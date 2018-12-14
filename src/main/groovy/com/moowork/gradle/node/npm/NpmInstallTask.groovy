@@ -13,6 +13,7 @@ class NpmInstallTask
         this.description = 'Install node packages from package.json.'
         setNpmCommand( 'install' )
         dependsOn( [NpmSetupTask.NAME] )
+        mustRunAfter( [NpmCiTask.NAME] )
 
         this.project.afterEvaluate {
             getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'package.json' ) )

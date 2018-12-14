@@ -1,5 +1,6 @@
 package com.moowork.gradle.node
 
+import com.moowork.gradle.node.npm.NpmCiTask
 import com.moowork.gradle.node.npm.NpmInstallTask
 import com.moowork.gradle.node.npm.NpmSetupTask
 import com.moowork.gradle.node.npm.NpmTask
@@ -54,6 +55,7 @@ class NodePlugin
     private void addTasks()
     {
         this.project.tasks.create( NpmInstallTask.NAME, NpmInstallTask )
+        this.project.tasks.create( NpmCiTask.NAME, NpmCiTask )
         this.project.tasks.create( YarnInstallTask.NAME, YarnInstallTask )
         this.setupTask = this.project.tasks.create( SetupTask.NAME, SetupTask )
         this.npmSetupTask = this.project.tasks.create( NpmSetupTask.NAME, NpmSetupTask )
