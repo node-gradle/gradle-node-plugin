@@ -132,7 +132,4 @@ class NpmSetupTask
         return []
     }
 
-    static void main(String[] args) {
-
-    }
 }
