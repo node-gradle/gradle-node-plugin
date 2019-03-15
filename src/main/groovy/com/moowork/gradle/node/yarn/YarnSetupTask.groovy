@@ -17,7 +17,7 @@ class YarnSetupTask
         this.group = 'Node'
         this.description = 'Setup a specific version of Yarn to be used by the build.'
 
-        this.enabled = false;
+        this.enabled = false
     }
 
     @Input
@@ -45,7 +45,7 @@ class YarnSetupTask
             pkg += "@${yarnVersion}"
         }
 
-        this.setArgs( ['install', '--global', '--no-save', '--prefix', this.getVariant().yarnDir, pkg] )
+        this.setArgs(['install', '--global', '--no-save'] + proxySettings() + ['--prefix', this.getVariant().yarnDir.absolutePath, pkg])
         enabled = true
     }
 }
