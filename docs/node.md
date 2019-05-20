@@ -175,6 +175,9 @@ node {
 
   // Version of Yarn to use.
   yarnVersion = '0.16.1'
+  
+  // Override the install command used by npmInstall
+  npmInstallCommand = 'install'
 
   // Base URL for fetching node distributions (change if you have a mirror).
   distBaseUrl = 'https://nodejs.org/dist'

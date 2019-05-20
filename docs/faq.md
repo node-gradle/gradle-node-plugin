@@ -23,6 +23,13 @@ task bundle(type: YarnTask) {
 
 More info in [Gradle doc](https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks)
 
+# How do I use npm ci instead of npm install?
+
+```gradle
+node {
+    npmInstallCommand = System.getenv("CI") ? 'ci' : 'install'
+}
+```
 
 # How do I set log level for NPM install task?
 

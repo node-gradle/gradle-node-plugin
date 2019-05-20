@@ -43,6 +43,10 @@ class NpmTask
         this.args = value.asList()
     }
 
+    String[] getNpmCommand() {
+        return npmCommand
+    }
+
     void setNpmCommand( String[] cmd )
     {
         this.npmCommand = cmd
