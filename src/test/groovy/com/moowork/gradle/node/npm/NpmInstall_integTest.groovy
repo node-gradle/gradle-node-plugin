@@ -111,4 +111,44 @@ class NpmInstall_integTest
         then:
         result.task( ':npmInstall' ).outcome == TaskOutcome.SUCCESS
     }
+
+    def 'configure npm install through extension'()
+    {
+        given:
+        writeBuild( '''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            node {
+                version = "10.14.0"
+                npmVersion = "6.4.1"
+                download = true
+                workDir = file('build/node')
+                npmInstallCommand = 'ci'
+            }
+        ''' )
+        writeEmptyPackageJson()
+
+        when:
+        def result = buildAndFail( 'npmInstall' )
+
+        then:
+        result.output.contains('can only install packages with an existing package-lock.json')
+        result.task(':npmInstall').outcome == TaskOutcome.FAILED
+
+        when:
+        writeFile( 'package-lock.json', '''
+            {
+              "name": "example",
+              "lockfileVersion": 1,
+              "requires": true,
+              "dependencies": {}
+            }
+        ''' )
+        result = buildTask( 'npmInstall' )
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+    }
 }

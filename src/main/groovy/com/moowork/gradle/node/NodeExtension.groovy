@@ -25,6 +25,8 @@ class NodeExtension
 
     String npmCommand = 'npm'
 
+    String npmInstallCommand = 'install'
+
     String yarnCommand = 'yarn'
 
     boolean download = false
