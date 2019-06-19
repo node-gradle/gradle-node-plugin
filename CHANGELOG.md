@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 1.5.0 *(2019-06-19)*
+----------------------------
+* Backport from srs: Added gradle build cache support for npm install (bjornmagnusson)
+
+Version 1.4.0 *(2019-05-20)*
+----------------------------
+* Adds npmInstallCommand for overriding NpmInstallTasks behaviour.
+
 Version 1.3.0 *(2018-12-04)*
 ----------------------------
 * Relocated to com.github.node-gradle.(node|grunt|gulp)
