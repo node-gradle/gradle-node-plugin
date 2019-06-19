@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Version 1.5.1 *(2019-06-19)*
+----------------------------
+* Fix inputs/outputs for NpmInstallTask/YarnInstallTask. 
+
 Version 1.5.0 *(2019-06-19)*
 ----------------------------
 * Backport from srs: Added gradle build cache support for npm install (bjornmagnusson)
