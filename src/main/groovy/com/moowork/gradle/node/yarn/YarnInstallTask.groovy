@@ -20,12 +20,6 @@ class YarnInstallTask
         this.description = 'Install node packages using Yarn.'
         setYarnCommand( '' )
         dependsOn( [YarnSetupTask.NAME] )
-
-        this.project.afterEvaluate {
-            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'package.json' ) )
-            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'yarn.lock' ) )
-            getOutputs().dir( new File( (File) this.project.node.nodeModulesDir, 'node_modules' ) )
-        }
     }
 
     @InputFile

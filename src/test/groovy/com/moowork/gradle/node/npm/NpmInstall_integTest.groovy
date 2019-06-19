@@ -138,17 +138,94 @@ class NpmInstall_integTest
         result.task(':npmInstall').outcome == TaskOutcome.FAILED
 
         when:
-        writeFile( 'package-lock.json', '''
+        writeEmptyLockFile()
+        result = buildTask( 'npmInstall' )
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'verify npm install inputs/outputs'()
+    {
+        given:
+        writeBuild( '''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            node {
+                version = "10.14.0"
+                npmVersion = "6.4.1"
+                download = true
+                workDir = file('build/node')
+                npmInstallCommand = 'install'
+            }
+
+            task verifyIO {
+                doLast {
+                    if (!tasks.named("npmInstall").get().outputs.files.contains(project.file('package-lock.json'))) {
+                        throw new RuntimeException("package-lock.json is not in INSTALL'S outputs!")
+                    }
+                    if (tasks.named("npmInstall").get().inputs.files.contains(project.file('package-lock.json'))) {
+                        throw new RuntimeException("package-lock.json is in INSTALL'S inputs!")
+                    }
+                }
+            }
+        ''' )
+        writeEmptyPackageJson()
+
+        when:
+        def result = buildTask( 'verifyIO' )
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+    }
+    def 'verify npm ci inputs/outputs'()
+    {
+        given:
+        writeBuild( '''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            node {
+                version = "10.14.0"
+                npmVersion = "6.4.1"
+                download = true
+                workDir = file('build/node')
+                npmInstallCommand = 'ci'
+            }
+
+            task verifyIO {
+                doLast {
+                    if (tasks.named("npmInstall").get().outputs.files.contains(project.file('package-lock.json'))) {
+                        throw new RuntimeException("package-lock.json is in CI'S outputs!")
+                    }
+                    if (!tasks.named("npmInstall").get().inputs.files.contains(project.file('package-lock.json'))) {
+                        throw new RuntimeException("package-lock.json is not in CI'S inputs!")
+                    }
+                }
+            }
+        ''' )
+        writeEmptyPackageJson()
+        writeEmptyLockFile()
+
+        when:
+        def result = buildTask( 'verifyIO' )
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+    }
+
+    protected final void writeEmptyLockFile()
+    {
+        writeFile('package-lock.json', '''
             {
               "name": "example",
               "lockfileVersion": 1,
               "requires": true,
               "dependencies": {}
             }
-        ''' )
-        result = buildTask( 'npmInstall' )
-
-        then:
-        result.outcome == TaskOutcome.SUCCESS
+        ''')
     }
 }

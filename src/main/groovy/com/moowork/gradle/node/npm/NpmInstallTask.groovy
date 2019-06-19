@@ -24,28 +24,19 @@ class NpmInstallTask
         this.project.afterEvaluate {
             def ext = this.project.extensions.getByType(NodeExtension)
             setNpmCommand( ext.getNpmInstallCommand() )
-            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'package.json' ) )
-            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'package-lock.json'))
+
+            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'package.json' ) ).withPathSensitivity(PathSensitivity.RELATIVE)
             getOutputs().dir( new File( (File) this.project.node.nodeModulesDir, 'node_modules' ) )
+
+            def lockFile = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'package-lock.json')
+            if (npmCommand[0] == "ci") {
+                getInputs().file(lockFile.exists() ? lockFile : null)
+                        .withPathSensitivity(PathSensitivity.RELATIVE)
+                        .optional()
+            } else if (npmCommand[0] == "install") {
+                getOutputs().file(lockFile)
+            }
         }
-    }
-
-    @InputFile
-    @Optional
-    @PathSensitive(PathSensitivity.RELATIVE)
-    protected getPackageJsonFile()
-    {
-        def packageJsonFile = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'package.json')
-        return packageJsonFile.exists() ? packageJsonFile : null
-    }
-
-    @InputFile
-    @Optional
-    @PathSensitive(PathSensitivity.RELATIVE)
-    protected getPackageLockFile()
-    {
-        def lockFile = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'package-lock.json')
-        return lockFile.exists() ? lockFile : null
     }
 
     @OutputDirectory
