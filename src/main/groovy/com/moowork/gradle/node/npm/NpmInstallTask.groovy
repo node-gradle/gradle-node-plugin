@@ -25,7 +25,11 @@ class NpmInstallTask
             def ext = this.project.extensions.getByType(NodeExtension)
             setNpmCommand( ext.getNpmInstallCommand() )
 
-            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'package.json' ) ).withPathSensitivity(PathSensitivity.RELATIVE)
+            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'package.json' ) )
+                    .withPathSensitivity(PathSensitivity.RELATIVE)
+            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'npm-shrinkwrap.json' ) )
+                    .withPathSensitivity(PathSensitivity.RELATIVE)
+                    .optional()
             getOutputs().dir( new File( (File) this.project.node.nodeModulesDir, 'node_modules' ) )
 
             def lockFile = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'package-lock.json')
