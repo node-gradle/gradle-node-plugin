@@ -1,8 +1,8 @@
 package com.moowork.gradle.node.npm
-import com.moowork.gradle.node.NodeExtension
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 
@@ -24,24 +24,53 @@ class NpmInstallTask
         this.project.afterEvaluate {
             def ext = this.project.extensions.getByType(NodeExtension)
             setNpmCommand( ext.getNpmInstallCommand() )
-
-            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'package.json' ) )
-                    .withPathSensitivity(PathSensitivity.RELATIVE)
-            getInputs().file( new File( (File) this.project.node.nodeModulesDir, 'npm-shrinkwrap.json' ) )
-                    .withPathSensitivity(PathSensitivity.RELATIVE)
-                    .optional()
-            getOutputs().dir( new File( (File) this.project.node.nodeModulesDir, 'node_modules' ) )
-
-            def lockFile = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'package-lock.json')
-            if (npmCommand[0] == "ci") {
-                getInputs().file(lockFile.exists() ? lockFile : null)
-                        .withPathSensitivity(PathSensitivity.RELATIVE)
-                        .optional()
-            } else if (npmCommand[0] == "install") {
-                getOutputs().file(lockFile)
-            }
         }
     }
+
+    @InputFile
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    protected getPackageJsonFile()
+    {
+        def file = new File( (File) this.project.node.nodeModulesDir, 'package.json' )
+        return file.exists() ? file : null
+    }
+
+    @InputFile
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    protected getNpmShrinkwrap()
+    {
+        def file = new File( (File) this.project.node.nodeModulesDir, 'npm-shrinkwrap.json' )
+        return file.exists() ? file : null
+    }
+
+    @InputFile
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    protected getPackageLockFileAsInput()
+    {
+        def lockFile = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'package-lock.json')
+        if (npmCommand[0] == "ci") {
+            return lockFile.exists() ? lockFile : null
+        }
+
+        return null
+    }
+
+    @OutputFile
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    protected getPackageLockFileAsOutput()
+    {
+        if (npmCommand[0] == "install") {
+            def file = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'package-lock.json')
+            return file.exists() ? file : null
+        }
+
+        return null
+    }
+
 
     @OutputDirectory
     protected getNodeModulesDir()
