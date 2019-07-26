@@ -9,6 +9,8 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-gradle-plugin'
+
+ext.nextVersion = 'major'
 apply plugin: 'com.cinnober.gradle.semver-git'
 
 apply from: "$rootDir/gradle/additional-artifacts.gradle"
