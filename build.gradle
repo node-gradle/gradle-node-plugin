@@ -27,7 +27,7 @@ repositories {
 dependencies {
     testCompile 'cglib:cglib-nodep:3.2.9'
     testCompile 'org.apache.commons:commons-io:1.3.2'
-    testCompile('org.spockframework:spock-core:1.2-groovy-2.4')
+    testCompile('org.spockframework:spock-core:1.2-groovy-2.5')
 }
 
 tasks.withType( Test ) {
