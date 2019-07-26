@@ -5,17 +5,7 @@ in your `build.gradle` file:
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "1.3.0"
-}
-```
-
-If you want to install all of the node-plugins (which is pretty uncommon), then write this:
-
-```gradle
-plugins {
-  id "com.github.node-gradle.node" version "1.3.0"
-  id "com.github.node-gradle.grunt" version "1.3.0"
-  id "com.github.node-gradle.gulp" version "1.3.0"
+  id "com.github.node-gradle.node" version "2.0.0"
 }
 ```
 
@@ -30,7 +20,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.github.node-gradle:gradle-node-plugin:1.3.0"
+    classpath "com.github.node-gradle:gradle-node-plugin:2.0.0"
   }
 }
 
@@ -52,7 +42,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.github.node-gradle:gradle-node-plugin:1.3.0-SNAPSHOT"
+    classpath "com.github.node-gradle:gradle-node-plugin:2.0.0-SNAPSHOT"
   }
 }
 

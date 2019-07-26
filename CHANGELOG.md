@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 2.0.0 *(WIP)*
+----------------------------
+* Only support Gradle 5.x
+* Drop support for grunt/gulp plugins.
+
 Version 1.5.1 *(2019-06-19)*
 ----------------------------
 * Fix inputs/outputs for NpmInstallTask/YarnInstallTask. 

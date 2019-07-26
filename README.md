@@ -13,15 +13,8 @@ with Gradle:
 
 * [NodeJS](https://nodejs.org)
 * [Yarn](https://yarnpkg.com/)
-* [Grunt](https://gruntjs.com/)
-* [Gulp](https://gulpjs.com/)
-
-It's actually 3 plugins in one:
 
 * [Node Plugin](https://plugins.gradle.org/plugin/com.github.node-gradle.node) (`com.github.node-gradle.node`) - [See docs](docs/node.md).
-* [Grunt Plugin](https://plugins.gradle.org/plugin/com.github.node-gradle.grunt) (`com.github.node-gradle.grunt`) - [See docs](docs/grunt.md)
-* [Gulp Plugin](https://plugins.gradle.org/plugin/com.github.node-gradle.gulp) (`com.github.node-gradle.gulp`) - [See docs](docs/gulp.md)
-
 
 ## Documentation
 
@@ -30,8 +23,6 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 
 * [Installing](docs/installing.md)
 * [Node Plugin](docs/node.md)
-* [Grunt Plugin](docs/grunt.md)
-* [Gulp Plugin](docs/gulp.md)
 * [FAQ](docs/faq.md)
 * [Changelog](CHANGELOG.md)
 
@@ -40,6 +31,7 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 
 Here's the documentation for older releases of the plugin:
 
+* [1.5.2](https://github.com/node-gradle/gradle-node-plugin/blob/v1.5.2/README.md)
 * [1.1.1](https://github.com/node-gradle/gradle-node-plugin/blob/v1.1.1/README.md)
 * [1.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/v1.1.0/README.md)
 * [1.0.1](https://github.com/node-gradle/gradle-node-plugin/blob/v1.0.1/README.md)
