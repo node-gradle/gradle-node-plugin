@@ -26,6 +26,7 @@ class SetupTask
 
     SetupTask()
     {
+
         this.group = 'Node'
         this.description = 'Download and install a local node/npm version.'
         this.enabled = false
@@ -65,7 +66,7 @@ class SetupTask
     void exec()
     {
         configureIfNeeded()
-        addRepository()
+        addRepositoryIfNeeded()
 
         if ( this.variant.exeDependency )
         {
@@ -162,6 +163,17 @@ class SetupTask
         def conf = this.project.configurations.detachedConfiguration( dep )
         conf.transitive = false
         return conf.resolve().iterator().next();
+    }
+
+    private void addRepositoryIfNeeded()
+    {
+        def distUrl = this.config.distBaseUrl
+
+        Closure predicate = { it in IvyArtifactRepository && distUrl == it.url.toString() }
+
+        if ( ! this.project.repositories.find( predicate ) ) {
+            addRepository()
+        }
     }
 
     private void addRepository()
