@@ -28,7 +28,6 @@ class NpmInstallTask
     }
 
     @InputFile
-    @Optional
     @PathSensitive(PathSensitivity.RELATIVE)
     protected getPackageJsonFile()
     {
