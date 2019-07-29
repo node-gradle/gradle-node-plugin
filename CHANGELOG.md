@@ -1,9 +1,9 @@
 Changelog
 =========
 
-Version 2.0.0 *(WIP)*
+Version 2.0.0 *(2019-07-29)*
 ----------------------------
-* Only support Gradle 5.x
+* Only support Gradle 5.x officially.
 * Drop support for grunt/gulp plugins.
 
 Version 1.5.1 *(2019-06-19)*
