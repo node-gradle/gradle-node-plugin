@@ -70,6 +70,7 @@ class NpmInstallTask
         return null
     }
 
+
     @OutputDirectory
     protected getNodeModulesDir()
     {

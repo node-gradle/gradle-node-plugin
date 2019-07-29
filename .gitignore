@@ -9,3 +9,7 @@ build/
 /out
 /.nb-gradle/
 node_modules
+.classpath
+.project
+.settings
+bin

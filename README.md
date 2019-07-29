@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/node-gradle/gradle-node-plugin.svg?branch=master)](https://travis-ci.org/node-gradle/gradle-node-plugin)
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/xledod92mhvfihlb?svg=true)](https://ci.appveyor.com/project/deepy/gradle-node-plugin)
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-![Version](https://img.shields.io/badge/Version-1.3.0-orange.svg)
+![Version](https://img.shields.io/badge/Version-1.5.3-orange.svg)
 
 This plugin enabled you to use a lot of [NodeJS](https://nodejs.org)-based technologies as part of your 
 build without having NodeJS installed locally on your system. It integrates the following NodeJS-based system
@@ -13,15 +13,8 @@ with Gradle:
 
 * [NodeJS](https://nodejs.org)
 * [Yarn](https://yarnpkg.com/)
-* [Grunt](https://gruntjs.com/)
-* [Gulp](https://gulpjs.com/)
-
-It's actually 3 plugins in one:
 
 * [Node Plugin](https://plugins.gradle.org/plugin/com.github.node-gradle.node) (`com.github.node-gradle.node`) - [See docs](docs/node.md).
-* [Grunt Plugin](https://plugins.gradle.org/plugin/com.github.node-gradle.grunt) (`com.github.node-gradle.grunt`) - [See docs](docs/grunt.md)
-* [Gulp Plugin](https://plugins.gradle.org/plugin/com.github.node-gradle.gulp) (`com.github.node-gradle.gulp`) - [See docs](docs/gulp.md)
-
 
 ## Documentation
 
@@ -30,8 +23,6 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 
 * [Installing](docs/installing.md)
 * [Node Plugin](docs/node.md)
-* [Grunt Plugin](docs/grunt.md)
-* [Gulp Plugin](docs/gulp.md)
 * [FAQ](docs/faq.md)
 * [Changelog](CHANGELOG.md)
 
@@ -40,6 +31,7 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 
 Here's the documentation for older releases of the plugin:
 
+* [1.5.3](https://github.com/node-gradle/gradle-node-plugin/blob/v1.5.3/README.md)
 * [1.1.1](https://github.com/node-gradle/gradle-node-plugin/blob/v1.1.1/README.md)
 * [1.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/v1.1.0/README.md)
 * [1.0.1](https://github.com/node-gradle/gradle-node-plugin/blob/v1.0.1/README.md)
@@ -69,7 +61,7 @@ one of the existing contributors a nudge.
 
 This plugin is open source project and completely free to use. If you are using this project in your products/projects, please consider sponsoring to ensure it is actively developed and maintained.
 
-[Donate via PayPal (one time)](https://www.paypal.me/stenrs)
+[Donate via PayPal (one time)](https://www.paypal.me/ANordlund)
 
 ## License
 

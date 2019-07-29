@@ -49,18 +49,6 @@ pluginBundle {
             description = 'Gradle plugin for executing node scripts.'
             tags = ['java', 'gradle', 'node', 'yarn', 'npm']
         }
-        gruntPlugin {
-            id = 'com.github.node-gradle.grunt'
-            displayName = 'Gradle Grunt Plugin'
-            description = 'Gradle pluign for executing grunt builds.'
-            tags = ['java', 'gradle', 'node', 'yarn', 'npm', 'grunt']
-        }
-        gulpPlugin {
-            id = 'com.github.node-gradle.gulp'
-            displayName = 'Gradle Gulp Plugin'
-            description = 'Gradle plugin for executing gulp builds.'
-            tags = ['java', 'gradle', 'node', 'yarn', 'npm', 'gulp']
-        }
     }
 
     mavenCoordinates {

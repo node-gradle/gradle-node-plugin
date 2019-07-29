@@ -10,7 +10,7 @@ file (see [Installing](installing.md) for details):
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "1.3.0"
+  id "com.github.node-gradle.node" version "2.0.0"
 }
 ```
 
@@ -66,7 +66,7 @@ task myScript(type: NodeTask) {
 }
 ```
 
-When executing this for the first time, it will run a nodeSetup task that downloads NodeJS 
+When executing this for the first time, it will run a `nodeSetup` task that downloads NodeJS 
 (for your platform) and NPM (Node Package Manager) if on windows (other platforms include 
 it into the distribution).
 
@@ -75,16 +75,18 @@ it into the distribution).
 
 When adding the node plugin, you will have a `npmInstall` task already added. This task will 
 execute `npm install` and installs all dependencies in `package.json`. It will only run when changes 
-are made to `package.json` or `node_modules`. Execute it like this:
+are made to `package.json`, `npm-shrinkwrap.json`, `package-lock.json` or `node_modules`. Execute it like this:
 
 ```bash
 $ gradle npmInstall
 ```
 
+Keep in mind that this task is **not** equivalent to `npm_install`.
+The *only* task that will respect settings like `npmInstallCommand` is `npmInstall`.
+
 All npm command can also be invoked using underscore notation based on a gradle rule:
 
 ```bash
-$ gradle npm_install
 $ gradle npm_update
 $ gradle npm_list
 $ gradle npm_cache_clean
@@ -95,7 +97,7 @@ These however are not shown when running gradle tasks, as they generated dynamic
 be used for dependency declarations, such as:
 
 ```gradle
-npm_install.dependsOn(npm_cache_clean)
+npm_audit.dependsOn(npm_cache_clean)
 ```
 
 More arguments can be passed via the `build.gradle` file:

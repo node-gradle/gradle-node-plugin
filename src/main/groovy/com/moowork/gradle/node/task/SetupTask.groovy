@@ -24,10 +24,6 @@ class SetupTask
 
     protected Variant variant
 
-    private IvyArtifactRepository repo
-
-    private List<ArtifactRepository> allRepos;
-
     SetupTask()
     {
         this.group = 'Node'
@@ -79,7 +75,6 @@ class SetupTask
         deleteExistingNode()
         unpackNodeArchive()
         setExecutableFlag()
-        restoreRepositories()
     }
 
     private void copyNodeExe()
@@ -171,12 +166,8 @@ class SetupTask
 
     private void addRepository()
     {
-        this.allRepos = new ArrayList<>()
-        this.allRepos.addAll( this.project.repositories )
-        this.project.repositories.clear()
-
         def distUrl = this.config.distBaseUrl
-        this.repo = this.project.repositories.ivy {
+        this.project.repositories.ivy {
             url distUrl
             if (BackwardsCompat.usePatternLayout()) {
                 patternLayout {
@@ -195,11 +186,5 @@ class SetupTask
                 }
             }
         }
-    }
-
-    private void restoreRepositories()
-    {
-        this.project.repositories.clear();
-        this.project.repositories.addAll( this.allRepos );
     }
 }
