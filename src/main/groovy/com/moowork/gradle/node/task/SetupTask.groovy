@@ -165,9 +165,8 @@ class SetupTask
     }
 
     private void addRepositoryIfNeeded() {
-        def distBaseUrl = this.config.distBaseUrl
-        if ( distBaseUrl != null ) {
-            addRepository distBaseUrl
+        if ( this.config.distBaseUrl != null ) {
+            addRepository this.config.distBaseUrl
         }
     }
 
