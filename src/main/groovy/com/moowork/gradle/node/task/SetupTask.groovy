@@ -4,7 +4,6 @@ import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.util.BackwardsCompat
 import com.moowork.gradle.node.variant.Variant
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -26,6 +25,7 @@ class SetupTask
 
     SetupTask()
     {
+
         this.group = 'Node'
         this.description = 'Download and install a local node/npm version.'
         this.enabled = false
@@ -65,7 +65,7 @@ class SetupTask
     void exec()
     {
         configureIfNeeded()
-        addRepository()
+        addRepositoryIfNeeded()
 
         if ( this.variant.exeDependency )
         {
@@ -164,9 +164,14 @@ class SetupTask
         return conf.resolve().iterator().next();
     }
 
-    private void addRepository()
-    {
-        def distUrl = this.config.distBaseUrl
+    private void addRepositoryIfNeeded() {
+        def distBaseUrl = this.config.distBaseUrl
+        if ( distBaseUrl != null ) {
+            addRepository distBaseUrl
+        }
+    }
+
+    private void addRepository( String distUrl ) {
         this.project.repositories.ivy {
             url distUrl
             if (BackwardsCompat.usePatternLayout()) {
