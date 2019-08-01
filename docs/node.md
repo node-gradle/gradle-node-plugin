@@ -182,6 +182,7 @@ node {
   npmInstallCommand = 'install'
 
   // Base URL for fetching node distributions (change if you have a mirror).
+  // Or set to null if you want to add the repository on your own.
   distBaseUrl = 'https://nodejs.org/dist'
 
   // If true, it will download node using above parameters.
