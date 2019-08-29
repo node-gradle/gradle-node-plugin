@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/node-gradle/gradle-node-plugin.svg?branch=master)](https://travis-ci.org/node-gradle/gradle-node-plugin)
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/xledod92mhvfihlb?svg=true)](https://ci.appveyor.com/project/deepy/gradle-node-plugin)
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-![Version](https://img.shields.io/badge/Version-1.5.3-orange.svg)
+![Version](https://img.shields.io/badge/Version-2.0.0-orange.svg)
 
 This plugin enabled you to use a lot of [NodeJS](https://nodejs.org)-based technologies as part of your 
 build without having NodeJS installed locally on your system. It integrates the following NodeJS-based system
