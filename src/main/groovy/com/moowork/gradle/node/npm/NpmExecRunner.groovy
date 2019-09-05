@@ -1,8 +1,6 @@
 package com.moowork.gradle.node.npm
 
 import com.moowork.gradle.node.exec.ExecRunner
-import com.moowork.gradle.node.exec.NodeExecRunner
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 
@@ -18,7 +16,7 @@ class NpmExecRunner
     protected ExecResult doExecute()
     {
 
-        def exec = this.variant.npmExec
+        def exec = getCommand()
         def arguments = this.arguments
 
         if ( this.ext.download )
@@ -40,7 +38,7 @@ class NpmExecRunner
                 environment['PATH'] = path + File.pathSeparator + environment['PATH']
             }
 
-            def File localNpm = project.file( new File( this.ext.nodeModulesDir, 'node_modules/npm/bin/npm-cli.js' ) )
+            def File localNpm = getLocalCommandScript()
             if ( localNpm.exists() )
             {
                 exec = this.variant.nodeExec
@@ -49,9 +47,21 @@ class NpmExecRunner
             else if ( !new File(exec).exists() )
             {
                 exec = this.variant.nodeExec
-                arguments = [this.variant.npmScriptFile] + arguments
+                arguments = [getCommandScript()] + arguments
             }
         }
         return run( exec, arguments )
+    }
+
+    protected String getCommand() {
+        this.variant.npmExec
+    }
+
+    protected File getLocalCommandScript() {
+        return project.file(new File(this.ext.nodeModulesDir, 'node_modules/npm/bin/npm-cli.js'))
+    }
+
+    protected String getCommandScript() {
+        return this.variant.npmScriptFile
     }
 }

@@ -52,6 +52,7 @@ class VariantBuilderTest
           variant.nodeBinDir.toString().endsWith(NODE_BASE_PATH + nodeDir)
           variant.nodeExec.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node.exe")
           variant.npmScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npm-cli.js")
+          variant.npxScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npx-cli.js")
 
         where:
           osArch   | nodeDir                    | exeDependency
@@ -86,6 +87,7 @@ class VariantBuilderTest
           variant.nodeBinDir.toString().endsWith(NODE_BASE_PATH + nodeDir)
           variant.nodeExec.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node.exe")
           variant.npmScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npm-cli.js")
+          variant.npxScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npx-cli.js")
 
         where:
           osArch   | nodeDir                   | exeDependency
@@ -122,6 +124,7 @@ class VariantBuilderTest
           variant.nodeBinDir.toString().endsWith(NODE_BASE_PATH + nodeDir)
           variant.nodeExec.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node.exe")
           variant.npmScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npm-cli.js")
+          variant.npxScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npx-cli.js")
         where:
           version | osArch
           "4.5.0" | "win-x86"
@@ -158,6 +161,7 @@ class VariantBuilderTest
           variant.nodeBinDir.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + 'bin')
           variant.nodeExec.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "bin${PS}node")
           variant.npmScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "lib${PS}node_modules${PS}npm${PS}bin${PS}npm-cli.js")
+          variant.npxScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "lib${PS}node_modules${PS}npm${PS}bin${PS}npx-cli.js")
 
         where:
           osName     | osArch   | nodeDir                   | depName
@@ -199,6 +203,7 @@ class VariantBuilderTest
           variant.nodeBinDir.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + 'bin')
           variant.nodeExec.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "bin${PS}node")
           variant.npmScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "lib${PS}node_modules${PS}npm${PS}bin${PS}npm-cli.js")
+          variant.npxScriptFile.toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "lib${PS}node_modules${PS}npm${PS}bin${PS}npx-cli.js")
 
         where:
           osName  | osArch | sysOsArch | nodeDir                    | depName
@@ -224,6 +229,7 @@ class VariantBuilderTest
 
           def npmDir = variant.nodeDir
           def npm = ext.npmCommand + ".cmd"
+          def npx = ext.npxCommand + ".cmd"
 
           if (npmVersion != "") {
             npmDir = new File(ext.npmWorkDir, "npm-v${npmVersion}".toString())
@@ -231,11 +237,13 @@ class VariantBuilderTest
 
           if (download) {
             npm = new File(npmDir, npm).toString()
+            npx = new File(npmDir, npx).toString()
           }
         expect:
           variant.npmDir == npmDir
           variant.npmBinDir == npmDir
           variant.npmExec == npm
+          variant.npxExec == npx
 
           // if no version use node paths
           npmVersion != "" || variant.npmDir == variant.nodeDir
@@ -266,6 +274,7 @@ class VariantBuilderTest
 
           def npmDir = variant.nodeDir
           def npm = ext.npmCommand
+          def npx = ext.npxCommand
 
           if (npmVersion != "") {
             npmDir = new File(ext.npmWorkDir, "npm-v${npmVersion}".toString())
@@ -275,11 +284,13 @@ class VariantBuilderTest
 
           if (download) {
             npm = new File(npmBinDir, npm).toString()
+            npx = new File(npmBinDir, npx).toString()
           }
         expect:
           variant.npmDir == npmDir
           variant.npmBinDir == npmBinDir
           variant.npmExec == npm
+          variant.npxExec == npx
 
           // if no version use node paths
           npmVersion != "" || variant.npmDir == variant.nodeDir

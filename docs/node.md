@@ -117,6 +117,43 @@ task installExpress(type: NpmTask) {
 }
 ```
 
+## Executing `npm` Commands via `npx`
+
+[As of 5.2](https://blog.npmjs.org/post/162869356040/introducing-npx-an-npm-package-runner),
+ `npm` is bundled with a new command called [`npx`](https://www.npmjs.com/package/npx) which is aimed at running CLI 
+ commands from NPM packages. 
+
+It enables to execute `npm` commands without needing to declare them as a `script` in the `package.json` file and run 
+thanks to the `run` `npm` command.
+
+It does not require the command to be locally or globally installed. If the command is not already installed, the 
+corresponding package is installed then the command is run. In this case, it is necessary to indicate the package
+ name instead of the command name.
+
+To generate a new Angular project with the `ng` command coming from `@angular/cli` which is not installed 
+(note that we can specify the version):
+
+```gradle
+task generateAngularApp(type: NpxTask) {
+  command = '@angular/cli@8.3.2'
+  args = ['new', 'myApp']
+}
+```
+
+To build an Angular application with `@angular/cli` locally installed:
+
+```gradle
+task buildAngularApp(type: NpxTask) {
+  dependsOn npmInstall
+  command = 'ng'
+  args = ['build', '--prod']
+  inputs.files('package.json', 'package-lock.json', 'angular.json', 'tsconfig.json', 'tsconfig.app.json')
+  inputs.dir('src')
+  inputs.dir('node_modules')
+  outputs.dir('dist')
+}
+```
+
 
 ## Executing Yarn Tasks
 

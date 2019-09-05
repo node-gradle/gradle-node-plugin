@@ -14,6 +14,7 @@ class NodeExtensionTest
         then:
         ext != null
         ext.npmCommand == 'npm'
+        ext.npxCommand == 'npx'
         ext.distBaseUrl == 'https://nodejs.org/dist'
         ext.workDir != null
         ext.nodeModulesDir != null
