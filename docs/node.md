@@ -124,11 +124,13 @@ task installExpress(type: NpmTask) {
  commands from NPM packages. 
 
 It enables to execute `npm` commands without needing to declare them as a `script` in the `package.json` file and run 
-thanks to the `run` `npm` command.
+thanks to the `npm run` command.
 
 It does not require the command to be locally or globally installed. If the command is not already installed, the 
 corresponding package is installed then the command is run. In this case, it is necessary to indicate the package
  name instead of the command name.
+ 
+The `NpxTask` is able to execute some `npx` commands. It depends on the `npmSetup` to ensure `npx` is available. 
 
 To generate a new Angular project with the `ng` command coming from `@angular/cli` which is not installed 
 (note that we can specify the version):
@@ -149,7 +151,7 @@ task buildAngularApp(type: NpxTask) {
   args = ['build', '--prod']
   inputs.files('package.json', 'package-lock.json', 'angular.json', 'tsconfig.json', 'tsconfig.app.json')
   inputs.dir('src')
-  inputs.dir('node_modules')
+  inputs.dir(fileTree("node_modules").exclude(".cache"))
   outputs.dir('dist')
 }
 ```
