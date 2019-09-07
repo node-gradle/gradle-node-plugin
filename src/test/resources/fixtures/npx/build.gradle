@@ -1,0 +1,35 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == 'true' : false
+
+node {
+    version = "10.14.0"
+    npmVersion = "6.4.1"
+    download = true
+    workDir = file('build/node')
+}
+
+// mocha is installed locally whereas eslint is not
+
+task lint(type: NpxTask) {
+    dependsOn npmInstall
+    command = 'eslint@6.3.0'
+    args = changeInputs ? ['test.js', '--quiet'] : ['test.js']
+    inputs.files('.eslintrc.yml', 'test.js')
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task test(type: NpxTask) {
+    dependsOn lint
+    command = changeInputs ? '_mocha' : 'mocha'
+    inputs.dir('node_modules')
+    inputs.file('package.json')
+    inputs.file('test.js')
+    outputs.upToDateWhen {
+        true
+    }
+}
