@@ -4,12 +4,10 @@ import com.moowork.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
 class NpxTask_integTest
-    extends AbstractIntegTest
-{
-    def 'execute npx command with no package.json file'()
-    {
+        extends AbstractIntegTest {
+    def 'execute npx command with no package.json file'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
@@ -25,7 +23,7 @@ class NpxTask_integTest
                 command = 'chcase-cli'
                 args = ['--help']
             }
-        ''' )
+        ''')
 
         when:
         def result = build(":camelCase")
@@ -35,14 +33,15 @@ class NpxTask_integTest
         result.output.contains("--case, -C  Which case to convert to")
     }
 
-    def 'execute npx command with a package.json file'()
-    {
+    def 'execute npx command with a package.json file'() {
         given:
-        // mocha is installed locally whereas eslint not
-        writeBuild( '''
+        // mocha is installed locally whereas eslint is not
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
+            
+            def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == 'true': false
 
             node {
                 version = "10.14.0"
@@ -54,7 +53,7 @@ class NpxTask_integTest
             task lint(type: NpxTask) {
                 dependsOn npmInstall
                 command = 'eslint@6.3.0'
-                args = ['test.js']
+                args = changeInputs ? ['test.js', '--quiet'] : ['test.js']
                 inputs.files('.eslintrc.yml', 'test.js')
                 outputs.upToDateWhen {
                     true
@@ -63,7 +62,7 @@ class NpxTask_integTest
             
             task test(type: NpxTask) {
                 dependsOn lint
-                command = 'mocha'
+                command = changeInputs ? '_mocha' : 'mocha'
                 inputs.dir('node_modules')
                 inputs.file('package.json')
                 inputs.file('test.js')
@@ -71,7 +70,7 @@ class NpxTask_integTest
                     true
                 }
             }
-        ''' )
+        ''')
 
         writePackageJson(""" {
             "name": "example",
@@ -124,5 +123,12 @@ class NpxTask_integTest
         then:
         result2.task(":lint").outcome == TaskOutcome.UP_TO_DATE
         result2.task(":test").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        def result3 = build(":test", "-DchangeInputs=true")
+
+        then:
+        result3.task(":lint").outcome == TaskOutcome.SUCCESS
+        result3.task(":test").outcome == TaskOutcome.SUCCESS
     }
 }

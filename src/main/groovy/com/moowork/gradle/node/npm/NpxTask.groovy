@@ -11,12 +11,10 @@ class NpxTask
 {
     protected NpxExecRunner runner
 
-    @Input
     private List<?> args = []
 
     private ExecResult result
 
-    @Input
     private String command
 
     NpxTask()
@@ -46,6 +44,7 @@ class NpxTask
         this.args = value.asList()
     }
 
+    @Input
     String getCommand() {
         return command
     }
@@ -55,7 +54,7 @@ class NpxTask
         this.command = cmd
     }
 
-    @Internal
+    @Input
     List<?> getArgs()
     {
         return this.args
