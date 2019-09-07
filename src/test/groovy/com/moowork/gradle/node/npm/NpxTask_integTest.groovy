@@ -33,12 +33,10 @@ class NpxTask_integTest
         result.output.contains("--case, -C  Which case to convert to")
     }
 
-    def 'execute npx command with a package.json file'() {
+    def 'execute npx command with a package.json file and check inputs up-to-date detection'() {
         given:
-        copyResources('fixtures/npx/build.gradle', 'build.gradle')
-        copyResources('fixtures/npx/package.json', 'package.json')
-        copyResources('fixtures/npx/test.js', 'test.js')
-        copyResources('fixtures/npx/.eslintrc.yml', '.eslintrc.yml')
+        copyResources('fixtures/npx/', '')
+        copyResources('fixtures/javascript-project/', '')
 
         when:
         def result = build(":test")

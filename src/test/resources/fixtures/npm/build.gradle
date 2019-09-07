@@ -11,21 +11,10 @@ node {
     workDir = file('build/node')
 }
 
-// mocha is installed locally whereas eslint is not
-
-task lint(type: NpxTask) {
+task test(type: NpmTask) {
     dependsOn npmInstall
-    command = 'eslint@6.3.0'
-    args = changeInputs ? ['index.js'] : ['index.js', 'test.js']
-    inputs.files('.eslintrc.yml', 'index.js')
-    outputs.upToDateWhen {
-        true
-    }
-}
-
-task test(type: NpxTask) {
-    dependsOn lint
-    command = changeInputs ? '_mocha' : 'mocha'
+    npmCommand = changeInputs ? ['run', 'test'] : ['run']
+    args = changeInputs ? [] : ['test']
     inputs.dir('node_modules')
     inputs.file('package.json')
     inputs.files('index.js', 'test.js')

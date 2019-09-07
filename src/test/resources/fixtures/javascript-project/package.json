@@ -1,7 +1,10 @@
 {
-  "name": "example",
+  "name": "hello",
   "dependencies": {
     "mocha": "6.2.0",
     "chai": "4.2.0"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
