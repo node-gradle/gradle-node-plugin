@@ -1,0 +1,27 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    download = true
+    workDir = file("build/node")
+}
+
+def changeScript = System.properties["changeScript"] ? System.properties["changeScript"] == "true" : false
+def changeArgs = System.properties["changeArgs"] ? System.properties["changeArgs"] == "true" : false
+
+task hello(type: NodeTask) {
+    script = file("simple.js")
+    args = []
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+if (changeScript) {
+    hello.script = file("name.js")
+}
+
+if (changeArgs) {
+    hello.args = ["Bob", "Alice"]
+}

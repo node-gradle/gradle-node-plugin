@@ -3,6 +3,9 @@ package com.moowork.gradle.node.exec
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.variant.Variant
 import org.gradle.api.Project
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.process.ExecResult
 
 abstract class ExecRunner
@@ -17,9 +20,10 @@ abstract class ExecRunner
 
     def Object workingDir
 
+    @Internal
     def List<?> arguments = []
 
-    def boolean ignoreExitValue
+    def boolean ignoreExitValue = false
 
     def Closure execOverrides
 
@@ -27,6 +31,25 @@ abstract class ExecRunner
     {
         this.project = project
         this.environment << System.getenv()
+    }
+
+    @Input
+    @Optional
+    Object getWorkingDir()
+    {
+        return workingDir
+    }
+
+    @Input
+    Map<String, ?> getEnvironment()
+    {
+        return this.environment
+    }
+
+    @Input
+    boolean getIgnoreExitValue()
+    {
+        return ignoreExitValue
     }
 
     protected final ExecResult run( final String exec, final List<?> args )

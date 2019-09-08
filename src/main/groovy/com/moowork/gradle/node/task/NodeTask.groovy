@@ -2,7 +2,11 @@ package com.moowork.gradle.node.task
 
 import com.moowork.gradle.node.exec.NodeExecRunner
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
@@ -71,16 +75,28 @@ class NodeTask
         return this.result
     }
 
-    @Internal
+    @InputFiles
+    File getScript()
+    {
+        return this.script
+    }
+
+    @Input
     List<?> getArgs()
     {
         return this.args
     }
 
-    @Internal
+    @Input
     Iterable<?> getOptions()
     {
         return this.options
+    }
+
+    @Nested
+    NodeExecRunner getRunner()
+    {
+        return this.runner
     }
 
     @TaskAction
