@@ -45,6 +45,21 @@ class NodeTask_integTest
 
         then:
         result5.task(":hello").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        // Reset build arguments to ensure the next change is not up-to-date
+        def result6 = build("hello")
+
+        then:
+        result6.task(":hello").outcome == TaskOutcome.SUCCESS
+
+        when:
+        writeFile("simple.js", "console.log('Hello Bobby');")
+        def result7 = build("hello")
+
+        then:
+        result7.task(":hello").outcome == TaskOutcome.SUCCESS
+        result7.output.contains("Hello Bobby")
     }
 
     def 'exec node program with custom settings and check up-to-date detection'()
