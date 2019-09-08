@@ -3,6 +3,7 @@ package com.moowork.gradle.node.npm
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
@@ -78,6 +79,12 @@ class NpxTask
     void setExecOverrides( final Closure closure )
     {
         this.runner.execOverrides = closure
+    }
+
+    @Nested
+    NpxExecRunner getRunner()
+    {
+        return runner
     }
 
     @Internal
