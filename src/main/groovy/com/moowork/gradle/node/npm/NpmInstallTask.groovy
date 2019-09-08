@@ -59,7 +59,6 @@ class NpmInstallTask
 
     @OutputFile
     @Optional
-    @PathSensitive(PathSensitivity.RELATIVE)
     protected getPackageLockFileAsOutput()
     {
         if (npmCommand[0] == "install") {
