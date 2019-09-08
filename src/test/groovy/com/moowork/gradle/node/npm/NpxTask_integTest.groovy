@@ -60,5 +60,47 @@ class NpxTask_integTest
         then:
         result3.task(":lint").outcome == TaskOutcome.SUCCESS
         result3.task(":test").outcome == TaskOutcome.SUCCESS
+
+        when:
+        def result4 = build(":env")
+
+        then:
+        result4.task(":env").outcome == TaskOutcome.SUCCESS
+        result4.output.contains("PATH=")
+
+        when:
+        def result5 = build(":env", "-DcustomEnv=true")
+
+        then:
+        result5.task(":env").outcome == TaskOutcome.SUCCESS
+        result5.output.contains("CUSTOM=custom value")
+
+        when:
+        def result6 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
+
+        then:
+        result6.task(":env").outcome == TaskOutcome.SUCCESS
+        result6.output.contains("E404")
+
+        when:
+        def result7 = build(":env", "-DnotExistingCommand=true")
+
+        then:
+        result7.task(":env").outcome == TaskOutcome.FAILED
+        result7.output.contains("E404")
+
+        when:
+        def result8 = build(":cwd")
+
+        then:
+        result8.task(":cwd").outcome == TaskOutcome.SUCCESS
+        result8.output.contains("${projectDir}")
+
+        when:
+        def result9 = build(":cwd", "-DcustomWorkingDir")
+
+        then:
+        result9.task(":cwd").outcome == TaskOutcome.SUCCESS
+        result9.output.contains("${projectDir}/build/customWorkingDirectory")
     }
 }

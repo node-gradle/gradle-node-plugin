@@ -1,23 +1,28 @@
 plugins {
-    id 'com.github.node-gradle.node'
+    id "com.github.node-gradle.node"
 }
 
-def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == 'true' : false
+def changeInputs = isPropertyEnabled("changeInputs")
+
+def isPropertyEnabled(name) {
+    def property = System.properties[name]
+    return property == "true"
+}
 
 node {
     version = "10.14.0"
     npmVersion = "6.4.1"
     download = true
-    workDir = file('build/node')
+    workDir = file("build/node")
 }
 
 // mocha is installed locally whereas eslint is not
 
 task lint(type: NpxTask) {
     dependsOn npmInstall
-    command = 'eslint@6.3.0'
-    args = changeInputs ? ['index.js'] : ['index.js', 'test.js']
-    inputs.files('.eslintrc.yml', 'index.js')
+    command = "eslint@6.3.0"
+    args = changeInputs ? ["index.js"] : ["index.js", "test.js"]
+    inputs.files(".eslintrc.yml", "index.js")
     outputs.upToDateWhen {
         true
     }
@@ -25,11 +30,41 @@ task lint(type: NpxTask) {
 
 task test(type: NpxTask) {
     dependsOn lint
-    command = changeInputs ? '_mocha' : 'mocha'
-    inputs.dir('node_modules')
-    inputs.file('package.json')
-    inputs.files('index.js', 'test.js')
+    command = changeInputs ? "_mocha" : "mocha"
+    inputs.dir("node_modules")
+    inputs.file("package.json")
+    inputs.files("index.js", "test.js")
     outputs.upToDateWhen {
         true
     }
+}
+
+task env(type: NpxTask) {
+    command = "printenv"
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task cwd(type: NpxTask) {
+    command = "cwd"
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+if (isPropertyEnabled("customEnv")) {
+    env.environment = [CUSTOM: "custom value"]
+}
+
+if (isPropertyEnabled("ignoreExitValue")) {
+    env.ignoreExitValue = true
+}
+
+if (isPropertyEnabled("notExistingCommand")) {
+    env.command = "notExistingCommand"
+}
+
+if (isPropertyEnabled("customWorkingDir")) {
+    env.workingDir = file("${project.buildDir}/customWorkingDirectory")
 }
