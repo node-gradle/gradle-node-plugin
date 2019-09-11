@@ -66,6 +66,7 @@ class NpxTask_integTest
     def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
         given:
         copyResources('fixtures/npx-env/', '')
+        copyResources('fixtures/env/', '')
 
         when:
         def result1 = build(":env")

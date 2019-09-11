@@ -3,6 +3,7 @@ package com.moowork.gradle.node.npm
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
@@ -58,6 +59,12 @@ class NpmTask
     List<?> getArgs()
     {
         return this.args
+    }
+
+    @Nested
+    NpmExecRunner getExecRunner()
+    {
+        return this.runner
     }
 
     void setEnvironment( final Map<String, ?> value )

@@ -1,7 +1,0 @@
-{
-  "name": "hello",
-  "dependencies": {
-    "printenv": "1.0.0",
-    "utils-eval": "1.0.1"
-  }
-}
