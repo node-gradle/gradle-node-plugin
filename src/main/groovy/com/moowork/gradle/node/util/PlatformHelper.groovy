@@ -56,12 +56,9 @@ class PlatformHelper
     public String getOsArch()
     {
         final String arch = property( "os.arch" ).toLowerCase()
-        if ( arch.contains( "64" ) )
-        {
-            return "x64"
-        }
         //as Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch
-        if( arch.equals( "arm" ))
+        //unfortunately some JVMs say aarch32/64, so we need an additional conditional
+        if( arch.equals( "arm" ) || arch.startsWith( "aarch" ))
         {
             def systemArch = 'uname -m'.execute().text.trim()
             //the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here
@@ -73,6 +70,10 @@ class PlatformHelper
             {
                 return systemArch
             }
+        }
+        else if ( arch.contains( "64" ) )
+        {
+            return "x64"
         }
 
         return "x86"

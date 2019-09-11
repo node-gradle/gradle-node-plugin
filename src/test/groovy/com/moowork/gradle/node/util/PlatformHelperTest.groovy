@@ -30,14 +30,32 @@ class PlatformHelperTest
 
         where:
         osProp      | archProp | osName    | osArch | isWindows
-        'Windows 8' | 'x86'    | 'win' | 'x86'  | true
-        'Windows 8' | 'x86_64' | 'win' | 'x64'  | true
+        'Windows 8' | 'x86'    | 'win'     | 'x86'  | true
+        'Windows 8' | 'x86_64' | 'win'     | 'x64'  | true
         'Mac OS X'  | 'x86'    | 'darwin'  | 'x86'  | false
         'Mac OS X'  | 'x86_64' | 'darwin'  | 'x64'  | false
         'Linux'     | 'x86'    | 'linux'   | 'x86'  | false
         'Linux'     | 'x86_64' | 'linux'   | 'x64'  | false
         'SunOS'     | 'x86'    | 'sunos'   | 'x86'  | false
         'SunOS'     | 'x86_64' | 'sunos'   | 'x64'  | false
+    }
+
+    def "check that aarch32/64 is handled as arm"() {
+        when:
+        this.props.setProperty("os.name", "Linux")
+        this.props.setProperty("os.arch", "aarch64")
+
+        then:
+        this.helper.getOsName() == "linux"
+        this.helper.getOsArch() != "x64"
+
+        when:
+        this.props.setProperty("os.name", "Linux")
+        this.props.setProperty("os.arch", "aarch32")
+
+        then:
+        this.helper.getOsName() == "linux"
+        this.helper.getOsArch() != "x86"
     }
 
     def "throw exception if unsupported os"()
