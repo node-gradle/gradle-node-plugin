@@ -20,7 +20,7 @@ abstract class AbstractIntegTest
 
     def setup()
     {
-        this.projectDir = this.temporaryFolder.root;
+        this.projectDir = this.temporaryFolder.root.toPath().toRealPath().toFile()
         this.buildFile = createFile( 'build.gradle' )
     }
 
