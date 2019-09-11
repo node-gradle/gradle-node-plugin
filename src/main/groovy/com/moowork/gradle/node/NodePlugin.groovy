@@ -3,6 +3,7 @@ package com.moowork.gradle.node
 import com.moowork.gradle.node.npm.NpmInstallTask
 import com.moowork.gradle.node.npm.NpmSetupTask
 import com.moowork.gradle.node.npm.NpmTask
+import com.moowork.gradle.node.npm.NpxTask
 import com.moowork.gradle.node.task.NodeTask
 import com.moowork.gradle.node.task.SetupTask
 import com.moowork.gradle.node.variant.VariantBuilder
@@ -48,6 +49,7 @@ class NodePlugin
     {
         addGlobalTaskType( NodeTask )
         addGlobalTaskType( NpmTask )
+        addGlobalTaskType( NpxTask )
         addGlobalTaskType( YarnTask )
     }
 

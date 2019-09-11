@@ -95,7 +95,7 @@ abstract class AbstractIntegTest
         return file
     }
 
-    protected void copyResources( String srcDir, String destination )
+    protected void copyResources( String srcDir, String destination = "" )
     {
         ClassLoader classLoader = getClass().getClassLoader();
         URL resource = classLoader.getResource( srcDir );

@@ -1,7 +1,9 @@
 package com.moowork.gradle.node.npm
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
@@ -43,6 +45,7 @@ class NpmTask
         this.args = value.asList()
     }
 
+    @Input
     String[] getNpmCommand() {
         return npmCommand
     }
@@ -52,10 +55,16 @@ class NpmTask
         this.npmCommand = cmd
     }
 
-    @Internal
+    @Input
     List<?> getArgs()
     {
         return this.args
+    }
+
+    @Nested
+    NpmExecRunner getExecRunner()
+    {
+        return this.runner
     }
 
     void setEnvironment( final Map<String, ?> value )
@@ -63,9 +72,9 @@ class NpmTask
         this.runner.environment << value
     }
 
-    void setWorkingDir( final Object value )
+    void setWorkingDir( final File workingDir )
     {
-        this.runner.workingDir = value
+        this.runner.workingDir = workingDir
     }
 
     void setIgnoreExitValue( final boolean value )

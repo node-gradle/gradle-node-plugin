@@ -5,6 +5,7 @@ import com.moowork.gradle.node.task.SetupTask
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
@@ -37,7 +38,7 @@ class NpmSetupTask
     }
 
     @Input
-    Set<String> getInput()
+    Set<Object> getInput()
     {
         def set = new HashSet<>()
         set.add( getConfig().download )
@@ -76,12 +77,12 @@ class NpmSetupTask
         return getConfig().variant
     }
 
+    @Input
     List<?> getArgs()
     {
         return this.args
     }
 
-    @Internal
     void setArgs( final Iterable<?> value )
     {
         this.args = value.toList()
@@ -95,6 +96,12 @@ class NpmSetupTask
     void setExecOverrides( final Closure closure )
     {
         this.runner.execOverrides = closure
+    }
+
+    @Nested
+    NpmExecRunner getRunner()
+    {
+        return runner
     }
 
     @TaskAction

@@ -1,52 +1,62 @@
-package com.moowork.gradle.node.yarn
+package com.moowork.gradle.node.npm
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
-class YarnTask
+class NpxTask
     extends DefaultTask
 {
-    protected YarnExecRunner runner
+    protected NpxExecRunner runner
 
-    private Iterable<?> args = []
+    private List<?> args = []
 
     private ExecResult result
 
-    private String[] yarnCommand
+    private String command
 
-    public YarnTask()
+    NpxTask()
     {
-        this.runner = new YarnExecRunner( this.project )
-        dependsOn( YarnSetupTask.NAME )
+        this.runner = new NpxExecRunner( this.project )
+        dependsOn( NpmSetupTask.NAME )
 
         this.project.afterEvaluate {
-            if ( !this.runner.workingDir )
-            {
-                def workingDir = this.project.node.nodeModulesDir
-                setWorkingDir( workingDir )
-            }
+            afterEvaluate( this.project.node.nodeModulesDir )
+        }
+    }
 
-            if ( !this.runner.workingDir.exists() )
-            {
-                this.runner.workingDir.mkdirs();
-            }
+    void afterEvaluate(nodeModulesDir) {
+        if ( !this.runner.workingDir )
+        {
+            setWorkingDir( nodeModulesDir )
+        }
+
+        if ( !this.runner.workingDir.exists() )
+        {
+            this.runner.workingDir.mkdirs();
         }
     }
 
     void setArgs( final Iterable<?> value )
     {
-        this.args = value
+        this.args = value.asList()
     }
 
-    void setYarnCommand( String[] cmd )
+    @Input
+    String getCommand() {
+        return command
+    }
+
+    void setCommand(String cmd )
     {
-        this.yarnCommand = cmd
+        this.command = cmd
     }
 
-    @Internal
-    Iterable<?> getArgs()
+    @Input
+    List<?> getArgs()
     {
         return this.args
     }
@@ -71,6 +81,12 @@ class YarnTask
         this.runner.execOverrides = closure
     }
 
+    @Nested
+    NpxExecRunner getRunner()
+    {
+        return runner
+    }
+
     @Internal
     ExecResult getResult()
     {
@@ -80,9 +96,9 @@ class YarnTask
     @TaskAction
     void exec()
     {
-        if ( this.yarnCommand != null )
+        if ( this.command != null )
         {
-            this.runner.arguments.addAll( this.yarnCommand )
+            this.runner.arguments.addAll( this.command )
         }
 
         this.runner.arguments.addAll( this.args )

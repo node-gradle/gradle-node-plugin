@@ -21,7 +21,7 @@ class YarnSetupTask
     }
 
     @Input
-    Set<String> getInput()
+    Set<Object> getInput()
     {
         def set = new HashSet<>()
         set.add( this.getConfig().download )

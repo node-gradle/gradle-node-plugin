@@ -1,0 +1,49 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    version = "10.14.0"
+    npmVersion = "6.4.1"
+    download = true
+    workDir = file("build/node")
+}
+
+def changeOptions = isPropertyEnabled("changeOptions")
+
+def changeEnv = isPropertyEnabled("changeEnv")
+def changeWorkingDir = isPropertyEnabled("changeWorkingDir")
+def fail = isPropertyEnabled("fail")
+def ignoreExitValue = isPropertyEnabled("ignoreExitValue")
+
+def isPropertyEnabled(name) {
+    def property = System.properties[name]
+    return property == 'true'
+}
+
+task env(type: NodeTask) {
+    script = file("env.js")
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+if (changeOptions) {
+    env.options = ["--print", "1000 * 1000"]
+}
+
+if (changeEnv) {
+    env.environment = ["CUSTOM": "custom environment value"]
+}
+
+if (changeWorkingDir) {
+    env.workingDir = file("${project.buildDir}/notExisting")
+}
+
+if (fail) {
+    env.args = ['fail']
+}
+
+if (ignoreExitValue) {
+    env.ignoreExitValue = true
+}
