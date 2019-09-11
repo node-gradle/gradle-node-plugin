@@ -2,13 +2,6 @@ plugins {
     id "com.github.node-gradle.node"
 }
 
-def changeInputs = isPropertyEnabled("changeInputs")
-
-def isPropertyEnabled(name) {
-    def property = System.properties[name]
-    return property == "true"
-}
-
 node {
     version = "10.14.0"
     npmVersion = "6.4.1"
@@ -21,7 +14,7 @@ node {
 task lint(type: NpxTask) {
     dependsOn npmInstall
     command = "eslint@6.3.0"
-    args = changeInputs ? ["index.js"] : ["index.js", "test.js"]
+    args = ["index.js", "test.js"]
     inputs.files(".eslintrc.yml", "index.js")
     outputs.upToDateWhen {
         true
@@ -30,7 +23,7 @@ task lint(type: NpxTask) {
 
 task test(type: NpxTask) {
     dependsOn lint
-    command = changeInputs ? "_mocha" : "mocha"
+    command = "mocha"
     inputs.dir("node_modules")
     inputs.file("package.json")
     inputs.files("index.js", "test.js")
@@ -53,18 +46,12 @@ task cwd(type: NpxTask) {
     }
 }
 
-if (isPropertyEnabled("customEnv")) {
-    env.environment = [CUSTOM: "custom value"]
+if (isPropertyEnabled("changeInputs")) {
+    lint.args = ["index.js"]
+    test.command = "_mocha"
 }
 
-if (isPropertyEnabled("ignoreExitValue")) {
-    env.ignoreExitValue = true
-}
-
-if (isPropertyEnabled("notExistingCommand")) {
-    env.command = "notExistingCommand"
-}
-
-if (isPropertyEnabled("customWorkingDir")) {
-    env.workingDir = file("${project.buildDir}/customWorkingDirectory")
+def isPropertyEnabled(name) {
+    def property = System.properties[name]
+    return property == "true"
 }

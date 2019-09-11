@@ -18,7 +18,7 @@ abstract class ExecRunner
 
     def Map<String, ?> environment = [:]
 
-    def Object workingDir
+    def File workingDir
 
     @Internal
     def List<?> arguments = []
@@ -35,7 +35,7 @@ abstract class ExecRunner
 
     @Input
     @Optional
-    Object getWorkingDir()
+    File getWorkingDir()
     {
         return workingDir
     }
@@ -61,15 +61,11 @@ abstract class ExecRunner
             it.executable = realExec
             it.args = realArgs
             it.environment = this.environment
+            it.ignoreExitValue = this.ignoreExitValue
 
             if ( this.workingDir != null )
             {
                 it.workingDir = this.workingDir
-            }
-
-            if ( this.ignoreExitValue != null )
-            {
-                it.ignoreExitValue = this.ignoreExitValue
             }
 
             if ( this.execOverrides != null )

@@ -51,6 +51,7 @@ class NpxTask_integTest
         def result2 = build(":test")
 
         then:
+        println(result2.output)
         result2.task(":lint").outcome == TaskOutcome.UP_TO_DATE
         result2.task(":test").outcome == TaskOutcome.UP_TO_DATE
 
@@ -60,47 +61,52 @@ class NpxTask_integTest
         then:
         result3.task(":lint").outcome == TaskOutcome.SUCCESS
         result3.task(":test").outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
+        given:
+        copyResources('fixtures/npx-env/', '')
 
         when:
-        def result4 = build(":env")
+        def result1 = build(":env")
 
         then:
-        result4.task(":env").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("PATH=")
+        result1.task(":env").outcome == TaskOutcome.SUCCESS
+        result1.output.contains("PATH=")
 
         when:
-        def result5 = build(":env", "-DcustomEnv=true")
+        def result2 = build(":env", "-DcustomEnv=true")
 
         then:
-        result5.task(":env").outcome == TaskOutcome.SUCCESS
-        result5.output.contains("CUSTOM=custom value")
+        result2.task(":env").outcome == TaskOutcome.SUCCESS
+        result2.output.contains("CUSTOM=custom value")
 
         when:
-        def result6 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
+        def result3 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
 
         then:
-        result6.task(":env").outcome == TaskOutcome.SUCCESS
-        result6.output.contains("E404")
+        result3.task(":env").outcome == TaskOutcome.SUCCESS
+        result3.output.contains("E404")
 
         when:
-        def result7 = build(":env", "-DnotExistingCommand=true")
+        def result4 = buildAndFail(":env", "-DnotExistingCommand=true")
 
         then:
-        result7.task(":env").outcome == TaskOutcome.FAILED
-        result7.output.contains("E404")
+        result4.task(":env").outcome == TaskOutcome.FAILED
+        result4.output.contains("E404")
 
         when:
-        def result8 = build(":cwd")
+        def result5 = build(":pwd")
 
         then:
-        result8.task(":cwd").outcome == TaskOutcome.SUCCESS
-        result8.output.contains("${projectDir}")
+        result5.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result5.output.contains("${projectDir}")
 
         when:
-        def result9 = build(":cwd", "-DcustomWorkingDir")
+        def result6 = build(":pwd", "-DcustomWorkingDir=true")
 
         then:
-        result9.task(":cwd").outcome == TaskOutcome.SUCCESS
-        result9.output.contains("${projectDir}/build/customWorkingDirectory")
+        result6.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result6.output.contains("${projectDir}/build/customWorkingDirectory")
     }
 }

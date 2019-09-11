@@ -1,0 +1,45 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    version = "10.14.0"
+    npmVersion = "6.4.1"
+    download = true
+    workDir = file("build/node")
+}
+
+task env(type: NpxTask) {
+    command = "printenv"
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task pwd(type: NpxTask) {
+    command = "pcwd"
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+if (isPropertyEnabled("customEnv")) {
+    env.environment = [CUSTOM: "custom value"]
+}
+
+if (isPropertyEnabled("ignoreExitValue")) {
+    env.ignoreExitValue = true
+}
+
+if (isPropertyEnabled("notExistingCommand")) {
+    env.command = "notExistingCommand"
+}
+
+if (isPropertyEnabled("customWorkingDir")) {
+    pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
+}
+
+def isPropertyEnabled(name) {
+    def property = System.properties[name]
+    return property == "true"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "hello",
+  "dependencies": {
+    "printenv": "1.0.0",
+    "pcwd": "1.0.1"
+  }
+}

@@ -54,9 +54,9 @@ class NodeTask
         this.runner.environment << value
     }
 
-    void setWorkingDir( final Object value )
+    void setWorkingDir( final File workingDir )
     {
-        this.runner.workingDir = value
+        this.runner.workingDir = workingDir
     }
 
     void setIgnoreExitValue( final boolean value )
