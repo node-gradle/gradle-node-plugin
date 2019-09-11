@@ -100,13 +100,14 @@ class NpxTask_integTest
 
         then:
         result5.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result5.output.contains("${projectDir}")
+        result5.output.contains("Working directory is '${projectDir}'")
 
         when:
         def result6 = build(":pwd", "-DcustomWorkingDir=true")
 
         then:
         result6.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result6.output.contains("${projectDir}${File.separator}build${File.separator}customWorkingDirectory")
+        def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
+        result6.output.contains("Working directory is '${expectedWorkingDirectory}'")
     }
 }

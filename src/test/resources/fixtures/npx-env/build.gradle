@@ -10,6 +10,7 @@ node {
 }
 
 task env(type: NpxTask) {
+    dependsOn npmInstall
     command = "printenv"
     outputs.upToDateWhen {
         true
@@ -17,7 +18,9 @@ task env(type: NpxTask) {
 }
 
 task pwd(type: NpxTask) {
-    command = "pcwd"
+    dependsOn npmInstall
+    command = "jseval"
+    args = ["console.log(`Working directory is '\${process.cwd()}'`);"]
     outputs.upToDateWhen {
         true
     }
