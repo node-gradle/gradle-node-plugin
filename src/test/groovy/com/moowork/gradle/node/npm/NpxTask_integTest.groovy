@@ -107,6 +107,6 @@ class NpxTask_integTest
 
         then:
         result6.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result6.output.contains("${projectDir}/build/customWorkingDirectory")
+        result6.output.contains("${projectDir}${File.separator}build${File.separator}customWorkingDirectory")
     }
 }
