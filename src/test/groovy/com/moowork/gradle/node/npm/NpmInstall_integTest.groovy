@@ -218,6 +218,33 @@ class NpmInstall_integTest
         result.outcome == TaskOutcome.SUCCESS
     }
 
+    def 'test issue #341 from srs'() {
+        given:
+        writeBuild( '''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            node {
+                version = "10.14.0"
+                npmVersion = "6.4.1"
+                download = true
+            }
+        ''' )
+        writeFile( 'package.json', """{
+            "name": "example",
+            "dependencies": {
+                "node-sass": "^4.12.0"
+            }
+        }""" )
+
+        when:
+        def result = buildTask( 'npmInstall' )
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+    }
+
     protected final void writeEmptyLockFile()
     {
         writeFile('package-lock.json', '''
