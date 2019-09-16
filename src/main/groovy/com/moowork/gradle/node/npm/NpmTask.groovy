@@ -1,5 +1,6 @@
 package com.moowork.gradle.node.npm
 
+import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -21,6 +22,7 @@ class NpmTask
 
     NpmTask()
     {
+        this.group = NodePlugin.NODE_GROUP
         this.runner = new NpmExecRunner( this.project )
         dependsOn( NpmSetupTask.NAME )
 

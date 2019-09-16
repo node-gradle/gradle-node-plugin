@@ -1,6 +1,7 @@
 package com.moowork.gradle.node.npm
 
 import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.task.SetupTask
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -30,7 +31,7 @@ class NpmSetupTask
     {
         dependsOn( SetupTask.NAME )
 
-        this.group = 'Node'
+        this.group = NodePlugin.NODE_GROUP
         this.description = 'Setup a specific version of npm to be used by the build.'
         this.enabled = false
 

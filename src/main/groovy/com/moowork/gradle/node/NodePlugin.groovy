@@ -16,6 +16,8 @@ import org.gradle.api.Project
 class NodePlugin
     implements Plugin<Project>
 {
+    public static final String NODE_GROUP = "Node"
+
     private Project project
 
     private NodeExtension config

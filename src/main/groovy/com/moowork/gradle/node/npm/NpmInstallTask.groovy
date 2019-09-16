@@ -1,4 +1,6 @@
 package com.moowork.gradle.node.npm
+
+import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
@@ -17,7 +19,7 @@ class NpmInstallTask
 
     NpmInstallTask()
     {
-        this.group = 'Node'
+        this.group = NodePlugin.NODE_GROUP
         this.description = 'Install node packages from package.json.'
         dependsOn( [NpmSetupTask.NAME] )
 

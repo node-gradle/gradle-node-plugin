@@ -1,5 +1,6 @@
 package com.moowork.gradle.node.yarn
 
+import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -18,6 +19,7 @@ class YarnTask
 
     public YarnTask()
     {
+        this.group = NodePlugin.NODE_GROUP
         this.runner = new YarnExecRunner( this.project )
         dependsOn( YarnSetupTask.NAME )
 

@@ -1,6 +1,7 @@
 package com.moowork.gradle.node.task
 
 import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.util.BackwardsCompat
 import com.moowork.gradle.node.variant.Variant
 import org.gradle.api.DefaultTask
@@ -26,7 +27,7 @@ class SetupTask
     SetupTask()
     {
 
-        this.group = 'Node'
+        this.group = NodePlugin.NODE_GROUP
         this.description = 'Download and install a local node/npm version.'
         this.enabled = false
     }

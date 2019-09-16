@@ -1,5 +1,6 @@
 package com.moowork.gradle.node.yarn
 
+import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.npm.NpmSetupTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -14,7 +15,7 @@ class YarnSetupTask
 
     YarnSetupTask()
     {
-        this.group = 'Node'
+        this.group = NodePlugin.NODE_GROUP
         this.description = 'Setup a specific version of Yarn to be used by the build.'
 
         this.enabled = false

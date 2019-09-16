@@ -1,5 +1,6 @@
 package com.moowork.gradle.node.task
 
+import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.exec.NodeExecRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -25,6 +26,7 @@ class NodeTask
 
     NodeTask()
     {
+        this.group = NodePlugin.NODE_GROUP
         this.runner = new NodeExecRunner( this.project )
         dependsOn( SetupTask.NAME )
     }
