@@ -1,5 +1,6 @@
 package com.moowork.gradle.node.npm
 
+import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -20,6 +21,7 @@ class NpxTask
 
     NpxTask()
     {
+        this.group = NodePlugin.NODE_GROUP
         this.runner = new NpxExecRunner( this.project )
         dependsOn( NpmSetupTask.NAME )
 
