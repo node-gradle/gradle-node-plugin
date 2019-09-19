@@ -44,4 +44,5 @@ test {
     {
         exclude '**/*_integTest*'
     }
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 }
