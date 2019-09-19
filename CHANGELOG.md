@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Version 2.1.0 *(2019-09-19)*
+----------------------------
+* Adds NpxTask for making use of https://www.npmjs.com/package/npx PR #32 
+* Improved up-to-date checks PR #32 
+* Support ARM even if the JDK reports aarch64 #33
+* Setting distBaseUrl to null disables repository adding PR #25 
+
 Version 2.0.0 *(2019-07-29)*
 ----------------------------
 * Only support Gradle 5.x officially.
