@@ -46,7 +46,7 @@ class YarnRule_integTest
             }
         ''' )
 
-        copyResources( 'fixtures/yarn/package.json', 'package.json' )
+        copyResources( 'fixtures/yarn-rule/package.json', 'package.json' )
 
         when:
         def result = buildTask( 'yarn_run_parent' )

@@ -2,7 +2,9 @@ package com.moowork.gradle.node.yarn
 
 import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
@@ -47,7 +49,15 @@ class YarnTask
         this.yarnCommand = cmd
     }
 
-    @Internal
+    @Input
+    @Optional
+    String [] getYarnCommand()
+    {
+        return yarnCommand
+    }
+
+    @Input
+    @Optional
     Iterable<?> getArgs()
     {
         return this.args

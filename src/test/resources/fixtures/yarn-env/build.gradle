@@ -1,0 +1,51 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    version = "10.14.0"
+    npmVersion = "6.4.1"
+    download = true
+    workDir = file("build/node")
+}
+
+task env(type: YarnTask) {
+    dependsOn yarn
+    yarnCommand = ["run", "printenv"]
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+// This should be documented in the package.json file but it cannot be done because JSON does not accept comments.
+// npm run forces the current directory but we can read the INIT_CWD environment variable to get the original working
+// directory. This is the reason why we read the INIT_CWD variable and not the process.cwd() one in the script
+// definition.
+task pwd(type: YarnTask) {
+    dependsOn yarn
+    yarnCommand = ["run", "printcwd"]
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+if (isPropertyEnabled("customEnv")) {
+    env.environment = [CUSTOM: "custom value"]
+}
+
+if (isPropertyEnabled("ignoreExitValue")) {
+    env.ignoreExitValue = true
+}
+
+if (isPropertyEnabled("notExistingCommand")) {
+    env.yarnCommand = ["notExistingCommand"]
+}
+
+if (isPropertyEnabled("customWorkingDir")) {
+    pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
+}
+
+def isPropertyEnabled(name) {
+    def property = System.properties[name]
+    return property == "true"
+}
