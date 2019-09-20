@@ -13,5 +13,5 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
-  - ./gradlew ci
+  - travis_wait ./gradlew ci
   - ./gradlew -p examples build
