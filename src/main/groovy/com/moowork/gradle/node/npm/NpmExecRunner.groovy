@@ -22,23 +22,6 @@ class NpmExecRunner
 
         if ( this.ext.download )
         {
-            def npmBinDir = this.variant.npmBinDir.getAbsolutePath();
-
-            def nodeBinDir = this.variant.nodeBinDir.getAbsolutePath();
-
-            def path = npmBinDir + File.pathSeparator + nodeBinDir;
-
-            // Take care of Windows environments that may contain "Path" OR "PATH" - both existing
-            // possibly (but not in parallel as of now)
-            if ( environment['Path'] != null )
-            {
-                environment['Path'] = path + File.pathSeparator + environment['Path']
-            }
-            else
-            {
-                environment['PATH'] = path + File.pathSeparator + environment['PATH']
-            }
-
             def File localNpm = getLocalCommandScript()
             if ( localNpm.exists() )
             {
@@ -67,5 +50,17 @@ class NpmExecRunner
     @Internal
     protected String getCommandScript() {
         return this.variant.npmScriptFile
+    }
+
+    @Override
+    protected String computeAdditionalBinPath()
+    {
+        if (ext.download)
+        {
+            def npmBinDir = this.variant.npmBinDir.getAbsolutePath();
+            def nodeBinDir = this.variant.nodeBinDir.getAbsolutePath();
+            return npmBinDir + File.pathSeparator + nodeBinDir
+        }
+        return null
     }
 }

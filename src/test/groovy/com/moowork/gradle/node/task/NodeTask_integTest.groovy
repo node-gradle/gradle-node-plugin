@@ -2,10 +2,15 @@ package com.moowork.gradle.node.task
 
 import com.moowork.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
+import org.junit.Rule
+import org.junit.contrib.java.lang.system.EnvironmentVariables
 
 class NodeTask_integTest
     extends AbstractIntegTest
 {
+    @Rule
+    EnvironmentVariables environmentVariables = new EnvironmentVariables()
+
     def 'exec simple node program and check up-to-date detection'()
     {
         given:
@@ -108,6 +113,7 @@ class NodeTask_integTest
         result6.output.contains("Detected custom environment: custom environment value")
 
         when:
+        environmentVariables.set("NEW_ENV_VARIABLE", "Let's make the whole environment change")
         def result7 = build("env", "-DchangeEnv=true")
 
         then:

@@ -2,9 +2,13 @@ package com.moowork.gradle.node.npm
 
 import com.moowork.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
+import org.junit.Rule
+import org.junit.contrib.java.lang.system.EnvironmentVariables
 
 class NpmTask_integTest
         extends AbstractIntegTest {
+    @Rule
+    EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
     def 'execute npm command with a package.json file and check inputs up-to-date detection'() {
         given:
@@ -51,32 +55,39 @@ class NpmTask_integTest
         result2.output.contains("CUSTOM=custom value")
 
         when:
-        def result3 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
+        environmentVariables.set("NEW_ENV_VARIABLE", "Let's make the whole environment change")
+        def result3 = build(":env", "-DcustomEnv=true")
 
         then:
-        result3.task(":env").outcome == TaskOutcome.SUCCESS
-        result3.output.contains("Usage: npm <command>")
+        result3.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result4 = buildAndFail(":env", "-DnotExistingCommand=true")
+        def result4 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
 
         then:
-        result4.task(":env").outcome == TaskOutcome.FAILED
+        result4.task(":env").outcome == TaskOutcome.SUCCESS
         result4.output.contains("Usage: npm <command>")
 
         when:
-        def result5 = build(":pwd")
+        def result5 = buildAndFail(":env", "-DnotExistingCommand=true")
 
         then:
-        result5.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result5.output.contains("Working directory is '${projectDir}'")
+        result5.task(":env").outcome == TaskOutcome.FAILED
+        result5.output.contains("Usage: npm <command>")
 
         when:
-        def result6 = build(":pwd", "-DcustomWorkingDir=true")
+        def result6 = build(":pwd")
 
         then:
         result6.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result6.output.contains("Working directory is '${projectDir}'")
+
+        when:
+        def result7 = build(":pwd", "-DcustomWorkingDir=true")
+
+        then:
+        result7.task(":pwd").outcome == TaskOutcome.SUCCESS
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
-        result6.output.contains("Working directory is '${expectedWorkingDirectory}'")
+        result7.output.contains("Working directory is '${expectedWorkingDirectory}'")
     }
 }

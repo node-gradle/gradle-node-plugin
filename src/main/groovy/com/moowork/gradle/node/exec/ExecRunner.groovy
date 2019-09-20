@@ -30,7 +30,6 @@ abstract class ExecRunner
     public ExecRunner( final Project project )
     {
         this.project = project
-        this.environment << System.getenv()
     }
 
     @Input
@@ -56,11 +55,11 @@ abstract class ExecRunner
     {
         def realExec = exec
         def realArgs = args
-
+        def execEnvironment = computeExecEnvironment()
         return this.project.exec( {
             it.executable = realExec
             it.args = realArgs
-            it.environment = this.environment
+            it.environment = execEnvironment
             it.ignoreExitValue = this.ignoreExitValue
 
             if ( this.workingDir != null )
@@ -74,6 +73,27 @@ abstract class ExecRunner
             }
         } )
     }
+
+    private Map<Object, Object> computeExecEnvironment()
+    {
+        def environment = [:]
+        environment << System.getenv()
+        environment << this.environment
+        String path = computeAdditionalBinPath()
+        if (path != null)
+        {
+            // Take care of Windows environments that may contain "Path" OR "PATH" - both existing
+            // possibly (but not in parallel as of now)
+            if (environment['Path'] != null) {
+                environment['Path'] = path + File.pathSeparator + environment['Path']
+            } else {
+                environment['PATH'] = path + File.pathSeparator + environment['PATH']
+            }
+        }
+        return environment
+    }
+
+    protected abstract String computeAdditionalBinPath()
 
     public final ExecResult execute()
     {
