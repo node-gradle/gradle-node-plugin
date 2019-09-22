@@ -4,6 +4,7 @@ import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
@@ -61,6 +62,12 @@ class YarnTask
     Iterable<?> getArgs()
     {
         return this.args
+    }
+
+    @Nested
+    YarnExecRunner getExecRunner()
+    {
+        return this.runner
     }
 
     void setEnvironment( final Map<String, ?> value )

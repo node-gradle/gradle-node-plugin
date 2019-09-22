@@ -37,7 +37,7 @@ class YarnTask_integTest
 
     def 'execute yarn command with custom execution configuration and check up-to-date-detection'() {
         given:
-        copyResources('fixtures/npm-env/', '')
+        copyResources('fixtures/yarn-env/', '')
         copyResources('fixtures/env/', '')
 
         when:
@@ -66,14 +66,14 @@ class YarnTask_integTest
 
         then:
         result4.task(":env").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("Usage: npm <command>")
+        result4.output.contains("error Command \"notExistingCommand\" not found.")
 
         when:
         def result5 = buildAndFail(":env", "-DnotExistingCommand=true")
 
         then:
         result5.task(":env").outcome == TaskOutcome.FAILED
-        result5.output.contains("Usage: npm <command>")
+        result5.output.contains("error Command \"notExistingCommand\" not found.")
 
         when:
         def result6 = build(":pwd")
