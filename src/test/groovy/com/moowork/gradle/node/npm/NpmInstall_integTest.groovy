@@ -24,22 +24,28 @@ class NpmInstall_integTest
         writeEmptyPackageJson()
 
         when:
-        def result = buildTask( 'npmInstall' )
+        def result = build( 'npmInstall' )
 
         then:
-        result.outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
-        result = buildTask( 'npmInstall' )
+        result = build( 'npmInstall' )
 
         then:
-        result.outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
-        result = buildTask( 'npmInstall' )
+        result = build( 'npmInstall' )
 
         then:
-        result.outcome == TaskOutcome.UP_TO_DATE
+        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
     def 'install packages with npm and postinstall task requiring npm and node'()
@@ -65,22 +71,28 @@ class NpmInstall_integTest
         """)
 
         when:
-        def result = buildTask( 'npmInstall' )
+        def result = build( 'npmInstall' )
 
         then:
-        result.outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
-        result = buildTask( 'npmInstall' )
+        result = build( 'npmInstall' )
 
         then:
-        result.outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
-        result = buildTask( 'npmInstall' )
+        result = build( 'npmInstall' )
 
         then:
-        result.outcome == TaskOutcome.UP_TO_DATE
+        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
     def 'install packages with npm in different directory'()
@@ -112,7 +124,7 @@ class NpmInstall_integTest
         result.task( ':npmInstall' ).outcome == TaskOutcome.SUCCESS
     }
 
-    def 'configure npm install through extension'()
+    def 'configure npm install to use the ci command through extension'()
     {
         given:
         writeBuild( '''

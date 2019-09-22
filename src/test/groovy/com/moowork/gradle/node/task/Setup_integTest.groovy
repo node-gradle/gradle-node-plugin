@@ -53,6 +53,12 @@ class Setup_integTest
 
         then:
         result.outcome == TaskOutcome.SUCCESS
+
+        when:
+        result = buildTask( 'nodeSetup' )
+
+        then:
+        result.outcome == TaskOutcome.UP_TO_DATE
     }
 
     def 'setup node (windows)'()
