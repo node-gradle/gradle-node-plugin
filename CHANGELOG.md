@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 2.1.1 *(2019-09-28)*
+----------------------------
+
+* Fix an issue in `NodeTask`, `NpmTask`, `NpxTask` and `YarnTask` that caused the up-to-date checking to be too much sensitive regarding the environment: any change of an environment variable caused the task to be considered as out-of-date
+* Improve the inputs declarations of the `YarnTask`
+
 Version 2.1.0 *(2019-09-19)*
 ----------------------------
 * Adds NpxTask for making use of https://www.npmjs.com/package/npx PR #32 
