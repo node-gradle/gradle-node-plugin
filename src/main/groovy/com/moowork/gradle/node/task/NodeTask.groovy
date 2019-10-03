@@ -5,11 +5,13 @@ import com.moowork.gradle.node.exec.NodeExecRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
+
+import static org.gradle.api.tasks.PathSensitivity.RELATIVE
 
 class NodeTask
     extends DefaultTask
@@ -77,7 +79,8 @@ class NodeTask
         return this.result
     }
 
-    @InputFiles
+    @InputFile
+    @PathSensitive(RELATIVE)
     File getScript()
     {
         return this.script
