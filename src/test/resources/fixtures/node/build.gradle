@@ -25,3 +25,7 @@ if (changeScript) {
 if (changeArgs) {
     hello.args = ["Bob", "Alice"]
 }
+
+task helloFromIndex(type: NodeTask) {
+    script = file(".")
+}

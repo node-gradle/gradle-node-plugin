@@ -70,6 +70,13 @@ class NodeTask_integTest
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result7.task(":hello").outcome == TaskOutcome.SUCCESS
         result7.output.contains("Hello Bobby")
+
+        when:
+        def result8 = build("helloFromIndex")
+
+        then:
+        result8.task(":helloFromIndex").outcome == TaskOutcome.SUCCESS
+        result8.output.contains("Hello world from index.js!")
     }
 
     def 'exec node program with custom settings and check up-to-date detection'() {

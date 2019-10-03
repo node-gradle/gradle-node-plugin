@@ -4,7 +4,7 @@ import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.exec.NodeExecRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.PathSensitive
@@ -79,7 +79,7 @@ class NodeTask
         return this.result
     }
 
-    @InputFile
+    @InputFiles
     @PathSensitive(RELATIVE)
     File getScript()
     {
