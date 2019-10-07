@@ -27,7 +27,7 @@ class NodeExecRunner
     {
         if (this.ext.download)
         {
-            return  this.variant.nodeBinDir.getAbsolutePath()
+            return this.variant.nodeBinDir.getAbsolutePath()
         }
         return null
     }

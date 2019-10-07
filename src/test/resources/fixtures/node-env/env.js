@@ -9,3 +9,5 @@ if (customEnvironmentVariable) {
 } else {
     console.log('No custom environment');
 }
+
+console.log(`Current working directory: ${process.cwd()}`);

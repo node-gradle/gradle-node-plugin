@@ -25,22 +25,6 @@ class NpmTask
         this.group = NodePlugin.NODE_GROUP
         this.runner = new NpmExecRunner( this.project )
         dependsOn( NpmSetupTask.NAME )
-
-        this.project.afterEvaluate {
-            afterEvaluate( this.project.node.nodeModulesDir )
-        }
-    }
-
-    void afterEvaluate(nodeModulesDir) {
-        if ( !this.runner.workingDir )
-        {
-            setWorkingDir( nodeModulesDir )
-        }
-
-        if ( !this.runner.workingDir.exists() )
-        {
-            this.runner.workingDir.mkdirs();
-        }
     }
 
     void setArgs( final Iterable<?> value )

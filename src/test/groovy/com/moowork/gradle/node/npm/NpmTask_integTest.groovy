@@ -128,5 +128,6 @@ class NpmTask_integTest
         result8.task(":pwd").outcome == TaskOutcome.SUCCESS
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
         result8.output.contains("Working directory is '${expectedWorkingDirectory}'")
+        new File(expectedWorkingDirectory).isDirectory()
     }
 }

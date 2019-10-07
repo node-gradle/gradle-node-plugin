@@ -25,19 +25,6 @@ class YarnTask
         this.group = NodePlugin.NODE_GROUP
         this.runner = new YarnExecRunner( this.project )
         dependsOn( YarnSetupTask.NAME )
-
-        this.project.afterEvaluate {
-            if ( !this.runner.workingDir )
-            {
-                def workingDir = this.project.node.nodeModulesDir
-                setWorkingDir( workingDir )
-            }
-
-            if ( !this.runner.workingDir.exists() )
-            {
-                this.runner.workingDir.mkdirs();
-            }
-        }
     }
 
     void setArgs( final Iterable<?> value )

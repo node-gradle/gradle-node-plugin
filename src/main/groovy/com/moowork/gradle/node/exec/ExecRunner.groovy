@@ -54,22 +54,29 @@ abstract class ExecRunner
         def realExec = exec
         def realArgs = args
         def execEnvironment = computeExecEnvironment()
+        def execWorkingDir = computeWorkingDir()
         return this.project.exec( {
             it.executable = realExec
             it.args = realArgs
             it.environment = execEnvironment
             it.ignoreExitValue = this.ignoreExitValue
-
-            if ( this.workingDir != null )
-            {
-                it.workingDir = this.workingDir
-            }
+            it.workingDir = execWorkingDir
 
             if ( this.execOverrides != null )
             {
                 this.execOverrides( it )
             }
         } )
+    }
+
+    private File computeWorkingDir()
+    {
+        File workingDir = this.workingDir != null ? this.workingDir : this.project.node.nodeModulesDir
+        if (!workingDir.exists())
+        {
+            workingDir.mkdirs()
+        }
+        return workingDir
     }
 
     private Map<Object, Object> computeExecEnvironment()

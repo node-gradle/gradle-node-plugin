@@ -153,12 +153,14 @@ class NodeTask_integTest
         result9.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result10 = buildAndFail("env", "-DchangeWorkingDir=true", "--rerun-tasks")
+        def result10 = build("env", "-DchangeWorkingDir=true", "--rerun-tasks")
 
         then:
         result10.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result10.task(":env").outcome == TaskOutcome.FAILED
-        result10.output.contains("A problem occurred starting process")
+        result10.task(":env").outcome == TaskOutcome.SUCCESS
+        def expectedWorkingDir = "${projectDir}${File.separator}build${File.separator}notExisting"
+        result10.output.contains("Current working directory: ${expectedWorkingDir}")
+        new File(expectedWorkingDir).isDirectory()
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date
