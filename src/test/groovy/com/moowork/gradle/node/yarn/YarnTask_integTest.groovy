@@ -116,8 +116,17 @@ class YarnTask_integTest
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result7.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
         result7.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result7.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        def result8 = build(":pwd", "-DcustomWorkingDir=true", "--rerun-tasks")
+
+        then:
+        result8.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result8.task(":yarnSetup").outcome == TaskOutcome.SUCCESS
+        result8.task(":yarn").outcome == TaskOutcome.SUCCESS
+        result8.task(":pwd").outcome == TaskOutcome.SUCCESS
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
-        result7.output.contains("Working directory is '${expectedWorkingDirectory}'")
+        result8.output.contains("Working directory is '${expectedWorkingDirectory}'")
     }
 }

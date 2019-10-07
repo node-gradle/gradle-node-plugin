@@ -146,50 +146,57 @@ class NodeTask_integTest
         result8.task(":env").outcome == TaskOutcome.SUCCESS
 
         when:
-        def result9 = buildAndFail("env", "-DchangeWorkingDir=true")
+        def result9 = build("env", "-DchangeWorkingDir=true")
 
         then:
         result9.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result9.task(":env").outcome == TaskOutcome.FAILED
-        result9.output.contains("A problem occurred starting process")
+        result9.task(":env").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        def result10 = buildAndFail("env", "-DchangeWorkingDir=true", "--rerun-tasks")
+
+        then:
+        result10.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result10.task(":env").outcome == TaskOutcome.FAILED
+        result10.output.contains("A problem occurred starting process")
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date
-        def result10 = build("env")
-
-        then:
-        result10.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result10.task(":env").outcome == TaskOutcome.UP_TO_DATE
-
-        when:
-        def result11 = build("env", "-DignoreExitValue=true")
+        def result11 = build("env")
 
         then:
         result11.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result11.task(":env").outcome == TaskOutcome.SUCCESS
-        result11.output.contains("No custom environment")
+        result11.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result12 = build("env", "-Dfail=true", "-DignoreExitValue=true")
+        def result12 = build("env", "-DignoreExitValue=true")
 
         then:
         result12.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result12.task(":env").outcome == TaskOutcome.SUCCESS
-        result12.output.contains("I had to fail")
+        result12.output.contains("No custom environment")
 
         when:
         def result13 = build("env", "-Dfail=true", "-DignoreExitValue=true")
 
         then:
         result13.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result13.task(":env").outcome == TaskOutcome.UP_TO_DATE
+        result13.task(":env").outcome == TaskOutcome.SUCCESS
+        result13.output.contains("I had to fail")
 
         when:
-        def result14 = buildAndFail("env", "-Dfail=true")
+        def result14 = build("env", "-Dfail=true", "-DignoreExitValue=true")
 
         then:
         result14.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result14.task(":env").outcome == TaskOutcome.FAILED
-        result14.output.contains("I had to fail")
+        result14.task(":env").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        def result15 = buildAndFail("env", "-Dfail=true")
+
+        then:
+        result15.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result15.task(":env").outcome == TaskOutcome.FAILED
+        result15.output.contains("I had to fail")
     }
 }
