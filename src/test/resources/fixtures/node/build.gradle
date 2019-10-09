@@ -28,4 +28,7 @@ if (changeArgs) {
 
 task helloFromIndex(type: NodeTask) {
     script = file(".")
+    outputs.upToDateWhen {
+        true
+    }
 }

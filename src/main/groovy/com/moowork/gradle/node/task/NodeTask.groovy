@@ -4,7 +4,7 @@ import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.exec.NodeExecRunner
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.PathSensitive
@@ -79,10 +79,16 @@ class NodeTask
         return this.result
     }
 
-    @InputFiles
+    @InputFile
     @PathSensitive(RELATIVE)
     File getScript()
     {
+        if (this.script && this.script.isDirectory())
+        {
+            logger.warn("Using the NodeTask with a script directory ({}) is deprecated. " +
+                    "It will no longer be supported in the next major version.", this.script)
+            return new File(this.script, "index.js")
+        }
         return this.script
     }
 

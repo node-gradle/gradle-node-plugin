@@ -77,6 +77,25 @@ class NodeTask_integTest
         then:
         result8.task(":helloFromIndex").outcome == TaskOutcome.SUCCESS
         result8.output.contains("Hello world from index.js!")
+        result8.output.contains("Using the NodeTask with a script directory")
+
+        when:
+        createFile("simple.js").delete()
+        def result9 = build("helloFromIndex")
+
+        then:
+        // Ensure that the helloFromIndex task input does not contain the whole directory
+        result9.task(":helloFromIndex").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        writeFile("index.js", "console.log('Hello Gradle');")
+        def result10 = build("helloFromIndex")
+
+        then:
+        // Ensure that the helloFromIndex task input contains the index.js file
+        result10.task(":helloFromIndex").outcome == TaskOutcome.SUCCESS
+        result10.output.contains("Hello Gradle")
+        result10.output.contains("Using the NodeTask with a script directory")
     }
 
     def 'exec node program with custom settings and check up-to-date detection'() {
