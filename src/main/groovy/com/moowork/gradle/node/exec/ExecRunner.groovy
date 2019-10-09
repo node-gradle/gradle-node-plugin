@@ -24,6 +24,7 @@ abstract class ExecRunner
 
     def boolean ignoreExitValue = false
 
+    @Internal
     def Closure execOverrides
 
     public ExecRunner( final Project project )
