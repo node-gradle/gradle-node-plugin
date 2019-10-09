@@ -193,6 +193,7 @@ class NpmInstall_integTest
         then:
         result.outcome == TaskOutcome.SUCCESS
     }
+
     def 'verify npm ci inputs/outputs'()
     {
         given:
@@ -228,6 +229,123 @@ class NpmInstall_integTest
 
         then:
         result.outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'verity output configuration'()
+    {
+        given:
+        writeBuild( '''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            node {
+                version = "10.14.0"
+                npmVersion = "6.4.1"
+                download = true
+                workDir = file('build/node')
+            }
+            
+            def changeOutput = System.properties["changeOutput"] ? System.properties["changeOutput"] == "true" : false
+            if (changeOutput) {
+                npmInstall {
+                    nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
+                }
+            }
+        ''' )
+        writePackageJson("""
+            {
+              "name": "hello",
+              "dependencies": {
+                "mocha": "6.2.0"
+              }
+            }
+        """)
+
+        when:
+        def result1 = build("npmInstall")
+
+        then:
+        result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        when:
+        def result2 = build("npmInstall")
+
+        then:
+        // Because package-lock.json was created
+        result2.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        when:
+        // Let's add a file in the node_modules directory
+        writeFile("node_modules/mocha/newFile.txt", "hello")
+        def result3 = build("npmInstall")
+
+        then:
+        // It should not make the build out-of-date
+        result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        // Let's update a file in the node_modules directory
+        writeFile("node_modules/mocha/package.json", "modified package.json")
+        def result4 = build("npmInstall")
+
+        then:
+        // This time the build should not be up-to-date and the file should be reset
+        result4.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        createFile("node_modules/mocha/package.json").text != "modified package.json"
+
+        when:
+        // Let's delete a file in the node_modules directory
+        createFile("node_modules/mocha/package.json").delete()
+        def result5 = build("npmInstall")
+
+        then:
+        // This time the build should be up-to-date and the file should be reset
+        result5.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        createFile("node_modules/mocha/package.json").exists()
+
+        when:
+        createFile("node_modules").deleteDir()
+        def result6 = build("npmInstall", "-DchangeOutput=true")
+
+        then:
+        result6.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        when:
+        // Let's add a file in the node_modules directory
+        writeFile("node_modules/mocha/newFile.txt", "hello")
+        def result7 = build("npmInstall", "-DchangeOutput=true")
+
+        then:
+        // It should not make the build out-of-date
+        result7.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        // Let's update a file in the node_modules directory
+        writeFile("node_modules/mocha/package.json", "modified package.json")
+        def result8 = build("npmInstall", "-DchangeOutput=true")
+
+        then:
+        // The build should still be up-to-date
+        result8.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        // Let's delete an excluded file in the node_modules directory
+        createFile("node_modules/mocha/package.json").delete()
+        def result9 = build("npmInstall", "-DchangeOutput=true")
+
+        then:
+        // The build should still be up-to-date
+        result9.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        // Let's delete a not excluded file in the node_modules directory
+        createFile("node_modules/mocha/mocha.js").delete()
+        def result10 = build("npmInstall", "-DchangeOutput=true")
+
+        then:
+        // This time the build should not be up-to-date since not the whole node_modules directory is excluded
+        result10.task(":npmInstall").outcome == TaskOutcome.SUCCESS
     }
 
     protected final void writeEmptyLockFile()

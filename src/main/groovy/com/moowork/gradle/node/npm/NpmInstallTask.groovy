@@ -3,8 +3,8 @@ package com.moowork.gradle.node.npm
 import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 
@@ -17,6 +17,8 @@ class NpmInstallTask
 {
     public final static String NAME = 'npmInstall'
 
+    private Closure nodeModulesOutputFilter
+
     NpmInstallTask()
     {
         this.group = NodePlugin.NODE_GROUP
@@ -27,6 +29,11 @@ class NpmInstallTask
             def ext = this.project.extensions.getByType(NodeExtension)
             setNpmCommand( ext.getNpmInstallCommand() )
         }
+    }
+
+    void setNodeModulesOutputFilter(Closure nodeModulesOutputFilter)
+    {
+        this.nodeModulesOutputFilter = nodeModulesOutputFilter
     }
 
     @InputFile
@@ -72,9 +79,16 @@ class NpmInstallTask
     }
 
 
-    @OutputDirectory
+    @OutputFiles
     protected getNodeModulesDir()
     {
-        return new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'node_modules')
+        def nodeModulesDirectory =
+                new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'node_modules')
+        def nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
+        if (nodeModulesOutputFilter)
+        {
+            nodeModulesOutputFilter(nodeModulesFileTree)
+        }
+        return nodeModulesFileTree
     }
 }
