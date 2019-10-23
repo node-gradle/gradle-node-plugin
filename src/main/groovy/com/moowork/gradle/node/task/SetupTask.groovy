@@ -134,6 +134,11 @@ class SetupTask
             {
                 Files.createSymbolicLink( npm, Paths.get( variant.npmScriptFile ) )
             }
+            Path npx = Paths.get( variant.nodeBinDir.path, 'npx' )
+            if ( Files.deleteIfExists( npx ) )
+            {
+                Files.createSymbolicLink( npx, Paths.get( variant.npxScriptFile ) )
+            }
         }
     }
 
