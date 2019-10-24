@@ -12,9 +12,11 @@ build without having NodeJS installed locally on your system. It integrates the 
 with Gradle:
 
 * [NodeJS](https://nodejs.org)
+* [Npm](https://www.npmjs.com/)
 * [Yarn](https://yarnpkg.com/)
 
-* [Node Plugin](https://plugins.gradle.org/plugin/com.github.node-gradle.node) (`com.github.node-gradle.node`) - [See docs](docs/node.md).
+The plugin is published in the [Gradle plugins portal](https://plugins.gradle.org/plugin/com.github.node-gradle.node)
+with the `com.github.node-gradle.node` identifier.
 
 ## Documentation
 
