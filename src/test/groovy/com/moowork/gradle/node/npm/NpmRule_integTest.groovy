@@ -115,7 +115,7 @@ class NpmRule_integTest
         then:
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result.task(":npm_run_npmVersion").outcome == TaskOutcome.SUCCESS
-        result.output.contains("Version${System.lineSeparator()}6.12.0")
+        result.output.contains("Version\n6.12.0")
     }
 
     def 'can execute subtasks using npm'()
