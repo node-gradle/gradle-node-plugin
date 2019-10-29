@@ -94,7 +94,7 @@ class NpmRule_integTest
         fileExists( 'test.txt' )
     }
 
-    def 'succeeds to run npm module using npm_run_ when shrinkwrap contains local npm'()
+    def 'succeeds to run npm module using npm_run_ when the package.json file contains local npm'()
     {
         given:
         writeBuild( '''
