@@ -6,7 +6,6 @@ group = 'com.github.node-gradle'
 
 apply plugin: 'idea'
 apply plugin: 'groovy'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-gradle-plugin'
 
@@ -27,10 +26,10 @@ repositories {
 }
 
 dependencies {
-    testCompile 'cglib:cglib-nodep:3.2.9'
-    testCompile 'org.apache.commons:commons-io:1.3.2'
-    testCompile('org.spockframework:spock-core:1.3-groovy-2.5')
-    testCompile('com.github.stefanbirkner:system-rules:1.19.0')
+    testImplementation 'cglib:cglib-nodep:3.2.9'
+    testImplementation 'org.apache.commons:commons-io:1.3.2'
+    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+    testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
 tasks.withType( Test ) {
