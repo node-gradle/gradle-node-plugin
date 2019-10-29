@@ -15,8 +15,6 @@ class NpmInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
             }
@@ -28,7 +26,7 @@ class NpmInstall_integTest
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
@@ -36,7 +34,8 @@ class NpmInstall_integTest
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        // because of package-lock.json that was generated during the previous npm install execution
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
@@ -44,7 +43,7 @@ class NpmInstall_integTest
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
@@ -56,8 +55,6 @@ class NpmInstall_integTest
                 id 'com.github.node-gradle.node'
             }
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
             }
@@ -75,7 +72,7 @@ class NpmInstall_integTest
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
@@ -83,7 +80,7 @@ class NpmInstall_integTest
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
@@ -91,7 +88,7 @@ class NpmInstall_integTest
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
@@ -104,8 +101,6 @@ class NpmInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
                 nodeModulesDir = file('subdirectory')
@@ -133,8 +128,6 @@ class NpmInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
                 npmInstallCommand = 'ci'
@@ -166,8 +159,6 @@ class NpmInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
                 npmInstallCommand = 'install'
@@ -203,8 +194,6 @@ class NpmInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
                 npmInstallCommand = 'ci'
@@ -240,8 +229,6 @@ class NpmInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
             }

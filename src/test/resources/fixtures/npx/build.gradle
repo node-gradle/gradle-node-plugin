@@ -3,7 +3,6 @@ plugins {
 }
 
 node {
-    version = "10.14.0"
     npmVersion = "6.12.0"
     download = true
     workDir = file("build/node")

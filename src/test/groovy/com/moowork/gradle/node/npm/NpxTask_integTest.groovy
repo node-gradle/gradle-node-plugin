@@ -1,7 +1,6 @@
 package com.moowork.gradle.node.npm
 
 import com.moowork.gradle.AbstractIntegTest
-import org.gradle.api.Task
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
@@ -19,8 +18,6 @@ class NpxTask_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
             }
@@ -36,7 +33,7 @@ class NpxTask_integTest
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":camelCase").outcome == TaskOutcome.SUCCESS
         result.output.contains("--case, -C  Which case to convert to")
     }

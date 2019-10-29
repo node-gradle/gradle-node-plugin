@@ -22,7 +22,6 @@ class Setup_integTest
             }
 
             node {
-                version = "10.14.0"
                 download = false
             }
         ''' )
@@ -43,7 +42,6 @@ class Setup_integTest
             }
 
             node {
-                version = "10.14.0"
                 download = true
             }
         ''' )
@@ -72,7 +70,6 @@ class Setup_integTest
             }
 
             node {
-                version = "10.14.0"
                 download = false
             }
         ''' )
@@ -95,7 +92,6 @@ class Setup_integTest
             }
 
             node {
-                version = "10.14.0"
                 download = true
             }
         ''' )
@@ -118,7 +114,6 @@ class Setup_integTest
             }
 
             node {
-                version = "10.14.0"
                 download = true
             }
         ''' )
@@ -143,7 +138,6 @@ class Setup_integTest
             }
 
             node {
-                version = "10.14.0"
                 download = true
             }
             
@@ -184,7 +178,6 @@ class Setup_integTest
             }
 
             node {
-                version = "10.14.0"
                 download = true
                 distBaseUrl = null
             }

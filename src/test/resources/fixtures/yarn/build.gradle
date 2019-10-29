@@ -5,7 +5,6 @@ plugins {
 def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == "true" : false
 
 node {
-    version = "10.14.0"
     yarnVersion = "1.18.0"
     download = true
     workDir = file("build/node")

@@ -15,8 +15,6 @@ class NpmRule_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
             }
@@ -38,7 +36,6 @@ class NpmRule_integTest
                 id 'com.github.node-gradle.node'
             }
             node {
-                npmVersion = "6.4.1"
                 download = true
             }
         ''' )
@@ -60,7 +57,6 @@ class NpmRule_integTest
                 id 'com.github.node-gradle.node'
             }
             node {
-                npmVersion = "6.4.1"
                 download = true
             }
         ''' )
@@ -84,8 +80,6 @@ class NpmRule_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
             }
         ''' )
@@ -109,8 +103,6 @@ class NpmRule_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
             }
         ''' )
@@ -170,7 +162,6 @@ class NpmRule_integTest
                 id 'com.github.node-gradle.node'
             }
             node {
-                npmVersion = "6.4.1"
                 download = true
                 nodeModulesDir = file("frontend")
             }

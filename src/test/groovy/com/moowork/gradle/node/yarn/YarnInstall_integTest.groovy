@@ -15,8 +15,6 @@ class YarnInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                yarnVersion = "1.12.3"
                 download = true
                 workDir = file('build/node')
                 yarnWorkDir = file('build/yarn')
@@ -51,8 +49,6 @@ class YarnInstall_integTest
                 id 'com.github.node-gradle.node'
             }
             node {
-                version = "10.14.0"
-                yarnVersion = "1.12.3"
                 download = true
                 workDir = file('build/node')
                 yarnWorkDir = file('build/yarn')
@@ -94,8 +90,6 @@ class YarnInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                yarnVersion = "1.12.3"
                 download = true
                 workDir = file('build/node')
                 yarnWorkDir = file('build/yarn')
@@ -124,8 +118,6 @@ class YarnInstall_integTest
             }
 
             node {
-                version = "10.14.0"
-                npmVersion = "6.4.1"
                 download = true
                 workDir = file('build/node')
             }
