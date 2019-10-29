@@ -47,3 +47,12 @@ test {
     }
     maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 }
+
+gradlePlugin {
+    plugins {
+        nodePlugin {
+            id = "com.github.node-gradle.node"
+            implementationClass = "com.moowork.gradle.node.NodePlugin"
+        }
+    }
+}
