@@ -107,18 +107,15 @@ class NpmRule_integTest
             }
         ''' )
 
-        copyResources( 'fixtures/npm-present/package.json', 'package.json' )
-        copyResources( 'fixtures/npm-present/npm-shrinkwrap.json', 'npm-shrinkwrap.json' )
+        copyResources( 'fixtures/npm-present/' )
 
         when:
-        def result = buildTask( 'npm_run_parent' )
+        def result = build( 'npm_run_npmVersion' )
 
         then:
-        result.outcome == TaskOutcome.SUCCESS
-        fileExists( 'child1.txt' )
-        fileExists( 'child2.txt' )
-        fileExists( 'parent1.txt' )
-        fileExists( 'parent2.txt' )
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result.task(":npm_run_npmVersion").outcome == TaskOutcome.SUCCESS
+        result.output.contains("Version${System.lineSeparator()}6.12.0")
     }
 
     def 'can execute subtasks using npm'()
