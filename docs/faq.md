@@ -52,3 +52,28 @@ tasks.npmSetup {
 ```
 
 You can also add any other arguments to this list that work with `npm install` i.e. more verbose modes.
+
+# How do I ignore some files of the `node_modules` directory that are modified by the build and prevent tasks from being up-to-date ?
+
+`NpmInstallTask` and `YarnInstallTask` have an option that enables to exclude some files from the task's output.
+Its type is a closure that contains a [`FileTree`](https://docs.gradle.org/current/javadoc/org/gradle/api/file/FileTree.html)
+whose root directory is `node_modules`.
+   
+With npm:
+```gradle
+npmInstall {
+  nodeModulesOutputFilter = { it.exclude("package/package.json") }
+}
+```
+    
+Note that `it` is the implicit closure variable containing the `FileTree` instance. It could also be written this way:
+```gradle
+nodeModulesOutputFilter = { fileTree -> fileTree.exclude("package/package.json") }
+```
+    
+With yarn:
+```gradle
+yarn {
+    nodeModulesOutputFilter = { it.exclude("package/**").exclude("anotherPackage") }
+}
+```
