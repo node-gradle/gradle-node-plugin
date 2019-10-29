@@ -51,7 +51,7 @@ class YarnTask_integTest
 
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("> Task :version\n1.18.0")
+        result4.output.contains("> Task :version${System.lineSeparator()}1.18.0")
     }
 
     def 'execute yarn command with custom execution configuration and check up-to-date-detection'() {

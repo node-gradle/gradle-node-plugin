@@ -80,7 +80,7 @@ class NpxTask_integTest
 
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("> Task :version\n6.12.0")
+        result4.output.contains("> Task :version${System.lineSeparator()}6.12.0")
     }
 
     def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
@@ -174,6 +174,6 @@ class NpxTask_integTest
 
         then:
         result9.task(":version").outcome == TaskOutcome.SUCCESS
-        result9.output.contains("> Task :version\n6.4.1")
+        result9.output.contains("> Task :version${System.lineSeparator()}6.4.1")
     }
 }
