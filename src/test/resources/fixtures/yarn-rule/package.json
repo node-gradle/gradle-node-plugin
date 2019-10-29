@@ -1,11 +1,11 @@
 {
   "name": "example",
   "devDependencies": {
-    "yarn": "0.16.1",
-    "concurrently": "3.1.0"
+    "yarn": "1.19.0",
+    "concurrently": "5.0.0"
   },
   "dependencies": {
-    "less": "2.6.1"
+    "less": "3.10.3"
   },
   "scripts": {
     "child1": "echo \"child1\" > child1.txt",

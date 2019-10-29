@@ -144,4 +144,17 @@ class NpmTask_integTest
         result9.task(":version").outcome == TaskOutcome.SUCCESS
         result9.output.contains("> Task :version${System.lineSeparator()}6.4.1")
     }
+
+    def 'execute npm command using the npm version specified in the package.json file'() {
+        given:
+        copyResources('fixtures/npm/', '')
+        copyResources('fixtures/npm-present/', '')
+
+        when:
+        def result = build(":version")
+
+        then:
+        result.task(":version").outcome == TaskOutcome.SUCCESS
+        result.output.contains("> Task :version${System.lineSeparator()}6.12.0")
+    }
 }
