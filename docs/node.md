@@ -34,7 +34,7 @@ task myScript(type: NodeTask) {
 }
 ```
 
-You can add node options like this:
+You can add Node.js options like this:
 
 ```gradle
 task myScript(type: NodeTask) {
@@ -43,33 +43,9 @@ task myScript(type: NodeTask) {
 }
 ```
 
-`NodeTask` is a wrapper around the core `Exec` task. You can set the `ignoreExitValue` property on it:
-
-```gradle
-task myScript(type: NodeTask) {
-  script = file('src/scripts/my.js')
-  ignoreExitValue = true
-}
-````
-
-You can also customize all other values on the `ExecSpec` by passing a closure to `execOverrides`. It's 
-executed last, possibly overriding already set parameters.
-
-```gradle
-task myScript(type: NodeTask) {
-  script = file('src/scripts/my.js')
-  execOverrides {
-    it.ignoreExitValue = true
-    it.workingDir = 'somewhere'
-    it.standardOutput = new FileOutputStream('logs/my.log')
-  }
-}
-```
-
-When executing this for the first time, it will run a `nodeSetup` task that downloads NodeJS 
-(for your platform) and NPM (Node Package Manager) if on windows (other platforms include 
+When executing this task for the first time, it will run a `nodeSetup` task that downloads NodeJS 
+(for your platform) and NPM (Node Package Manager) if on Windows (other platforms include 
 it into the distribution).
-
 
 ## Executing `npm` Tasks
 
