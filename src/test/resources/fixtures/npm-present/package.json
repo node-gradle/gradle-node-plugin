@@ -4,6 +4,6 @@
     "npm": "6.12.0"
   },
   "scripts": {
-    "npmVersion": "echo \"Version\" && npx npm --version"
+    "npmVersion": "echo Version && npx npm --version"
   }
 }
