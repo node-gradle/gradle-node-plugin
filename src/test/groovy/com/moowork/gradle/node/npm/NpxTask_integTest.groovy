@@ -1,6 +1,7 @@
 package com.moowork.gradle.node.npm
 
 import com.moowork.gradle.AbstractIntegTest
+import org.gradle.api.Task
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
@@ -76,6 +77,13 @@ class NpxTask_integTest
         result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":lint").outcome == TaskOutcome.SUCCESS
         result3.task(":test").outcome == TaskOutcome.SUCCESS
+
+        when:
+        def result4 = build(":version")
+
+        then:
+        result4.task(":version").outcome == TaskOutcome.SUCCESS
+        result4.output.contains("> Task :version\n6.12.0")
     }
 
     def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
@@ -88,7 +96,7 @@ class NpxTask_integTest
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result1.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result1.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":env").outcome == TaskOutcome.SUCCESS
         result1.output.contains("PATH=")
@@ -98,7 +106,7 @@ class NpxTask_integTest
 
         then:
         result2.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result2.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result2.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result2.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result2.task(":env").outcome == TaskOutcome.SUCCESS
         result2.output.contains("CUSTOM=custom value")
@@ -109,7 +117,7 @@ class NpxTask_integTest
 
         then:
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
@@ -118,7 +126,7 @@ class NpxTask_integTest
 
         then:
         result4.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result4.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result4.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result4.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":env").outcome == TaskOutcome.SUCCESS
         result4.output.contains("E404")
@@ -128,7 +136,7 @@ class NpxTask_integTest
 
         then:
         result5.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result5.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result5.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result5.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.FAILED
         result5.output.contains("E404")
@@ -138,7 +146,7 @@ class NpxTask_integTest
 
         then:
         result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result6.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result6.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result6.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result6.task(":pwd").outcome == TaskOutcome.SUCCESS
         result6.output.contains("Working directory is '${projectDir}'")
@@ -148,7 +156,7 @@ class NpxTask_integTest
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result7.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result7.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result7.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
 
@@ -157,11 +165,18 @@ class NpxTask_integTest
 
         then:
         result8.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result8.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result8.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result8.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result8.task(":pwd").outcome == TaskOutcome.SUCCESS
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
         result8.output.contains("Working directory is '${expectedWorkingDirectory}'")
         new File(expectedWorkingDirectory).isDirectory()
+
+        when:
+        def result9 = build(":version")
+
+        then:
+        result9.task(":version").outcome == TaskOutcome.SUCCESS
+        result9.output.contains("> Task :version\n6.4.1")
     }
 }

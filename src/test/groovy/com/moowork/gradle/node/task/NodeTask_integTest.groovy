@@ -96,6 +96,13 @@ class NodeTask_integTest
         result10.task(":helloFromIndex").outcome == TaskOutcome.SUCCESS
         result10.output.contains("Hello Gradle")
         result10.output.contains("Using the NodeTask with a script directory")
+
+        when:
+        def result11 = build(":version")
+
+        then:
+        result11.task(":version").outcome == TaskOutcome.SUCCESS
+        result11.output.contains("Version: v12.13.0")
     }
 
     def 'exec node program with custom settings and check up-to-date detection'() {
@@ -219,5 +226,12 @@ class NodeTask_integTest
         result15.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result15.task(":env").outcome == TaskOutcome.FAILED
         result15.output.contains("I had to fail")
+
+        when:
+        def result16 = build(":version")
+
+        then:
+        result16.task(":version").outcome == TaskOutcome.SUCCESS
+        result16.output.contains("Version: v10.14.0")
     }
 }

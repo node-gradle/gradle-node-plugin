@@ -4,7 +4,6 @@ plugins {
 
 node {
     version = "10.14.0"
-    npmVersion = "6.4.1"
     download = true
     workDir = file("build/node")
 }
@@ -27,6 +26,11 @@ task pwd(type: YarnTask) {
     outputs.upToDateWhen {
         true
     }
+}
+
+task version(type: YarnTask) {
+    dependsOn yarn
+    yarnCommand = ["--version"]
 }
 
 if (isPropertyEnabled("customEnv")) {

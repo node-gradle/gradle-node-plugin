@@ -4,7 +4,6 @@ plugins {
 
 node {
     version = "10.14.0"
-    npmVersion = "6.4.1"
     download = true
     workDir = file("build/node")
 }
@@ -24,6 +23,11 @@ task pwd(type: NpxTask) {
     outputs.upToDateWhen {
         true
     }
+}
+
+task version(type: NpxTask) {
+    dependsOn npmInstall
+    command = "--version"
 }
 
 if (isPropertyEnabled("customEnv")) {

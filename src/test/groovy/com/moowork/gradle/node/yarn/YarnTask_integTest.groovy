@@ -2,8 +2,11 @@ package com.moowork.gradle.node.yarn
 
 import com.moowork.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
+import org.gradle.util.GradleVersion
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
+
+import java.util.regex.Pattern
 
 class YarnTask_integTest
         extends AbstractIntegTest {
@@ -42,6 +45,13 @@ class YarnTask_integTest
         result3.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":test").outcome == TaskOutcome.SUCCESS
+
+        when:
+        def result4 = build(":version")
+
+        then:
+        result4.task(":version").outcome == TaskOutcome.SUCCESS
+        result4.output.contains("> Task :version\n1.18.0")
     }
 
     def 'execute yarn command with custom execution configuration and check up-to-date-detection'() {
@@ -129,5 +139,15 @@ class YarnTask_integTest
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
         result8.output.contains("Working directory is '${expectedWorkingDirectory}'")
         new File(expectedWorkingDirectory).isDirectory()
+
+        when:
+        def result9 = build(":version")
+
+        then:
+        result9.task(":version").outcome == TaskOutcome.SUCCESS
+        def versionPattern = Pattern.compile("> Task :version\\s+([0-9]+\\.[0-9]+\\.[0-9]+)")
+        def versionMatch = versionPattern.matcher(result9.output)
+        versionMatch.find()
+        GradleVersion.version(versionMatch.group(1)).compareTo(GradleVersion.version("1.19.0")) > 0
     }
 }

@@ -6,7 +6,7 @@ def changeInputs = System.properties["changeInputs"] ? System.properties["change
 
 node {
     version = "10.14.0"
-    npmVersion = "6.4.1"
+    npmVersion = "6.12.0"
     download = true
     workDir = file('build/node')
 }
@@ -21,4 +21,9 @@ task test(type: NpmTask) {
     outputs.upToDateWhen {
         true
     }
+}
+
+task version(type: NpmTask) {
+    dependsOn npmInstall
+    npmCommand = ["--version"]
 }

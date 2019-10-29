@@ -3,8 +3,6 @@ plugins {
 }
 
 node {
-    version = "10.14.0"
-    npmVersion = "6.4.1"
     download = true
     workDir = file("build/node")
 }
@@ -46,4 +44,8 @@ if (fail) {
 
 if (ignoreExitValue) {
     env.ignoreExitValue = true
+}
+
+task version(type: NodeTask) {
+    script = file("version.js")
 }

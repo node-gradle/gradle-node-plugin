@@ -1,24 +1,29 @@
 plugins {
-    id 'com.github.node-gradle.node'
+    id "com.github.node-gradle.node"
 }
 
-def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == 'true' : false
+def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == "true" : false
 
 node {
     version = "10.14.0"
-    npmVersion = "6.4.1"
+    yarnVersion = "1.18.0"
     download = true
-    workDir = file('build/node')
+    workDir = file("build/node")
 }
 
 task test(type: YarnTask) {
     dependsOn yarn
-    yarnCommand = changeInputs ? ['run', 'test'] : ['run']
-    args = changeInputs ? [] : ['test']
-    inputs.dir('node_modules')
-    inputs.file('package.json')
-    inputs.files('index.js', 'test.js')
+    yarnCommand = changeInputs ? ["run", "test"] : ["run"]
+    args = changeInputs ? [] : ["test"]
+    inputs.dir("node_modules")
+    inputs.file("package.json")
+    inputs.files("index.js", "test.js")
     outputs.upToDateWhen {
         true
     }
+}
+
+task version(type: YarnTask) {
+    dependsOn yarn
+    yarnCommand = ["--version"]
 }

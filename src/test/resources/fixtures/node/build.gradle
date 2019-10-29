@@ -3,6 +3,7 @@ plugins {
 }
 
 node {
+    version = "12.13.0"
     download = true
     workDir = file("build/node")
 }
@@ -31,4 +32,8 @@ task helloFromIndex(type: NodeTask) {
     outputs.upToDateWhen {
         true
     }
+}
+
+task version(type: NodeTask) {
+    script = file("version.js")
 }
