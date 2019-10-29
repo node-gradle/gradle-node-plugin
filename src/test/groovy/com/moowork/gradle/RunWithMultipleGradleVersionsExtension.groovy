@@ -12,8 +12,10 @@ import java.lang.reflect.Parameter
 
 class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExtension<RunWithMultipleGradleVersions> {
     private static final GradleVersion MINIMUM_SUPPORTED_GRADLE_VERSION = GradleVersion.version("5.0")
+    private static final GradleVersion GRADLE_6_VERSION = GradleVersion.version("6.0-rc-1")
     private static final GradleVersion CURRENT_GRADLE_VERSION = GradleVersion.current()
-    private static final GradleVersion[] GRADLE_VERSIONS = [MINIMUM_SUPPORTED_GRADLE_VERSION, CURRENT_GRADLE_VERSION]
+    private static final GradleVersion[] GRADLE_VERSIONS =
+            [MINIMUM_SUPPORTED_GRADLE_VERSION, CURRENT_GRADLE_VERSION, GRADLE_6_VERSION]
     private GradleVersion gradleVersion
 
     @Override
