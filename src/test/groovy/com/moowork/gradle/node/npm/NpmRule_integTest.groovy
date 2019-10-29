@@ -3,6 +3,8 @@ package com.moowork.gradle.node.npm
 import com.moowork.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
+import java.util.regex.Pattern
+
 class NpmRule_integTest
     extends AbstractIntegTest
 {
@@ -115,7 +117,8 @@ class NpmRule_integTest
         then:
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result.task(":npm_run_npmVersion").outcome == TaskOutcome.SUCCESS
-        result.output.contains("Version\n6.12.0")
+        def versionPattern = Pattern.compile(".*Version\\s+6.12.0.*", Pattern.DOTALL)
+        versionPattern.matcher(result.output).find()
     }
 
     def 'can execute subtasks using npm'()
