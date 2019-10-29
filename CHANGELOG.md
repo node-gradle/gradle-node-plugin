@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Version 2.2.0 *(to be released)*
+----------------------------
+
+* Improve the inputs declarations of tasks:
+  * `NodeTask`'s `script` now has relative path sensitivity (issue [#41](https://github.com/node-gradle/gradle-node-plugin/issues/41))
+  * No longer consider the working dir as an input for all tasks (issue [#40](https://github.com/node-gradle/gradle-node-plugin/issues/40))
+  * Explicitly exclude the `execOverrides` option of tasks from the inputs (issue [#40](https://github.com/node-gradle/gradle-node-plugin/issues/40)) 
+* Deprecate the usage of `NodeTask` with a `script` which is a directory ; Node.js supports that and looks for an
+  `index.js` file in the directory but this is not compliant with a correct input/output declaration (issue [#41](https://github.com/node-gradle/gradle-node-plugin/issues/41))
+* No longer use `Project.afterEvaluate` as a first step to support lazy tasks configuration (issue [#39](https://github.com/node-gradle/gradle-node-plugin/issues/39))
+* Gradle 6 compatibility (all integration tests run also on Gradle 6.0-rc-1)
+* Improve the integration tests coverage
+
 Version 2.1.1 *(2019-09-28)*
 ----------------------------
 
