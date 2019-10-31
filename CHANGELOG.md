@@ -15,7 +15,7 @@ Version 2.2.0 *(2019-10-13)*
 * Deprecate the usage of `NodeTask` with a `script` which is a directory ; Node.js supports that and looks for an
   `index.js` file in the directory but this is not compliant with a correct input/output declaration (issue [#41](https://github.com/node-gradle/gradle-node-plugin/issues/41))
 * No longer use `Project.afterEvaluate` as a first step to support lazy tasks configuration (issue [#39](https://github.com/node-gradle/gradle-node-plugin/issues/39))
-* Gradle 6 compatibility (all integration tests run also on Gradle 6.0-rc-1)
+* Gradle 6 compatibility (all integration tests run also on Gradle 6.0-rc-2)
 * Improve the integration tests coverage
 
 Version 2.1.1 *(2019-09-28)*
