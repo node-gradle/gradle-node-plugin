@@ -1,7 +1,7 @@
 Changelog
 =========
 
-Version 2.2.0 *(to be released)*
+Version 2.2.0 *(2019-10-13)*
 ----------------------------
 
 * Improve the inputs declarations of tasks:
