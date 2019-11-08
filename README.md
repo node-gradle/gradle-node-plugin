@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 ![Version](https://img.shields.io/badge/Version-2.2.0-orange.svg)
 
-This plugin enabled you to use a lot of [NodeJS](https://nodejs.org)-based technologies as part of your 
+This plugin enables you to use a lot of [NodeJS](https://nodejs.org)-based technologies as part of your 
 build without having NodeJS installed locally on your system. It integrates the following NodeJS-based system
 with Gradle:
 
