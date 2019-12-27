@@ -2,7 +2,6 @@ package com.moowork.gradle.node.yarn;
 
 import com.moowork.gradle.node.NodePlugin;
 import groovy.lang.Closure;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
@@ -10,13 +9,22 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecResult;
+import org.gradle.process.ExecSpec;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
 public class YarnTask extends DefaultTask {
+
+	protected YarnExecRunner runner;
+
+	private List<String> args = new ArrayList<>();
+	private ExecResult result;
+	private String[] yarnCommand;
 
 	public YarnTask() {
 		this.setGroup(NodePlugin.NODE_GROUP);
@@ -24,7 +32,7 @@ public class YarnTask extends DefaultTask {
 		dependsOn(YarnSetupTask.NAME);
 	}
 
-	public void setArgs(final Iterable<?> value) {
+	public void setArgs(final List<String> value) {
 		this.args = value;
 	}
 
@@ -40,7 +48,7 @@ public class YarnTask extends DefaultTask {
 
 	@Input
 	@Optional
-	public Iterable<?> getArgs() {
+	public Iterable<String> getArgs() {
 		return this.args;
 	}
 
@@ -49,8 +57,8 @@ public class YarnTask extends DefaultTask {
 		return this.runner;
 	}
 
-	public void setEnvironment(final Map<String, ?> value) {
-		DefaultGroovyMethods.leftShift((Map<String, Object>) this.runner.getEnvironment(), (Map<String, Object>) value);
+	public void setEnvironment(final Map<String, String> value) {
+		this.runner.getEnvironment().putAll(value);
 	}
 
 	public void setWorkingDir(final File workingDir) {
@@ -61,7 +69,7 @@ public class YarnTask extends DefaultTask {
 		this.runner.setIgnoreExitValue(value);
 	}
 
-	public void setExecOverrides(final Closure closure) {
+	public void setExecOverrides(final Closure<ExecSpec> closure) {
 		this.runner.setExecOverrides(closure);
 	}
 
@@ -73,15 +81,10 @@ public class YarnTask extends DefaultTask {
 	@TaskAction
 	public void exec() {
 		if (this.yarnCommand != null) {
-			DefaultGroovyMethods.addAll(this.runner.getArguments(), this.yarnCommand);
+			this.runner.getArguments().addAll(Arrays.asList(this.yarnCommand));
 		}
 
-		DefaultGroovyMethods.addAll(this.runner.getArguments(), this.args);
+		this.args.forEach(this.runner.getArguments()::add);
 		this.result = this.runner.execute();
 	}
-
-	protected YarnExecRunner runner;
-	private Iterable<?> args = new ArrayList<>();
-	private ExecResult result;
-	private String[] yarnCommand;
 }

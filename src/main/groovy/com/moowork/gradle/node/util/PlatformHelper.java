@@ -7,6 +7,10 @@ import java.util.Properties;
 
 public class PlatformHelper {
 
+	private static PlatformHelper INSTANCE = new PlatformHelper();
+
+	private final Properties props;
+
 	public PlatformHelper() {
 		this(System.getProperties());
 	}
@@ -79,7 +83,4 @@ public class PlatformHelper {
 	public static void setINSTANCE(PlatformHelper INSTANCE) {
 		PlatformHelper.INSTANCE = INSTANCE;
 	}
-
-	private static PlatformHelper INSTANCE = new PlatformHelper();
-	private final Properties props;
 }

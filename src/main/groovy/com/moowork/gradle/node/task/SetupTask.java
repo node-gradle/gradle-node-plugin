@@ -3,13 +3,11 @@ package com.moowork.gradle.node.task;
 import com.moowork.gradle.node.NodeExtension;
 import com.moowork.gradle.node.NodePlugin;
 import com.moowork.gradle.node.variant.Variant;
-import groovy.lang.Closure;
 import org.codehaus.groovy.runtime.StringGroovyMethods;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository;
-import org.gradle.api.file.CopySpec;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.OutputDirectory;
@@ -32,7 +30,6 @@ public class SetupTask extends DefaultTask {
 	protected Variant variant;
 
 	public SetupTask() {
-
 		this.setGroup(NodePlugin.NODE_GROUP);
 		this.setDescription("Download and install a local node/npm version.");
 		this.setEnabled(false);
@@ -79,16 +76,10 @@ public class SetupTask extends DefaultTask {
 	}
 
 	private void copyNodeExe() {
-		this.getProject().copy(new Closure<Object>(this, this) {
-			public Object doCall(CopySpec it) {
-				invokeMethod("from", new Object[]{getNodeExeFile()});
-				invokeMethod("into", new Object[]{SetupTask.this.variant.getNodeBinDir()});
-				return invokeMethod("rename", new Object[]{"node.+\\.exe", "node.exe"});
-			}
-
-			public Object doCall() {
-				return doCall(null);
-			}
+		this.getProject().copy(it -> {
+			it.from(getNodeExeFile());
+			it.into(this.variant.getNodeBinDir());
+			it.rename("node.*\\.exe", "node.exe");
 		});
 	}
 
@@ -98,15 +89,9 @@ public class SetupTask extends DefaultTask {
 
 	private void unpackNodeArchive() {
 		if (getNodeArchiveFile().getName().endsWith("zip")) {
-			this.getProject().copy(new Closure<Object>(this, this) {
-				public Object doCall(CopySpec it) {
-					invokeMethod("from", new Object[]{SetupTask.this.getProject().zipTree(getNodeArchiveFile())});
-					return invokeMethod("into", new Object[]{getNodeDir().getParent()});
-				}
-
-				public Object doCall() {
-					return doCall(null);
-				}
+			this.getProject().copy(it -> {
+				it.from(getProject().zipTree(getNodeArchiveFile()));
+				it.into(getNodeDir().getParent());
 			});
 		} else if (StringGroovyMethods.asBoolean(this.variant.getExeDependency())) {
 			//Remap lib/node_modules to node_modules (the same directory as node.exe) because that's how the zip dist does it
@@ -147,7 +132,7 @@ public class SetupTask extends DefaultTask {
 	}
 
 	private void setExecutableFlag() {
-		if (!this.variant.getWindows()) {
+		if (!this.variant.isWindows()) {
 			new File(this.variant.getNodeExec()).setExecutable(true);
 		}
 	}

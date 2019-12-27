@@ -8,6 +8,23 @@ import java.io.File;
 
 public class NodeExtension {
 
+	public static final String NAME = "node";
+
+	private File workDir;
+	private File npmWorkDir;
+	private File yarnWorkDir;
+	private File nodeModulesDir;
+	private String version = "10.14.0";
+	private String npmVersion = "";
+	private String yarnVersion = "";
+	private String distBaseUrl = "https://nodejs.org/dist";
+	private String npmCommand = "npm";
+	private String npxCommand = "npx";
+	private String npmInstallCommand = "install";
+	private String yarnCommand = "yarn";
+	private boolean download = false;
+	private Variant variant;
+
 	public NodeExtension(final Project project) {
 		File cacheDir = new File(project.getProjectDir(), ".gradle");
 		this.workDir = new File(cacheDir, "nodejs");
@@ -22,10 +39,6 @@ public class NodeExtension {
 
 	public static NodeExtension create(final Project project) {
 		return project.getExtensions().create(NAME, NodeExtension.class, project);
-	}
-
-	public static String getNAME() {
-		return NAME;
 	}
 
 	public File getWorkDir() {
@@ -143,20 +156,4 @@ public class NodeExtension {
 	public void setVariant(Variant variant) {
 		this.variant = variant;
 	}
-
-	private static final String NAME = "node";
-	private File workDir;
-	private File npmWorkDir;
-	private File yarnWorkDir;
-	private File nodeModulesDir;
-	private String version = "10.14.0";
-	private String npmVersion = "";
-	private String yarnVersion = "";
-	private String distBaseUrl = "https://nodejs.org/dist";
-	private String npmCommand = "npm";
-	private String npxCommand = "npx";
-	private String npmInstallCommand = "install";
-	private String yarnCommand = "yarn";
-	private boolean download = false;
-	private Variant variant;
 }

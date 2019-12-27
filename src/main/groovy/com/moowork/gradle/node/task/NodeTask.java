@@ -3,7 +3,6 @@ package com.moowork.gradle.node.task;
 import com.moowork.gradle.node.NodePlugin;
 import com.moowork.gradle.node.exec.NodeExecRunner;
 import groovy.lang.Closure;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
@@ -12,9 +11,11 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecResult;
+import org.gradle.process.ExecSpec;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,12 @@ import static org.gradle.api.tasks.PathSensitivity.RELATIVE;
 
 
 public class NodeTask extends DefaultTask {
+
+	protected NodeExecRunner runner;
+	private File script;
+	private List<String> args = new ArrayList<>();
+	private List<String> options = new ArrayList<>();
+	private ExecResult result;
 
 	public NodeTask() {
 		this.setGroup(NodePlugin.NODE_GROUP);
@@ -33,20 +40,20 @@ public class NodeTask extends DefaultTask {
 		this.script = value;
 	}
 
-	public void setArgs(final Iterable<?> value) {
-		this.args = DefaultGroovyMethods.asList((Iterable<Object>) value);
+	public void setArgs(final List<String> value) {
+		this.args = value;
 	}
 
-	public void addArgs(final Object... args) {
-		DefaultGroovyMethods.addAll(this.args, args);
+	public void addArgs(final String... args) {
+		this.args.addAll(Arrays.asList(args));
 	}
 
-	public void setOptions(final Iterable<?> value) {
+	public void setOptions(final List<String> value) {
 		this.options = value;
 	}
 
-	public void setEnvironment(final Map<String, ?> value) {
-		DefaultGroovyMethods.leftShift((Map<String, Object>) this.runner.getEnvironment(), (Map<String, Object>) value);
+	public void setEnvironment(final Map<String, String> value) {
+		this.runner.getEnvironment().putAll(value);
 	}
 
 	public void setWorkingDir(final File workingDir) {
@@ -57,7 +64,7 @@ public class NodeTask extends DefaultTask {
 		this.runner.setIgnoreExitValue(value);
 	}
 
-	public void setExecOverrides(final Closure closure) {
+	public void setExecOverrides(final Closure<ExecSpec> closure) {
 		this.runner.setExecOverrides(closure);
 	}
 
@@ -78,12 +85,12 @@ public class NodeTask extends DefaultTask {
 	}
 
 	@Input
-	public List<?> getArgs() {
+	public List<String> getArgs() {
 		return this.args;
 	}
 
 	@Input
-	public Iterable<?> getOptions() {
+	public List<String> getOptions() {
 		return this.options;
 	}
 
@@ -98,18 +105,11 @@ public class NodeTask extends DefaultTask {
 			throw new IllegalStateException("Required script property is not set.");
 		}
 
-		List<Object> execArgs = new ArrayList();
-		execArgs.addAll(DefaultGroovyMethods.asType(this.options, List.class));
+		List<String> execArgs = new ArrayList<>(this.options);
 		execArgs.add(this.script.getAbsolutePath());
-		execArgs.addAll(DefaultGroovyMethods.asType(this.args, List.class));
+		execArgs.addAll(this.args);
 
 		this.runner.setArguments(execArgs);
 		this.result = this.runner.execute();
 	}
-
-	protected NodeExecRunner runner;
-	private File script;
-	private List<Object> args = new ArrayList<>();
-	private Iterable<?> options = new ArrayList<>();
-	private ExecResult result;
 }

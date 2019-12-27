@@ -7,6 +7,7 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.process.ExecResult;
+import org.gradle.process.ExecSpec;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,13 +21,14 @@ public abstract class ExecRunner {
 	protected Project project;
 	protected NodeExtension ext;
 	protected Variant variant;
-	private Map<String, ?> environment = new LinkedHashMap<>();
+
+	private Map<String, String> environment = new LinkedHashMap<>();
 	private File workingDir;
 	@Internal
-	private List<Object> arguments = new ArrayList<>();
+	private List<String> arguments = new ArrayList<>();
 	private boolean ignoreExitValue = false;
 	@Internal
-	private Closure execOverrides;
+	private Closure<ExecSpec> execOverrides;
 
 	public ExecRunner(final Project project) {
 		this.project = project;
@@ -38,7 +40,7 @@ public abstract class ExecRunner {
 	}
 
 	@Input
-	public Map<String, ?> getEnvironment() {
+	public Map<String, String> getEnvironment() {
 		return this.environment;
 	}
 
@@ -47,49 +49,47 @@ public abstract class ExecRunner {
 		return this.ignoreExitValue;
 	}
 
-	protected final ExecResult run(final String exec, final List<?> args) {
-		final String realExec = exec;
-		final List<?> realArgs = args;
-		final Map<Object, Object> execEnvironment = computeExecEnvironment();
+	protected final ExecResult run(final String exec, final List<String> args) {
+		final Map<String, String> execEnvironment = computeExecEnvironment();
 		final File execWorkingDir = computeWorkingDir();
 		return this.project.exec(execSpec -> {
-			execSpec.setExecutable(realExec);
-			execSpec.setArgs((List<String>) realArgs);
-			execSpec.setEnvironment((Map<String, ?>) (Map<?, ?>) execEnvironment);
-			execSpec.setIgnoreExitValue(ExecRunner.this.getIgnoreExitValue());
+			execSpec.setExecutable(exec);
+			execSpec.setArgs(args);
+			execSpec.setEnvironment(execEnvironment);
+			execSpec.setIgnoreExitValue(getIgnoreExitValue());
 			execSpec.setWorkingDir(execWorkingDir);
 
-			if (ExecRunner.this.getExecOverrides() != null) {
-				ExecRunner.this.getExecOverrides().call(execSpec);
+			if (getExecOverrides() != null) {
+				getExecOverrides().call(execSpec);
 			}
 		});
 	}
 
 	private File computeWorkingDir() {
-		File workingDir = this.workingDir != null ? this.workingDir : this.project.getExtensions().getByType(NodeExtension.class).getNodeModulesDir();
-		if (!workingDir.exists()) {
-			workingDir.mkdirs();
+		File computedWorkingDir = this.workingDir != null ? this.workingDir : this.project.getExtensions().getByType(NodeExtension.class).getNodeModulesDir();
+		if (!computedWorkingDir.exists()) {
+			computedWorkingDir.mkdirs();
 		}
 
-		return workingDir;
+		return computedWorkingDir;
 	}
 
-	private Map<Object, Object> computeExecEnvironment() {
-		Map<Object, Object> environment = new LinkedHashMap<>();
-		environment.putAll(System.getenv());
-		environment.putAll(this.environment);
+	private Map<String, String> computeExecEnvironment() {
+		Map<String, String> execEnvironment = new LinkedHashMap<>();
+		execEnvironment.putAll(System.getenv());
+		execEnvironment.putAll(this.environment);
 		String path = computeAdditionalBinPath();
 		if (path != null) {
 			// Take care of Windows environments that may contain "Path" OR "PATH" - both existing
 			// possibly (but not in parallel as of now)
-			if (environment.get("Path") != null) {
-				environment.put("Path", path + File.pathSeparator + environment.get("Path"));
+			if (execEnvironment.get("Path") != null) {
+				execEnvironment.put("Path", path + File.pathSeparator + execEnvironment.get("Path"));
 			} else {
-				environment.put("PATH", path + File.pathSeparator + environment.get("PATH"));
+				execEnvironment.put("PATH", path + File.pathSeparator + execEnvironment.get("PATH"));
 			}
 		}
 
-		return environment;
+		return execEnvironment;
 	}
 
 	protected abstract String computeAdditionalBinPath();
@@ -102,7 +102,7 @@ public abstract class ExecRunner {
 
 	protected abstract ExecResult doExecute();
 
-	public void setEnvironment(Map<String, ?> environment) {
+	public void setEnvironment(Map<String, String> environment) {
 		this.environment = environment;
 	}
 
@@ -110,11 +110,11 @@ public abstract class ExecRunner {
 		this.workingDir = workingDir;
 	}
 
-	public List<Object> getArguments() {
+	public List<String> getArguments() {
 		return this.arguments;
 	}
 
-	public void setArguments(List<Object> arguments) {
+	public void setArguments(List<String> arguments) {
 		this.arguments = arguments;
 	}
 
@@ -122,11 +122,11 @@ public abstract class ExecRunner {
 		this.ignoreExitValue = ignoreExitValue;
 	}
 
-	public Closure getExecOverrides() {
+	public Closure<ExecSpec> getExecOverrides() {
 		return this.execOverrides;
 	}
 
-	public void setExecOverrides(Closure execOverrides) {
+	public void setExecOverrides(Closure<ExecSpec> execOverrides) {
 		this.execOverrides = execOverrides;
 	}
 }

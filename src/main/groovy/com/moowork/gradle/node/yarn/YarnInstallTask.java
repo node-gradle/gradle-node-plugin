@@ -19,15 +19,15 @@ import java.io.File;
  */
 public class YarnInstallTask extends YarnTask {
 
+	public static final String NAME = "yarn";
+
+	private Closure<ConfigurableFileTree> nodeModulesOutputFilter;
+
 	public YarnInstallTask() {
 		this.setGroup(NodePlugin.NODE_GROUP);
 		this.setDescription("Install node packages using Yarn.");
 		setYarnCommand(new String[]{""});
 		dependsOn(YarnSetupTask.NAME);
-	}
-
-	public void setNodeModulesOutputFilter(Closure nodeModulesOutputFilter) {
-		this.nodeModulesOutputFilter = nodeModulesOutputFilter;
 	}
 
 	@InputFile
@@ -57,6 +57,7 @@ public class YarnInstallTask extends YarnTask {
 		return nodeModulesFileTree;
 	}
 
-	public static final String NAME = "yarn";
-	private Closure nodeModulesOutputFilter;
+	public void setNodeModulesOutputFilter(Closure<ConfigurableFileTree> nodeModulesOutputFilter) {
+		this.nodeModulesOutputFilter = nodeModulesOutputFilter;
+	}
 }

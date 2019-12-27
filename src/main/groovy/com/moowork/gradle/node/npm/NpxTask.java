@@ -2,13 +2,13 @@ package com.moowork.gradle.node.npm;
 
 import com.moowork.gradle.node.NodePlugin;
 import groovy.lang.Closure;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecResult;
+import org.gradle.process.ExecSpec;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,19 +18,25 @@ import java.util.Map;
 
 public class NpxTask extends DefaultTask {
 
+	protected NpxExecRunner runner;
+
+	private List<String> args = new ArrayList<>();
+	private ExecResult result;
+	private String command;
+
 	public NpxTask() {
 		this.setGroup(NodePlugin.NODE_GROUP);
 		this.runner = new NpxExecRunner(this.getProject());
 		dependsOn(NpmSetupTask.NAME);
 	}
 
-	public void setArgs(final Iterable<?> value) {
-		this.args = DefaultGroovyMethods.asList((Iterable<?>) value);
+	public void setArgs(final List<String> value) {
+		this.args = value;
 	}
 
 	@Input
 	public String getCommand() {
-		return command;
+		return this.command;
 	}
 
 	public void setCommand(String cmd) {
@@ -38,12 +44,12 @@ public class NpxTask extends DefaultTask {
 	}
 
 	@Input
-	public List<?> getArgs() {
+	public List<String> getArgs() {
 		return this.args;
 	}
 
-	public void setEnvironment(final Map<String, ?> value) {
-		DefaultGroovyMethods.leftShift((Map<String, Object>) this.runner.getEnvironment(), (Map<String, Object>) value);
+	public void setEnvironment(final Map<String, String> value) {
+		this.runner.getEnvironment().putAll(value);
 	}
 
 	public void setWorkingDir(final File workingDir) {
@@ -54,13 +60,13 @@ public class NpxTask extends DefaultTask {
 		this.runner.setIgnoreExitValue(value);
 	}
 
-	public void setExecOverrides(final Closure closure) {
+	public void setExecOverrides(final Closure<ExecSpec> closure) {
 		this.runner.setExecOverrides(closure);
 	}
 
 	@Nested
 	public NpxExecRunner getRunner() {
-		return runner;
+		return this.runner;
 	}
 
 	@Internal
@@ -71,15 +77,10 @@ public class NpxTask extends DefaultTask {
 	@TaskAction
 	public void exec() {
 		if (this.command != null) {
-			DefaultGroovyMethods.addAll(this.runner.getArguments(), new Object[]{this.command});
+			this.runner.getArguments().add(this.command);
 		}
 
 		this.runner.getArguments().addAll(this.args);
 		this.result = this.runner.execute();
 	}
-
-	protected NpxExecRunner runner;
-	private List<?> args = new ArrayList<Object>();
-	private ExecResult result;
-	private String command;
 }

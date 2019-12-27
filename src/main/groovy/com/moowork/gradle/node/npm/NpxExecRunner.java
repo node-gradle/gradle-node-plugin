@@ -21,7 +21,7 @@ public class NpxExecRunner extends NpmExecRunner {
 	@Override
 	@Internal
 	protected File getLocalCommandScript() {
-		return project.file(new File(this.ext.getNodeModulesDir(), "node_modules/npm/bin/npx-cli.js"));
+		return this.project.file(new File(this.ext.getNodeModulesDir(), "node_modules/npm/bin/npx-cli.js"));
 	}
 
 	@Override

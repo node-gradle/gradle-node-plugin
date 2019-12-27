@@ -10,13 +10,20 @@ import com.moowork.gradle.node.variant.VariantBuilder;
 import com.moowork.gradle.node.yarn.YarnInstallTask;
 import com.moowork.gradle.node.yarn.YarnSetupTask;
 import com.moowork.gradle.node.yarn.YarnTask;
-import groovy.lang.Closure;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
 
 public class NodePlugin implements Plugin<Project> {
+
+	public static final String NODE_GROUP = "Node";
+
+	private Project project;
+	private NodeExtension config;
+	private SetupTask setupTask;
+	private NpmSetupTask npmSetupTask;
+	private YarnSetupTask yarnSetupTask;
 
 	@Override
 	public void apply(final Project project) {
@@ -28,17 +35,11 @@ public class NodePlugin implements Plugin<Project> {
 		addNpmRule();
 		addYarnRule();
 
-		this.project.afterEvaluate(new Closure<Object>(this, this) {
-			public void doCall(Project it) {
-				NodePlugin.this.config.setVariant(new VariantBuilder(NodePlugin.this.config).build());
-				configureSetupTask();
-				configureNpmSetupTask();
-				configureYarnSetupTask();
-			}
-
-			public void doCall() {
-				doCall(null);
-			}
+		this.project.afterEvaluate(it -> {
+			NodePlugin.this.config.setVariant(new VariantBuilder(NodePlugin.this.config).build());
+			configureSetupTask();
+			configureNpmSetupTask();
+			configureYarnSetupTask();
 		});
 	}
 
@@ -103,11 +104,4 @@ public class NodePlugin implements Plugin<Project> {
 	private void configureYarnSetupTask() {
 		this.yarnSetupTask.configureVersion(this.config.getYarnVersion());
 	}
-
-	public static final String NODE_GROUP = "Node";
-	private Project project;
-	private NodeExtension config;
-	private SetupTask setupTask;
-	private NpmSetupTask npmSetupTask;
-	private YarnSetupTask yarnSetupTask;
 }

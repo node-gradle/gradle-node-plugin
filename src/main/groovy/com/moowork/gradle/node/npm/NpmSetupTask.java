@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecResult;
+import org.gradle.process.ExecSpec;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,9 +30,11 @@ import java.util.Set;
 public class NpmSetupTask extends DefaultTask {
 
 	public static final String NAME = "npmSetup";
+
+	protected List<String> args = new ArrayList<>();
+
 	private NpmExecRunner runner;
 	private NodeExtension config;
-	protected List<Object> args = new ArrayList<>();
 	private ExecResult result;
 
 	public NpmSetupTask() {
@@ -79,19 +82,19 @@ public class NpmSetupTask extends DefaultTask {
 	}
 
 	@Input
-	public List<Object> getArgs() {
+	public List<String> getArgs() {
 		return this.args;
 	}
 
-	public void setArgs(final Iterable<?> value) {
-		this.args = DefaultGroovyMethods.toList((Iterable<Object>) value);
+	public void setArgs(final List<String> value) {
+		this.args = value;
 	}
 
 	public void setIgnoreExitValue(final boolean value) {
 		this.runner.setIgnoreExitValue(value);
 	}
 
-	public void setExecOverrides(final Closure closure) {
+	public void setExecOverrides(final Closure<ExecSpec> closure) {
 		this.runner.setExecOverrides(closure);
 	}
 

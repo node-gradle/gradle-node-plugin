@@ -43,7 +43,7 @@ public class VariantBuilder {
 		variant.setNpxExec(this.ext.getNpxCommand());
 		variant.setYarnExec(this.ext.getYarnCommand());
 
-		if (variant.getWindows()) {
+		if (variant.isWindows()) {
 			if (variant.getNpmExec().equals("npm")) {
 				variant.setNpmExec("npm.cmd");
 			}
@@ -75,7 +75,7 @@ public class VariantBuilder {
 		}
 
 		if (this.ext.getDownload()) {
-			if (variant.getNodeExec().equals("node") && variant.getWindows()) {
+			if (variant.getNodeExec().equals("node") && variant.isWindows()) {
 				variant.setNodeExec("node.exe");
 			}
 

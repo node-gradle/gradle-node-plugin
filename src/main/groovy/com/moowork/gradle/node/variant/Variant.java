@@ -21,12 +21,8 @@ public class Variant {
 	private String archiveDependency;
 	private String exeDependency;
 
-	public boolean getWindows() {
-		return windows;
-	}
-
 	public boolean isWindows() {
-		return windows;
+		return this.windows;
 	}
 
 	public void setWindows(boolean windows) {
@@ -34,7 +30,7 @@ public class Variant {
 	}
 
 	public String getNodeExec() {
-		return nodeExec;
+		return this.nodeExec;
 	}
 
 	public void setNodeExec(String nodeExec) {
@@ -42,7 +38,7 @@ public class Variant {
 	}
 
 	public String getNpmScriptFile() {
-		return npmScriptFile;
+		return this.npmScriptFile;
 	}
 
 	public void setNpmScriptFile(String npmScriptFile) {
@@ -50,7 +46,7 @@ public class Variant {
 	}
 
 	public String getNpxScriptFile() {
-		return npxScriptFile;
+		return this.npxScriptFile;
 	}
 
 	public void setNpxScriptFile(String npxScriptFile) {
@@ -58,7 +54,7 @@ public class Variant {
 	}
 
 	public File getNodeDir() {
-		return nodeDir;
+		return this.nodeDir;
 	}
 
 	public void setNodeDir(File nodeDir) {
@@ -66,7 +62,7 @@ public class Variant {
 	}
 
 	public File getNodeBinDir() {
-		return nodeBinDir;
+		return this.nodeBinDir;
 	}
 
 	public void setNodeBinDir(File nodeBinDir) {
@@ -74,7 +70,7 @@ public class Variant {
 	}
 
 	public String getNpmExec() {
-		return npmExec;
+		return this.npmExec;
 	}
 
 	public void setNpmExec(String npmExec) {
@@ -82,7 +78,7 @@ public class Variant {
 	}
 
 	public String getNpxExec() {
-		return npxExec;
+		return this.npxExec;
 	}
 
 	public void setNpxExec(String npxExec) {
@@ -90,7 +86,7 @@ public class Variant {
 	}
 
 	public File getNpmDir() {
-		return npmDir;
+		return this.npmDir;
 	}
 
 	public void setNpmDir(File npmDir) {
@@ -98,7 +94,7 @@ public class Variant {
 	}
 
 	public File getNpmBinDir() {
-		return npmBinDir;
+		return this.npmBinDir;
 	}
 
 	public void setNpmBinDir(File npmBinDir) {
@@ -106,7 +102,7 @@ public class Variant {
 	}
 
 	public String getYarnExec() {
-		return yarnExec;
+		return this.yarnExec;
 	}
 
 	public void setYarnExec(String yarnExec) {
@@ -114,7 +110,7 @@ public class Variant {
 	}
 
 	public File getYarnDir() {
-		return yarnDir;
+		return this.yarnDir;
 	}
 
 	public void setYarnDir(File yarnDir) {
@@ -122,7 +118,7 @@ public class Variant {
 	}
 
 	public File getYarnBinDir() {
-		return yarnBinDir;
+		return this.yarnBinDir;
 	}
 
 	public void setYarnBinDir(File yarnBinDir) {
@@ -130,7 +126,7 @@ public class Variant {
 	}
 
 	public String getArchiveDependency() {
-		return archiveDependency;
+		return this.archiveDependency;
 	}
 
 	public void setArchiveDependency(String archiveDependency) {
@@ -138,7 +134,7 @@ public class Variant {
 	}
 
 	public String getExeDependency() {
-		return exeDependency;
+		return this.exeDependency;
 	}
 
 	public void setExeDependency(String exeDependency) {

@@ -19,7 +19,7 @@ public class NpmExecRunner extends ExecRunner {
 	protected ExecResult doExecute() {
 
 		String exec = getCommand();
-		List<Object> arguments = this.getArguments();
+		List<String> arguments = this.getArguments();
 
 		if (this.ext.getDownload()) {
 			File localNpm = getLocalCommandScript();
