@@ -28,6 +28,12 @@ import java.util.Set;
  **/
 public class NpmSetupTask extends DefaultTask {
 
+	public static final String NAME = "npmSetup";
+	private NpmExecRunner runner;
+	private NodeExtension config;
+	protected List<Object> args = new ArrayList<>();
+	private ExecResult result;
+
 	public NpmSetupTask() {
 		dependsOn(SetupTask.NAME);
 
@@ -126,10 +132,4 @@ public class NpmSetupTask extends DefaultTask {
 
 		return new ArrayList<>();
 	}
-
-	public static final String NAME = "npmSetup";
-	private NpmExecRunner runner;
-	private NodeExtension config;
-	protected List<Object> args = new ArrayList<>();
-	private ExecResult result;
 }

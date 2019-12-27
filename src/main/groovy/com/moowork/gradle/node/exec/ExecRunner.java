@@ -7,7 +7,6 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.process.ExecResult;
-import org.gradle.process.ExecSpec;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,6 +16,17 @@ import java.util.Map;
 
 
 public abstract class ExecRunner {
+
+	protected Project project;
+	protected NodeExtension ext;
+	protected Variant variant;
+	private Map<String, ?> environment = new LinkedHashMap<>();
+	private File workingDir;
+	@Internal
+	private List<Object> arguments = new ArrayList<>();
+	private boolean ignoreExitValue = false;
+	@Internal
+	private Closure execOverrides;
 
 	public ExecRunner(final Project project) {
 		this.project = project;
@@ -42,23 +52,15 @@ public abstract class ExecRunner {
 		final List<?> realArgs = args;
 		final Map<Object, Object> execEnvironment = computeExecEnvironment();
 		final File execWorkingDir = computeWorkingDir();
-		return this.project.exec(new Closure<Object>(this, this) {
-			public Object doCall(ExecSpec it) {
-				it.setExecutable(realExec);
-				it.setArgs((List<String>) realArgs);
-				it.setEnvironment((Map<String, ?>) (Map<?, ?>) execEnvironment);
-				it.setIgnoreExitValue(ExecRunner.this.getIgnoreExitValue());
-				it.setWorkingDir(execWorkingDir);
+		return this.project.exec(execSpec -> {
+			execSpec.setExecutable(realExec);
+			execSpec.setArgs((List<String>) realArgs);
+			execSpec.setEnvironment((Map<String, ?>) (Map<?, ?>) execEnvironment);
+			execSpec.setIgnoreExitValue(ExecRunner.this.getIgnoreExitValue());
+			execSpec.setWorkingDir(execWorkingDir);
 
-				if (ExecRunner.this.getExecOverrides() != null) {
-					return ExecRunner.this.getExecOverrides();
-				} else {
-					return null;
-				}
-			}
-
-			public Object doCall() {
-				return doCall(null);
+			if (ExecRunner.this.getExecOverrides() != null) {
+				ExecRunner.this.getExecOverrides().call(execSpec);
 			}
 		});
 	}
@@ -127,15 +129,4 @@ public abstract class ExecRunner {
 	public void setExecOverrides(Closure execOverrides) {
 		this.execOverrides = execOverrides;
 	}
-
-	protected Project project;
-	protected NodeExtension ext;
-	protected Variant variant;
-	private Map<String, ?> environment = new LinkedHashMap<>();
-	private File workingDir;
-	@Internal
-	private List<Object> arguments = new ArrayList<>();
-	private boolean ignoreExitValue = false;
-	@Internal
-	private Closure execOverrides;
 }
