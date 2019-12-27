@@ -1,56 +1,162 @@
-package com.moowork.gradle.node
+package com.moowork.gradle.node;
 
-import com.moowork.gradle.node.variant.Variant
-import org.gradle.api.Project
+import com.moowork.gradle.node.variant.Variant;
+import org.gradle.api.Project;
 
-class NodeExtension
-{
-    final static String NAME = 'node'
+import java.io.File;
 
-    File workDir
 
-    File npmWorkDir
+public class NodeExtension {
 
-    File yarnWorkDir
+	public NodeExtension(final Project project) {
+		File cacheDir = new File(project.getProjectDir(), ".gradle");
+		this.workDir = new File(cacheDir, "nodejs");
+		this.npmWorkDir = new File(cacheDir, "npm");
+		this.yarnWorkDir = new File(cacheDir, "yarn");
+		this.nodeModulesDir = project.getProjectDir();
+	}
 
-    File nodeModulesDir
+	public static NodeExtension get(final Project project) {
+		return project.getExtensions().getByType(NodeExtension.class);
+	}
 
-    String version = '10.14.0'
+	public static NodeExtension create(final Project project) {
+		return project.getExtensions().create(NAME, NodeExtension.class, project);
+	}
 
-    String npmVersion = ''
+	public static String getNAME() {
+		return NAME;
+	}
 
-    String yarnVersion = ''
+	public File getWorkDir() {
+		return this.workDir;
+	}
 
-    String distBaseUrl = 'https://nodejs.org/dist'
+	public void setWorkDir(File workDir) {
+		this.workDir = workDir;
+	}
 
-    String npmCommand = 'npm'
+	public File getNpmWorkDir() {
+		return this.npmWorkDir;
+	}
 
-    String npxCommand = 'npx'
+	public void setNpmWorkDir(File npmWorkDir) {
+		this.npmWorkDir = npmWorkDir;
+	}
 
-    String npmInstallCommand = 'install'
+	public File getYarnWorkDir() {
+		return this.yarnWorkDir;
+	}
 
-    String yarnCommand = 'yarn'
+	public void setYarnWorkDir(File yarnWorkDir) {
+		this.yarnWorkDir = yarnWorkDir;
+	}
 
-    boolean download = false
+	public File getNodeModulesDir() {
+		return this.nodeModulesDir;
+	}
 
-    Variant variant
+	public void setNodeModulesDir(File nodeModulesDir) {
+		this.nodeModulesDir = nodeModulesDir;
+	}
 
-    NodeExtension( final Project project )
-    {
-        def cacheDir = new File( project.projectDir, '.gradle' )
-        this.workDir = new File( cacheDir, 'nodejs' )
-        this.npmWorkDir = new File( cacheDir, 'npm' )
-        this.yarnWorkDir = new File( cacheDir, 'yarn' )
-        this.nodeModulesDir = project.projectDir
-    }
+	public String getVersion() {
+		return this.version;
+	}
 
-    static NodeExtension get( final Project project )
-    {
-        return project.extensions.getByType( NodeExtension )
-    }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-    static NodeExtension create( final Project project )
-    {
-        return project.extensions.create( NAME, NodeExtension, project )
-    }
+	public String getNpmVersion() {
+		return this.npmVersion;
+	}
+
+	public void setNpmVersion(String npmVersion) {
+		this.npmVersion = npmVersion;
+	}
+
+	public String getYarnVersion() {
+		return this.yarnVersion;
+	}
+
+	public void setYarnVersion(String yarnVersion) {
+		this.yarnVersion = yarnVersion;
+	}
+
+	public String getDistBaseUrl() {
+		return this.distBaseUrl;
+	}
+
+	public void setDistBaseUrl(String distBaseUrl) {
+		this.distBaseUrl = distBaseUrl;
+	}
+
+	public String getNpmCommand() {
+		return this.npmCommand;
+	}
+
+	public void setNpmCommand(String npmCommand) {
+		this.npmCommand = npmCommand;
+	}
+
+	public String getNpxCommand() {
+		return this.npxCommand;
+	}
+
+	public void setNpxCommand(String npxCommand) {
+		this.npxCommand = npxCommand;
+	}
+
+	public String getNpmInstallCommand() {
+		return this.npmInstallCommand;
+	}
+
+	public void setNpmInstallCommand(String npmInstallCommand) {
+		this.npmInstallCommand = npmInstallCommand;
+	}
+
+	public String getYarnCommand() {
+		return this.yarnCommand;
+	}
+
+	public void setYarnCommand(String yarnCommand) {
+		this.yarnCommand = yarnCommand;
+	}
+
+	public boolean getDownload() {
+		return this.download;
+	}
+
+	public boolean isDownload() {
+		return this.download;
+	}
+
+	public void setDownload(boolean download) {
+		this.download = download;
+	}
+
+	public Variant getVariant() {
+		return this.variant;
+	}
+
+	public void setVariant(Variant variant) {
+		this.variant = variant;
+	}
+
+	private static final String NAME = "node";
+	private File workDir;
+	private File npmWorkDir;
+	private File yarnWorkDir;
+	private File nodeModulesDir;
+	private String version = "10.14.0";
+	private String npmVersion = "";
+	private String yarnVersion = "";
+	private String distBaseUrl = "https://nodejs.org/dist";
+	private String npmCommand = "npm";
+	private String npxCommand = "npx";
+	private String npmInstallCommand = "install";
+	private String yarnCommand = "yarn";
+	private boolean download = false;
+	private Variant variant;
 }

@@ -1,42 +1,147 @@
-package com.moowork.gradle.node.variant
+package com.moowork.gradle.node.variant;
 
-class Variant
-{
-    def boolean windows
+import java.io.File;
 
-    /* Node */
 
-    def String nodeExec
+public class Variant {
 
-    def String npmScriptFile
+	private boolean windows;
+	private String nodeExec;
+	private String npmScriptFile;
+	private String npxScriptFile;
+	private File nodeDir;
+	private File nodeBinDir;
+	private String npmExec;
+	private String npxExec;
+	private File npmDir;
+	private File npmBinDir;
+	private String yarnExec;
+	private File yarnDir;
+	private File yarnBinDir;
+	private String archiveDependency;
+	private String exeDependency;
 
-    def String npxScriptFile
+	public boolean getWindows() {
+		return windows;
+	}
 
-    def File nodeDir
+	public boolean isWindows() {
+		return windows;
+	}
 
-    def File nodeBinDir
+	public void setWindows(boolean windows) {
+		this.windows = windows;
+	}
 
-    /* NPM */
+	public String getNodeExec() {
+		return nodeExec;
+	}
 
-    def String npmExec
+	public void setNodeExec(String nodeExec) {
+		this.nodeExec = nodeExec;
+	}
 
-    def String npxExec
+	public String getNpmScriptFile() {
+		return npmScriptFile;
+	}
 
-    def File npmDir
+	public void setNpmScriptFile(String npmScriptFile) {
+		this.npmScriptFile = npmScriptFile;
+	}
 
-    def File npmBinDir
+	public String getNpxScriptFile() {
+		return npxScriptFile;
+	}
 
-    /* Yarn */
+	public void setNpxScriptFile(String npxScriptFile) {
+		this.npxScriptFile = npxScriptFile;
+	}
 
-    def String yarnExec
+	public File getNodeDir() {
+		return nodeDir;
+	}
 
-    def File yarnDir
+	public void setNodeDir(File nodeDir) {
+		this.nodeDir = nodeDir;
+	}
 
-    def File yarnBinDir
+	public File getNodeBinDir() {
+		return nodeBinDir;
+	}
 
-    /* Dependencies */
+	public void setNodeBinDir(File nodeBinDir) {
+		this.nodeBinDir = nodeBinDir;
+	}
 
-    def String archiveDependency
+	public String getNpmExec() {
+		return npmExec;
+	}
 
-    def String exeDependency
+	public void setNpmExec(String npmExec) {
+		this.npmExec = npmExec;
+	}
+
+	public String getNpxExec() {
+		return npxExec;
+	}
+
+	public void setNpxExec(String npxExec) {
+		this.npxExec = npxExec;
+	}
+
+	public File getNpmDir() {
+		return npmDir;
+	}
+
+	public void setNpmDir(File npmDir) {
+		this.npmDir = npmDir;
+	}
+
+	public File getNpmBinDir() {
+		return npmBinDir;
+	}
+
+	public void setNpmBinDir(File npmBinDir) {
+		this.npmBinDir = npmBinDir;
+	}
+
+	public String getYarnExec() {
+		return yarnExec;
+	}
+
+	public void setYarnExec(String yarnExec) {
+		this.yarnExec = yarnExec;
+	}
+
+	public File getYarnDir() {
+		return yarnDir;
+	}
+
+	public void setYarnDir(File yarnDir) {
+		this.yarnDir = yarnDir;
+	}
+
+	public File getYarnBinDir() {
+		return yarnBinDir;
+	}
+
+	public void setYarnBinDir(File yarnBinDir) {
+		this.yarnBinDir = yarnBinDir;
+	}
+
+	public String getArchiveDependency() {
+		return archiveDependency;
+	}
+
+	public void setArchiveDependency(String archiveDependency) {
+		this.archiveDependency = archiveDependency;
+	}
+
+	public String getExeDependency() {
+		return exeDependency;
+	}
+
+	public void setExeDependency(String exeDependency) {
+		this.exeDependency = exeDependency;
+	}
 }

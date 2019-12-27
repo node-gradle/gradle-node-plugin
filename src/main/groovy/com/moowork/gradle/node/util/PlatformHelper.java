@@ -1,86 +1,85 @@
-package com.moowork.gradle.node.util
+package com.moowork.gradle.node.util;
 
-class PlatformHelper
-{
-    static PlatformHelper INSTANCE = new PlatformHelper()
+import org.codehaus.groovy.runtime.ProcessGroovyMethods;
 
-    private final Properties props;
+import java.util.Properties;
 
-    public PlatformHelper()
-    {
-        this( System.getProperties() )
-    }
 
-    public PlatformHelper( final Properties props )
-    {
-        this.props = props;
-    }
+public class PlatformHelper {
 
-    private String property( final String name )
-    {
-        def value = this.props.getProperty( name )
-        return value != null ? value : System.getProperty( name )
-    }
+	public PlatformHelper() {
+		this(System.getProperties());
+	}
 
-    public String getOsName()
-    {
-        final String name = property( "os.name" ).toLowerCase()
-        if ( name.contains( "windows" ) )
-        {
-            return "win"
-        }
+	public PlatformHelper(final Properties props) {
+		this.props = props;
+	}
 
-        if ( name.contains( "mac" ) )
-        {
-            return "darwin"
-        }
+	private String property(final String name) {
+		String value = this.props.getProperty(name);
+		return value != null ? value : System.getProperty(name);
+	}
 
-        if ( name.contains( "linux" ) )
-        {
-            return "linux"
-        }
+	public String getOsName() {
+		final String name = property("os.name").toLowerCase();
+		if (name.contains("windows")) {
+			return "win";
+		}
 
-        if ( name.contains( "freebsd" ) )
-        {
-            return "linux"
-        }
+		if (name.contains("mac")) {
+			return "darwin";
+		}
 
-        if ( name.contains( "sunos" ) )
-        {
-            return "sunos"
-        }
+		if (name.contains("linux")) {
+			return "linux";
+		}
 
-        throw new IllegalArgumentException( "Unsupported OS: " + name )
-    }
+		if (name.contains("freebsd")) {
+			return "linux";
+		}
 
-    public String getOsArch()
-    {
-        final String arch = property( "os.arch" ).toLowerCase()
-        //as Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch
-        //unfortunately some JVMs say aarch32/64, so we need an additional conditional
-        if( arch.equals( "arm" ) || arch.startsWith( "aarch" ))
-        {
-            def systemArch = 'uname -m'.execute().text.trim()
-            //the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here
-            if(systemArch.equals("armv8l"))
-            {
-                return "arm64"
-            }
-            else
-            {
-                return systemArch
-            }
-        }
-        else if ( arch.contains( "64" ) )
-        {
-            return "x64"
-        }
+		if (name.contains("sunos")) {
+			return "sunos";
+		}
 
-        return "x86"
-    }
+		throw new IllegalArgumentException("Unsupported OS: " + name);
+	}
 
-    public boolean isWindows()
-    {
-        return getOsName().equals( "win" )
-    }
+	public String getOsArch() {
+		try {
+			final String arch = property("os.arch").toLowerCase();
+			//as Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch
+			//unfortunately some JVMs say aarch32/64, so we need an additional conditional
+			if (arch.equals("arm") || arch.startsWith("aarch")) {
+				String systemArch = ProcessGroovyMethods.getText(ProcessGroovyMethods.execute("uname -m")).trim();
+				//the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here
+				if (systemArch.equals("armv8l")) {
+					return "arm64";
+				} else {
+					return systemArch;
+				}
+			} else if (arch.contains("64")) {
+				return "x64";
+			}
+
+			return "x86";
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public boolean isWindows() {
+		return getOsName().equals("win");
+	}
+
+	public static PlatformHelper getINSTANCE() {
+		return INSTANCE;
+	}
+
+	public static void setINSTANCE(PlatformHelper INSTANCE) {
+		PlatformHelper.INSTANCE = INSTANCE;
+	}
+
+	private static PlatformHelper INSTANCE = new PlatformHelper();
+	private final Properties props;
 }

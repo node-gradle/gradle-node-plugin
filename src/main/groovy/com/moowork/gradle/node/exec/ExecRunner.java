@@ -1,112 +1,141 @@
-package com.moowork.gradle.node.exec
+package com.moowork.gradle.node.exec;
 
-import com.moowork.gradle.node.NodeExtension
-import com.moowork.gradle.node.variant.Variant
-import org.gradle.api.Project
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.process.ExecResult
+import com.moowork.gradle.node.NodeExtension;
+import com.moowork.gradle.node.variant.Variant;
+import groovy.lang.Closure;
+import org.gradle.api.Project;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
+import org.gradle.process.ExecResult;
+import org.gradle.process.ExecSpec;
 
-abstract class ExecRunner
-{
-    protected Project project
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-    protected NodeExtension ext
 
-    protected Variant variant
+public abstract class ExecRunner {
 
-    def Map<String, ?> environment = [:]
+	public ExecRunner(final Project project) {
+		this.project = project;
+	}
 
-    def File workingDir
+	@Internal
+	public File getWorkingDir() {
+		return this.workingDir;
+	}
 
-    @Internal
-    def List<?> arguments = []
+	@Input
+	public Map<String, ?> getEnvironment() {
+		return this.environment;
+	}
 
-    def boolean ignoreExitValue = false
+	@Input
+	public boolean getIgnoreExitValue() {
+		return this.ignoreExitValue;
+	}
 
-    @Internal
-    def Closure execOverrides
+	protected final ExecResult run(final String exec, final List<?> args) {
+		final String realExec = exec;
+		final List<?> realArgs = args;
+		final Map<Object, Object> execEnvironment = computeExecEnvironment();
+		final File execWorkingDir = computeWorkingDir();
+		return this.project.exec(new Closure<Object>(this, this) {
+			public Object doCall(ExecSpec it) {
+				it.setExecutable(realExec);
+				it.setArgs((List<String>) realArgs);
+				it.setEnvironment((Map<String, ?>) (Map<?, ?>) execEnvironment);
+				it.setIgnoreExitValue(ExecRunner.this.getIgnoreExitValue());
+				it.setWorkingDir(execWorkingDir);
 
-    public ExecRunner( final Project project )
-    {
-        this.project = project
-    }
+				if (ExecRunner.this.getExecOverrides() != null) {
+					return ExecRunner.this.getExecOverrides();
+				} else {
+					return null;
+				}
+			}
 
-    @Internal
-    File getWorkingDir()
-    {
-        return workingDir
-    }
+			public Object doCall() {
+				return doCall(null);
+			}
+		});
+	}
 
-    @Input
-    Map<String, ?> getEnvironment()
-    {
-        return this.environment
-    }
+	private File computeWorkingDir() {
+		File workingDir = this.workingDir != null ? this.workingDir : this.project.getExtensions().getByType(NodeExtension.class).getNodeModulesDir();
+		if (!workingDir.exists()) {
+			workingDir.mkdirs();
+		}
 
-    @Input
-    boolean getIgnoreExitValue()
-    {
-        return ignoreExitValue
-    }
+		return workingDir;
+	}
 
-    protected final ExecResult run( final String exec, final List<?> args )
-    {
-        def realExec = exec
-        def realArgs = args
-        def execEnvironment = computeExecEnvironment()
-        def execWorkingDir = computeWorkingDir()
-        return this.project.exec( {
-            it.executable = realExec
-            it.args = realArgs
-            it.environment = execEnvironment
-            it.ignoreExitValue = this.ignoreExitValue
-            it.workingDir = execWorkingDir
+	private Map<Object, Object> computeExecEnvironment() {
+		Map<Object, Object> environment = new LinkedHashMap<>();
+		environment.putAll(System.getenv());
+		environment.putAll(this.environment);
+		String path = computeAdditionalBinPath();
+		if (path != null) {
+			// Take care of Windows environments that may contain "Path" OR "PATH" - both existing
+			// possibly (but not in parallel as of now)
+			if (environment.get("Path") != null) {
+				environment.put("Path", path + File.pathSeparator + environment.get("Path"));
+			} else {
+				environment.put("PATH", path + File.pathSeparator + environment.get("PATH"));
+			}
+		}
 
-            if ( this.execOverrides != null )
-            {
-                this.execOverrides( it )
-            }
-        } )
-    }
+		return environment;
+	}
 
-    private File computeWorkingDir()
-    {
-        File workingDir = this.workingDir != null ? this.workingDir : this.project.node.nodeModulesDir
-        if (!workingDir.exists())
-        {
-            workingDir.mkdirs()
-        }
-        return workingDir
-    }
+	protected abstract String computeAdditionalBinPath();
 
-    private Map<Object, Object> computeExecEnvironment()
-    {
-        def environment = [:]
-        environment << System.getenv()
-        environment << this.environment
-        String path = computeAdditionalBinPath()
-        if (path != null)
-        {
-            // Take care of Windows environments that may contain "Path" OR "PATH" - both existing
-            // possibly (but not in parallel as of now)
-            if (environment['Path'] != null) {
-                environment['Path'] = path + File.pathSeparator + environment['Path']
-            } else {
-                environment['PATH'] = path + File.pathSeparator + environment['PATH']
-            }
-        }
-        return environment
-    }
+	public final ExecResult execute() {
+		this.ext = NodeExtension.get(this.project);
+		this.variant = this.ext.getVariant();
+		return doExecute();
+	}
 
-    protected abstract String computeAdditionalBinPath()
+	protected abstract ExecResult doExecute();
 
-    public final ExecResult execute()
-    {
-        this.ext = NodeExtension.get( this.project )
-        this.variant = this.ext.variant
-        return doExecute()
-    }
+	public void setEnvironment(Map<String, ?> environment) {
+		this.environment = environment;
+	}
 
-    protected abstract ExecResult doExecute()
+	public void setWorkingDir(File workingDir) {
+		this.workingDir = workingDir;
+	}
+
+	public List<Object> getArguments() {
+		return this.arguments;
+	}
+
+	public void setArguments(List<Object> arguments) {
+		this.arguments = arguments;
+	}
+
+	public void setIgnoreExitValue(boolean ignoreExitValue) {
+		this.ignoreExitValue = ignoreExitValue;
+	}
+
+	public Closure getExecOverrides() {
+		return this.execOverrides;
+	}
+
+	public void setExecOverrides(Closure execOverrides) {
+		this.execOverrides = execOverrides;
+	}
+
+	protected Project project;
+	protected NodeExtension ext;
+	protected Variant variant;
+	private Map<String, ?> environment = new LinkedHashMap<>();
+	private File workingDir;
+	@Internal
+	private List<Object> arguments = new ArrayList<>();
+	private boolean ignoreExitValue = false;
+	@Internal
+	private Closure execOverrides;
 }

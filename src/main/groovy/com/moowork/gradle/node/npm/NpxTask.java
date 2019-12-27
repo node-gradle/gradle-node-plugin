@@ -1,93 +1,85 @@
-package com.moowork.gradle.node.npm
+package com.moowork.gradle.node.npm;
 
-import com.moowork.gradle.node.NodePlugin
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.TaskAction
-import org.gradle.process.ExecResult
+import com.moowork.gradle.node.NodePlugin;
+import groovy.lang.Closure;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.process.ExecResult;
 
-class NpxTask
-    extends DefaultTask
-{
-    protected NpxExecRunner runner
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-    private List<?> args = []
 
-    private ExecResult result
+public class NpxTask extends DefaultTask {
 
-    private String command
+	public NpxTask() {
+		this.setGroup(NodePlugin.NODE_GROUP);
+		this.runner = new NpxExecRunner(this.getProject());
+		dependsOn(NpmSetupTask.NAME);
+	}
 
-    NpxTask()
-    {
-        this.group = NodePlugin.NODE_GROUP
-        this.runner = new NpxExecRunner( this.project )
-        dependsOn( NpmSetupTask.NAME )
-    }
+	public void setArgs(final Iterable<?> value) {
+		this.args = DefaultGroovyMethods.asList((Iterable<?>) value);
+	}
 
-    void setArgs( final Iterable<?> value )
-    {
-        this.args = value.asList()
-    }
+	@Input
+	public String getCommand() {
+		return command;
+	}
 
-    @Input
-    String getCommand() {
-        return command
-    }
+	public void setCommand(String cmd) {
+		this.command = cmd;
+	}
 
-    void setCommand(String cmd )
-    {
-        this.command = cmd
-    }
+	@Input
+	public List<?> getArgs() {
+		return this.args;
+	}
 
-    @Input
-    List<?> getArgs()
-    {
-        return this.args
-    }
+	public void setEnvironment(final Map<String, ?> value) {
+		DefaultGroovyMethods.leftShift((Map<String, Object>) this.runner.getEnvironment(), (Map<String, Object>) value);
+	}
 
-    void setEnvironment( final Map<String, ?> value )
-    {
-        this.runner.environment << value
-    }
+	public void setWorkingDir(final File workingDir) {
+		this.runner.setWorkingDir(workingDir);
+	}
 
-    void setWorkingDir( final File workingDir )
-    {
-        this.runner.workingDir = workingDir
-    }
+	public void setIgnoreExitValue(final boolean value) {
+		this.runner.setIgnoreExitValue(value);
+	}
 
-    void setIgnoreExitValue( final boolean value )
-    {
-        this.runner.ignoreExitValue = value
-    }
+	public void setExecOverrides(final Closure closure) {
+		this.runner.setExecOverrides(closure);
+	}
 
-    void setExecOverrides( final Closure closure )
-    {
-        this.runner.execOverrides = closure
-    }
+	@Nested
+	public NpxExecRunner getRunner() {
+		return runner;
+	}
 
-    @Nested
-    NpxExecRunner getRunner()
-    {
-        return runner
-    }
+	@Internal
+	public ExecResult getResult() {
+		return this.result;
+	}
 
-    @Internal
-    ExecResult getResult()
-    {
-        return this.result
-    }
+	@TaskAction
+	public void exec() {
+		if (this.command != null) {
+			DefaultGroovyMethods.addAll(this.runner.getArguments(), new Object[]{this.command});
+		}
 
-    @TaskAction
-    void exec()
-    {
-        if ( this.command != null )
-        {
-            this.runner.arguments.addAll( this.command )
-        }
+		this.runner.getArguments().addAll(this.args);
+		this.result = this.runner.execute();
+	}
 
-        this.runner.arguments.addAll( this.args )
-        this.result = this.runner.execute()
-    }
+	protected NpxExecRunner runner;
+	private List<?> args = new ArrayList<Object>();
+	private ExecResult result;
+	private String command;
 }

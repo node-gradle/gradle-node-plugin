@@ -1,66 +1,63 @@
-package com.moowork.gradle.node.npm
+package com.moowork.gradle.node.npm;
 
-import com.moowork.gradle.node.exec.ExecRunner
-import org.gradle.api.Project
-import org.gradle.api.tasks.Internal
-import org.gradle.process.ExecResult
+import com.moowork.gradle.node.exec.ExecRunner;
+import org.gradle.api.Project;
+import org.gradle.api.tasks.Internal;
+import org.gradle.process.ExecResult;
 
-class NpmExecRunner
-    extends ExecRunner
-{
-    public NpmExecRunner( final Project project )
-    {
-        super( project )
-    }
+import java.io.File;
+import java.util.List;
 
-    @Override
-    protected ExecResult doExecute()
-    {
 
-        def exec = getCommand()
-        def arguments = this.arguments
+public class NpmExecRunner extends ExecRunner {
 
-        if ( this.ext.download )
-        {
-            def File localNpm = getLocalCommandScript()
-            if ( localNpm.exists() )
-            {
-                exec = this.variant.nodeExec
-                arguments = [localNpm.absolutePath] + arguments
-            }
-            else if ( !new File(exec).exists() )
-            {
-                exec = this.variant.nodeExec
-                arguments = [getCommandScript()] + arguments
-            }
-        }
-        return run( exec, arguments )
-    }
+	public NpmExecRunner(final Project project) {
+		super(project);
+	}
 
-    @Internal
-    protected String getCommand() {
-        this.variant.npmExec
-    }
+	@Override
+	protected ExecResult doExecute() {
 
-    @Internal
-    protected File getLocalCommandScript() {
-        return project.file(new File(this.ext.nodeModulesDir, 'node_modules/npm/bin/npm-cli.js'))
-    }
+		String exec = getCommand();
+		List<Object> arguments = this.getArguments();
 
-    @Internal
-    protected String getCommandScript() {
-        return this.variant.npmScriptFile
-    }
+		if (this.ext.getDownload()) {
+			File localNpm = getLocalCommandScript();
+			if (localNpm.exists()) {
+				exec = this.variant.getNodeExec();
+				arguments.add(0, localNpm.getAbsolutePath());
+			} else if (!new File(exec).exists()) {
+				exec = this.variant.getNodeExec();
+				arguments.add(0, getCommandScript());
+			}
+		}
 
-    @Override
-    protected String computeAdditionalBinPath()
-    {
-        if (ext.download)
-        {
-            def npmBinDir = this.variant.npmBinDir.getAbsolutePath();
-            def nodeBinDir = this.variant.nodeBinDir.getAbsolutePath();
-            return npmBinDir + File.pathSeparator + nodeBinDir
-        }
-        return null
-    }
+		return run(exec, arguments);
+	}
+
+	@Internal
+	protected String getCommand() {
+		return this.variant.getNpmExec();
+	}
+
+	@Internal
+	protected File getLocalCommandScript() {
+		return this.project.file(new File(this.ext.getNodeModulesDir(), "node_modules/npm/bin/npm-cli.js"));
+	}
+
+	@Internal
+	protected String getCommandScript() {
+		return this.variant.getNpmScriptFile();
+	}
+
+	@Override
+	protected String computeAdditionalBinPath() {
+		if (this.ext.getDownload()) {
+			String npmBinDir = this.variant.getNpmBinDir().getAbsolutePath();
+			String nodeBinDir = this.variant.getNodeBinDir().getAbsolutePath();
+			return npmBinDir + File.pathSeparator + nodeBinDir;
+		}
+
+		return null;
+	}
 }

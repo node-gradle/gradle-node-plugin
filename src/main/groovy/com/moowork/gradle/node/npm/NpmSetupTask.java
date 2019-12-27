@@ -1,143 +1,135 @@
-package com.moowork.gradle.node.npm
+package com.moowork.gradle.node.npm;
 
-import com.moowork.gradle.node.NodeExtension
-import com.moowork.gradle.node.NodePlugin
-import com.moowork.gradle.node.task.SetupTask
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
-import org.gradle.process.ExecResult
+import com.moowork.gradle.node.NodeExtension;
+import com.moowork.gradle.node.NodePlugin;
+import com.moowork.gradle.node.task.SetupTask;
+import com.moowork.gradle.node.variant.Variant;
+import groovy.lang.Closure;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.process.ExecResult;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 
 /**
  * npm install that only gets executed if gradle decides so.
  **/
-class NpmSetupTask
-    extends DefaultTask
-{
-    public final static String NAME = 'npmSetup'
+public class NpmSetupTask extends DefaultTask {
 
-    private NpmExecRunner runner
+	public NpmSetupTask() {
+		dependsOn(SetupTask.NAME);
 
-    private NodeExtension config
+		this.setGroup(NodePlugin.NODE_GROUP);
+		this.setDescription("Setup a specific version of npm to be used by the build.");
+		this.setEnabled(false);
 
-    protected List<?> args = []
+		this.runner = new NpmExecRunner(this.getProject());
+	}
 
-    private ExecResult result
+	@Input
+	public Set<Object> getInput() {
+		Set<Object> set = new HashSet<>();
+		set.add(getConfig().getDownload());
+		set.add(getConfig().getNpmVersion());
+		set.add(getConfig().getNpmWorkDir());
+		return set;
+	}
 
-    NpmSetupTask()
-    {
-        dependsOn( SetupTask.NAME )
+	@OutputDirectory
+	public File getNpmDir() {
+		return getVariant().getNpmDir();
+	}
 
-        this.group = NodePlugin.NODE_GROUP
-        this.description = 'Setup a specific version of npm to be used by the build.'
-        this.enabled = false
+	@Internal
+	public ExecResult getResult() {
+		return this.result;
+	}
 
-        this.runner = new NpmExecRunner( this.project )
-    }
+	@Internal
+	protected NodeExtension getConfig() {
+		if (this.config != null) {
+			return this.config;
+		}
 
-    @Input
-    Set<Object> getInput()
-    {
-        def set = new HashSet<>()
-        set.add( getConfig().download )
-        set.add( getConfig().npmVersion )
-        set.add( getConfig().npmWorkDir )
-        return set
-    }
+		this.config = NodeExtension.get(this.getProject());
+		return this.config;
+	}
 
-    @OutputDirectory
-    File getNpmDir()
-    {
-        return getVariant().npmDir
-    }
+	@Internal
+	protected Variant getVariant() {
+		return getConfig().getVariant();
+	}
 
-    @Internal
-    ExecResult getResult()
-    {
-        return this.result
-    }
+	@Input
+	public List<Object> getArgs() {
+		return this.args;
+	}
 
-    @Internal
-    protected getConfig()
-    {
-        if ( this.config != null )
-        {
-            return this.config
-        }
+	public void setArgs(final Iterable<?> value) {
+		this.args = DefaultGroovyMethods.toList((Iterable<Object>) value);
+	}
 
-        this.config = NodeExtension.get( this.project )
-        return this.config
-    }
+	public void setIgnoreExitValue(final boolean value) {
+		this.runner.setIgnoreExitValue(value);
+	}
 
-    @Internal
-    protected getVariant()
-    {
-        return getConfig().variant
-    }
+	public void setExecOverrides(final Closure closure) {
+		this.runner.setExecOverrides(closure);
+	}
 
-    @Input
-    List<?> getArgs()
-    {
-        return this.args
-    }
+	@Nested
+	public NpmExecRunner getRunner() {
+		return this.runner;
+	}
 
-    void setArgs( final Iterable<?> value )
-    {
-        this.args = value.toList()
-    }
+	@TaskAction
+	public void exec() {
+		this.runner.getArguments().addAll(this.args);
+		this.result = this.runner.execute();
+	}
 
-    void setIgnoreExitValue( final boolean value )
-    {
-        this.runner.ignoreExitValue = value
-    }
+	public void configureVersion(final String npmVersion) {
+		if (!npmVersion.isEmpty()) {
+			getLogger().debug("Setting npmVersion to {}", npmVersion);
+			setArgs(DefaultGroovyMethods.plus(DefaultGroovyMethods.plus(new ArrayList<String>(Arrays.asList("install", "--global", "--no-save")), proxySettings()), new ArrayList<>(Arrays.asList("--prefix", getVariant().getNpmDir().getAbsolutePath(), "npm@" + npmVersion))));
+			setEnabled(true);
+		}
+	}
 
-    void setExecOverrides( final Closure closure )
-    {
-        this.runner.execOverrides = closure
-    }
+	public static List<String> proxySettings() {
+		for (String[] proxySettings : Arrays.asList(new String[]{"http", "--proxy"}, new String[]{"https", "--https-proxy"})) {
+			String proxyHost = System.getProperty(proxySettings[0] + ".proxyHost");
+			String proxyPort = System.getProperty(proxySettings[0] + ".proxyPort");
+			if (proxyHost != null && proxyPort != null) {
+				proxyHost = proxyHost.replaceAll("^https?://", "");
+				String proxyUser = System.getProperty(proxySettings[0] + ".proxyUser");
+				String proxyPassword = System.getProperty(proxySettings[0] + ".proxyPassword");
+				if (proxyUser != null && proxyPassword != null) {
+					return Collections.singletonList(proxySettings[1] + " " + proxySettings[0] + "://" + proxyUser + ":" + proxyPassword + "@" + proxyHost + ":" + proxyPort);
+				} else {
+					return Collections.singletonList(proxySettings[1] + " " + proxySettings[0] + "://" + proxyHost + ":" + proxyPort);
+				}
+			}
+		}
 
-    @Nested
-    NpmExecRunner getRunner()
-    {
-        return runner
-    }
+		return new ArrayList<>();
+	}
 
-    @TaskAction
-    void exec()
-    {
-        this.runner.arguments.addAll( this.args )
-        this.result = this.runner.execute()
-    }
-
-    void configureVersion( String npmVersion )
-    {
-        if ( !npmVersion.isEmpty() )
-        {
-            logger.debug( "Setting npmVersion to ${npmVersion}" )
-            setArgs(['install', '--global', '--no-save'] + proxySettings() + ['--prefix', getVariant().npmDir.absolutePath, "npm@${npmVersion}"])
-            enabled = true
-        }
-    }
-
-    static List<String> proxySettings() {
-        for(String[] proxySettings : [['http', '--proxy'], ['https', '--https-proxy']]) {
-            String proxyHost = System.getProperty(proxySettings[0] + '.proxyHost')
-            String proxyPort = System.getProperty(proxySettings[0] + '.proxyPort')
-            if (proxyHost != null && proxyPort != null) {
-                proxyHost = proxyHost.replaceAll('^https?://', '')
-                String proxyUser = System.getProperty(proxySettings[0] + '.proxyUser')
-                String proxyPassword = System.getProperty(proxySettings[0] + '.proxyPassword')
-                if (proxyUser != null && proxyPassword != null) {
-                    return ["${proxySettings[1]} ${proxySettings[0]}://$proxyUser:$proxyPassword@$proxyHost:$proxyPort"]
-                } else {
-                    return ["${proxySettings[1]} ${proxySettings[0]}://$proxyHost:$proxyPort"]
-                }
-            }
-        }
-        return []
-    }
-
+	public static final String NAME = "npmSetup";
+	private NpmExecRunner runner;
+	private NodeExtension config;
+	protected List<Object> args = new ArrayList<>();
+	private ExecResult result;
 }

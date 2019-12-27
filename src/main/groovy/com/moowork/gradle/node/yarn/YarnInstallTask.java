@@ -1,63 +1,62 @@
-package com.moowork.gradle.node.yarn
+package com.moowork.gradle.node.yarn;
 
-import com.moowork.gradle.node.NodeExtension
-import com.moowork.gradle.node.NodePlugin
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputFiles
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
+import com.moowork.gradle.node.NodeExtension;
+import com.moowork.gradle.node.NodePlugin;
+import groovy.lang.Closure;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.gradle.api.file.ConfigurableFileTree;
+import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.OutputFiles;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
+
+import java.io.File;
+
 
 /**
- * yarn install that only gets executed if gradle decides so.*/
-class YarnInstallTask
-    extends YarnTask
-{
-    public final static String NAME = 'yarn'
+ * yarn install that only gets executed if gradle decides so.
+ */
+public class YarnInstallTask extends YarnTask {
 
-    private Closure nodeModulesOutputFilter
+	public YarnInstallTask() {
+		this.setGroup(NodePlugin.NODE_GROUP);
+		this.setDescription("Install node packages using Yarn.");
+		setYarnCommand(new String[]{""});
+		dependsOn(YarnSetupTask.NAME);
+	}
 
-    public YarnInstallTask()
-    {
-        this.group = NodePlugin.NODE_GROUP
-        this.description = 'Install node packages using Yarn.'
-        setYarnCommand( '' )
-        dependsOn( [YarnSetupTask.NAME] )
-    }
+	public void setNodeModulesOutputFilter(Closure nodeModulesOutputFilter) {
+		this.nodeModulesOutputFilter = nodeModulesOutputFilter;
+	}
 
-    void setNodeModulesOutputFilter(Closure nodeModulesOutputFilter)
-    {
-        this.nodeModulesOutputFilter = nodeModulesOutputFilter
-    }
+	@InputFile
+	@Optional
+	@PathSensitive(PathSensitivity.RELATIVE)
+	protected File getPackageJsonFile() {
+		File packageJsonFile = new File(this.getProject().getExtensions().getByType(NodeExtension.class).getNodeModulesDir(), "package.json");
+		return packageJsonFile.exists() ? packageJsonFile : null;
+	}
 
-    @InputFile
-    @Optional
-    @PathSensitive(PathSensitivity.RELATIVE)
-    protected getPackageJsonFile()
-    {
-        def packageJsonFile = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'package.json')
-        return packageJsonFile.exists() ? packageJsonFile : null
-    }
+	@InputFile
+	@Optional
+	@PathSensitive(PathSensitivity.RELATIVE)
+	protected File getYarnLockFile() {
+		File lockFile = new File(this.getProject().getExtensions().getByType(NodeExtension.class).getNodeModulesDir(), "yarn.lock");
+		return lockFile.exists() ? lockFile : null;
+	}
 
-    @InputFile
-    @Optional
-    @PathSensitive(PathSensitivity.RELATIVE)
-    protected getYarnLockFile()
-    {
-        def lockFile = new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'yarn.lock')
-        return lockFile.exists() ? lockFile : null
-    }
+	@OutputFiles
+	protected ConfigurableFileTree getNodeModulesDir() {
+		File nodeModulesDirectory = new File(this.getProject().getExtensions().getByType(NodeExtension.class).getNodeModulesDir(), "node_modules");
+		ConfigurableFileTree nodeModulesFileTree = getProject().fileTree(nodeModulesDirectory);
+		if (DefaultGroovyMethods.asBoolean(this.nodeModulesOutputFilter)) {
+			this.nodeModulesOutputFilter.call(nodeModulesFileTree);
+		}
 
-    @OutputFiles
-    protected getNodeModulesDir()
-    {
-        def nodeModulesDirectory =
-                new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'node_modules')
-        def nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
-        if (nodeModulesOutputFilter)
-        {
-            nodeModulesOutputFilter(nodeModulesFileTree)
-        }
-        return nodeModulesFileTree
-    }
+		return nodeModulesFileTree;
+	}
+
+	public static final String NAME = "yarn";
+	private Closure nodeModulesOutputFilter;
 }

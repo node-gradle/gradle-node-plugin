@@ -1,127 +1,113 @@
-package com.moowork.gradle.node
+package com.moowork.gradle.node;
 
-import com.moowork.gradle.node.npm.NpmInstallTask
-import com.moowork.gradle.node.npm.NpmSetupTask
-import com.moowork.gradle.node.npm.NpmTask
-import com.moowork.gradle.node.npm.NpxTask
-import com.moowork.gradle.node.task.NodeTask
-import com.moowork.gradle.node.task.SetupTask
-import com.moowork.gradle.node.variant.VariantBuilder
-import com.moowork.gradle.node.yarn.YarnInstallTask
-import com.moowork.gradle.node.yarn.YarnSetupTask
-import com.moowork.gradle.node.yarn.YarnTask
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import com.moowork.gradle.node.npm.NpmInstallTask;
+import com.moowork.gradle.node.npm.NpmSetupTask;
+import com.moowork.gradle.node.npm.NpmTask;
+import com.moowork.gradle.node.npm.NpxTask;
+import com.moowork.gradle.node.task.NodeTask;
+import com.moowork.gradle.node.task.SetupTask;
+import com.moowork.gradle.node.variant.VariantBuilder;
+import com.moowork.gradle.node.yarn.YarnInstallTask;
+import com.moowork.gradle.node.yarn.YarnSetupTask;
+import com.moowork.gradle.node.yarn.YarnTask;
+import groovy.lang.Closure;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
 
-class NodePlugin
-    implements Plugin<Project>
-{
-    public static final String NODE_GROUP = "Node"
 
-    private Project project
+public class NodePlugin implements Plugin<Project> {
 
-    private NodeExtension config
+	@Override
+	public void apply(final Project project) {
+		this.project = project;
+		this.config = NodeExtension.create(this.project);
 
-    private SetupTask setupTask
+		addGlobalTypes();
+		addTasks();
+		addNpmRule();
+		addYarnRule();
 
-    private NpmSetupTask npmSetupTask
+		this.project.afterEvaluate(new Closure<Object>(this, this) {
+			public void doCall(Project it) {
+				NodePlugin.this.config.setVariant(new VariantBuilder(NodePlugin.this.config).build());
+				configureSetupTask();
+				configureNpmSetupTask();
+				configureYarnSetupTask();
+			}
 
-    private YarnSetupTask yarnSetupTask
+			public void doCall() {
+				doCall(null);
+			}
+		});
+	}
 
-    @Override
-    void apply( final Project project )
-    {
-        this.project = project
-        this.config = NodeExtension.create( this.project )
+	private void addGlobalTypes() {
+		addGlobalTaskType(NodeTask.class);
+		addGlobalTaskType(NpmTask.class);
+		addGlobalTaskType(NpxTask.class);
+		addGlobalTaskType(YarnTask.class);
+	}
 
-        addGlobalTypes()
-        addTasks()
-        addNpmRule()
-        addYarnRule()
+	private void addTasks() {
+		this.project.getTasks().create(NpmInstallTask.NAME, NpmInstallTask.class);
+		this.project.getTasks().create(YarnInstallTask.NAME, YarnInstallTask.class);
+		this.setupTask = this.project.getTasks().create(SetupTask.NAME, SetupTask.class);
+		this.npmSetupTask = this.project.getTasks().create(NpmSetupTask.NAME, NpmSetupTask.class);
+		this.yarnSetupTask = this.project.getTasks().create(YarnSetupTask.NAME, YarnSetupTask.class);
+	}
 
-        this.project.afterEvaluate {
-            this.config.variant = new VariantBuilder( this.config ).build()
-            configureSetupTask()
-            configureNpmSetupTask()
-            configureYarnSetupTask()
-        }
-    }
+	private void addGlobalTaskType(Class type) {
+		this.project.getExtensions().getExtraProperties().set(type.getSimpleName(), type);
+	}
 
-    private void addGlobalTypes()
-    {
-        addGlobalTaskType( NodeTask )
-        addGlobalTaskType( NpmTask )
-        addGlobalTaskType( NpxTask )
-        addGlobalTaskType( YarnTask )
-    }
+	private void addNpmRule() {
+		// note this rule also makes it possible to specify e.g. "dependsOn npm_install"
+		this.project.getTasks().addRule("Pattern: \"npm_<command>\": Executes an NPM command.", taskName -> {
+			if (taskName.startsWith("npm_")) {
+				NpmTask npmTask = NodePlugin.this.project.getTasks().create(taskName, NpmTask.class);
 
-    private void addTasks()
-    {
-        this.project.tasks.create( NpmInstallTask.NAME, NpmInstallTask )
-        this.project.tasks.create( YarnInstallTask.NAME, YarnInstallTask )
-        this.setupTask = this.project.tasks.create( SetupTask.NAME, SetupTask )
-        this.npmSetupTask = this.project.tasks.create( NpmSetupTask.NAME, NpmSetupTask )
-        this.yarnSetupTask = this.project.tasks.create( YarnSetupTask.NAME, YarnSetupTask )
-    }
+				String[] tokens = DefaultGroovyMethods.tail(taskName.split("_"));// all except first
+				npmTask.setNpmCommand(tokens);
 
-    private void addGlobalTaskType( Class type )
-    {
-        this.project.extensions.extraProperties.set( type.getSimpleName(), type )
-    }
+				if (DefaultGroovyMethods.head(tokens).equalsIgnoreCase("run")) {
+					npmTask.dependsOn(NpmInstallTask.NAME);
+				}
+			}
+		});
+	}
 
-    private void addNpmRule()
-    {
-        // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
-        project.getTasks().addRule( 'Pattern: "npm_<command>": Executes an NPM command.' ) { String taskName ->
-            if ( taskName.startsWith( "npm_" ) )
-            {
-                NpmTask npmTask = project.getTasks().create( taskName, NpmTask.class )
+	private void addYarnRule() {
+		// note this rule also makes it possible to specify e.g. "dependsOn yarn_install"
+		this.project.getTasks().addRule("Pattern: \"yarn_<command>\": Executes an Yarn command.", taskName -> {
+			if (taskName.startsWith("yarn_")) {
+				YarnTask yarnTask = NodePlugin.this.project.getTasks().create(taskName, YarnTask.class);
+				String[] tokens = DefaultGroovyMethods.tail(taskName.split("_"));// all except first
+				yarnTask.setYarnCommand(tokens);
 
-                String[] tokens = taskName.split( '_' ).tail() // all except first
-                npmTask.npmCommand = tokens
+				if (DefaultGroovyMethods.head(tokens).equalsIgnoreCase("run")) {
+					yarnTask.dependsOn(YarnInstallTask.NAME);
+				}
+			}
+		});
+	}
 
-                if ( tokens.head().equalsIgnoreCase( "run" ) )
-                {
-                    npmTask.dependsOn( NpmInstallTask.NAME )
-                }
+	private void configureSetupTask() {
+		this.setupTask.setEnabled(this.config.getDownload());
+	}
 
-                return npmTask
-            }
-        }
-    }
+	private void configureNpmSetupTask() {
+		this.npmSetupTask.configureVersion(this.config.getNpmVersion());
+	}
 
-    private void addYarnRule()
-    {
-        // note this rule also makes it possible to specify e.g. "dependsOn yarn_install"
-        project.getTasks().addRule( 'Pattern: "yarn_<command>": Executes an Yarn command.' ) { String taskName ->
-            if ( taskName.startsWith( "yarn_" ) )
-            {
-                YarnTask yarnTask = project.getTasks().create( taskName, YarnTask.class )
-                String[] tokens = taskName.split( '_' ).tail() // all except first
-                yarnTask.yarnCommand = tokens
+	private void configureYarnSetupTask() {
+		this.yarnSetupTask.configureVersion(this.config.getYarnVersion());
+	}
 
-                if ( tokens.head().equalsIgnoreCase( "run" ) )
-                {
-                    yarnTask.dependsOn( YarnInstallTask.NAME )
-                }
-
-                return yarnTask
-            }
-        }
-    }
-
-    private void configureSetupTask()
-    {
-        this.setupTask.setEnabled( this.config.download )
-    }
-
-    private void configureNpmSetupTask()
-    {
-        this.npmSetupTask.configureVersion( this.config.npmVersion )
-    }
-
-    private void configureYarnSetupTask()
-    {
-        this.yarnSetupTask.configureVersion( this.config.yarnVersion )
-    }
+	public static final String NODE_GROUP = "Node";
+	private Project project;
+	private NodeExtension config;
+	private SetupTask setupTask;
+	private NpmSetupTask npmSetupTask;
+	private YarnSetupTask yarnSetupTask;
 }
