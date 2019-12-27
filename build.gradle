@@ -1,16 +1,18 @@
 buildscript {
-    apply from: "$rootDir/gradle/buildscript.gradle", to: buildscript
+	apply from: "$rootDir/gradle/buildscript.gradle", to: buildscript
+}
+
+plugins {
+	id('idea')
+	id('groovy')
+	id('maven-publish')
+	id('org.gradle.kotlin.kotlin-dsl') version "1.3.1"
+	id('com.cinnober.gradle.semver-git') version "2.4.0"
 }
 
 group = 'com.github.node-gradle'
 
-apply plugin: 'idea'
-apply plugin: 'groovy'
-apply plugin: 'maven-publish'
-apply plugin: 'java-gradle-plugin'
-
 ext.nextVersion = 'minor'
-apply plugin: 'com.cinnober.gradle.semver-git'
 
 apply from: "$rootDir/gradle/additional-artifacts.gradle"
 apply from: "$rootDir/gradle/coverage.gradle"
@@ -22,37 +24,37 @@ sourceCompatibility = compatibilityVersion
 targetCompatibility = compatibilityVersion
 
 repositories {
-    jcenter()
+	jcenter()
 }
 
 dependencies {
-    testImplementation 'cglib:cglib-nodep:3.2.9'
-    testImplementation 'org.objenesis:objenesis:3.1'
-    testImplementation 'org.apache.commons:commons-io:1.3.2'
-    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
-    testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
+	testImplementation 'cglib:cglib-nodep:3.2.9'
+	testImplementation 'org.objenesis:objenesis:3.1'
+	testImplementation 'org.apache.commons:commons-io:1.3.2'
+	testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+	testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
 tasks.withType( Test ) {
-    testLogging {
-        events "skipped", "failed"
-        exceptionFormat "full"
-    }
+	testLogging {
+		events "skipped", "failed"
+		exceptionFormat "full"
+	}
 }
 
 test {
-    if ( project.hasProperty( 'skipIT' ) )
-    {
-        exclude '**/*_integTest*'
-    }
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+	if ( project.hasProperty( 'skipIT' ) )
+	{
+		exclude '**/*_integTest*'
+	}
+	maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 }
 
 gradlePlugin {
-    plugins {
-        nodePlugin {
-            id = "com.github.node-gradle.node"
-            implementationClass = "com.moowork.gradle.node.NodePlugin"
-        }
-    }
+	plugins {
+		nodePlugin {
+			id = "com.github.node-gradle.node"
+			implementationClass = "com.moowork.gradle.node.NodePlugin"
+		}
+	}
 }
