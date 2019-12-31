@@ -188,7 +188,7 @@ class VariantBuilderTest
           ext.version = '5.12.0'
           ext.workDir = new File('.gradle/node').absoluteFile
 
-          def platformHelperSpy = Spy(PlatformHelper, constructorArgs: [this.props])
+          PlatformHelper platformHelperSpy = (PlatformHelper) Spy(PlatformHelper, constructorArgs: [this.props])
           platformHelperSpy.osArch >> { sysOsArch }
           def builder = new VariantBuilder(ext, platformHelperSpy)
           def variant = builder.build()

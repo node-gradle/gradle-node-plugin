@@ -67,6 +67,6 @@ class PlatformHelperTest
         this.helper.getOsName()
 
         then:
-        thrown( IllegalArgumentException )
+        thrown( IllegalStateException )
     }
 }
