@@ -1,90 +1,45 @@
-package com.moowork.gradle.node.yarn;
+package com.moowork.gradle.node.yarn
 
-import com.moowork.gradle.node.NodePlugin;
-import groovy.lang.Closure;
-import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Nested;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.TaskAction;
-import org.gradle.process.ExecResult;
-import org.gradle.process.ExecSpec;
+import com.moowork.gradle.node.NodePlugin
+import com.moowork.gradle.node.util.MutableAlias
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.*
+import org.gradle.process.ExecResult
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+open class YarnTask : DefaultTask() {
 
+    @get:Nested
+    val execRunner = YarnExecRunner(project)
+    @get:Optional
+    @get:Input
+    var args = mutableListOf<String>()
+    @get:Optional
+    @get:Input
+    var yarnCommand = mutableListOf<String>()
 
-public class YarnTask extends DefaultTask {
+    @get:Internal
+    var result: ExecResult? = null
 
-	protected YarnExecRunner runner;
+    @get:Internal
+    var execOverrides by MutableAlias { execRunner::execOverrides }
+    @get:Internal
+    var ignoreExitValue by MutableAlias { execRunner::ignoreExitValue }
+    @get:Internal
+    var workingDir by MutableAlias { execRunner::workingDir }
 
-	private List<String> args = new ArrayList<>();
-	private ExecResult result;
-	private String[] yarnCommand;
+    init {
+        group = NodePlugin.NODE_GROUP
+        dependsOn(YarnSetupTask.NAME)
+    }
 
-	public YarnTask() {
-		this.setGroup(NodePlugin.NODE_GROUP);
-		this.runner = new YarnExecRunner(this.getProject());
-		dependsOn(YarnSetupTask.NAME);
-	}
+    fun setEnvironment(value: Map<String, String>) {
+        execRunner.environment.putAll(value)
+    }
 
-	public void setArgs(final List<String> value) {
-		this.args = value;
-	}
-
-	public void setYarnCommand(String[] cmd) {
-		this.yarnCommand = cmd;
-	}
-
-	@Input
-	@Optional
-	public String[] getYarnCommand() {
-		return this.yarnCommand;
-	}
-
-	@Input
-	@Optional
-	public Iterable<String> getArgs() {
-		return this.args;
-	}
-
-	@Nested
-	public YarnExecRunner getExecRunner() {
-		return this.runner;
-	}
-
-	public void setEnvironment(final Map<String, String> value) {
-		this.runner.getEnvironment().putAll(value);
-	}
-
-	public void setWorkingDir(final File workingDir) {
-		this.runner.setWorkingDir(workingDir);
-	}
-
-	public void setIgnoreExitValue(final boolean value) {
-		this.runner.setIgnoreExitValue(value);
-	}
-
-	public void setExecOverrides(final Closure<ExecSpec> closure) {
-		this.runner.setExecOverrides(closure);
-	}
-
-	@Internal
-	public ExecResult getResult() {
-		return this.result;
-	}
-
-	@TaskAction
-	public void exec() {
-		if (this.yarnCommand != null) {
-			this.runner.getArguments().addAll(Arrays.asList(this.yarnCommand));
-		}
-
-		this.args.forEach(this.runner.getArguments()::add);
-		this.result = this.runner.execute();
-	}
+    @TaskAction
+    fun exec() {
+        execRunner.arguments.addAll(yarnCommand)
+        execRunner.arguments.addAll(args)
+        result = execRunner.execute()
+    }
 }

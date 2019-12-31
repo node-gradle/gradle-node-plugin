@@ -1,31 +1,16 @@
-package com.moowork.gradle.node.exec;
+package com.moowork.gradle.node.exec
 
-import org.gradle.api.Project;
-import org.gradle.process.ExecResult;
+import org.gradle.api.Project
+import org.gradle.process.ExecResult
 
+class NodeExecRunner(project: Project) : ExecRunner(project) {
 
-public class NodeExecRunner extends ExecRunner {
+    override fun doExecute(): ExecResult {
+        val exec = if (ext.download) variant.nodeExec else "node"
+        return run(exec, arguments)
+    }
 
-	public NodeExecRunner(final Project project) {
-		super(project);
-	}
-
-	@Override
-	protected ExecResult doExecute() {
-		String exec = "node";
-		if (this.ext.getDownload()) {
-			exec = this.variant.getNodeExec();
-		}
-
-		return run(exec, this.getArguments());
-	}
-
-	@Override
-	protected String computeAdditionalBinPath() {
-		if (this.ext.getDownload()) {
-			return this.variant.getNodeBinDir().getAbsolutePath();
-		}
-
-		return null;
-	}
+    override fun computeAdditionalBinPath(): String {
+        return if (ext.download) variant.nodeBinDir.absolutePath else ""
+    }
 }

@@ -1,59 +1,47 @@
-package com.moowork.gradle.node.yarn;
+package com.moowork.gradle.node.yarn
 
-import com.moowork.gradle.node.NodePlugin;
-import com.moowork.gradle.node.npm.NpmSetupTask;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.OutputDirectory;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.moowork.gradle.node.NodePlugin
+import com.moowork.gradle.node.npm.NpmSetupTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
+import java.io.File
+import java.util.*
 
 /**
  * Setup a specific version of Yarn to be used by the build.
- **/
-public class YarnSetupTask extends NpmSetupTask {
+ */
+open class YarnSetupTask : NpmSetupTask() {
 
-	public static final String NAME = "yarnSetup";
+    init {
+        group = NodePlugin.NODE_GROUP
+        description = "Setup a specific version of Yarn to be used by the build."
+        isEnabled = false
+    }
 
-	public YarnSetupTask() {
-		this.setGroup(NodePlugin.NODE_GROUP);
-		this.setDescription("Setup a specific version of Yarn to be used by the build.");
+    @Input
+    override fun getInput(): Set<Any?> {
+        val set: MutableSet<Any?> = HashSet()
+        set.add(config.download)
+        set.add(config.yarnVersion)
+        return set
+    }
 
-		this.setEnabled(false);
-	}
+    @OutputDirectory
+    fun getYarnDir(): File {
+        return variant.yarnDir
+    }
 
-	@Override
-	@Input
-	public Set<Object> getInput() {
-		Set<Object> set = new HashSet<>();
-		set.add(this.getConfig().getDownload());
-		set.add(this.getConfig().getYarnVersion());
-		return set;
-	}
+    override fun configureVersion(version: String) {
+        var pkg = "yarn"
+        if (version.isNotEmpty()) {
+            logger.debug("Setting yarnVersion to $version")
+            pkg += "@$version"
+        }
+        args.addAll(0, listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", variant.yarnDir.absolutePath, pkg))
+        isEnabled = true
+    }
 
-	@OutputDirectory
-	public File getYarnDir() {
-		return this.getVariant().getYarnDir();
-	}
-
-	@Override
-	public void configureVersion(final String yarnVersion) {
-		String pkg = "yarn";
-
-		if (!yarnVersion.isEmpty()) {
-			getLogger().debug("Setting yarnVersion to " + yarnVersion);
-			pkg += "@" + yarnVersion;
-		}
-
-		List<String> args = new ArrayList<>(Arrays.asList("install", "--global", "--no-save"));
-		args.addAll(NpmSetupTask.proxySettings());
-		args.addAll(Arrays.asList("--prefix", getVariant().getYarnDir().getAbsolutePath(), pkg));
-		setArgs(args);
-		setEnabled(true);
-	}
+    companion object {
+        const val NAME = "yarnSetup"
+    }
 }

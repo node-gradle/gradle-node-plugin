@@ -1,138 +1,88 @@
-package com.moowork.gradle.node.npm;
+package com.moowork.gradle.node.npm
 
-import com.moowork.gradle.node.NodeExtension;
-import com.moowork.gradle.node.NodePlugin;
-import com.moowork.gradle.node.task.SetupTask;
-import com.moowork.gradle.node.variant.Variant;
-import groovy.lang.Closure;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Nested;
-import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.TaskAction;
-import org.gradle.process.ExecResult;
-import org.gradle.process.ExecSpec;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.NodePlugin
+import com.moowork.gradle.node.task.SetupTask
+import com.moowork.gradle.node.util.Alias
+import com.moowork.gradle.node.util.MutableAlias
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.*
+import org.gradle.process.ExecResult
+import java.util.*
 
 /**
  * npm install that only gets executed if gradle decides so.
- **/
-public class NpmSetupTask extends DefaultTask {
+ */
+open class NpmSetupTask : DefaultTask() {
 
-	public static final String NAME = "npmSetup";
+    @get:Nested
+    val execRunner = NpmExecRunner(project)
 
-	protected List<String> args = new ArrayList<>();
+    @get:Input
+    var args = mutableListOf<String>()
+    @get:OutputDirectory
+    val npmDir by Alias { variant::npmDir }
 
-	private NpmExecRunner runner;
-	private NodeExtension config;
-	private ExecResult result;
+    @get:Internal
+    val config by lazy { NodeExtension[project] }
+    @get:Internal
+    val variant by Alias { config::variant }
+    @get:Internal
+    var ignoreExitValue by MutableAlias { execRunner::ignoreExitValue }
+    @get:Internal
+    var execOverrides by MutableAlias { execRunner::execOverrides }
+    @get:Internal
+    var result: ExecResult? = null
 
-	public NpmSetupTask() {
-		dependsOn(SetupTask.NAME);
+    init {
+        group = NodePlugin.NODE_GROUP
+        description = "Setup a specific version of npm to be used by the build."
+        dependsOn(SetupTask.NAME)
+        isEnabled = false
+    }
 
-		this.setGroup(NodePlugin.NODE_GROUP);
-		this.setDescription("Setup a specific version of npm to be used by the build.");
-		this.setEnabled(false);
+    @Input
+    open fun getInput(): Set<Any?> {
+        val set: MutableSet<Any?> = HashSet()
+        set.add(config.download)
+        set.add(config.npmVersion)
+        set.add(config.npmWorkDir)
+        return set
+    }
 
-		this.runner = new NpmExecRunner(this.getProject());
-	}
+    @TaskAction
+    fun exec() {
+        execRunner.arguments.addAll(args)
+        result = execRunner.execute()
+    }
 
-	@Input
-	public Set<Object> getInput() {
-		Set<Object> set = new HashSet<>();
-		set.add(getConfig().getDownload());
-		set.add(getConfig().getNpmVersion());
-		set.add(getConfig().getNpmWorkDir());
-		return set;
-	}
+    open fun configureVersion(version: String) {
+        if (version.isNotEmpty()) {
+            logger.debug("Setting npmVersion to {}", version)
+            args.addAll(0, listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", variant.npmDir.absolutePath, "npm@$version"))
+            isEnabled = true
+        }
+    }
 
-	@OutputDirectory
-	public File getNpmDir() {
-		return getVariant().getNpmDir();
-	}
+    companion object {
+        const val NAME = "npmSetup"
 
-	@Internal
-	public ExecResult getResult() {
-		return this.result;
-	}
-
-	@Internal
-	protected NodeExtension getConfig() {
-		if (this.config != null) {
-			return this.config;
-		}
-
-		this.config = NodeExtension.get(this.getProject());
-		return this.config;
-	}
-
-	@Internal
-	protected Variant getVariant() {
-		return getConfig().getVariant();
-	}
-
-	@Input
-	public List<String> getArgs() {
-		return this.args;
-	}
-
-	public void setArgs(final List<String> value) {
-		this.args = value;
-	}
-
-	public void setIgnoreExitValue(final boolean value) {
-		this.runner.setIgnoreExitValue(value);
-	}
-
-	public void setExecOverrides(final Closure<ExecSpec> closure) {
-		this.runner.setExecOverrides(closure);
-	}
-
-	@Nested
-	public NpmExecRunner getRunner() {
-		return this.runner;
-	}
-
-	@TaskAction
-	public void exec() {
-		this.runner.getArguments().addAll(this.args);
-		this.result = this.runner.execute();
-	}
-
-	public void configureVersion(final String npmVersion) {
-		if (!npmVersion.isEmpty()) {
-			getLogger().debug("Setting npmVersion to {}", npmVersion);
-			setArgs(DefaultGroovyMethods.plus(DefaultGroovyMethods.plus(new ArrayList<String>(Arrays.asList("install", "--global", "--no-save")), proxySettings()), new ArrayList<>(Arrays.asList("--prefix", getVariant().getNpmDir().getAbsolutePath(), "npm@" + npmVersion))));
-			setEnabled(true);
-		}
-	}
-
-	public static List<String> proxySettings() {
-		for (String[] proxySettings : Arrays.asList(new String[]{"http", "--proxy"}, new String[]{"https", "--https-proxy"})) {
-			String proxyHost = System.getProperty(proxySettings[0] + ".proxyHost");
-			String proxyPort = System.getProperty(proxySettings[0] + ".proxyPort");
-			if (proxyHost != null && proxyPort != null) {
-				proxyHost = proxyHost.replaceAll("^https?://", "");
-				String proxyUser = System.getProperty(proxySettings[0] + ".proxyUser");
-				String proxyPassword = System.getProperty(proxySettings[0] + ".proxyPassword");
-				if (proxyUser != null && proxyPassword != null) {
-					return Collections.singletonList(proxySettings[1] + " " + proxySettings[0] + "://" + proxyUser + ":" + proxyPassword + "@" + proxyHost + ":" + proxyPort);
-				} else {
-					return Collections.singletonList(proxySettings[1] + " " + proxySettings[0] + "://" + proxyHost + ":" + proxyPort);
-				}
-			}
-		}
-
-		return new ArrayList<>();
-	}
+        val PROXY_SETTINGS by lazy {
+            for ((proxyProto, proxyParam) in listOf(arrayOf("http", "--proxy"), arrayOf("https", "--https-proxy"))) {
+                var proxyHost = System.getProperty("$proxyProto.proxyHost")
+                val proxyPort = System.getProperty("$proxyProto.proxyPort")
+                if (proxyHost != null && proxyPort != null) {
+                    proxyHost = proxyHost.replace("^https?://".toRegex(), "")
+                    val proxyUser = System.getProperty("$proxyProto.proxyUser")
+                    val proxyPassword = System.getProperty("$proxyProto.proxyPassword")
+                    return@lazy if (proxyUser != null && proxyPassword != null) {
+                        listOf("$proxyParam $proxyProto://$proxyUser:$proxyPassword@$proxyHost:$proxyPort")
+                    } else {
+                        listOf("$proxyParam $proxyProto://$proxyHost:$proxyPort")
+                    }
+                }
+            }
+            return@lazy emptyList()
+        }
+    }
 }

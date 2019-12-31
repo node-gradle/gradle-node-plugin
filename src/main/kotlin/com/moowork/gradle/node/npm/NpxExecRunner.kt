@@ -1,32 +1,23 @@
-package com.moowork.gradle.node.npm;
+package com.moowork.gradle.node.npm
 
-import org.gradle.api.Project;
-import org.gradle.api.tasks.Internal;
+import org.gradle.api.Project
+import org.gradle.api.tasks.Internal
+import java.io.File
 
-import java.io.File;
+class NpxExecRunner(project: Project) : NpmExecRunner(project) {
 
+    @Internal
+    override fun getCommand(): String {
+        return variant.npxExec
+    }
 
-public class NpxExecRunner extends NpmExecRunner {
+    @Internal
+    override fun getLocalCommandScript(): File {
+        return project.file(File(ext.nodeModulesDir, "node_modules/npm/bin/npx-cli.js"))
+    }
 
-	public NpxExecRunner(Project project) {
-		super(project);
-	}
-
-	@Override
-	@Internal
-	protected String getCommand() {
-		return this.variant.getNpxExec();
-	}
-
-	@Override
-	@Internal
-	protected File getLocalCommandScript() {
-		return this.project.file(new File(this.ext.getNodeModulesDir(), "node_modules/npm/bin/npx-cli.js"));
-	}
-
-	@Override
-	@Internal
-	protected String getCommandScript() {
-		return this.variant.getNpxScriptFile();
-	}
+    @Internal
+    override fun getCommandScript(): String {
+        return variant.npxScriptFile
+    }
 }

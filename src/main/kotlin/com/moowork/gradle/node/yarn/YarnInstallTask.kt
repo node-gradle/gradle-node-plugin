@@ -1,63 +1,60 @@
-package com.moowork.gradle.node.yarn;
+package com.moowork.gradle.node.yarn
 
-import com.moowork.gradle.node.NodeExtension;
-import com.moowork.gradle.node.NodePlugin;
-import groovy.lang.Closure;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-import org.gradle.api.file.ConfigurableFileTree;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.OutputFiles;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
-
-import java.io.File;
-
+import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.NodePlugin
+import groovy.lang.Closure
+import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.invoke
+import java.io.File
 
 /**
  * yarn install that only gets executed if gradle decides so.
  */
-public class YarnInstallTask extends YarnTask {
+open class YarnInstallTask : YarnTask() {
 
-	public static final String NAME = "yarn";
+    @Suppress("MemberVisibilityCanBePrivate") // Configurable
+    var nodeModulesOutputFilter: (ConfigurableFileTree.() -> Unit)? = null
 
-	private Closure<ConfigurableFileTree> nodeModulesOutputFilter;
+    private val extension = NodeExtension[project]
 
-	public YarnInstallTask() {
-		this.setGroup(NodePlugin.NODE_GROUP);
-		this.setDescription("Install node packages using Yarn.");
-		setYarnCommand(new String[]{""});
-		dependsOn(YarnSetupTask.NAME);
-	}
+    init {
+        group = NodePlugin.NODE_GROUP
+        description = "Install node packages using Yarn."
+        dependsOn(YarnSetupTask.NAME)
+    }
 
-	@InputFile
-	@Optional
-	@PathSensitive(PathSensitivity.RELATIVE)
-	protected File getPackageJsonFile() {
-		File packageJsonFile = new File(this.getProject().getExtensions().getByType(NodeExtension.class).getNodeModulesDir(), "package.json");
-		return packageJsonFile.exists() ? packageJsonFile : null;
-	}
+    @PathSensitive(PathSensitivity.RELATIVE)
+    @Optional
+    @InputFile
+    protected fun getPackageJsonFile(): File? {
+        val packageJsonFile = File(extension.nodeModulesDir, "package.json")
+        return packageJsonFile.takeIf { it.exists() }
+    }
 
-	@InputFile
-	@Optional
-	@PathSensitive(PathSensitivity.RELATIVE)
-	protected File getYarnLockFile() {
-		File lockFile = new File(this.getProject().getExtensions().getByType(NodeExtension.class).getNodeModulesDir(), "yarn.lock");
-		return lockFile.exists() ? lockFile : null;
-	}
+    @PathSensitive(PathSensitivity.RELATIVE)
+    @Optional
+    @InputFile
+    protected fun getYarnLockFile(): File? {
+        val lockFile = File(extension.nodeModulesDir, "yarn.lock")
+        return lockFile.takeIf { it.exists() }
+    }
 
-	@OutputFiles
-	protected ConfigurableFileTree getNodeModulesDir() {
-		File nodeModulesDirectory = new File(this.getProject().getExtensions().getByType(NodeExtension.class).getNodeModulesDir(), "node_modules");
-		ConfigurableFileTree nodeModulesFileTree = getProject().fileTree(nodeModulesDirectory);
-		if (DefaultGroovyMethods.asBoolean(this.nodeModulesOutputFilter)) {
-			this.nodeModulesOutputFilter.call(nodeModulesFileTree);
-		}
+    @OutputFiles
+    protected fun getNodeModulesDir(): ConfigurableFileTree {
+        val nodeModulesDirectory = File(extension.nodeModulesDir, "node_modules")
+        val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
+        nodeModulesOutputFilter?.invoke(nodeModulesFileTree)
+        return nodeModulesFileTree
+    }
 
-		return nodeModulesFileTree;
-	}
+    // Configurable; Groovy support
+    @Suppress("unused")
+    fun setNodeModulesOutputFilter(nodeModulesOutputFilter: Closure<ConfigurableFileTree>) {
+        this.nodeModulesOutputFilter = { nodeModulesOutputFilter.invoke(this) }
+    }
 
-	public void setNodeModulesOutputFilter(Closure<ConfigurableFileTree> nodeModulesOutputFilter) {
-		this.nodeModulesOutputFilter = nodeModulesOutputFilter;
-	}
+    companion object {
+        const val NAME = "yarn"
+    }
 }

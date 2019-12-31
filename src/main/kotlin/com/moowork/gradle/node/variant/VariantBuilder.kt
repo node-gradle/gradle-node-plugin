@@ -1,149 +1,142 @@
-package com.moowork.gradle.node.variant;
+package com.moowork.gradle.node.variant
 
-import com.moowork.gradle.node.NodeExtension;
-import com.moowork.gradle.node.util.PlatformHelper;
-import org.codehaus.groovy.runtime.StringGroovyMethods;
+import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.util.PlatformHelper
+import com.moowork.gradle.node.util.mapIf
+import com.moowork.gradle.node.util.tokenize
+import java.io.File
 
-import java.io.File;
-import java.util.List;
+class VariantBuilder @JvmOverloads constructor(
+        private val ext: NodeExtension,
+        private val platformHelper: PlatformHelper = PlatformHelper.INSTANCE
+) {
 
+    @Suppress("CanBeVal")
+    fun build(): Variant {
+        val osName = platformHelper.osName
+        val osArch = platformHelper.osArch
+        val isWindows = platformHelper.isWindows
 
-public class VariantBuilder {
+        var nodeExec: String
+        var nodeDir: File
+        var nodeBinDir: File
+        var npmExec: String
+        var npmDir: File
+        var npmBinDir: File
+        var npmScriptFile: String
+        var npxExec: String
+        var npxScriptFile: String
+        var yarnExec: String
+        var yarnDir: File
+        var yarnBinDir: File
+        var archiveDependency: String
+        var exeDependency: String?
 
-	private final NodeExtension ext;
-	private PlatformHelper platformHelper;
+        if (isWindows) {
+            nodeExec = "node"
+            nodeDir = getNodeDir(osName, osArch)
+            nodeBinDir = nodeDir
+            npmExec = ext.npmCommand.mapIf({ it == "npm" }) { "npm.cmd" }
+            npmDir = if (ext.npmVersion.isNotBlank()) getNpmDir() else nodeDir
+            npmBinDir = npmDir
+            npmScriptFile = File(nodeDir, "node_modules/npm/bin/npm-cli.js").path
+            npxExec = ext.npxCommand.mapIf({ it == "npx" }) { "npx.cmd" }
+            npxScriptFile = File(nodeDir, "node_modules/npm/bin/npx-cli.js").path
+            yarnExec = ext.yarnCommand.mapIf({ it == "yarn" }) { "yarn.cmd" }
+            yarnDir = getYarnDir()
+            yarnBinDir = yarnDir
+            if (hasWindowsZip()) {
+                archiveDependency = getArchiveDependency(osName, osArch, "zip")
+                exeDependency = null
+            } else {
+                archiveDependency = getArchiveDependency("linux", "x86", "tar.gz")
+                exeDependency = getExeDependency()
+            }
+        } else {
+            nodeExec = "node"
+            nodeDir = getNodeDir(osName, osArch)
+            nodeBinDir = File(nodeDir, "bin")
+            npmExec = ext.npmCommand
+            npmDir = if (ext.npmVersion.isNotBlank()) getNpmDir() else nodeDir
+            npmBinDir = File(npmDir, "bin")
+            npmScriptFile = File(nodeDir, "lib/node_modules/npm/bin/npm-cli.js").path
+            npxExec = ext.npxCommand
+            npxScriptFile = File(nodeDir, "lib/node_modules/npm/bin/npx-cli.js").path
+            yarnExec = ext.yarnCommand
+            yarnDir = getYarnDir()
+            yarnBinDir = File(yarnDir, "bin")
+            archiveDependency = getArchiveDependency(osName, osArch, "tar.gz")
+            exeDependency = null
+        }
 
-	public VariantBuilder(final NodeExtension ext) {
-		this.ext = ext;
-		this.platformHelper = PlatformHelper.getINSTANCE();
-	}
+        if (ext.download) {
+            nodeExec = nodeExec.mapIf({ it == "node" && isWindows }) { "node.exe" }
+            nodeExec = File(nodeBinDir, nodeExec).absolutePath
+            npmExec = File(npmBinDir, npmExec).absolutePath
+            npxExec = File(npmBinDir, npxExec).absolutePath
+            yarnExec = File(yarnBinDir, yarnExec).absolutePath
+        }
 
-	public VariantBuilder(final NodeExtension ext, PlatformHelper platformHelper) {
-		this(ext);
-		this.platformHelper = platformHelper;
-	}
+        return Variant(
+                isWindows = isWindows,
+                nodeExec = nodeExec,
+                nodeDir = nodeDir,
+                nodeBinDir = nodeBinDir,
+                npmExec = npmExec,
+                npmDir = npmDir,
+                npmBinDir = npmBinDir,
+                npmScriptFile = npmScriptFile,
+                npxExec = npxExec,
+                npxScriptFile = npxScriptFile,
+                yarnExec = yarnExec,
+                yarnDir = yarnDir,
+                yarnBinDir = yarnBinDir,
+                archiveDependency = archiveDependency,
+                exeDependency = exeDependency
+        )
+    }
 
-	public Variant build() {
-		String osName = this.platformHelper.getOsName();
-		String osArch = this.platformHelper.getOsArch();
+    private fun getArchiveDependency(osName: String?, osArch: String?, type: String): String {
+        val version = ext.version
+        return "org.nodejs:node:$version:$osName-$osArch@$type"
+    }
 
-		Variant variant = new Variant();
-		variant.setWindows(this.platformHelper.isWindows());
+    private fun getExeDependency(): String {
+        val majorVersion = ext.version.tokenize(".").first().toInt()
+        return if (majorVersion > 3) {
+            if (platformHelper.osArch == "x86") {
+                "org.nodejs:win-x86/node:${ext.version}@exe"
+            } else {
+                "org.nodejs:win-x64/node:${ext.version}@exe"
+            }
+        } else {
+            if (platformHelper.osArch == "x86") {
+                "org.nodejs:node:${ext.version}@exe"
+            } else {
+                "org.nodejs:x64/node:${ext.version}@exe"
+            }
+        }
+    }
 
-		variant.setNodeDir(getNodeDir(osName, osArch));
-		variant.setNpmDir(StringGroovyMethods.asBoolean(this.ext.getNpmVersion()) ? getNpmDir() : variant.getNodeDir());
-		variant.setYarnDir(getYarnDir());
+    private fun hasWindowsZip(): Boolean {
+        val (majorVersion, minorVersion, microVersion) = ext.version.tokenize(".").map { it.toInt() }
+        return majorVersion == 4 && minorVersion >= 5
+                || majorVersion == 6 && (minorVersion > 2 || minorVersion == 2 && microVersion >= 1)
+                || majorVersion > 6
+    }
 
-		variant.setNodeBinDir(variant.getNodeDir());
-		variant.setNpmBinDir(variant.getNpmDir());
-		variant.setYarnBinDir(variant.getYarnDir());
+    private fun getNpmDir(): File {
+        return File(ext.npmWorkDir, "npm-v${ext.npmVersion}")
+    }
 
-		variant.setNodeExec("node");
-		variant.setNpmExec(this.ext.getNpmCommand());
-		variant.setNpxExec(this.ext.getNpxCommand());
-		variant.setYarnExec(this.ext.getYarnCommand());
+    private fun getYarnDir(): File {
+        val dirname = "yarn" + if (ext.yarnVersion.isNotBlank()) "-v${ext.yarnVersion}" else "-latest"
+        return File(ext.yarnWorkDir, dirname)
+    }
 
-		if (variant.isWindows()) {
-			if (variant.getNpmExec().equals("npm")) {
-				variant.setNpmExec("npm.cmd");
-			}
-
-			if (variant.getNpxExec().equals("npx")) {
-				variant.setNpxExec("npx.cmd");
-			}
-
-			if (variant.getYarnExec().equals("yarn")) {
-				variant.setYarnExec("yarn.cmd");
-			}
-
-			if (hasWindowsZip()) {
-				variant.setArchiveDependency(getArchiveDependency(osName, osArch, "zip"));
-			} else {
-				variant.setArchiveDependency(getArchiveDependency("linux", "x86", "tar.gz"));
-				variant.setExeDependency(getExeDependency());
-			}
-
-			variant.setNpmScriptFile(new File(variant.getNodeDir(), "node_modules/npm/bin/npm-cli.js").getPath());
-			variant.setNpxScriptFile(new File(variant.getNodeDir(), "node_modules/npm/bin/npx-cli.js").getPath());
-		} else {
-			variant.setNodeBinDir(new File(variant.getNodeBinDir(), "bin"));
-			variant.setNpmBinDir(new File(variant.getNpmBinDir(), "bin"));
-			variant.setYarnBinDir(new File(variant.getYarnBinDir(), "bin"));
-			variant.setArchiveDependency(getArchiveDependency(osName, osArch, "tar.gz"));
-			variant.setNpmScriptFile(new File(variant.getNodeDir(), "lib/node_modules/npm/bin/npm-cli.js").getPath());
-			variant.setNpxScriptFile(new File(variant.getNodeDir(), "lib/node_modules/npm/bin/npx-cli.js").getPath());
-		}
-
-		if (this.ext.getDownload()) {
-			if (variant.getNodeExec().equals("node") && variant.isWindows()) {
-				variant.setNodeExec("node.exe");
-			}
-
-			variant.setNodeExec(new File(variant.getNodeBinDir(), variant.getNodeExec()).getAbsolutePath());
-			variant.setNpmExec(new File(variant.getNpmBinDir(), variant.getNpmExec()).getAbsolutePath());
-			variant.setNpxExec(new File(variant.getNpmBinDir(), variant.getNpxExec()).getAbsolutePath());
-			variant.setYarnExec(new File(variant.getYarnBinDir(), variant.getYarnExec()).getAbsolutePath());
-		}
-
-		return variant;
-	}
-
-	private String getArchiveDependency(final String osName, final String osArch, final String type) {
-		final String version = this.ext.getVersion();
-		return "org.nodejs:node:" + version + ":" + osName + "-" + osArch + "@" + type;
-	}
-
-	private String getExeDependency() {
-		final String version = this.ext.getVersion();
-		String osArch = this.platformHelper.getOsArch();
-		Integer majorVersion = StringGroovyMethods.toInteger(StringGroovyMethods.tokenize(version, ".").get(0));
-		if (majorVersion > 3) {
-			if (osArch.equals("x86")) {
-				return "org.nodejs:win-x86/node:" + version + "@exe";
-			} else {
-				return "org.nodejs:win-x64/node:" + version + "@exe";
-			}
-		} else {
-			if (osArch.equals("x86")) {
-				return "org.nodejs:node:" + version + "@exe";
-			} else {
-				return "org.nodejs:x64/node:" + version + "@exe";
-			}
-		}
-	}
-
-	private boolean hasWindowsZip() {
-		String version = this.ext.getVersion();
-		List<String> tokens = StringGroovyMethods.tokenize(version, ".");
-		Integer majorVersion = StringGroovyMethods.toInteger(tokens.get(0));
-		Integer minorVersion = StringGroovyMethods.toInteger(tokens.get(1));
-		Integer microVersion = StringGroovyMethods.toInteger(tokens.get(2));
-		if ((majorVersion == 4 && minorVersion >= 5) || (majorVersion == 6 && (minorVersion > 2 || (minorVersion == 2 && microVersion >= 1))) || majorVersion > 6) {
-			return true;
-		}
-
-		return false;
-	}
-
-	private File getNodeDir(final String osName, final String osArch) {
-		final String version = this.ext.getVersion();
-		String dirName = "node-v" + version + "-" + osName + "-" + osArch;
-		return new File(this.ext.getWorkDir(), dirName);
-	}
-
-	private File getNpmDir() {
-		final String version = this.ext.getNpmVersion();
-		return new File(this.ext.getNpmWorkDir(), "npm-v" + version);
-	}
-
-	private File getYarnDir() {
-		String dirname = "yarn";
-		if (StringGroovyMethods.asBoolean(this.ext.getYarnVersion())) {
-			dirname += "-v" + this.ext.getYarnVersion();
-		} else {
-			dirname += "-latest";
-		}
-
-		return new File(this.ext.getYarnWorkDir(), dirname);
-	}
+    private fun getNodeDir(osName: String?, osArch: String?): File {
+        val version = ext.version
+        val dirName = "node-v$version-$osName-$osArch"
+        return File(ext.workDir, dirName)
+    }
 }
