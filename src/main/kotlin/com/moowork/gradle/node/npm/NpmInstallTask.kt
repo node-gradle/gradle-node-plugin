@@ -23,7 +23,7 @@ open class NpmInstallTask : NpmTask() {
         description = "Install node packages from package.json."
         dependsOn(NpmSetupTask.NAME)
         project.afterEvaluate {
-            npmCommand = mutableListOf(extension.npmInstallCommand)
+            npmCommand = listOf(extension.npmInstallCommand)
         }
     }
 

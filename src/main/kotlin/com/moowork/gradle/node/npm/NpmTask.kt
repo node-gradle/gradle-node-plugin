@@ -12,10 +12,10 @@ open class NpmTask : DefaultTask() {
     val execRunner: NpmExecRunner = NpmExecRunner(project)
     @get:Optional
     @get:Input
-    var args = mutableListOf<String>()
+    var args = listOf<String>()
     @get:Optional
     @get:Input
-    var npmCommand = mutableListOf<String>()
+    var npmCommand = listOf<String>()
 
     @get:Internal
     var result: ExecResult? = null

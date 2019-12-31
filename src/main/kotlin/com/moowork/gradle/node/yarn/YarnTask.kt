@@ -12,10 +12,10 @@ open class YarnTask : DefaultTask() {
     val execRunner = YarnExecRunner(project)
     @get:Optional
     @get:Input
-    var args = mutableListOf<String>()
+    var args = listOf<String>()
     @get:Optional
     @get:Input
-    var yarnCommand = mutableListOf<String>()
+    var yarnCommand = listOf<String>()
 
     @get:Internal
     var result: ExecResult? = null

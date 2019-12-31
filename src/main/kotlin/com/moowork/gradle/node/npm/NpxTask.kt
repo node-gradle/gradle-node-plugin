@@ -14,7 +14,7 @@ open class NpxTask : DefaultTask() {
     @get:Nested
     val execRunner = NpxExecRunner(project)
     @get:Input
-    var args = mutableListOf<String>()
+    var args = listOf<String>()
     @get:Input
     var command: String? = null
 

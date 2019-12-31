@@ -13,9 +13,9 @@ open class NodeTask : DefaultTask() {
     @get:Nested
     val execRunner = NodeExecRunner(project)
     @get:Input
-    var options = mutableListOf<String>()
+    var options = listOf<String>()
     @get:Input
-    var args = mutableListOf<String>()
+    var args = listOf<String>()
     private var _script: File? = null
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)

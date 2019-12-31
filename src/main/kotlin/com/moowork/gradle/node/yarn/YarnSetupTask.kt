@@ -37,7 +37,7 @@ open class YarnSetupTask : NpmSetupTask() {
             logger.debug("Setting yarnVersion to $version")
             pkg += "@$version"
         }
-        args.addAll(0, listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", variant.yarnDir.absolutePath, pkg))
+        args = listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", variant.yarnDir.absolutePath, pkg) + args
         isEnabled = true
     }
 

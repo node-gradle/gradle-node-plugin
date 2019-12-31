@@ -19,7 +19,7 @@ open class NpmSetupTask : DefaultTask() {
     val execRunner = NpmExecRunner(project)
 
     @get:Input
-    var args = mutableListOf<String>()
+    var args = listOf<String>()
     @get:OutputDirectory
     val npmDir by Alias { variant::npmDir }
 
@@ -59,7 +59,7 @@ open class NpmSetupTask : DefaultTask() {
     open fun configureVersion(version: String) {
         if (version.isNotEmpty()) {
             logger.debug("Setting npmVersion to {}", version)
-            args.addAll(0, listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", variant.npmDir.absolutePath, "npm@$version"))
+            args = listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", variant.npmDir.absolutePath, "npm@$version") + args
             isEnabled = true
         }
     }
