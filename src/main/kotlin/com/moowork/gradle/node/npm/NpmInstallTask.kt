@@ -14,6 +14,7 @@ import java.io.File
 open class NpmInstallTask : NpmTask() {
 
     @Suppress("MemberVisibilityCanBePrivate") // Configurable
+    @get:Internal
     var nodeModulesOutputFilter: (ConfigurableFileTree.() -> Unit)? = null
 
     private val extension = NodeExtension[project]

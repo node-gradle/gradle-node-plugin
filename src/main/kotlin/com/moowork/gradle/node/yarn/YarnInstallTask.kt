@@ -14,6 +14,7 @@ import java.io.File
 open class YarnInstallTask : YarnTask() {
 
     @Suppress("MemberVisibilityCanBePrivate") // Configurable
+    @get:Internal
     var nodeModulesOutputFilter: (ConfigurableFileTree.() -> Unit)? = null
 
     private val extension = NodeExtension[project]

@@ -17,7 +17,7 @@ open class SetupTask : DefaultTask() {
     private val variant by lazy { config.variant }
 
     @get:OutputDirectory
-    private val nodeDir by Alias { variant::nodeDir }
+    protected val nodeDir by Alias { variant::nodeDir }
 
     init {
         group = NodePlugin.NODE_GROUP

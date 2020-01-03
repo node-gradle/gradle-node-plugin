@@ -13,9 +13,13 @@ import org.gradle.process.ExecSpec
 import java.io.File
 import java.util.*
 
-abstract class ExecRunner(protected var project: Project) {
+abstract class ExecRunner(
+        @get:Internal protected var project: Project
+) {
 
+    @get:Internal
     protected val ext: NodeExtension = NodeExtension[project]
+    @get:Internal
     protected val variant: Variant by lazy { ext.variant }
 
     @get:Input

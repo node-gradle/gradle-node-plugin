@@ -2,6 +2,7 @@ package com.moowork.gradle.node.npm
 
 import com.moowork.gradle.node.exec.ExecRunner
 import org.gradle.api.Project
+import org.gradle.api.tasks.Internal
 import org.gradle.process.ExecResult
 import java.io.File
 
@@ -32,7 +33,12 @@ open class NpmExecRunner(project: Project) : ExecRunner(project) {
         return npmBinDir + File.pathSeparator + nodeBinDir
     }
 
+    @Internal
     protected open fun getCommand(): String = this.variant.npmExec
+
+    @Internal
     protected open fun getLocalCommandScript(): File = this.project.file(File(ext.nodeModulesDir, "node_modules/npm/bin/npm-cli.js"))
+
+    @Internal
     protected open fun getCommandScript(): String = this.variant.npmScriptFile
 }
