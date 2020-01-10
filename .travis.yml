@@ -15,3 +15,11 @@ cache:
 script:
   - travis_wait 30 ./gradlew ci
   - ./gradlew -p examples build
+  - travis_wait 30 ./gradlew sonarqube
+
+addons:
+  sonarcloud:
+    organization: "node-gradle"
+    token:
+      secure: "cPGCalcsdbtAMrRsxAmE2jFvwmupiL2bzsB5yJFYWW/a5nlBPzjrper3deh59WyZGJVt+f+BIomqtzemWS3zENC79PZtDGOldmXF1XITAZ8va8nBbWsjfAGN0r9mOGpp9dtcmFmt0tcyBblh3kRdbs/LRT+mYd/z5vFhZXV6o2Ub68DDO6aTnwIt0nIYgeCgp9y5jqV9pV2qQYVeLwJ0Q10l/4GGPe4Jz8EaqnMsy1GcbqNx5jVIJZR5dhSfsrCMu7r1CUGeM/rx7Ucd7BmH7+WPzW3srU+PHsPfGZsfLsrsFDQKCSFDWlRErCAqZxNJ9dYN1QaCY/hivpy0t0kSd9Bhffc2CYyGQ88yIo0H/cZTKhi2438NyBpOzZ1HG/LBkQBfh6TX4wBIL0GgL810Zv64K9XiZM4kA93L+nfADM4tkzNzkufn0D8skjoyXmdLSiY7n7/ciWzXuO+ZnM+aK/RYoprX8vA/x1hv3pLT2uy2qh/K+RU9kYYzKN9D4L4GtxX4DtZlF3Gye0khZyAl+F8B98XXzwqs1xx/vECnxAUxbeMdGfTZOnp30r/d9uj4pDFyg+ofPBTKe/C+7MrcN3GxT2GlpbvU7UDCPZfwFhPAtQxDYm1hScbo7b7/ru0ys5IUB8GDNNttgSzCrMi8gwyxrA/OfGbpNQ+mBCZdeyg="
+
