@@ -13,6 +13,7 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git fetch -q --unshallow & fi'
   - travis_wait 30 ./gradlew ci
   - ./gradlew -p examples build
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then travis_wait 30 ./gradlew sonarqube; fi'
