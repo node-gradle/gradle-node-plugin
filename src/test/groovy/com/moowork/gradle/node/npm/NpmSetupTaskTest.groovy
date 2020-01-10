@@ -1,6 +1,5 @@
 package com.moowork.gradle.node.npm
 
-import com.moowork.gradle.node.npm.NpmSetupTask
 import com.moowork.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
