@@ -2,9 +2,9 @@ package com.moowork.gradle.node.npm
 
 import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 
@@ -26,9 +26,24 @@ class NpmInstallTask
         dependsOn( [NpmSetupTask.NAME] )
 
         this.project.afterEvaluate {
-            def ext = this.project.extensions.getByType(NodeExtension)
-            setNpmCommand( ext.getNpmInstallCommand() )
+            def nodeExtension = this.project.extensions.getByType(NodeExtension)
+            setNpmCommand( nodeExtension.getNpmInstallCommand() )
+
+            def nodeModulesDirectory = new File(nodeExtension.nodeModulesDir, 'node_modules')
+            if (nodeModulesOutputFilter) {
+                def nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
+                nodeModulesOutputFilter(nodeModulesFileTree)
+                outputs.files(nodeModulesFileTree)
+            } else {
+                outputs.dir(nodeModulesDirectory)
+            }
         }
+    }
+
+    @Internal
+    Closure getNodeModulesOutputFilter()
+    {
+        return nodeModulesOutputFilter
     }
 
     void setNodeModulesOutputFilter(Closure nodeModulesOutputFilter)
@@ -76,19 +91,5 @@ class NpmInstallTask
         }
 
         return null
-    }
-
-
-    @OutputFiles
-    protected getNodeModulesDir()
-    {
-        def nodeModulesDirectory =
-                new File(this.project.extensions.getByType(NodeExtension).nodeModulesDir, 'node_modules')
-        def nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
-        if (nodeModulesOutputFilter)
-        {
-            nodeModulesOutputFilter(nodeModulesFileTree)
-        }
-        return nodeModulesFileTree
     }
 }

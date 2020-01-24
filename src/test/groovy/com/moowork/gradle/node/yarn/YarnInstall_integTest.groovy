@@ -109,10 +109,9 @@ class YarnInstall_integTest
         result.outcome == TaskOutcome.SUCCESS
     }
 
-    def 'verity output configuration'()
-    {
+    def 'verity output configuration'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
@@ -128,7 +127,7 @@ class YarnInstall_integTest
                     nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
                 }
             }
-        ''' )
+        ''')
         writePackageJson("""
             {
               "name": "hello",
@@ -178,49 +177,83 @@ class YarnInstall_integTest
         then:
         // This time the build should be up-to-date
         result5.task(":yarn").outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'verity output configuration when filtering node_modules output'()
+    {
+        given:
+        writeBuild( '''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            node {
+                download = true
+                workDir = file('build/node')
+            }
+            
+            yarn {
+                nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
+            }
+        ''' )
+        writePackageJson("""
+            {
+              "name": "hello",
+              "dependencies": {
+                "mocha": "6.2.0"
+              }
+            }
+        """)
 
         when:
         createFile("node_modules").deleteDir()
-        def result6 = build("yarn", "-DchangeOutput=true")
+        def result1 = build("yarn")
 
         then:
-        result6.task(":yarn").outcome == TaskOutcome.SUCCESS
+        result1.task(":yarn").outcome == TaskOutcome.SUCCESS
 
         when:
         // Let's add a file in the node_modules directory
         writeFile("node_modules/mocha/newFile.txt", "hello")
-        def result7 = build("yarn", "-DchangeOutput=true")
+        def result2 = build("yarn")
 
         then:
-        // It should not make the build out-of-date
-        result7.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        // It should make the build out-of-date
+        result2.task(":yarn").outcome == TaskOutcome.SUCCESS
+
+        when:
+        createFile("node_modules").delete()
+        def result3 = build("yarn", "--rerun-tasks")
+
+        then:
+        result3.task(":yarn").outcome == TaskOutcome.SUCCESS
 
         when:
         // Let's update a file in the node_modules directory
         writeFile("node_modules/mocha/package.json", "modified package.json")
-        def result8 = build("yarn", "-DchangeOutput=true")
+        def result4 = build("yarn")
 
         then:
         // The build should still be up-to-date
-        result8.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result4.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
 
         when:
         // Let's delete an excluded file in the node_modules directory
         createFile("node_modules/mocha/package.json").delete()
-        def result9 = build("yarn", "-DchangeOutput=true")
+        def result5 = build("yarn")
 
         then:
         // The build should still be up-to-date
-        result9.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result5.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
 
         when:
         // Let's delete a not excluded file in the node_modules directory
         createFile("node_modules/mocha/mocha.js").delete()
-        def result10 = build("yarn", "-DchangeOutput=true")
+        def result6 = build("yarn")
 
         then:
         // This time the build should not be up-to-date since not the whole node_modules directory is excluded
-        result10.task(":yarn").outcome == TaskOutcome.SUCCESS
+        result6.task(":yarn").outcome == TaskOutcome.SUCCESS
     }
 
 }

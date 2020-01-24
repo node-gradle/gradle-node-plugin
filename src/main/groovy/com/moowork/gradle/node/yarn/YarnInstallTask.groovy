@@ -3,6 +3,7 @@ package com.moowork.gradle.node.yarn
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.PathSensitive
@@ -17,12 +18,30 @@ class YarnInstallTask
 
     private Closure nodeModulesOutputFilter
 
-    public YarnInstallTask()
+    YarnInstallTask()
     {
         this.group = NodePlugin.NODE_GROUP
         this.description = 'Install node packages using Yarn.'
         setYarnCommand( '' )
         dependsOn( [YarnSetupTask.NAME] )
+
+        this.project.afterEvaluate {
+            def nodeExtension = this.project.extensions.getByType(NodeExtension)
+            def nodeModulesDirectory = new File(nodeExtension.nodeModulesDir, 'node_modules')
+            if (nodeModulesOutputFilter) {
+                def nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
+                nodeModulesOutputFilter(nodeModulesFileTree)
+                outputs.files(nodeModulesFileTree)
+            } else {
+                outputs.dir(nodeModulesDirectory)
+            }
+        }
+    }
+
+    @Internal
+    Closure getNodeModulesOutputFilter()
+    {
+        return nodeModulesOutputFilter
     }
 
     void setNodeModulesOutputFilter(Closure nodeModulesOutputFilter)
