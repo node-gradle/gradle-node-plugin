@@ -220,10 +220,9 @@ class NpmInstall_integTest
         result.outcome == TaskOutcome.SUCCESS
     }
 
-    def 'verity output configuration'()
-    {
+    def 'verity output configuration'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
@@ -232,14 +231,7 @@ class NpmInstall_integTest
                 download = true
                 workDir = file('build/node')
             }
-            
-            def changeOutput = System.properties["changeOutput"] ? System.properties["changeOutput"] == "true" : false
-            if (changeOutput) {
-                npmInstall {
-                    nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
-                }
-            }
-        ''' )
+        ''')
         writePackageJson("""
             {
               "name": "hello",
@@ -287,52 +279,79 @@ class NpmInstall_integTest
         def result5 = build("npmInstall")
 
         then:
-        // This time the build should be up-to-date and the file should be reset
+        // This time the build should not be up-to-date and the file should be reset
         result5.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         createFile("node_modules/mocha/package.json").exists()
+    }
+
+    def 'verity output configuration when filtering node_modules output'()
+    {
+        given:
+        writeBuild( '''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            node {
+                download = true
+                workDir = file('build/node')
+            }
+
+            npmInstall {
+                nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
+            }
+        ''' )
+        writePackageJson("""
+            {
+              "name": "hello",
+              "dependencies": {
+                "mocha": "6.2.0"
+              }
+            }
+        """)
 
         when:
         createFile("node_modules").deleteDir()
-        def result6 = build("npmInstall", "-DchangeOutput=true")
+        def result1 = build("npmInstall")
 
         then:
-        result6.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
         // Let's add a file in the node_modules directory
         writeFile("node_modules/mocha/newFile.txt", "hello")
-        def result7 = build("npmInstall", "-DchangeOutput=true")
+        def result2 = build("npmInstall")
 
         then:
-        // It should not make the build out-of-date
-        result7.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+        // It should make the build out-of-date
+        result2.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
         // Let's update a file in the node_modules directory
         writeFile("node_modules/mocha/package.json", "modified package.json")
-        def result8 = build("npmInstall", "-DchangeOutput=true")
+        def result3 = build("npmInstall")
 
         then:
         // The build should still be up-to-date
-        result8.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
 
         when:
         // Let's delete an excluded file in the node_modules directory
         createFile("node_modules/mocha/package.json").delete()
-        def result9 = build("npmInstall", "-DchangeOutput=true")
+        def result4 = build("npmInstall")
 
         then:
         // The build should still be up-to-date
-        result9.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+        result4.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
 
         when:
         // Let's delete a not excluded file in the node_modules directory
         createFile("node_modules/mocha/mocha.js").delete()
-        def result10 = build("npmInstall", "-DchangeOutput=true")
+        def result5 = build("npmInstall")
 
         then:
         // This time the build should not be up-to-date since not the whole node_modules directory is excluded
-        result10.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result5.task(":npmInstall").outcome == TaskOutcome.SUCCESS
     }
 
     protected final void writeEmptyLockFile()

@@ -25,6 +25,15 @@ open class NpmInstallTask : NpmTask() {
         dependsOn(NpmSetupTask.NAME)
         project.afterEvaluate {
             npmCommand = listOf(extension.npmInstallCommand)
+
+            val nodeModulesDirectory = File(extension.nodeModulesDir, "node_modules")
+            if (nodeModulesOutputFilter != null) {
+                val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
+                nodeModulesOutputFilter?.invoke(nodeModulesFileTree)
+                outputs.files(nodeModulesFileTree)
+            } else {
+                outputs.dir(nodeModulesDirectory)
+            }
         }
     }
 
@@ -56,14 +65,6 @@ open class NpmInstallTask : NpmTask() {
     protected fun getPackageLockFileAsOutput(): File? {
         val file = File(extension.nodeModulesDir, "package-lock.json")
         return file.takeIf { npmCommand[0] == "install" && it.exists() }
-    }
-
-    @OutputFiles
-    protected fun getNodeModulesDir(): ConfigurableFileTree {
-        val nodeModulesDirectory = File(extension.nodeModulesDir, "node_modules")
-        val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
-        nodeModulesOutputFilter?.invoke(nodeModulesFileTree)
-        return nodeModulesFileTree
     }
 
     // Configurable; Groovy support

@@ -126,3 +126,5 @@ yarn {
     nodeModulesOutputFilter = { it.exclude("package/**").exclude("anotherPackage") }
 }
 ```
+
+Note: the Gradle's up-to-date checking is much slower when using this option. See issue #63.

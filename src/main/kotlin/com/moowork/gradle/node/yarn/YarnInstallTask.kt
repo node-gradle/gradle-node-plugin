@@ -23,6 +23,17 @@ open class YarnInstallTask : YarnTask() {
         group = NodePlugin.NODE_GROUP
         description = "Install node packages using Yarn."
         dependsOn(YarnSetupTask.NAME)
+
+        project.afterEvaluate {
+            val nodeModulesDirectory = File(extension.nodeModulesDir, "node_modules")
+            if (nodeModulesOutputFilter != null) {
+                val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
+                nodeModulesOutputFilter?.invoke(nodeModulesFileTree)
+                outputs.files(nodeModulesFileTree)
+            } else {
+                outputs.dir(nodeModulesDirectory)
+            }
+        }
     }
 
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -39,14 +50,6 @@ open class YarnInstallTask : YarnTask() {
     protected fun getYarnLockFile(): File? {
         val lockFile = File(extension.nodeModulesDir, "yarn.lock")
         return lockFile.takeIf { it.exists() }
-    }
-
-    @OutputFiles
-    protected fun getNodeModulesDir(): ConfigurableFileTree {
-        val nodeModulesDirectory = File(extension.nodeModulesDir, "node_modules")
-        val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
-        nodeModulesOutputFilter?.invoke(nodeModulesFileTree)
-        return nodeModulesFileTree
     }
 
     // Configurable; Groovy support
