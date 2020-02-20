@@ -85,11 +85,15 @@ open class SetupTask : DefaultTask() {
             // Fix broken symlink
             val npm = Paths.get(variant.nodeBinDir.path, "npm")
             if (Files.deleteIfExists(npm)) {
-                Files.createSymbolicLink(npm, Paths.get(variant.npmScriptFile))
+                Files.createSymbolicLink(
+                        npm,
+                        variant.nodeBinDir.toPath().relativize(Paths.get(variant.npmScriptFile)))
             }
             val npx = Paths.get(variant.nodeBinDir.path, "npx")
             if (Files.deleteIfExists(npx)) {
-                Files.createSymbolicLink(npx, Paths.get(variant.npxScriptFile))
+                Files.createSymbolicLink(
+                        npx,
+                        variant.nodeBinDir.toPath().relativize(Paths.get(variant.npxScriptFile)))
             }
         }
     }
