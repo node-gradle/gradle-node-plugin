@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Version 2.2.2 *(2020-02-21)*
+----------------------------
+
+* Make npm and npx symlinks relative. PR #68
+
+Version 2.2.1 *(2020-01-31)*
+----------------------------
+
+* Only use fileTree for npmInstall output if a filter is configured. Hotfix for #63
+
 Version 2.2.0 *(2019-10-13)*
 ----------------------------
 
