@@ -50,6 +50,33 @@ class NodeTaskTest
         1 * this.execSpec.setArgs( ['c', 'd', script.absolutePath, 'a', 'b'] )
     }
 
+    def "execOverrides test"()
+    {
+        given:
+        this.props.setProperty( 'os.name', 'Linux' )
+        this.execSpec = Mock( ExecSpec )
+        this.ext.download = false
+
+        def task = this.project.tasks.create( 'simple', NodeTask )
+        task.ignoreExitValue = true
+
+        def script = new File( this.projectDir, 'script.js' )
+        script.write("console.log(\"hello world\");")
+        task.script = script
+        task.workingDir = this.projectDir
+        def baos = new ByteArrayOutputStream()
+        task.execOverrides = { it.standardOutput = baos }
+
+        when:
+        this.project.evaluate()
+        task.exec()
+
+        then:
+        task.result.exitValue == 0
+        1 * this.execSpec.setIgnoreExitValue( true )
+        1 * this.execSpec.setArgs( [script.absolutePath] )
+    }
+
     def "exec node task (download)"()
     {
         given:

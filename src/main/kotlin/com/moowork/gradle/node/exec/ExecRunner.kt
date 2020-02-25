@@ -3,6 +3,7 @@ package com.moowork.gradle.node.exec
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.variant.Variant
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -31,7 +32,7 @@ abstract class ExecRunner(
     @get:Internal
     var arguments: MutableList<String> = ArrayList()
     @get:Internal
-    var execOverrides: (ExecSpec.() -> Unit)? = null
+    var execOverrides: Action<ExecSpec>? = null
 
     fun execute(): ExecResult {
         return doExecute()
@@ -66,11 +67,6 @@ abstract class ExecRunner(
             execEnvironment[envPathName] = path + File.pathSeparator + execEnvironment[envPathName]
         }
         return execEnvironment
-    }
-
-    // Configurable; Groovy support
-    fun setExecOverrides(execOverrides: Closure<ExecSpec>) {
-        this.execOverrides = { execOverrides.invoke(this) }
     }
 
     protected abstract fun computeAdditionalBinPath(): String
