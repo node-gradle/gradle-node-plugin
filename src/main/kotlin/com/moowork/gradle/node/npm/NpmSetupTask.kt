@@ -68,6 +68,7 @@ open class NpmSetupTask : DefaultTask() {
         const val NAME = "npmSetup"
 
         val PROXY_SETTINGS by lazy {
+            val proxyArgs = ArrayList<String>()
             for ((proxyProto, proxyParam) in listOf(arrayOf("http", "--proxy"), arrayOf("https", "--https-proxy"))) {
                 var proxyHost = System.getProperty("$proxyProto.proxyHost")
                 val proxyPort = System.getProperty("$proxyProto.proxyPort")
@@ -75,14 +76,14 @@ open class NpmSetupTask : DefaultTask() {
                     proxyHost = proxyHost.replace("^https?://".toRegex(), "")
                     val proxyUser = System.getProperty("$proxyProto.proxyUser")
                     val proxyPassword = System.getProperty("$proxyProto.proxyPassword")
-                    return@lazy if (proxyUser != null && proxyPassword != null) {
-                        listOf("$proxyParam $proxyProto://$proxyUser:$proxyPassword@$proxyHost:$proxyPort")
+                    if (proxyUser != null && proxyPassword != null) {
+                        proxyArgs.add("$proxyParam $proxyProto://$proxyUser:$proxyPassword@$proxyHost:$proxyPort")
                     } else {
-                        listOf("$proxyParam $proxyProto://$proxyHost:$proxyPort")
+                        proxyArgs.add("$proxyParam $proxyProto://$proxyHost:$proxyPort")
                     }
                 }
             }
-            return@lazy emptyList()
+            return@lazy proxyArgs.toList()
         }
     }
 }
