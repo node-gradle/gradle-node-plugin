@@ -123,6 +123,7 @@ class NpmSetupTask
     }
 
     static List<String> proxySettings() {
+        def proxyArgs = []
         for(String[] proxySettings : [['http', '--proxy'], ['https', '--https-proxy']]) {
             String proxyHost = System.getProperty(proxySettings[0] + '.proxyHost')
             String proxyPort = System.getProperty(proxySettings[0] + '.proxyPort')
@@ -131,13 +132,13 @@ class NpmSetupTask
                 String proxyUser = System.getProperty(proxySettings[0] + '.proxyUser')
                 String proxyPassword = System.getProperty(proxySettings[0] + '.proxyPassword')
                 if (proxyUser != null && proxyPassword != null) {
-                    return ["${proxySettings[1]} ${proxySettings[0]}://$proxyUser:$proxyPassword@$proxyHost:$proxyPort"]
+                    proxyArgs.add("${proxySettings[1]} ${proxySettings[0]}://$proxyUser:$proxyPassword@$proxyHost:$proxyPort")
                 } else {
-                    return ["${proxySettings[1]} ${proxySettings[0]}://$proxyHost:$proxyPort"]
+                    proxyArgs.add("${proxySettings[1]} ${proxySettings[0]}://$proxyHost:$proxyPort")
                 }
             }
         }
-        return []
+        return proxyArgs
     }
 
 }
