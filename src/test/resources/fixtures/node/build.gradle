@@ -27,7 +27,7 @@ if (changeArgs) {
     hello.args = ["Bob", "Alice"]
 }
 
-task helloFromIndex(type: NodeTask) {
+task executeDirectoryScript(type: NodeTask) {
     script = file(".")
     outputs.upToDateWhen {
         true

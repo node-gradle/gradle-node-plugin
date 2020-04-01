@@ -72,37 +72,18 @@ class NodeTask_integTest
         result7.output.contains("Hello Bobby")
 
         when:
-        def result8 = build("helloFromIndex")
+        def result8 = buildAndFail("executeDirectoryScript")
 
         then:
-        result8.task(":helloFromIndex").outcome == TaskOutcome.SUCCESS
-        result8.output.contains("Hello world from index.js!")
-        result8.output.contains("Using the NodeTask with a script directory")
+        result8.task(":executeDirectoryScript").outcome == TaskOutcome.FAILED
+        result8.output.contains("specified for property 'script' is not a file")
 
         when:
-        createFile("simple.js").delete()
-        def result9 = build("helloFromIndex")
+        def result9 = build(":version")
 
         then:
-        // Ensure that the helloFromIndex task input does not contain the whole directory
-        result9.task(":helloFromIndex").outcome == TaskOutcome.UP_TO_DATE
-
-        when:
-        writeFile("index.js", "console.log('Hello Gradle');")
-        def result10 = build("helloFromIndex")
-
-        then:
-        // Ensure that the helloFromIndex task input contains the index.js file
-        result10.task(":helloFromIndex").outcome == TaskOutcome.SUCCESS
-        result10.output.contains("Hello Gradle")
-        result10.output.contains("Using the NodeTask with a script directory")
-
-        when:
-        def result11 = build(":version")
-
-        then:
-        result11.task(":version").outcome == TaskOutcome.SUCCESS
-        result11.output.contains("Version: v12.13.0")
+        result9.task(":version").outcome == TaskOutcome.SUCCESS
+        result9.output.contains("Version: v12.13.0")
     }
 
     def 'exec node program with custom settings and check up-to-date detection'() {

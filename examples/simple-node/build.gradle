@@ -5,8 +5,8 @@ node {
     download = true
 }
 
-task helloWorld( type: NodeTask, dependsOn: 'npmInstall' ) {
-    script = file( 'src/node' )
+task helloWorld(type: NodeTask, dependsOn: 'npmInstall') {
+    script = file('src/node/index.js')
 }
 
 task build(dependsOn: 'helloWorld') {

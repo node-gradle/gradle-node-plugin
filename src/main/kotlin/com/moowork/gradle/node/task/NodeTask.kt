@@ -16,26 +16,11 @@ open class NodeTask : DefaultTask() {
     var options = listOf<String>()
     @get:Input
     var args = listOf<String>()
-    private var _script: File? = null
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    var script: File?
-        get() {
-            val currentScript = _script ?: return null
-            if (currentScript.isDirectory) {
-                // TODO: Fulfill deprecation contract
-                logger.warn("Using the NodeTask with a script directory ({}) is deprecated. It will no longer be supported in the next major version.", currentScript)
-                return File(currentScript, "index.js")
-            }
-            return currentScript
-        }
-        set(value) {
-            _script = value
-        }
-
+    var script: File? = null
     @get:Internal
     var result: ExecResult? = null
-
     @get:Internal
     var execOverrides by MutableAlias { execRunner::execOverrides }
     @get:Internal
