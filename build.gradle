@@ -54,7 +54,7 @@ gradlePlugin {
 	plugins {
 		nodePlugin {
 			id = "com.github.node-gradle.node"
-			implementationClass = "com.moowork.gradle.node.NodePlugin"
+			implementationClass = "com.github.gradle.node.NodePlugin"
 		}
 	}
 }
