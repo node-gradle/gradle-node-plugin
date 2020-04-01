@@ -59,7 +59,7 @@ open class NpmSetupTask : DefaultTask() {
     open fun configureVersion(version: String) {
         if (version.isNotEmpty()) {
             logger.debug("Setting npmVersion to {}", version)
-            args = listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", variant.npmDir.absolutePath, "npm@$version") + args
+            args = listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", npmDir.absolutePath, "npm@$version") + args
             isEnabled = true
         }
     }
