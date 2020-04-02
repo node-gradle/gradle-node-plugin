@@ -1,0 +1,48 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build
+        run: |
+          ./gradlew --version
+          ./gradlew ci
+          ./gradlew -p examples build
+        working-directory: ${{github.workspace}}
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build
+        run: |
+          ./gradlew --version
+          ./gradlew ci
+          ./gradlew -p examples build
+        working-directory: ${{github.workspace}}
+  macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build
+        run: |
+          ./gradlew --version
+          ./gradlew ci
+          ./gradlew -p examples build
+        working-directory: ${{github.workspace}}
