@@ -62,9 +62,14 @@ This requires those tools are globally installed on your system in order to get 
 To build the plugin, just type the following command:
 
 ```bash
-./gradlew clean build
+./gradlew build
 ```
 
+To speed up the build, we can skip integration tests on older Gradle versions.
+
+```bash
+./gradlew build -PtestOnlyCurrentGradleVersion=true
+```
 
 ## Contributing
 

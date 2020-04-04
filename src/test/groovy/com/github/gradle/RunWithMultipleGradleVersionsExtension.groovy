@@ -1,5 +1,6 @@
 package com.github.gradle
 
+
 import org.gradle.util.GradleVersion
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension
 import org.spockframework.runtime.extension.IMethodInvocation
@@ -25,11 +26,12 @@ class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExt
 
     protected void executeFeaturesWithAllGradleVersions(SpecInfo spec) {
         def bottomSpec = spec.getBottomSpec()
+        def gradleVersions = computeCandidateGradleVersions()
         for (FeatureInfo feature : bottomSpec.getFeatures()) {
             feature.setReportIterations(true)
             feature.setIterationNameProvider({ "${gradleVersion}" })
             feature.addInterceptor({ IMethodInvocation invocation ->
-                for (GradleVersion gradleVersion : GRADLE_VERSIONS) {
+                for (GradleVersion gradleVersion : gradleVersions) {
                     println("Running with ${gradleVersion}")
                     this.gradleVersion = gradleVersion
                     invocation.proceed()
@@ -47,7 +49,14 @@ class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExt
         }
     }
 
-    private void enrichParameters(IMethodInvocation invocation, GradleVersion gradleVersion) {
+    private static GradleVersion[] computeCandidateGradleVersions() {
+        if (System.getProperty("testOnlyCurrentGradleVersion").equals("true")) {
+            return [CURRENT_GRADLE_VERSION]
+        }
+        return GRADLE_VERSIONS
+    }
+
+    private static void enrichParameters(IMethodInvocation invocation, GradleVersion gradleVersion) {
         // Inspired from http://spockframework.org/spock/docs/1.3/extensions.html#_injecting_method_parameters
         Map<Parameter, Integer> parameters = [:]
         invocation.method.reflection.parameters.eachWithIndex { parameter, i ->
