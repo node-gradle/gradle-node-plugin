@@ -4,61 +4,49 @@ import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
 class NpmInstall_integTest
-    extends AbstractIntegTest
-{
-    def 'install packages with npm'()
-    {
+        extends AbstractIntegTest {
+    def 'install packages with npm'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
-
-            node {
-                download = true
-                workDir = file('build/node')
-            }
-        ''' )
+        ''')
         writeEmptyPackageJson()
 
         when:
-        def result = build( 'npmInstall' )
+        def result = build('npmInstall')
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
-        result = build( 'npmInstall' )
+        result = build('npmInstall')
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         // because of package-lock.json that was generated during the previous npm install execution
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
-        result = build( 'npmInstall' )
+        result = build('npmInstall')
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
-    def 'install packages with npm and postinstall task requiring npm and node'()
-    {
+    def 'install packages with npm and postinstall task requiring npm and node'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
-            node {
-                download = true
-                workDir = file('build/node')
-            }
-        ''' )
+        ''')
         writePackageJson(""" {
             "name": "example",
             "dependencies": {},
@@ -68,75 +56,69 @@ class NpmInstall_integTest
         """)
 
         when:
-        def result = build( 'npmInstall' )
+        def result = build('npmInstall')
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
-        result = build( 'npmInstall' )
+        result = build('npmInstall')
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
 
         when:
-        result = build( 'npmInstall' )
+        result = build('npmInstall')
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
-    def 'install packages with npm in different directory'()
-    {
+    def 'install packages with npm in different directory'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
             node {
-                download = true
-                workDir = file('build/node')
                 nodeModulesDir = file('subdirectory')
             }
-        ''' )
-        writeFile( 'subdirectory/package.json', """{
+        ''')
+        writeFile('subdirectory/package.json', """{
             "name": "example",
             "dependencies": {
             }
-        }""" )
+        }""")
 
         when:
-        def result = build( 'npmInstall' )
+        def result = build('npmInstall')
 
         then:
-        result.task( ':npmInstall' ).outcome == TaskOutcome.SUCCESS
+        result.task(':npmInstall').outcome == TaskOutcome.SUCCESS
     }
 
-    def 'configure npm install to use the ci command through extension'()
-    {
+    def 'configure npm install to use the ci command through extension'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
             node {
-                download = true
-                workDir = file('build/node')
                 npmInstallCommand = 'ci'
             }
-        ''' )
+        ''')
         writeEmptyPackageJson()
 
         when:
-        def result = buildAndFail( 'npmInstall' )
+        def result = buildAndFail('npmInstall')
 
         then:
         result.output.contains('can only install packages with an existing package-lock.json')
@@ -144,23 +126,20 @@ class NpmInstall_integTest
 
         when:
         writeEmptyLockFile()
-        result = buildTask( 'npmInstall' )
+        result = buildTask('npmInstall')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
     }
 
-    def 'verify npm install inputs/outputs'()
-    {
+    def 'verify npm install inputs/outputs'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
             node {
-                download = true
-                workDir = file('build/node')
                 npmInstallCommand = 'install'
             }
 
@@ -174,28 +153,25 @@ class NpmInstall_integTest
                     }
                 }
             }
-        ''' )
+        ''')
         writeEmptyPackageJson()
         writeFile('package-lock.json', '')
 
         when:
-        def result = buildTask( 'verifyIO' )
+        def result = buildTask('verifyIO')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
     }
 
-    def 'verify npm ci inputs/outputs'()
-    {
+    def 'verify npm ci inputs/outputs'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
             node {
-                download = true
-                workDir = file('build/node')
                 npmInstallCommand = 'ci'
             }
 
@@ -209,12 +185,12 @@ class NpmInstall_integTest
                     }
                 }
             }
-        ''' )
+        ''')
         writeEmptyPackageJson()
         writeEmptyLockFile()
 
         when:
-        def result = buildTask( 'verifyIO' )
+        def result = buildTask('verifyIO')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
@@ -225,11 +201,6 @@ class NpmInstall_integTest
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
-            }
-
-            node {
-                download = true
-                workDir = file('build/node')
             }
         ''')
         writePackageJson("""
@@ -284,23 +255,17 @@ class NpmInstall_integTest
         createFile("node_modules/mocha/package.json").exists()
     }
 
-    def 'verity output configuration when filtering node_modules output'()
-    {
+    def 'verity output configuration when filtering node_modules output'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
-            }
-
-            node {
-                download = true
-                workDir = file('build/node')
             }
 
             npmInstall {
                 nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
             }
-        ''' )
+        ''')
         writePackageJson("""
             {
               "name": "hello",
@@ -354,8 +319,7 @@ class NpmInstall_integTest
         result5.task(":npmInstall").outcome == TaskOutcome.SUCCESS
     }
 
-    protected final void writeEmptyLockFile()
-    {
+    protected final void writeEmptyLockFile() {
         writeFile('package-lock.json', '''
             {
               "name": "example",

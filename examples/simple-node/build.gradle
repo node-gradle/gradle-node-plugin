@@ -1,10 +1,5 @@
 apply plugin: 'com.github.node-gradle.node'
 
-node {
-    version = '10.14.0'
-    download = true
-}
-
 task helloWorld(type: NodeTask, dependsOn: 'npmInstall') {
     script = file('src/node/index.js')
 }

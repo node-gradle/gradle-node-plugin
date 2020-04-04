@@ -17,11 +17,6 @@ class NpxTask_integTest
                 id 'com.github.node-gradle.node'
             }
 
-            node {
-                download = true
-                workDir = file('build/node')
-            }
-            
             task camelCase(type: NpxTask) {
                 command = 'chcase-cli'
                 args = ['--help']
@@ -32,7 +27,7 @@ class NpxTask_integTest
         def result = build(":camelCase")
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":camelCase").outcome == TaskOutcome.SUCCESS
         result.output.contains("--case, -C  Which case to convert to")

@@ -52,6 +52,13 @@ Here's the documentation for older releases of the plugin:
 
 ## Building the Plugin
 
+### Prerequisites
+
+Some integration test ensure that this plugin is able to use the globally installed Node.js, npm or yarn tools.
+This requires those tools are globally installed on your system in order to get all integration tests pass.
+
+### Command
+
 To build the plugin, just type the following command:
 
 ```bash

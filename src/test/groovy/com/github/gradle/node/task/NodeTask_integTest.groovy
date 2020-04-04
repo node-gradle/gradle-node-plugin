@@ -10,7 +10,7 @@ class NodeTask_integTest
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'exec simple node program and check up-to-date detection'() {
+    def 'download specified node version and exec simple node program and check up-to-date detection'() {
         given:
         copyResources("fixtures/node")
 
@@ -86,7 +86,7 @@ class NodeTask_integTest
         result9.output.contains("Version: v12.13.0")
     }
 
-    def 'exec node program with custom settings and check up-to-date detection'() {
+    def 'download default node version and exec node program with custom settings and check up-to-date detection'() {
         given:
         copyResources("fixtures/node-env")
 
@@ -214,5 +214,17 @@ class NodeTask_integTest
         then:
         result16.task(":version").outcome == TaskOutcome.SUCCESS
         result16.output.contains("Version: v10.14.0")
+    }
+
+    def 'try to use custom repositories when the download url is null'() {
+        given:
+        copyResources("fixtures/node-no-download-url")
+
+        when:
+        def result = buildAndFail("nodeSetup")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.FAILED
+        result.output.contains("Cannot resolve external dependency org.nodejs:node:10.14.0 because no repositories are defined.")
     }
 }

@@ -4,56 +4,49 @@ import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
 class YarnInstall_integTest
-    extends AbstractIntegTest
-{
-    def 'install packages with yarn'()
-    {
+        extends AbstractIntegTest {
+    def 'install packages with yarn'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
             node {
-                download = true
-                workDir = file('build/node')
                 yarnWorkDir = file('build/yarn')
             }
-        ''' )
+        ''')
         writeEmptyPackageJson()
 
         when:
-        def result = buildTask( 'yarn' )
+        def result = buildTask('yarn')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
 
         when:
-        result = buildTask( 'yarn' )
+        result = buildTask('yarn')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
 
         when:
-        result = buildTask( 'yarn' )
+        result = buildTask('yarn')
 
         then:
         result.outcome == TaskOutcome.UP_TO_DATE
     }
 
-    def 'install packages with yarn and and postinstall task requiring node and yarn'()
-    {
+    def 'install packages with yarn and and postinstall task requiring node and yarn'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
             node {
-                download = true
-                workDir = file('build/node')
                 yarnWorkDir = file('build/yarn')
             }
-        ''' )
+        ''')
         writePackageJson(""" {
             "name": "example",
             "dependencies": {},
@@ -63,47 +56,44 @@ class YarnInstall_integTest
         """)
 
         when:
-        def result = buildTask( 'yarn' )
+        def result = buildTask('yarn')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
 
         when:
-        result = buildTask( 'yarn' )
+        result = buildTask('yarn')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
 
         when:
-        result = buildTask( 'yarn' )
+        result = buildTask('yarn')
 
         then:
         result.outcome == TaskOutcome.UP_TO_DATE
     }
 
-    def 'install packages with yarn in different directory'()
-    {
+    def 'install packages with yarn in different directory'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
             node {
-                download = true
-                workDir = file('build/node')
                 yarnWorkDir = file('build/yarn')
                 nodeModulesDir = file('subdirectory')
             }
-        ''' )
-        writeFile( 'subdirectory/package.json', """{
+        ''')
+        writeFile('subdirectory/package.json', """{
             "name": "example",
             "dependencies": {
             }
-        }""" )
+        }""")
 
         when:
-        def result = buildTask( 'yarn' )
+        def result = buildTask('yarn')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
@@ -116,11 +106,6 @@ class YarnInstall_integTest
                 id 'com.github.node-gradle.node'
             }
 
-            node {
-                download = true
-                workDir = file('build/node')
-            }
-            
             def changeOutput = System.properties["changeOutput"] ? System.properties["changeOutput"] == "true" : false
             if (changeOutput) {
                 yarn {
@@ -179,23 +164,17 @@ class YarnInstall_integTest
         result5.task(":yarn").outcome == TaskOutcome.SUCCESS
     }
 
-    def 'verity output configuration when filtering node_modules output'()
-    {
+    def 'verity output configuration when filtering node_modules output'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
-            node {
-                download = true
-                workDir = file('build/node')
-            }
-            
             yarn {
                 nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
             }
-        ''' )
+        ''')
         writePackageJson("""
             {
               "name": "hello",
