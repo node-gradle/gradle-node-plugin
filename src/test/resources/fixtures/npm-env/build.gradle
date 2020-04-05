@@ -49,6 +49,12 @@ if (isPropertyEnabled("customWorkingDir")) {
     pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
 }
 
+if (isPropertyEnabled("outputFile")) {
+    env.execOverrides {
+        it.standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+    }
+}
+
 def isPropertyEnabled(name) {
     def property = System.properties[name]
     return property == "true"

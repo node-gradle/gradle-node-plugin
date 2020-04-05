@@ -2,6 +2,7 @@ package com.github.gradle.node.npm
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
+import org.gradle.util.GradleVersion
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
@@ -106,43 +107,58 @@ class NpmTask_integTest
         result5.task(":env").outcome == TaskOutcome.FAILED
         result5.output.contains("Usage: npm <command>")
 
-        when:
-        def result6 = build(":pwd")
+        if (gradleVersion >= GradleVersion.version("5.6")) {
+            when:
+            def result6 = build(":env", "-DoutputFile=true")
 
-        then:
-        result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result6.task(":npmSetup").outcome == TaskOutcome.SKIPPED
-        result6.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result6.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result6.output.contains("Working directory is '${projectDir}'")
+            then:
+            result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+            result6.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+            result6.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+            result6.task(":env").outcome == TaskOutcome.SUCCESS
+            !result6.output.contains("PATH=")
+            def outputFile = file("build/standard-output.txt")
+            outputFile.exists()
+            outputFile.text.contains("PATH=")
+        }
 
         when:
-        def result7 = build(":pwd", "-DcustomWorkingDir=true")
+        def result7 = build(":pwd")
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result7.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result7.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
+        result7.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result7.output.contains("Working directory is '${projectDir}'")
 
         when:
-        def result8 = build(":pwd", "-DcustomWorkingDir=true", "--rerun-tasks")
+        def result8 = build(":pwd", "-DcustomWorkingDir=true")
 
         then:
-        result8.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result8.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result8.task(":npmSetup").outcome == TaskOutcome.SKIPPED
-        result8.task(":npmInstall").outcome == TaskOutcome.SUCCESS
-        result8.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result8.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+        result8.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        def result9 = build(":pwd", "-DcustomWorkingDir=true", "--rerun-tasks")
+
+        then:
+        result9.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result9.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result9.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result9.task(":pwd").outcome == TaskOutcome.SUCCESS
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
-        result8.output.contains("Working directory is '${expectedWorkingDirectory}'")
+        result9.output.contains("Working directory is '${expectedWorkingDirectory}'")
         new File(expectedWorkingDirectory).isDirectory()
 
         when:
-        def result9 = build(":version")
+        def result10 = build(":version")
 
         then:
-        result9.task(":version").outcome == TaskOutcome.SUCCESS
-        result9.output.contains("> Task :version${System.lineSeparator()}6.4.1")
+        result10.task(":version").outcome == TaskOutcome.SUCCESS
+        result10.output.contains("> Task :version${System.lineSeparator()}6.4.1")
     }
 
     def 'execute npm command using the npm version specified in the package.json file'() {

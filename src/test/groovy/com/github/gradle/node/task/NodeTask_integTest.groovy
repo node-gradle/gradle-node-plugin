@@ -2,6 +2,7 @@ package com.github.gradle.node.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
+import org.gradle.util.GradleVersion
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
@@ -208,12 +209,25 @@ class NodeTask_integTest
         result15.task(":env").outcome == TaskOutcome.FAILED
         result15.output.contains("I had to fail")
 
+        if (gradleVersion >= GradleVersion.version("5.6")) {
+            when:
+            def result16 = build("env", "-DoutputFile=true")
+
+            then:
+            result16.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+            result16.task(":env").outcome == TaskOutcome.SUCCESS
+            !result16.output.contains("No custom environment")
+            def outputFile = file("build/standard-output.txt")
+            outputFile.exists()
+            outputFile.text.contains("No custom environment")
+        }
+
         when:
-        def result16 = build(":version")
+        def result17 = build(":version")
 
         then:
-        result16.task(":version").outcome == TaskOutcome.SUCCESS
-        result16.output.contains("Version: v10.14.0")
+        result17.task(":version").outcome == TaskOutcome.SUCCESS
+        result17.output.contains("Version: v10.14.0")
     }
 
     def 'try to use custom repositories when the download url is null'() {

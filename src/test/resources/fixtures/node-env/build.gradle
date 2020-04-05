@@ -13,6 +13,7 @@ def changeEnv = isPropertyEnabled("changeEnv")
 def changeWorkingDir = isPropertyEnabled("changeWorkingDir")
 def fail = isPropertyEnabled("fail")
 def ignoreExitValue = isPropertyEnabled("ignoreExitValue")
+def outputFile = isPropertyEnabled("outputFile")
 
 def isPropertyEnabled(name) {
     def property = System.properties[name]
@@ -45,6 +46,12 @@ if (fail) {
 
 if (ignoreExitValue) {
     env.ignoreExitValue = true
+}
+
+if (outputFile) {
+    env.execOverrides {
+        it.standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+    }
 }
 
 task version(type: NodeTask) {
