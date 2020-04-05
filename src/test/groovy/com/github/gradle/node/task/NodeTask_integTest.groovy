@@ -134,7 +134,7 @@ class NodeTask_integTest
         then:
         result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result6.task(":env").outcome == TaskOutcome.SUCCESS
-        result6.output.contains("Detected custom environment: custom environment value")
+        result6.output.contains("Detected custom environment: custom value")
 
         when:
         environmentVariables.set("NEW_ENV_VARIABLE", "Let's make the whole environment change")

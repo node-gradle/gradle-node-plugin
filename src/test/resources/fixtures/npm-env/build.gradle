@@ -33,7 +33,8 @@ task version(type: NpmTask) {
 }
 
 if (isPropertyEnabled("customEnv")) {
-    env.environment = [CUSTOM: "custom value"]
+    def qualifier = "custom"
+    env.environment = [CUSTOM: "${qualifier} value"]
 }
 
 if (isPropertyEnabled("ignoreExitValue")) {
