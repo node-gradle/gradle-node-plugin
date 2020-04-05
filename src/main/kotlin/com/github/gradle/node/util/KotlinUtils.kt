@@ -67,3 +67,11 @@ class MutableAlias<R, T>(private val propertySupplier: (R) -> KMutableProperty0<
         propertySupplier(thisRef).set(value)
     }
 }
+
+class OverrideMapAlias<R, K, V>(private val propertySupplier: (R) -> KProperty0<MutableMap<K, V>>) : ReadWriteProperty<R, Map<K, V>> {
+    override operator fun getValue(thisRef: R, property: KProperty<*>): Map<K, V> = propertySupplier(thisRef).get()
+    override operator fun setValue(thisRef: R, property: KProperty<*>, value: Map<K, V>) {
+        val map = propertySupplier(thisRef).get()
+        map.putAll(value)
+    }
+}

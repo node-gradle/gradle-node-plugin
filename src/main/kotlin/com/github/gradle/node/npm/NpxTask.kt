@@ -2,6 +2,7 @@ package com.github.gradle.node.npm
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.MutableAlias
+import com.github.gradle.node.util.OverrideMapAlias
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -27,14 +28,12 @@ open class NpxTask : DefaultTask() {
     var ignoreExitValue by MutableAlias { execRunner::ignoreExitValue }
     @get:Internal
     var workingDir by MutableAlias { execRunner::workingDir }
+    @get:Internal
+    var environment by OverrideMapAlias { execRunner::environment }
 
     init {
         group = NodePlugin.NODE_GROUP
         dependsOn(NpmSetupTask.NAME)
-    }
-
-    fun setEnvironment(value: Map<String, String>) {
-        execRunner.environment.putAll(value)
     }
 
     @TaskAction

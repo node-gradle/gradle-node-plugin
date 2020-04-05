@@ -2,6 +2,7 @@ package com.github.gradle.node.npm
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.MutableAlias
+import com.github.gradle.node.util.OverrideMapAlias
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecResult
@@ -26,14 +27,12 @@ open class NpmTask : DefaultTask() {
     var workingDir by MutableAlias { execRunner::workingDir }
     @get:Internal
     var execOverrides by MutableAlias { execRunner::execOverrides }
+    @get:Internal
+    var environment by OverrideMapAlias { execRunner::environment }
 
     init {
         group = NodePlugin.NODE_GROUP
         dependsOn(NpmSetupTask.NAME)
-    }
-
-    fun setEnvironment(value: Map<String, String>) {
-        execRunner.environment.putAll(value)
     }
 
     @TaskAction
