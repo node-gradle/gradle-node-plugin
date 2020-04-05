@@ -2,10 +2,9 @@
 
 # Gradle Plugin for Node
 
-[![Build Status](https://travis-ci.org/node-gradle/gradle-node-plugin.svg?branch=master)](https://travis-ci.org/node-gradle/gradle-node-plugin)
-[![Windows Build status](https://ci.appveyor.com/api/projects/status/xledod92mhvfihlb?svg=true)](https://ci.appveyor.com/project/deepy/gradle-node-plugin)
+![Build Status](https://github.com/node-gradle/gradle-node-plugin/workflows/CI/badge.svg?branch=master)
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-![Version](https://img.shields.io/badge/Version-2.2.2-orange.svg)
+![Version](https://img.shields.io/badge/Version-2.2.3-orange.svg)
 
 This plugin enables you to use a lot of [NodeJS](https://nodejs.org)-based technologies as part of your 
 build without having NodeJS installed locally on your system. It integrates the following NodeJS-based system
@@ -33,6 +32,9 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 
 Here's the documentation for older releases of the plugin:
 
+* [2.2.2](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.2/README.md)
+* [2.2.1](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.1/README.md)
+* [2.2.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.0/README.md)
 * [2.1.1](https://github.com/node-gradle/gradle-node-plugin/blob/2.1.1/README.md)
 * [2.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.1.0/README.md)
 * [2.0.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.0.0/README.md)
@@ -50,12 +52,24 @@ Here's the documentation for older releases of the plugin:
 
 ## Building the Plugin
 
+### Prerequisites
+
+Some integration test ensure that this plugin is able to use the globally installed Node.js, npm or yarn tools.
+This requires those tools are globally installed on your system in order to get all integration tests pass.
+
+### Command
+
 To build the plugin, just type the following command:
 
 ```bash
-./gradlew clean build
+./gradlew build
 ```
 
+To speed up the build, we can skip integration tests on older Gradle versions.
+
+```bash
+./gradlew build -PtestOnlyCurrentGradleVersion=true
+```
 
 ## Contributing
 

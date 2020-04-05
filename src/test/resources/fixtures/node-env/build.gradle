@@ -31,7 +31,8 @@ if (changeOptions) {
 }
 
 if (changeEnv) {
-    env.environment = ["CUSTOM": "custom environment value"]
+    def qualifier = "custom"
+    env.environment = [CUSTOM: "${qualifier} value"]
 }
 
 if (changeWorkingDir) {

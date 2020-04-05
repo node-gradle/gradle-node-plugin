@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.2.3 *(2020-02-28)*
+----------------------------
+
+The previous release (2.2.2) was released by error from the development branch which contains an entire Kotlin rewrite 
+of the plugin code and many backward compatibility breaks. This new version replaces the previous one and adds one fix.
+* Make npm and npx symlinks relative. PR #68
+* NpmSetupTask does not work when using separate http and https proxy settings #69
+
 Version 2.2.2 *(2020-02-21)*
 ----------------------------
 
