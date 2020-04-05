@@ -2,7 +2,6 @@ package com.github.gradle.node.exec
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.variant.Variant
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input

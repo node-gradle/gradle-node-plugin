@@ -3,9 +3,11 @@ package com.github.gradle.node.yarn
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.MutableAlias
 import com.github.gradle.node.util.OverrideMapAlias
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecResult
+import org.gradle.process.ExecSpec
 
 open class YarnTask : DefaultTask() {
 
@@ -22,17 +24,21 @@ open class YarnTask : DefaultTask() {
     var result: ExecResult? = null
 
     @get:Internal
-    var execOverrides by MutableAlias { execRunner::execOverrides }
-    @get:Internal
     var ignoreExitValue by MutableAlias { execRunner::ignoreExitValue }
     @get:Internal
     var workingDir by MutableAlias { execRunner::workingDir }
     @get:Internal
     var environment by OverrideMapAlias { execRunner::environment }
+    @get:Internal
+    var execOverrides by MutableAlias { execRunner::execOverrides }
 
     init {
         group = NodePlugin.NODE_GROUP
         dependsOn(YarnSetupTask.NAME)
+    }
+
+    fun execOverrides(execOverrides: Action<ExecSpec>) {
+        execRunner.execOverrides = execOverrides
     }
 
     @TaskAction

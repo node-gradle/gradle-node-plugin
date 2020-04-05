@@ -30,7 +30,7 @@ val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
     workingDir = file("./")
-    execOverrides = {
+    execOverrides {
         standardOutput = System.out
     }
     inputs.dir("node_modules")
@@ -47,7 +47,7 @@ val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
     workingDir = file("./")
-    execOverrides = {
+    execOverrides {
         standardOutput = System.out
     }
     inputs.dir("node_modules")
@@ -64,7 +64,7 @@ val testTaskUsingYarn = tasks.register<YarnTask>("testYarn") {
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
     workingDir = file("./")
-    execOverrides = {
+    execOverrides {
         standardOutput = System.out
     }
     inputs.dir("node_modules")
@@ -82,7 +82,7 @@ tasks.register<NodeTask>("run") {
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
     workingDir = file("./")
-    execOverrides = {
+    execOverrides {
         standardOutput = System.out
     }
     inputs.files("index.js", "main.js")
