@@ -46,7 +46,7 @@ class NpxTask_integTest extends AbstractIntegTest {
         result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":lint").outcome == TaskOutcome.SUCCESS
         result1.task(":test").outcome == TaskOutcome.SUCCESS
-        result1.output.contains("3 problems (0 errors, 3 warnings)")
+        result1.output.contains("5 problems (0 errors, 5 warnings)")
         result1.output.contains("1 passing")
 
         when:

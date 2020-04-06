@@ -35,7 +35,8 @@ val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
     }
     inputs.dir("node_modules")
     inputs.file("package.json")
-    inputs.files("index.js", "test.js")
+    inputs.dir("src")
+    inputs.dir("test")
     outputs.upToDateWhen {
         true
     }
@@ -52,7 +53,8 @@ val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
     }
     inputs.dir("node_modules")
     inputs.file("package.json")
-    inputs.files("index.js", "test.js")
+    inputs.dir("src")
+    inputs.dir("test")
     outputs.upToDateWhen {
         true
     }
@@ -69,7 +71,8 @@ val testTaskUsingYarn = tasks.register<YarnTask>("testYarn") {
     }
     inputs.dir("node_modules")
     inputs.file("package.json")
-    inputs.files("index.js", "test.js")
+    inputs.dir("src")
+    inputs.dir("test")
     outputs.upToDateWhen {
         true
     }
@@ -77,7 +80,7 @@ val testTaskUsingYarn = tasks.register<YarnTask>("testYarn") {
 
 tasks.register<NodeTask>("run") {
     dependsOn(testTaskUsingNpx, testTaskUsingNpm, testTaskUsingYarn)
-    script = file("main.js")
+    script = file("src/main.js")
     args = listOf("Bobby")
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
@@ -85,8 +88,40 @@ tasks.register<NodeTask>("run") {
     execOverrides = {
         standardOutput = System.out
     }
-    inputs.files("index.js", "main.js")
+    inputs.dir("src")
     outputs.upToDateWhen {
         false
     }
+}
+
+val buildTaskUsingNpx = tasks.register<NpxTask>("buildNpx") {
+    dependsOn(npmInstallTask)
+    command = "babel"
+    args = listOf("src", "--out-dir", "${buildDir}/npx-output")
+    inputs.dir("src")
+    outputs.dir("${buildDir}/npx-output")
+}
+
+val buildTaskUsingNpm = tasks.register<NpmTask>("buildNpm") {
+    dependsOn(npmInstallTask)
+    // For some reason the --out-dir parameter is not passed to babel, so we use a dedicated command
+    npmCommand = listOf("run", "buildNpm")
+    args = listOf()
+    inputs.dir("src")
+    outputs.dir("${buildDir}/npm-output")
+}
+
+val buildTaskUsingYarn = tasks.register<YarnTask>("buildYarn") {
+    dependsOn(npmInstallTask)
+    yarnCommand = listOf("run", "build")
+    args = listOf("--out-dir", "${buildDir}/yarn-output")
+    inputs.dir("src")
+    outputs.dir("${buildDir}/yarn-output")
+}
+
+tasks.register<Zip>("package") {
+    // Using old deprecated properties to get it work with Gradle 5.0
+    archiveName = "app.zip"
+    destinationDir = buildDir
+    from(buildTaskUsingNpx, buildTaskUsingNpm, buildTaskUsingYarn)
 }

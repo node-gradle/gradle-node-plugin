@@ -4,7 +4,13 @@
     "mocha": "6.2.0",
     "chai": "4.2.0"
   },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0"
+  },
   "scripts": {
+    "buildNpm": "babel src --out-dir build/npm-output",
+    "build": "babel src",
     "test": "mocha"
   }
 }
