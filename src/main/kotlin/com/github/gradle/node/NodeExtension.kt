@@ -11,7 +11,7 @@ open class NodeExtension(project: Project) {
     var npmWorkDir = File(cacheDir, "npm")
     var yarnWorkDir = File(cacheDir, "yarn")
     var nodeModulesDir: File = project.projectDir
-    var version = "10.14.0"
+    var version = "12.16.1"
     var npmVersion = ""
     var yarnVersion = ""
     var distBaseUrl: String? = "https://nodejs.org/dist"

@@ -15,7 +15,7 @@ class NodeExtensionTest extends AbstractProjectTest {
         ext.distBaseUrl == 'https://nodejs.org/dist'
         ext.workDir != null
         ext.nodeModulesDir != null
-        ext.version == '10.14.0'
+        ext.version == '12.16.1'
         !ext.download
         ext.npmVersion == ''
     }

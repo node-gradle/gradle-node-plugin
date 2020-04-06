@@ -141,7 +141,7 @@ class NpmTask_integTest extends AbstractIntegTest {
 
         then:
         result9.task(":version").outcome == TaskOutcome.SUCCESS
-        result9.output.contains("> Task :version${System.lineSeparator()}6.4.1")
+        result9.output.contains("> Task :version${System.lineSeparator()}6.13.4")
     }
 
     def 'execute npm command using the npm version specified in the package.json file'() {
