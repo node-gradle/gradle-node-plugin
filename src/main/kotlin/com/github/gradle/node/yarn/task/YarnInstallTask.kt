@@ -49,7 +49,7 @@ open class YarnInstallTask : YarnTask() {
         return lockFile.takeIf { it.exists() }
     }
 
-    // Configurable; Groovy support
+    // For Groovy DSL
     @Suppress("unused")
     fun setNodeModulesOutputFilter(nodeModulesOutputFilter: Closure<ConfigurableFileTree>) {
         this.nodeModulesOutputFilter = { nodeModulesOutputFilter.invoke(this) }

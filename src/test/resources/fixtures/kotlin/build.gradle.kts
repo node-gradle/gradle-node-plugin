@@ -1,7 +1,9 @@
 import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeTask
+import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnTask
 
 plugins {
@@ -21,7 +23,19 @@ configure<NodeExtension> {
     nodeModulesDir = file("${project.projectDir}")
 }
 
-val npmInstallTask = tasks.named("npmInstall")
+val npmInstallTask = tasks.withType(NpmInstallTask::class).named("npmInstall")
+npmInstallTask.configure {
+    nodeModulesOutputFilter = {
+        exclude("notExistingFile")
+    }
+}
+
+val yarnInstallTask = tasks.withType(YarnInstallTask::class).named("yarn")
+yarnInstallTask.configure {
+    nodeModulesOutputFilter = {
+        exclude("notExistingFile")
+    }
+}
 
 val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
     dependsOn(npmInstallTask)
