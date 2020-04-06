@@ -15,7 +15,7 @@ open class NodeSetupTask : DefaultTask() {
     private val config = NodeExtension[project]
     private val variant by lazy { config.variant }
     @get:OutputDirectory
-    protected val nodeDir by Alias { variant::nodeDir }
+    val nodeDir by Alias { variant::nodeDir }
 
     init {
         group = NodePlugin.NODE_GROUP
