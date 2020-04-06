@@ -3,8 +3,7 @@ package com.github.gradle.node.npm
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
-class NpmInstall_integTest
-        extends AbstractIntegTest {
+class NpmInstall_integTest extends AbstractIntegTest {
     def 'install packages with npm'() {
         given:
         writeBuild('''

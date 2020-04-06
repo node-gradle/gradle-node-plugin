@@ -3,8 +3,7 @@ package com.github.gradle.node.yarn
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
-class YarnRule_integTest
-        extends AbstractIntegTest {
+class YarnRule_integTest extends AbstractIntegTest {
     def 'execute yarn_install rule'() {
         given:
         writeBuild("""

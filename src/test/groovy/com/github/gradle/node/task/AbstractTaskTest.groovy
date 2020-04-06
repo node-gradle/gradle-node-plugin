@@ -1,6 +1,5 @@
 package com.github.gradle.node.task
 
-
 import com.github.gradle.AbstractProjectTest
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.util.PlatformHelper
@@ -11,48 +10,44 @@ import org.gradle.process.ExecSpec
 
 import java.lang.reflect.Field
 
-abstract class AbstractTaskTest
-		extends AbstractProjectTest
-{
-	ExecResult execResult
+abstract class AbstractTaskTest extends AbstractProjectTest {
+    ExecResult execResult
 
-	ExecSpec execSpec
+    ExecSpec execSpec
 
-	Properties props
+    Properties props
 
-	NodeExtension ext
+    NodeExtension ext
 
-	def setup()
-	{
-		this.props = new Properties()
-		PlatformHelper.INSTANCE = new PlatformHelper( this.props )
+    def setup() {
+        this.props = new Properties()
+        PlatformHelper.INSTANCE = new PlatformHelper(this.props)
 
-		this.execResult = Mock( ExecResult )
+        this.execResult = Mock(ExecResult)
 
-		this.project.apply plugin: 'com.github.node-gradle.node'
-		this.ext = NodeExtension.get( this.project )
+        this.project.apply plugin: 'com.github.node-gradle.node'
+        this.ext = NodeExtension.get(this.project)
 
-		mockExec()
-	}
+        mockExec()
+    }
 
-	private void mockExec()
-	{
-		// Create mock to track exec calls
-		ProcessOperations processOperations = Spy(this.project.getProcessOperations())
-		processOperations.exec(_ as Action<ExecSpec>) >> { Action<ExecSpec> action ->
-			action.execute(this.execSpec)
-			return this.execResult
-		}
-		// Gradle does not allow us to easily inject our own services; manually override the ProcessOperations service
-		Field processOperationsField = this.project.getClass().getDeclaredFields()
-				.findAll { it.name ==~ /\w+processOperations\w+/ }
-				.tap { assert it.size() == 1 }
-				.first()
-		processOperationsField.setAccessible(true)
-		processOperationsField.set(this.project, processOperations)
-	}
+    private void mockExec() {
+        // Create mock to track exec calls
+        ProcessOperations processOperations = Spy(this.project.getProcessOperations())
+        processOperations.exec(_ as Action<ExecSpec>) >> { Action<ExecSpec> action ->
+            action.execute(this.execSpec)
+            return this.execResult
+        }
+        // Gradle does not allow us to easily inject our own services; manually override the ProcessOperations service
+        Field processOperationsField = this.project.getClass().getDeclaredFields()
+                .findAll { it.name ==~ /\w+processOperations\w+/ }
+                .tap { assert it.size() == 1 }
+                .first()
+        processOperationsField.setAccessible(true)
+        processOperationsField.set(this.project, processOperations)
+    }
 
-	protected containsPath( final Map<String, ?> env ) {
-		return env['PATH'] != null || env['Path'] != null
-	}
+    protected containsPath(final Map<String, ?> env) {
+        return env['PATH'] != null || env['Path'] != null
+    }
 }

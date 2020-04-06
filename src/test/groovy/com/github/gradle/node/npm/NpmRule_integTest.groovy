@@ -5,8 +5,7 @@ import org.gradle.testkit.runner.TaskOutcome
 
 import java.util.regex.Pattern
 
-class NpmRule_integTest
-        extends AbstractIntegTest {
+class NpmRule_integTest extends AbstractIntegTest {
     def 'execute npm_install rule'() {
         given:
         writeBuild('''

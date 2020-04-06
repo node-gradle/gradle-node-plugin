@@ -8,8 +8,7 @@ import org.junit.contrib.java.lang.system.EnvironmentVariables
 
 import java.util.regex.Pattern
 
-class YarnTask_integTest
-        extends AbstractIntegTest {
+class YarnTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 

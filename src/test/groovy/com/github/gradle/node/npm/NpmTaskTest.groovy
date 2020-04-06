@@ -3,16 +3,13 @@ package com.github.gradle.node.npm
 import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
-class NpmTaskTest
-    extends AbstractTaskTest
-{
-    def "exec npm task"()
-    {
+class NpmTaskTest extends AbstractTaskTest {
+    def "exec npm task"() {
         given:
-        this.props.setProperty( 'os.name', 'Linux' )
-        this.execSpec = Mock( ExecSpec )
+        this.props.setProperty('os.name', 'Linux')
+        this.execSpec = Mock(ExecSpec)
 
-        def task = this.project.tasks.create( 'simple', NpmTask )
+        def task = this.project.tasks.create('simple', NpmTask)
         task.args = ['a', 'b']
         task.environment = ['a': '1']
         task.ignoreExitValue = true
@@ -26,19 +23,18 @@ class NpmTaskTest
         then:
         task.args == ['a', 'b']
         task.result.exitValue == 0
-        1 * this.execSpec.setIgnoreExitValue( true )
-        1 * this.execSpec.setEnvironment( { it['a'] == '1' && containsPath(it) } )
-        1 * this.execSpec.setExecutable( 'npm' )
-        1 * this.execSpec.setArgs( ['a', 'b'] )
+        1 * this.execSpec.setIgnoreExitValue(true)
+        1 * this.execSpec.setEnvironment({ it['a'] == '1' && containsPath(it) })
+        1 * this.execSpec.setExecutable('npm')
+        1 * this.execSpec.setArgs(['a', 'b'])
     }
 
-    def "exec npm task (windows)"()
-    {
+    def "exec npm task (windows)"() {
         given:
-        this.props.setProperty( 'os.name', 'Windows' )
-        this.execSpec = Mock( ExecSpec )
+        this.props.setProperty('os.name', 'Windows')
+        this.execSpec = Mock(ExecSpec)
 
-        def task = this.project.tasks.create( 'simple', NpmTask )
+        def task = this.project.tasks.create('simple', NpmTask)
         task.args = ['a', 'b']
         task.environment = ['a': '1']
         task.ignoreExitValue = true
@@ -52,20 +48,19 @@ class NpmTaskTest
         then:
         task.args == ['a', 'b']
         task.result.exitValue == 0
-        1 * this.execSpec.setIgnoreExitValue( true )
-        1 * this.execSpec.setEnvironment( { it['a'] == '1' && containsPath( it ) } )
-        1 * this.execSpec.setExecutable( 'npm.cmd' )
-        1 * this.execSpec.setArgs( ['a', 'b'] )
+        1 * this.execSpec.setIgnoreExitValue(true)
+        1 * this.execSpec.setEnvironment({ it['a'] == '1' && containsPath(it) })
+        1 * this.execSpec.setExecutable('npm.cmd')
+        1 * this.execSpec.setArgs(['a', 'b'])
     }
 
-    def "exec npm task (download)"()
-    {
+    def "exec npm task (download)"() {
         given:
-        this.props.setProperty( 'os.name', 'Linux' )
+        this.props.setProperty('os.name', 'Linux')
         this.ext.download = true
-        this.execSpec = Mock( ExecSpec )
+        this.execSpec = Mock(ExecSpec)
 
-        def task = this.project.tasks.create( 'simple', NpmTask )
+        def task = this.project.tasks.create('simple', NpmTask)
 
         when:
         this.project.evaluate()
@@ -73,6 +68,6 @@ class NpmTaskTest
 
         then:
         task.result.exitValue == 0
-        1 * this.execSpec.setIgnoreExitValue( false )
+        1 * this.execSpec.setIgnoreExitValue(false)
     }
 }

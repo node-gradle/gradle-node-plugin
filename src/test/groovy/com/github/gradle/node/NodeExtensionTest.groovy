@@ -2,14 +2,11 @@ package com.github.gradle.node
 
 import com.github.gradle.AbstractProjectTest
 
-class NodeExtensionTest
-    extends AbstractProjectTest
-{
-    def "check default values for extension"()
-    {
+class NodeExtensionTest extends AbstractProjectTest {
+    def "check default values for extension"() {
         when:
         this.project.apply plugin: 'com.github.node-gradle.node'
-        def ext = NodeExtension.get( this.project )
+        def ext = NodeExtension.get(this.project)
 
         then:
         ext != null
