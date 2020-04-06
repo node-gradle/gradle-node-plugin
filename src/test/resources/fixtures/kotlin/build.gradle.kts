@@ -43,7 +43,7 @@ val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
     args = listOf("--grep", "should say hello")
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
-    workingDir = file("./")
+    workingDir = projectDir
     execOverrides = {
         standardOutput = System.out
     }
@@ -61,7 +61,7 @@ val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
     npmCommand = listOf("run", "test")
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
-    workingDir = file("./")
+    workingDir = projectDir
     execOverrides = {
         standardOutput = System.out
     }
@@ -79,7 +79,7 @@ val testTaskUsingYarn = tasks.register<YarnTask>("testYarn") {
     yarnCommand = listOf("run", "test")
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
-    workingDir = file("./")
+    workingDir = projectDir
     execOverrides = {
         standardOutput = System.out
     }
@@ -98,7 +98,7 @@ tasks.register<NodeTask>("run") {
     args = listOf("Bobby")
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
-    workingDir = file("./")
+    workingDir = projectDir
     execOverrides = {
         standardOutput = System.out
     }
