@@ -1,5 +1,6 @@
 package com.github.gradle.node.yarn.task
 
+
 import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
@@ -16,8 +17,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         then:
         1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   temporaryFolder.getRoot().absolutePath + '/.gradle/yarn/yarn-latest',
-                                   'yarn'])
+                                   projectDir.absolutePath + '/.gradle/yarn/yarn-latest', 'yarn'])
     }
 
     def "exec yarnSetup task with yarn version specified"() {
@@ -33,7 +33,6 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         then:
         1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   temporaryFolder.getRoot().absolutePath + '/.gradle/yarn/yarn-v1.22.4',
-                                   'yarn@1.22.4'])
+                                   projectDir.absolutePath + '/.gradle/yarn/yarn-v1.22.4', 'yarn@1.22.4'])
     }
 }

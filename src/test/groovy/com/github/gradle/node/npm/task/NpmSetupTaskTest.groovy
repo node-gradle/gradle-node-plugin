@@ -24,7 +24,6 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         this.ext.npmVersion = '6.4.1'
         this.execSpec = Mock(ExecSpec)
 
-        this.execSpec = Mock(ExecSpec)
         def task = this.project.tasks.create('simple', NpmSetupTask)
 
         when:
@@ -33,6 +32,6 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
         then:
         1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   temporaryFolder.getRoot().absolutePath + '/.gradle/npm/npm-v6.4.1', 'npm@6.4.1'])
+                                   projectDir.absolutePath + '/.gradle/npm/npm-v6.4.1', 'npm@6.4.1'])
     }
 }
