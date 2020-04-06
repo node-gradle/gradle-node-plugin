@@ -1,20 +1,21 @@
-package com.github.gradle.node.task
+package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
-import com.github.gradle.node.exec.NodeExecRunner
+import com.github.gradle.node.npm.exec.NpmExecRunner
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.*
-import org.gradle.api.tasks.PathSensitivity.RELATIVE
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecSpec
 import java.io.File
 
-open class NodeTask : DefaultTask() {
-    @get:InputFile
-    @get:PathSensitive(RELATIVE)
-    var script: File? = null
+open class NpmTask : DefaultTask() {
+    @get:Optional
     @get:Input
-    var options = listOf<String>()
+    var npmCommand = listOf<String>()
+    @get:Optional
     @get:Input
     var args = listOf<String>()
     @get:Input
@@ -28,16 +29,15 @@ open class NodeTask : DefaultTask() {
 
     init {
         group = NodePlugin.NODE_GROUP
-        dependsOn(NodeSetupTask.NAME)
+        dependsOn(NpmSetupTask.NAME)
     }
 
     @TaskAction
     fun exec() {
-        val currentScript = checkNotNull(script) { "Required script property is not set." }
-        val command = options.plus(currentScript.absolutePath).plus(args)
+        val command = npmCommand.plus(args)
         val nodeExecConfiguration =
                 NodeExecConfiguration(command, environment, workingDir, ignoreExitValue, execOverrides)
-        val nodeExecRunner = NodeExecRunner()
-        nodeExecRunner.execute(project, nodeExecConfiguration)
+        val npmExecRunner = NpmExecRunner()
+        npmExecRunner.executeNpmCommand(project, nodeExecConfiguration)
     }
 }

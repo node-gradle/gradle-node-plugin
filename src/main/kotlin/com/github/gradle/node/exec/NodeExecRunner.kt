@@ -1,16 +1,22 @@
 package com.github.gradle.node.exec
 
+import com.github.gradle.node.NodeExtension
 import org.gradle.api.Project
-import org.gradle.process.ExecResult
 
-class NodeExecRunner(project: Project) : ExecRunner(project) {
-
-    override fun doExecute(): ExecResult {
-        val exec = if (ext.download) variant.nodeExec else "node"
-        return run(exec, arguments)
+internal class NodeExecRunner {
+    fun execute(project: Project, nodeExecConfiguration: NodeExecConfiguration) {
+        val execConfiguration = buildExecConfiguration(project, nodeExecConfiguration)
+        val execRunner = ExecRunner()
+        execRunner.execute(project, execConfiguration)
     }
 
-    override fun computeAdditionalBinPath(): String {
-        return if (ext.download) variant.nodeBinDir.absolutePath else ""
+    private fun buildExecConfiguration(project: Project, nodeExecConfiguration: NodeExecConfiguration): ExecConfiguration {
+        val nodeExtension = NodeExtension[project]
+        val variant = nodeExtension.variant
+        val executable = if (nodeExtension.download) variant.nodeExec else "node"
+        val additionalBinPath = if (nodeExtension.download) variant.nodeBinDir.absolutePath else null
+        return ExecConfiguration(executable, nodeExecConfiguration.command, additionalBinPath,
+                nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
+                nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
     }
 }

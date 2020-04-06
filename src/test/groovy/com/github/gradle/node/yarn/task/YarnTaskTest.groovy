@@ -1,7 +1,6 @@
-package com.github.gradle.node.yarn
+package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.task.AbstractTaskTest
-import com.github.gradle.node.yarn.YarnTask
 import org.gradle.process.ExecSpec
 
 class YarnTaskTest extends AbstractTaskTest {
@@ -22,7 +21,6 @@ class YarnTaskTest extends AbstractTaskTest {
 
         then:
         task.args == ['a', 'b']
-        task.result.exitValue == 0
         1 * this.execSpec.setIgnoreExitValue(true)
         1 * this.execSpec.setEnvironment({ it['a'] == '1' && containsPath(it) })
         1 * this.execSpec.setArgs(['a', 'b'])
@@ -40,7 +38,6 @@ class YarnTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        task.result.exitValue == 0
         1 * this.execSpec.setIgnoreExitValue(false)
     }
 }

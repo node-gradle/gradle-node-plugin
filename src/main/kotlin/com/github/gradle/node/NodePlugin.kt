@@ -1,40 +1,32 @@
 package com.github.gradle.node
 
-import com.github.gradle.node.npm.NpmInstallTask
-import com.github.gradle.node.npm.NpmSetupTask
-import com.github.gradle.node.npm.NpmTask
-import com.github.gradle.node.npm.NpxTask
+import com.github.gradle.node.npm.task.NpmInstallTask
+import com.github.gradle.node.npm.task.NpmSetupTask
+import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.npm.task.NpxTask
+import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
-import com.github.gradle.node.task.SetupTask
 import com.github.gradle.node.variant.VariantBuilder
-import com.github.gradle.node.yarn.YarnInstallTask
-import com.github.gradle.node.yarn.YarnSetupTask
-import com.github.gradle.node.yarn.YarnTask
+import com.github.gradle.node.yarn.task.YarnInstallTask
+import com.github.gradle.node.yarn.task.YarnSetupTask
+import com.github.gradle.node.yarn.task.YarnTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 
 class NodePlugin : Plugin<Project> {
-
     private lateinit var project: Project
-    private lateinit var config: NodeExtension
-
-    private lateinit var setupTask: SetupTask
-    private lateinit var npmSetupTask: NpmSetupTask
-    private lateinit var yarnSetupTask: YarnSetupTask
+    private lateinit var nodeExtension: NodeExtension
 
     override fun apply(project: Project) {
         this.project = project
-        this.config = NodeExtension.create(project)
+        this.nodeExtension = NodeExtension.create(project)
         addGlobalTypes()
         addTasks()
         addNpmRule()
         addYarnRule()
         this.project.afterEvaluate {
-            config.variant = VariantBuilder(config).build()
-            configureSetupTask()
-            configureNpmSetupTask()
-            configureYarnSetupTask()
+            nodeExtension.variant = VariantBuilder(nodeExtension).build()
         }
     }
 
@@ -45,16 +37,16 @@ class NodePlugin : Plugin<Project> {
         addGlobalTaskType(YarnTask::class.java)
     }
 
+    private fun addGlobalTaskType(type: Class<*>) {
+        project.extensions.extraProperties[type.simpleName] = type
+    }
+
     private fun addTasks() {
         project.tasks.create(NpmInstallTask.NAME, NpmInstallTask::class)
         project.tasks.create(YarnInstallTask.NAME, YarnInstallTask::class)
-        setupTask = project.tasks.create(SetupTask.NAME, SetupTask::class)
-        npmSetupTask = project.tasks.create(NpmSetupTask.NAME, NpmSetupTask::class)
-        yarnSetupTask = project.tasks.create(YarnSetupTask.NAME, YarnSetupTask::class)
-    }
-
-    private fun addGlobalTaskType(type: Class<*>) {
-        project.extensions.extraProperties[type.simpleName] = type
+        project.tasks.create(NodeSetupTask.NAME, NodeSetupTask::class)
+        project.tasks.create(NpmSetupTask.NAME, NpmSetupTask::class)
+        project.tasks.create(YarnSetupTask.NAME, YarnSetupTask::class)
     }
 
     private fun addNpmRule() { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
@@ -83,18 +75,6 @@ class NodePlugin : Plugin<Project> {
                 }
             }
         }
-    }
-
-    private fun configureSetupTask() {
-        setupTask.isEnabled = config.download
-    }
-
-    private fun configureNpmSetupTask() {
-        npmSetupTask.configureVersion(config.npmVersion)
-    }
-
-    private fun configureYarnSetupTask() {
-        yarnSetupTask.configureVersion(config.yarnVersion)
     }
 
     companion object {

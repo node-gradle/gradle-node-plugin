@@ -1,4 +1,4 @@
-package com.github.gradle.node.yarn
+package com.github.gradle.node.yarn.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome

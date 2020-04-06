@@ -5,9 +5,7 @@ import org.gradle.api.Project
 import java.io.File
 import kotlin.properties.Delegates
 
-@Suppress("MemberVisibilityCanBePrivate", "unused") // Extension object; properties may be configured in build scripts
 open class NodeExtension(project: Project) {
-
     private val cacheDir = File(project.projectDir, ".gradle")
     var workDir = File(cacheDir, "nodejs")
     var npmWorkDir = File(cacheDir, "npm")

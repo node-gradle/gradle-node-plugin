@@ -1,10 +1,10 @@
-package com.github.gradle.node.npm
+package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
 class NpmSetupTaskTest extends AbstractTaskTest {
-    def "exec npmSetup task"() {
+    def "disable npmSetup task when no npm version is specified"() {
         given:
         this.props.setProperty('os.name', 'Linux')
         this.execSpec = Mock(ExecSpec)
@@ -13,11 +13,9 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
         when:
         this.project.evaluate()
-        task.exec()
 
         then:
-        task.result.exitValue == 0
-        1 * this.execSpec.setArgs([])
+        !task.isEnabled()
     }
 
     def "exec npmSetup task (version specified)"() {
@@ -34,7 +32,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        task.result.exitValue == 0
-        1 * this.execSpec.setArgs([])
+        1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
+                                   temporaryFolder.getRoot().absolutePath + '/.gradle/npm/npm-v6.4.1', 'npm@6.4.1'])
     }
 }

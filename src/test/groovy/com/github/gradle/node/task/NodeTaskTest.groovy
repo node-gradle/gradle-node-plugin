@@ -39,7 +39,6 @@ class NodeTaskTest extends AbstractTaskTest {
         then:
         task.args == ['a', 'b']
         task.options == ['c', 'd']
-        task.result.exitValue == 0
         1 * this.execSpec.setIgnoreExitValue(true)
         1 * this.execSpec.setEnvironment({ it['a'] == '1' && containsPath(it) })
         1 * this.execSpec.setExecutable('node')
@@ -61,7 +60,6 @@ class NodeTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        task.result.exitValue == 0
         1 * this.execSpec.setIgnoreExitValue(false)
         1 * this.execSpec.setEnvironment({ containsPath(it) })
         1 * this.execSpec.setArgs([script.absolutePath])
@@ -85,7 +83,6 @@ class NodeTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        task.result.exitValue == 0
         1 * this.execSpec.setIgnoreExitValue(false)
         1 * this.execSpec.setEnvironment({ containsPath(it) })
         1 * this.execSpec.setExecutable('node')
@@ -107,7 +104,6 @@ class NodeTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        task.result.exitValue == 0
         1 * this.execSpec.setEnvironment({ containsPath(it) })
         1 * this.execSpec.setIgnoreExitValue(false)
     }

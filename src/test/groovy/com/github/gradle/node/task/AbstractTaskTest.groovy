@@ -12,11 +12,8 @@ import java.lang.reflect.Field
 
 abstract class AbstractTaskTest extends AbstractProjectTest {
     ExecResult execResult
-
     ExecSpec execSpec
-
     Properties props
-
     NodeExtension ext
 
     def setup() {

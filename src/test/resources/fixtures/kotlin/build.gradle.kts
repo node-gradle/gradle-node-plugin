@@ -1,8 +1,8 @@
 import com.github.gradle.node.NodeExtension
-import com.github.gradle.node.npm.NpmTask
-import com.github.gradle.node.npm.NpxTask
+import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeTask
-import com.github.gradle.node.yarn.YarnTask
+import com.github.gradle.node.yarn.task.YarnTask
 
 plugins {
     id("com.github.node-gradle.node")

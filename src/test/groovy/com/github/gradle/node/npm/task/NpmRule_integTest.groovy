@@ -1,4 +1,4 @@
-package com.github.gradle.node.npm
+package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome

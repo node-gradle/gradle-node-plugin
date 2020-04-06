@@ -9,9 +9,7 @@ import spock.lang.Specification
 class AbstractProjectTest extends Specification {
     @Rule
     final TemporaryFolder temporaryFolder = new TemporaryFolder()
-
     ProjectInternal project
-
     File projectDir
 
     def setup() {

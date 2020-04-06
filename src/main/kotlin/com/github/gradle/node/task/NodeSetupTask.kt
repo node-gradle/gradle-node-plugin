@@ -11,11 +11,9 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
-open class SetupTask : DefaultTask() {
-
+open class NodeSetupTask : DefaultTask() {
     private val config = NodeExtension[project]
     private val variant by lazy { config.variant }
-
     @get:OutputDirectory
     protected val nodeDir by Alias { variant::nodeDir }
 
@@ -23,6 +21,9 @@ open class SetupTask : DefaultTask() {
         group = NodePlugin.NODE_GROUP
         description = "Download and install a local node/npm version."
         isEnabled = false
+        project.afterEvaluate {
+            isEnabled = NodeExtension[project].download
+        }
     }
 
     @Input
