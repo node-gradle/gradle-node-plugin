@@ -26,8 +26,8 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', NpmSetupTask)
 
-        def expectedNpmInstallPath = projectDir.toPath().toAbsolutePath()
-                .resolve('.gradle').resolve('npm').resolve('npm-v6.4.1')
+        def expectedNpmInstallDirectory = projectDir.toPath().resolve('.gradle').resolve('npm')
+                .resolve('npm-v6.4.1').toFile()
 
         when:
         this.project.evaluate()
@@ -35,6 +35,6 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
         then:
         1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   expectedNpmInstallPath.toString(), 'npm@6.4.1'])
+                                   expectedNpmInstallDirectory.absolutePath, 'npm@6.4.1'])
     }
 }

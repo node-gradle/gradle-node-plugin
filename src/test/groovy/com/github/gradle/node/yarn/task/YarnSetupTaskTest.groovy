@@ -11,8 +11,8 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', YarnSetupTask)
 
-        def expectedYarnInstallPath = projectDir.toPath().toAbsolutePath()
-                .resolve('.gradle').resolve('yarn').resolve('yarn-latest')
+        def expectedYarnInstallDirectory = projectDir.toPath().resolve('.gradle').resolve('yarn')
+                .resolve('yarn-latest').toFile()
 
         when:
         this.project.evaluate()
@@ -20,7 +20,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         then:
         1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   expectedYarnInstallPath.toString(), 'yarn'])
+                                   expectedYarnInstallDirectory.absolutePath, 'yarn'])
     }
 
     def "exec yarnSetup task with yarn version specified"() {
@@ -30,8 +30,8 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', YarnSetupTask)
 
-        def expectedYarnInstallPath = projectDir.toPath().toAbsolutePath()
-                .resolve('.gradle').resolve('yarn').resolve('yarn-v1.22.4')
+        def expectedYarnInstallDirectory = projectDir.toPath().resolve('.gradle').resolve('yarn')
+                .resolve('yarn-v1.22.4').toFile()
 
         when:
         this.project.evaluate()
@@ -39,6 +39,6 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         then:
         1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   expectedYarnInstallPath.toString(), 'yarn@1.22.4'])
+                                   expectedYarnInstallDirectory.absolutePath, 'yarn@1.22.4'])
     }
 }
