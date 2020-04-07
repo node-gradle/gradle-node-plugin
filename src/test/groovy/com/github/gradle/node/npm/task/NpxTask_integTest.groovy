@@ -143,7 +143,7 @@ class NpxTask_integTest extends AbstractIntegTest {
         result6.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result6.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result6.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result6.output.contains("Working directory is '${projectDir}'")
+        result6.output.contains("workingDirectory='${projectDir}'")
 
         when:
         def result7 = build(":pwd", "-DcustomWorkingDir=true")
@@ -163,7 +163,7 @@ class NpxTask_integTest extends AbstractIntegTest {
         result8.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result8.task(":pwd").outcome == TaskOutcome.SUCCESS
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
-        result8.output.contains("Working directory is '${expectedWorkingDirectory}'")
+        result8.output.contains("workingDirectory='${expectedWorkingDirectory}'")
         new File(expectedWorkingDirectory).isDirectory()
 
         when:
