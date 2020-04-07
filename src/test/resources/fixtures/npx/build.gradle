@@ -34,7 +34,7 @@ task test(type: NpxTask) {
 }
 
 task env(type: NpxTask) {
-    command = "printenv"
+    command = "print-env"
     outputs.upToDateWhen {
         true
     }

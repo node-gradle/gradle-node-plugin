@@ -9,7 +9,7 @@ node {
 
 task env(type: YarnTask) {
     dependsOn yarn
-    yarnCommand = ["run", "printenv"]
+    yarnCommand = ["run", "print-env"]
     outputs.upToDateWhen {
         true
     }
