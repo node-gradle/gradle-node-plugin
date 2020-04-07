@@ -26,16 +26,17 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', NpmSetupTask)
 
-        def expectedNpmInstallDirectory =
-                new File(projectDir.toPath().resolve('.gradle').resolve('npm').toFile(),
-                        "npm-v6.4.1")
-
         when:
         this.project.evaluate()
         task.exec()
 
         then:
-        1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   expectedNpmInstallDirectory.absolutePath, 'npm@6.4.1'])
+        1 * this.execSpec.setArgs({ args ->
+            def expectedNpmInstallPath = projectDir.toPath().resolve('.gradle').resolve('npm')
+                    .resolve('npm-v6.4.1').toAbsolutePath().toString()
+            def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedNpmInstallPath, 'npm@6.4.1']
+            // Workaround a strange issue on Github actions macOS hosts
+            return args.collect { it.replace('^/private/', '/') } == expectedArgs
+        })
     }
 }

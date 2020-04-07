@@ -10,17 +10,18 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', YarnSetupTask)
 
-        def expectedYarnInstallDirectory =
-                new File(projectDir.toPath().resolve('.gradle').resolve('yarn').toFile(),
-                        'yarn-latest')
-
         when:
         this.project.evaluate()
         task.exec()
 
         then:
-        1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   expectedYarnInstallDirectory.absolutePath, 'yarn'])
+        1 * this.execSpec.setArgs({ args ->
+            def expectedYarnInstallPath = projectDir.toPath().resolve('.gradle').resolve('yarn')
+                    .resolve('yarn-latest').toAbsolutePath().toString()
+            def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedYarnInstallPath, 'yarn']
+            // Workaround a strange issue on Github actions macOS hosts
+            return args.collect { it.replace("^/private/", "/") } == expectedArgs
+        })
     }
 
     def "exec yarnSetup task with yarn version specified"() {
@@ -30,16 +31,17 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', YarnSetupTask)
 
-        def expectedYarnInstallDirectory =
-                new File(projectDir.toPath().resolve('.gradle').resolve('yarn').toFile(),
-                        'yarn-v1.22.4')
-
         when:
         this.project.evaluate()
         task.exec()
 
         then:
-        1 * this.execSpec.setArgs(['install', '--global', '--no-save', '--prefix',
-                                   expectedYarnInstallDirectory.absolutePath, 'yarn@1.22.4'])
+        1 * this.execSpec.setArgs({ args ->
+            def expectedYarnInstallPath = projectDir.toPath().resolve('.gradle').resolve('yarn')
+                    .resolve('yarn-v1.22.4').toAbsolutePath().toString()
+            def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedYarnInstallPath, 'yarn@1.22.4']
+            // Workaround a strange issue on Github actions macOS hosts
+            return args.collect { it.replace("^/private/", "/") } == expectedArgs
+        })
     }
 }
