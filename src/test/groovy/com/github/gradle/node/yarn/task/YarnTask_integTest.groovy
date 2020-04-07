@@ -66,7 +66,8 @@ class YarnTask_integTest extends AbstractIntegTest {
         result1.task(":yarnSetup").outcome == TaskOutcome.SUCCESS
         result1.task(":yarn").outcome == TaskOutcome.SUCCESS
         result1.task(":env").outcome == TaskOutcome.SUCCESS
-        result1.output.contains("PATH=")
+        // Sometimes the PATH variable is not defined in Windows Powershell, but the PATHEXT is
+        Pattern.compile("^PATH(?:EXT)?=.+\$", Pattern.MULTILINE).matcher(result1.output).find()
 
         when:
         def result2 = build(":env", "-DcustomEnv=true")

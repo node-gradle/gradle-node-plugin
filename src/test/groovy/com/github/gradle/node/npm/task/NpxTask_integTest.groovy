@@ -5,6 +5,8 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
+import java.util.regex.Pattern
+
 class NpxTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
@@ -90,7 +92,8 @@ class NpxTask_integTest extends AbstractIntegTest {
         result1.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":env").outcome == TaskOutcome.SUCCESS
-        result1.output.contains("PATH=")
+        // Sometimes the PATH variable is not defined in Windows Powershell, but the PATHEXT is
+        Pattern.compile("^PATH(?:EXT)?=.+\$", Pattern.MULTILINE).matcher(result1.output).find()
 
         when:
         def result2 = build(":env", "-DcustomEnv=true")
