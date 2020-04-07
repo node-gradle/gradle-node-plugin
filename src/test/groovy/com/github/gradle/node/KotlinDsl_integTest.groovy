@@ -29,6 +29,8 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         result1.task(":testYarn").outcome == TaskOutcome.SUCCESS
         result1.task(":run").outcome == TaskOutcome.SUCCESS
         result1.output.contains("Hello Bobby!")
+        // Ensure tests were executed 3 times
+        result1.output.split("1 passing").length == 4
 
         when:
         def result2 = build("package")

@@ -40,7 +40,7 @@ yarnInstallTask.configure {
 val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
     dependsOn(npmInstallTask)
     command = "mocha"
-    args = listOf("--grep", "should say hello")
+    args = listOf("test", "--grep", "should say hello")
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
     workingDir = projectDir
@@ -59,6 +59,7 @@ val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
 val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
     dependsOn(npmInstallTask)
     npmCommand = listOf("run", "test")
+    args = listOf("test")
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
     workingDir = projectDir
@@ -77,6 +78,7 @@ val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
 val testTaskUsingYarn = tasks.register<YarnTask>("testYarn") {
     dependsOn(npmInstallTask)
     yarnCommand = listOf("run", "test")
+    args = listOf("test")
     ignoreExitValue = false
     environment = mapOf("MY_CUSTOM_VARIABLE" to "hello")
     workingDir = projectDir
