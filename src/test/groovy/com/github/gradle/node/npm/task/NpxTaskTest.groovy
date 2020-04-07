@@ -64,7 +64,7 @@ class NpxTaskTest extends AbstractTaskTest {
         this.props.setProperty('os.name', 'Linux')
         this.ext.download = true
         this.execSpec = Mock(ExecSpec)
-        def variant = new VariantBuilder(this.ext).build()
+        def variant = new VariantBuilder().build(this.ext)
 
         def task = this.project.tasks.create('simple', NpxTask)
 

@@ -26,7 +26,7 @@ class NodePlugin : Plugin<Project> {
         addNpmRule()
         addYarnRule()
         this.project.afterEvaluate {
-            nodeExtension.variant = VariantBuilder(nodeExtension).build()
+            nodeExtension.variant = VariantBuilder().build(nodeExtension)
         }
     }
 

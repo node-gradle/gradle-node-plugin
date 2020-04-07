@@ -35,8 +35,8 @@ class VariantBuilderTest extends Specification {
         ext.version = '5.12.0'
         ext.workDir = new File('.gradle/node').absoluteFile
 
-        def builder = new VariantBuilder(ext)
-        def variant = builder.build()
+        def builder = new VariantBuilder()
+        def variant = builder.build(ext)
 
         expect:
         variant != null
@@ -69,8 +69,8 @@ class VariantBuilderTest extends Specification {
         ext.version = '4.0.0'
         ext.workDir = new File('.gradle/node').absoluteFile
 
-        def builder = new VariantBuilder(ext)
-        def variant = builder.build()
+        def builder = new VariantBuilder()
+        def variant = builder.build(ext)
 
         expect:
         variant != null
@@ -103,8 +103,8 @@ class VariantBuilderTest extends Specification {
         ext.version = version
         ext.workDir = new File('.gradle/node').absoluteFile
 
-        def builder = new VariantBuilder(ext)
-        def variant = builder.build()
+        def builder = new VariantBuilder()
+        def variant = builder.build(ext)
         def nodeDir = "node-v${version}-${osArch}".toString()
         def depName = "org.nodejs:node:${version}:${osArch}@zip".toString()
 
@@ -141,8 +141,8 @@ class VariantBuilderTest extends Specification {
         ext.version = '5.12.0'
         ext.workDir = new File('.gradle/node').absoluteFile
 
-        def builder = new VariantBuilder(ext)
-        def variant = builder.build()
+        def builder = new VariantBuilder()
+        def variant = builder.build(ext)
 
         expect:
         variant != null
@@ -182,8 +182,8 @@ class VariantBuilderTest extends Specification {
 
         PlatformHelper platformHelperSpy = (PlatformHelper) Spy(PlatformHelper, constructorArgs: [this.props])
         platformHelperSpy.osArch >> { sysOsArch }
-        def builder = new VariantBuilder(ext, platformHelperSpy)
-        def variant = builder.build()
+        def builder = new VariantBuilder(platformHelperSpy)
+        def variant = builder.build(ext)
 
         expect:
         variant != null
@@ -215,8 +215,8 @@ class VariantBuilderTest extends Specification {
         ext.download = download
         ext.npmVersion = npmVersion
 
-        def builder = new VariantBuilder(ext)
-        def variant = builder.build()
+        def builder = new VariantBuilder()
+        def variant = builder.build(ext)
 
         def npmDir = variant.nodeDir
         def npm = ext.npmCommand + ".cmd"
@@ -259,8 +259,8 @@ class VariantBuilderTest extends Specification {
         ext.download = download
         ext.npmVersion = npmVersion
 
-        def builder = new VariantBuilder(ext)
-        def variant = builder.build()
+        def builder = new VariantBuilder()
+        def variant = builder.build(ext)
 
         def npmDir = variant.nodeDir
         def npm = ext.npmCommand

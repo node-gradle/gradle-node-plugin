@@ -20,14 +20,19 @@ import java.util.*
 open class NpmSetupTask : DefaultTask() {
     @get:Internal
     protected val nodeExtension by lazy { NodeExtension[project] }
+
     @get:Internal
     protected val variant by Alias { nodeExtension::variant }
+
     @get:Input
     var args = listOf<String>()
+
     @get:Input
     var ignoreExitValue = false
+
     @get:Internal
     var execOverrides: (ExecSpec.() -> Unit)? = null
+
     @get:OutputDirectory
     val npmDir by Alias { variant::npmDir }
 
