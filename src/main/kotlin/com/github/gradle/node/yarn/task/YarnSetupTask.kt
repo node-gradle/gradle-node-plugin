@@ -31,7 +31,7 @@ open class YarnSetupTask : NpmSetupTask() {
 
     override fun computeCommand(): List<String> {
         val version = nodeExtension.yarnVersion
-        val yarnPackage = if (version.isNotEmpty()) "yarn@$version" else "yarn"
+        val yarnPackage = if (version.isNotBlank()) "yarn@$version" else "yarn"
         return listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(),
                 "--prefix", variant.yarnDir.absolutePath, yarnPackage) + args
     }

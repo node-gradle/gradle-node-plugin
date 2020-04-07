@@ -66,7 +66,7 @@ open class NpmSetupTask : DefaultTask() {
 
     @Internal
     protected open fun isTaskEnabled(): Boolean {
-        return nodeExtension.npmVersion.isNotEmpty()
+        return nodeExtension.npmVersion.isNotBlank()
     }
 
     companion object {
