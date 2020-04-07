@@ -22,8 +22,8 @@ with the `com.github.node-gradle.node` identifier.
 Here's how you get started using this plugin. If you do not find what you are looking for, please add an 
 issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issues).
 
-* [Installing](docs/installing.md)
-* [Node Plugin](docs/node.md)
+* [Installation](docs/installation.md)
+* [Usage](docs/usage.md)
 * [FAQ](docs/faq.md)
 * [Changelog](CHANGELOG.md)
 
