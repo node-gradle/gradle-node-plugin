@@ -120,9 +120,8 @@ val buildTaskUsingNpx = tasks.register<NpxTask>("buildNpx") {
 
 val buildTaskUsingNpm = tasks.register<NpmTask>("buildNpm") {
     dependsOn(npmInstallTask)
-    // For some reason the --out-dir parameter is not passed to babel, so we use a dedicated command
-    npmCommand = listOf("run", "buildNpm")
-    args = listOf()
+    npmCommand = listOf("run", "build")
+    args = listOf("--", "--out-dir", "${buildDir}/npm-output")
     inputs.dir("src")
     outputs.dir("${buildDir}/npm-output")
 }
