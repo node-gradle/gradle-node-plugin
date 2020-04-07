@@ -1,6 +1,5 @@
 package com.github.gradle.node.yarn.task
 
-
 import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
@@ -11,8 +10,9 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', YarnSetupTask)
 
-        def expectedYarnInstallDirectory = projectDir.toPath().resolve('.gradle').resolve('yarn')
-                .resolve('yarn-latest').toFile()
+        def expectedYarnInstallDirectory =
+                new File(projectDir.toPath().resolve('.gradle').resolve('yarn').toFile(),
+                        'yarn-latest')
 
         when:
         this.project.evaluate()
@@ -30,8 +30,9 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', YarnSetupTask)
 
-        def expectedYarnInstallDirectory = projectDir.toPath().resolve('.gradle').resolve('yarn')
-                .resolve('yarn-v1.22.4').toFile()
+        def expectedYarnInstallDirectory =
+                new File(projectDir.toPath().resolve('.gradle').resolve('yarn').toFile(),
+                        'yarn-v1.22.4')
 
         when:
         this.project.evaluate()

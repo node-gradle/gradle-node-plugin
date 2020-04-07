@@ -26,8 +26,9 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
         def task = this.project.tasks.create('simple', NpmSetupTask)
 
-        def expectedNpmInstallDirectory = projectDir.toPath().resolve('.gradle').resolve('npm')
-                .resolve('npm-v6.4.1').toFile()
+        def expectedNpmInstallDirectory =
+                new File(projectDir.toPath().resolve('.gradle').resolve('npm').toFile(),
+                        "npm-v6.4.1")
 
         when:
         this.project.evaluate()
