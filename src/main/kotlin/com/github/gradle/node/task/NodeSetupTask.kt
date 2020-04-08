@@ -14,6 +14,7 @@ import java.nio.file.Paths
 open class NodeSetupTask : DefaultTask() {
     private val config = NodeExtension[project]
     private val variant by lazy { config.variant }
+
     @get:OutputDirectory
     val nodeDir by Alias { variant::nodeDir }
 

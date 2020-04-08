@@ -15,14 +15,19 @@ import java.io.File
 open class NpxTask : DefaultTask() {
     @get:Input
     var command: String? = null
+
     @get:Input
     var args = listOf<String>()
+
     @get:Input
     var ignoreExitValue = false
+
     @get:Internal
     var workingDir: File? = null
+
     @get:Input
     var environment: Map<String, String> = mapOf()
+
     @get:Internal
     var execOverrides: (ExecSpec.() -> Unit)? = null
 

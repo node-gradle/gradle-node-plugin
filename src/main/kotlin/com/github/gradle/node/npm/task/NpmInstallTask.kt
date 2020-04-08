@@ -13,6 +13,7 @@ import java.io.File
  */
 open class NpmInstallTask : NpmTask() {
     private val nodeExtension by lazy { NodeExtension[project] }
+
     @get:Internal
     var nodeModulesOutputFilter: (ConfigurableFileTree.() -> Unit)? = null
 
