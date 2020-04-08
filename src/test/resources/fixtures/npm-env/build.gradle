@@ -9,7 +9,7 @@ node {
 
 task env(type: NpmTask) {
     dependsOn npmInstall
-    npmCommand = ["run", "printenv"]
+    npmCommand = ["run", "print-env"]
     outputs.upToDateWhen {
         true
     }

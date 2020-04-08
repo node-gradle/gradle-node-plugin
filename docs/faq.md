@@ -53,6 +53,63 @@ tasks.npmSetup {
 
 You can also add any other arguments to this list that work with `npm install` i.e. more verbose modes.
 
+# How do I run commands provided by npm packages?
+
+Some packages (for instance Grunt, Gulp, Angular CLI, mocha...) provide some command line tools.
+
+Instead of installing them globally, install them as `devDependencies` and run them using `npx` through the `NpxTask`.
+Read more regarding the `NpxTask` [here](node.md).
+
+Here are some examples:
+
+## Grunt
+
+Install the `grunt-cli` package:
+
+```bash
+npm install --save-dev grunt-cli
+```
+
+For a build described in `Gruntfile.js` with sources in the `src` directory and output in the `dist` directory:
+
+```groovy
+task buildWebapp(type: NpxTask) {
+    dependsOn npmInstall
+    npxCommand = "grunt"
+    args = ["build"]
+    inputs.file("Gruntfile.js")
+    inputs.dir("src")
+    inputs.dir("node_modules")
+    outputs.dir("dist")
+}
+```
+
+The task will only run if needed.
+
+## Gulp
+
+Install the `gulp-cli` package:
+
+```bash
+npm install gulp-cli
+```
+
+For a build described in `gulpfile.js` with sources in the `src` directory and output in the `dist` directory:
+
+```groovy
+task buildWebapp(type: NpxTask) {
+    dependsOn npmInstall
+    npxCommand = "gulp"
+    args = ["build"]
+    inputs.file("gulpfile.js")
+    inputs.dir("src")
+    inputs.dir("node_modules")
+    outputs.dir("dist")
+}
+```
+
+The task will only run if needed.
+
 # How do I customize the way the processes are launched?
 
 `NodeTask`, `NpmTask`, `NpxTask` and `YarnTask` are some wrappers around the core `Exec` task.

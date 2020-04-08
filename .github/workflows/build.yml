@@ -9,12 +9,15 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 8
+      - name: Gradle Version
+        run: ./gradlew --version
+        working-directory: ${{github.workspace}}
       - name: Build
-        run: |
-          ./gradlew --version
-          ./gradlew ci
-          ./gradlew -p examples build
+        run: ./gradlew ci
+        working-directory: ${{github.workspace}}
+      - name: Build Example Projects
+        run: ./gradlew -p examples build
         working-directory: ${{github.workspace}}
   windows:
     runs-on: windows-latest
@@ -24,12 +27,15 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 8
+      - name: Gradle Version
+        run: ./gradlew --version
+        working-directory: ${{github.workspace}}
       - name: Build
-        run: |
-          ./gradlew --version
-          ./gradlew ci
-          ./gradlew -p examples build
+        run: ./gradlew ci
+        working-directory: ${{github.workspace}}
+      - name: Build Example Projects
+        run: ./gradlew -p examples build
         working-directory: ${{github.workspace}}
   macos:
     runs-on: macos-latest
@@ -39,10 +45,13 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 8
+      - name: Gradle Version
+        run: ./gradlew --version
+        working-directory: ${{github.workspace}}
       - name: Build
-        run: |
-          ./gradlew --version
-          ./gradlew ci
-          ./gradlew -p examples build
+        run: ./gradlew ci
+        working-directory: ${{github.workspace}}
+      - name: Build Example Projects
+        run: ./gradlew -p examples build
         working-directory: ${{github.workspace}}

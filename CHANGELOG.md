@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 3.0 *(not yet released)*
+----------------------------
+
+* Rewrite the code to Kotlin
+* Improve the Kotlin DSL support
+* Upgrade default Node.js version to 12.16.1, the latest LTS version
+* Add full support of lazy configuration (issue #39)
+
+This version breaks backward compatibility. It should not visible for most non Groovy DSL users. Here is what changed:
+* All the package names were updated (they were inherited from the forked project)
+* Thanks to the Kotlin rewrite, some properties now have a stronger typing.
+
 Version 2.2.3 *(2020-02-28)*
 ----------------------------
 

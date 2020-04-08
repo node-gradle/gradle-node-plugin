@@ -6,8 +6,7 @@ import org.gradle.util.GradleVersion
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
-class NodeTask_integTest
-        extends AbstractIntegTest {
+class NodeTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
@@ -227,7 +226,7 @@ class NodeTask_integTest
 
         then:
         result17.task(":version").outcome == TaskOutcome.SUCCESS
-        result17.output.contains("Version: v10.14.0")
+        result17.output.contains("Version: v12.16.1")
     }
 
     def 'try to use custom repositories when the download url is null'() {
@@ -239,6 +238,6 @@ class NodeTask_integTest
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.FAILED
-        result.output.contains("Cannot resolve external dependency org.nodejs:node:10.14.0 because no repositories are defined.")
+        result.output.contains("Cannot resolve external dependency org.nodejs:node:12.16.1 because no repositories are defined.")
     }
 }

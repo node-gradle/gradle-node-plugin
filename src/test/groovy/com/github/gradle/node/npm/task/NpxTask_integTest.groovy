@@ -1,4 +1,4 @@
-package com.github.gradle.node.yarn
+package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
@@ -8,14 +8,36 @@ import org.junit.contrib.java.lang.system.EnvironmentVariables
 
 import java.util.regex.Pattern
 
-class YarnTask_integTest
-        extends AbstractIntegTest {
+class NpxTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'execute yarn command with a package.json file and check inputs up-to-date detection'() {
+    def 'execute npx command with no package.json file'() {
         given:
-        copyResources('fixtures/yarn/', '')
+        writeBuild('''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            task camelCase(type: NpxTask) {
+                command = 'chcase-cli'
+                args = ['--help']
+            }
+        ''')
+
+        when:
+        def result = build(":camelCase")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+        result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result.task(":camelCase").outcome == TaskOutcome.SUCCESS
+        result.output.contains("--case, -C  Which case to convert to")
+    }
+
+    def 'execute npx command with a package.json file and check inputs up-to-date detection'() {
+        given:
+        copyResources('fixtures/npx/', '')
         copyResources('fixtures/javascript-project/', '')
 
         when:
@@ -23,9 +45,11 @@ class YarnTask_integTest
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result1.task(":yarnSetup").outcome == TaskOutcome.SUCCESS
-        result1.task(":yarn").outcome == TaskOutcome.SUCCESS
+        result1.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result1.task(":lint").outcome == TaskOutcome.SUCCESS
         result1.task(":test").outcome == TaskOutcome.SUCCESS
+        result1.output.contains("5 problems (0 errors, 5 warnings)")
         result1.output.contains("1 passing")
 
         when:
@@ -33,8 +57,9 @@ class YarnTask_integTest
 
         then:
         result2.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result2.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
-        result2.task(":yarn").outcome == TaskOutcome.SUCCESS
+        result2.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result2.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result2.task(":lint").outcome == TaskOutcome.UP_TO_DATE
         result2.task(":test").outcome == TaskOutcome.UP_TO_DATE
 
         when:
@@ -42,8 +67,9 @@ class YarnTask_integTest
 
         then:
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":lint").outcome == TaskOutcome.SUCCESS
         result3.task(":test").outcome == TaskOutcome.SUCCESS
 
         when:
@@ -51,12 +77,12 @@ class YarnTask_integTest
 
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("> Task :version${System.lineSeparator()}1.18.0")
+        result4.output.contains("> Task :version${System.lineSeparator()}6.12.0")
     }
 
-    def 'execute yarn command with custom execution configuration and check up-to-date-detection'() {
+    def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
         given:
-        copyResources('fixtures/yarn-env/', '')
+        copyResources('fixtures/npx-env/', '')
         copyResources('fixtures/env/', '')
 
         when:
@@ -64,18 +90,19 @@ class YarnTask_integTest
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result1.task(":yarnSetup").outcome == TaskOutcome.SUCCESS
-        result1.task(":yarn").outcome == TaskOutcome.SUCCESS
+        result1.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":env").outcome == TaskOutcome.SUCCESS
-        result1.output.contains("PATH=")
+        // Sometimes the PATH variable is not defined in Windows Powershell, but the PATHEXT is
+        Pattern.compile("^PATH(?:EXT)?=.+\$", Pattern.MULTILINE).matcher(result1.output).find()
 
         when:
         def result2 = build(":env", "-DcustomEnv=true")
 
         then:
         result2.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result2.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
-        result2.task(":yarn").outcome == TaskOutcome.SUCCESS
+        result2.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result2.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result2.task(":env").outcome == TaskOutcome.SUCCESS
         result2.output.contains("CUSTOM=custom value")
 
@@ -85,8 +112,8 @@ class YarnTask_integTest
 
         then:
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
@@ -94,20 +121,20 @@ class YarnTask_integTest
 
         then:
         result4.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result4.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
-        result4.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result4.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result4.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":env").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("error Command \"notExistingCommand\" not found.")
+        result4.output.contains("E404")
 
         when:
         def result5 = buildAndFail(":env", "-DnotExistingCommand=true")
 
         then:
         result5.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result5.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
-        result5.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result5.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result5.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.FAILED
-        result5.output.contains("error Command \"notExistingCommand\" not found.")
+        result5.output.contains("E404")
 
         if (gradleVersion >= GradleVersion.version("5.6")) {
             when:
@@ -115,8 +142,8 @@ class YarnTask_integTest
 
             then:
             result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-            result6.task(":yarnSetup").outcome == TaskOutcome.SKIPPED
-            result6.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+            result6.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+            result6.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
             result6.task(":env").outcome == TaskOutcome.SUCCESS
             !result6.output.contains("PATH=")
             def outputFile = file("build/standard-output.txt")
@@ -129,18 +156,18 @@ class YarnTask_integTest
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result7.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result7.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result7.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result7.output.contains("Working directory is '${projectDir}'")
+        result7.output.contains("workingDirectory='${projectDir}'")
 
         when:
         def result8 = build(":pwd", "-DcustomWorkingDir=true")
 
         then:
         result8.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result8.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
-        result8.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result8.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result8.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result8.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
 
         when:
@@ -148,11 +175,11 @@ class YarnTask_integTest
 
         then:
         result9.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result9.task(":yarnSetup").outcome == TaskOutcome.SUCCESS
-        result9.task(":yarn").outcome == TaskOutcome.SUCCESS
+        result9.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result9.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result9.task(":pwd").outcome == TaskOutcome.SUCCESS
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
-        result9.output.contains("Working directory is '${expectedWorkingDirectory}'")
+        result9.output.contains("workingDirectory='${expectedWorkingDirectory}'")
         new File(expectedWorkingDirectory).isDirectory()
 
         when:
@@ -160,9 +187,19 @@ class YarnTask_integTest
 
         then:
         result10.task(":version").outcome == TaskOutcome.SUCCESS
-        def versionPattern = Pattern.compile("> Task :version\\s+([0-9]+\\.[0-9]+\\.[0-9]+)")
-        def versionMatch = versionPattern.matcher(result10.output)
-        versionMatch.find()
-        GradleVersion.version(versionMatch.group(1)) > GradleVersion.version("1.19.0")
+        result10.output.contains("> Task :version${System.lineSeparator()}6.13.4")
+    }
+
+    def 'execute npx command using the npm version specified in the package.json file'() {
+        given:
+        copyResources('fixtures/npx/', '')
+        copyResources('fixtures/npm-present/', '')
+
+        when:
+        def result = build(":version")
+
+        then:
+        result.task(":version").outcome == TaskOutcome.SUCCESS
+        result.output.contains("> Task :version${System.lineSeparator()}6.12.0")
     }
 }

@@ -1,10 +1,9 @@
-package com.github.gradle.node.yarn
+package com.github.gradle.node.yarn.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
-class YarnInstall_integTest
-        extends AbstractIntegTest {
+class YarnInstall_integTest extends AbstractIntegTest {
     def 'install packages with yarn'() {
         given:
         writeBuild('''

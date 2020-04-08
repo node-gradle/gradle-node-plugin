@@ -3,13 +3,13 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'com.gradle.plugin-publish'
 
 ext {
-    bintrayUser = resolveProperty( 'BINTRAY_USER', 'bintrayUser' )
-    bintrayKey = resolveProperty( 'BINTRAY_KEY', 'bintrayKey' )
+    bintrayUser = resolveProperty('BINTRAY_USER', 'bintrayUser')
+    bintrayKey = resolveProperty('BINTRAY_KEY', 'bintrayKey')
 }
 
 publishing {
     publications {
-        mavenJava( MavenPublication ) {
+        mavenJava(MavenPublication) {
             from components.java
             artifact sourcesJar
             artifact groovydocJar
@@ -56,14 +56,12 @@ pluginBundle {
     }
 }
 
-String resolveProperty( String envVarKey, String projectPropKey )
-{
+String resolveProperty(String envVarKey, String projectPropKey) {
     String propValue = System.getenv()[envVarKey]
 
-    if ( propValue )
-    {
+    if (propValue) {
         return propValue
     }
 
-    hasProperty( projectPropKey ) ? getProperty( projectPropKey ) : null
+    hasProperty(projectPropKey) ? getProperty(projectPropKey) : null
 }

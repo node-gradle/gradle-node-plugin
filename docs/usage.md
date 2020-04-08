@@ -1,11 +1,16 @@
-# Node Plugin
+# Usage
 
 This plugin enables you to run any [NodeJS](https://nodejs.org) script as part of your build. It does
-not depend on NodeJS (or NPM) being installed on your system. The plugin will
-download and manage NodeJS distributions, unpack them into your local `.gradle`
-directory and use them from there. It can also install [NPM](https://www.npmjs.com/) 
-packages from NPM or [Yarn](https://yarnpkg.com/). To start using the plugin, add this into your `build.gradle` 
-file (see [Installing](installing.md) for details):
+not require NodeJS (or NPM) being installed on your system but it is able to use them.
+
+By default, it will use the globally installed tools (NodeJS, npm and Yarn).
+If it is specified in the configuration, it is able to download and manage NodeJS distributions,
+unpack them into your local `.gradle` directory and use them from there.
+It can also install [NPM](https://www.npmjs.com/) packages from NPM or [Yarn](https://yarnpkg.com/).
+The version of each tool to use can be specified in the configuration.
+
+To start using the plugin, add this into your `build.gradle` 
+file (see [Installing](installation.md) for details):
 
 
 ```gradle

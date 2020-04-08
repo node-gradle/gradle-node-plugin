@@ -1,4 +1,4 @@
-# Installing
+# Installation
 
 Installing the node-related plugins can be done in multiple ways. The easiest is to use the `plugins`-closure 
 in your `build.gradle` file:

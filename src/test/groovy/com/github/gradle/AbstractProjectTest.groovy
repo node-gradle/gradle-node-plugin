@@ -6,21 +6,16 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
-class AbstractProjectTest
-    extends Specification
-{
+class AbstractProjectTest extends Specification {
     @Rule
     final TemporaryFolder temporaryFolder = new TemporaryFolder()
-
     ProjectInternal project
-
     File projectDir
 
-    def setup()
-    {
+    def setup() {
         this.projectDir = this.temporaryFolder.root
         this.project = (ProjectInternal) ProjectBuilder.builder().
-            withProjectDir( this.projectDir ).
-            build()
+                withProjectDir(this.projectDir).
+                build()
     }
 }

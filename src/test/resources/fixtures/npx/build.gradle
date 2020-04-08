@@ -13,8 +13,10 @@ node {
 task lint(type: NpxTask) {
     dependsOn npmInstall
     command = "eslint@6.3.0"
-    args = ["index.js", "test.js"]
-    inputs.files(".eslintrc.yml", "index.js")
+    args = ["src", "test"]
+    inputs.file(".eslintrc.yml")
+    inputs.dir("src")
+    inputs.dir("test")
     outputs.upToDateWhen {
         true
     }
@@ -23,16 +25,16 @@ task lint(type: NpxTask) {
 task test(type: NpxTask) {
     dependsOn lint
     command = "mocha"
-    inputs.dir("node_modules")
     inputs.file("package.json")
-    inputs.files("index.js", "test.js")
+    inputs.dir("src")
+    inputs.dir("test")
     outputs.upToDateWhen {
         true
     }
 }
 
 task env(type: NpxTask) {
-    command = "printenv"
+    command = "print-env"
     outputs.upToDateWhen {
         true
     }
@@ -51,7 +53,7 @@ task version(type: NpxTask) {
 }
 
 if (isPropertyEnabled("changeInputs")) {
-    lint.args = ["index.js"]
+    lint.args = ["src"]
     test.command = "_mocha"
 }
 

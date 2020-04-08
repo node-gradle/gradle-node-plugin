@@ -1,67 +1,77 @@
-package com.github.gradle.node.npm
+package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.task.SetupTask
+import com.github.gradle.node.exec.NodeExecConfiguration
+import com.github.gradle.node.npm.exec.NpmExecRunner
+import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.util.Alias
-import com.github.gradle.node.util.MutableAlias
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.*
-import org.gradle.process.ExecResult
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecSpec
 import java.util.*
 
 /**
  * npm install that only gets executed if gradle decides so.
  */
 open class NpmSetupTask : DefaultTask() {
+    @get:Internal
+    protected val nodeExtension by lazy { NodeExtension[project] }
 
-    @get:Nested
-    val execRunner = NpmExecRunner(project)
+    @get:Internal
+    protected val variant by Alias { nodeExtension::variant }
 
     @get:Input
     var args = listOf<String>()
-    @get:OutputDirectory
-    val npmDir by Alias { variant::npmDir }
+
+    @get:Input
+    var ignoreExitValue = false
 
     @get:Internal
-    val config by lazy { NodeExtension[project] }
-    @get:Internal
-    val variant by Alias { config::variant }
-    @get:Internal
-    var ignoreExitValue by MutableAlias { execRunner::ignoreExitValue }
-    @get:Internal
-    var execOverrides by MutableAlias { execRunner::execOverrides }
-    @get:Internal
-    var result: ExecResult? = null
+    var execOverrides: (ExecSpec.() -> Unit)? = null
+
+    @get:OutputDirectory
+    val npmDir by Alias { variant::npmDir }
 
     init {
         group = NodePlugin.NODE_GROUP
         description = "Setup a specific version of npm to be used by the build."
-        dependsOn(SetupTask.NAME)
-        isEnabled = false
+        dependsOn(NodeSetupTask.NAME)
+        project.afterEvaluate {
+            isEnabled = isTaskEnabled()
+        }
     }
 
     @Input
     open fun getInput(): Set<Any?> {
         val set: MutableSet<Any?> = HashSet()
-        set.add(config.download)
-        set.add(config.npmVersion)
-        set.add(config.npmWorkDir)
+        set.add(nodeExtension.download)
+        set.add(nodeExtension.npmVersion)
+        set.add(nodeExtension.npmWorkDir)
         return set
     }
 
     @TaskAction
     fun exec() {
-        execRunner.arguments.addAll(args)
-        result = execRunner.execute()
+        val command = computeCommand()
+        val nodeExecConfiguration = NodeExecConfiguration(command, ignoreExitValue = ignoreExitValue,
+                execOverrides = execOverrides)
+        val npmExecRunner = NpmExecRunner()
+        npmExecRunner.executeNpmCommand(project, nodeExecConfiguration)
     }
 
-    open fun configureVersion(version: String) {
-        if (version.isNotEmpty()) {
-            logger.debug("Setting npmVersion to {}", version)
-            args = listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix", npmDir.absolutePath, "npm@$version") + args
-            isEnabled = true
-        }
+    protected open fun computeCommand(): List<String> {
+        val version = nodeExtension.npmVersion
+        return listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix",
+                npmDir.absolutePath, "npm@$version") + args
+    }
+
+    @Internal
+    protected open fun isTaskEnabled(): Boolean {
+        return nodeExtension.npmVersion.isNotBlank()
     }
 
     companion object {

@@ -3,8 +3,6 @@ package com.github.gradle.node.util
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 
@@ -12,14 +10,14 @@ import kotlin.reflect.KProperty0
  * Tokenizes the given string into a list using the provided delimiter set.
  */
 @Suppress("UNCHECKED_CAST")
-fun String.tokenize(delimiters: String = " \t\n\r\u000C"): List<String> = StringTokenizer(this, delimiters).toList() as List<String>
+internal fun String.tokenize(delimiters: String = " \t\n\r\u000C"): List<String> = StringTokenizer(this, delimiters).toList() as List<String>
 
 /**
  * Executes the given command and returns its output.
  *
  * This is based on an aggregate of the answers provided here: [https://stackoverflow.com/questions/35421699/how-to-invoke-external-command-from-within-kotlin-code]
  */
-fun execute(vararg args: String, timeout: Long = 60): String {
+internal fun execute(vararg args: String, timeout: Long = 60): String {
     return ProcessBuilder(args.toList())
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
             .redirectError(ProcessBuilder.Redirect.PIPE)
@@ -31,7 +29,7 @@ fun execute(vararg args: String, timeout: Long = 60): String {
 /**
  * Transforms the receiver with the given [transform] if the provided [predicate] evaluates to `true`. Otherwise, the receiver is returned.
  */
-inline fun <T : Any?> T.mapIf(predicate: (T) -> Boolean, transform: (T) -> T): T = if (predicate(this)) transform(this) else this
+internal inline fun <T : Any?> T.mapIf(predicate: (T) -> Boolean, transform: (T) -> T): T = if (predicate(this)) transform(this) else this
 
 /**
  * A property delegate which delegates property accessors and mutators to the given target property. This is very similar to providing custom getters and setters.
@@ -52,26 +50,6 @@ inline fun <T : Any?> T.mapIf(predicate: (T) -> Boolean, transform: (T) -> T): T
  * field would not propagate to the property delegate, and subsequent accesses through the property delegate would continue to reference the original `person` value rather than the
  * new one. Without using the property supplier, we would initialize with a property on an existing instance and would not be able to change to another instance.
  */
-class Alias<R, T>(private val propertySupplier: (R) -> KProperty0<T>) : ReadOnlyProperty<R, T> {
+internal class Alias<R, T>(private val propertySupplier: (R) -> KProperty0<T>) : ReadOnlyProperty<R, T> {
     override operator fun getValue(thisRef: R, property: KProperty<*>): T = propertySupplier(thisRef).get()
-}
-
-/**
- * The [Alias] type for mutable properties. This property delegate allows for write operations to the target property.
- *
- * @see Alias
- */
-class MutableAlias<R, T>(private val propertySupplier: (R) -> KMutableProperty0<T>) : ReadWriteProperty<R, T> {
-    override operator fun getValue(thisRef: R, property: KProperty<*>): T = propertySupplier(thisRef).get()
-    override operator fun setValue(thisRef: R, property: KProperty<*>, value: T) {
-        propertySupplier(thisRef).set(value)
-    }
-}
-
-class OverrideMapAlias<R, K, V>(private val propertySupplier: (R) -> KProperty0<MutableMap<K, V>>) : ReadWriteProperty<R, Map<K, V>> {
-    override operator fun getValue(thisRef: R, property: KProperty<*>): Map<K, V> = propertySupplier(thisRef).get()
-    override operator fun setValue(thisRef: R, property: KProperty<*>, value: Map<K, V>) {
-        val map = propertySupplier(thisRef).get()
-        map.putAll(value)
-    }
 }

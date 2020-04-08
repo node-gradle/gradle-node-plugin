@@ -1,4 +1,4 @@
-const hello = require('./');
+const hello = require('../src');
 const sayHello = hello.sayHello;
 const chai = require('chai');
 const expect = chai.expect;

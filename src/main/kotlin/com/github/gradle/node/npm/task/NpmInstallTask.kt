@@ -1,4 +1,4 @@
-package com.github.gradle.node.npm
+package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
@@ -12,21 +12,18 @@ import java.io.File
  * npm install that only gets executed if gradle decides so.
  */
 open class NpmInstallTask : NpmTask() {
-
-    @Suppress("MemberVisibilityCanBePrivate") // Configurable
+    private val nodeExtension by lazy { NodeExtension[project] }
     @get:Internal
     var nodeModulesOutputFilter: (ConfigurableFileTree.() -> Unit)? = null
-
-    private val extension = NodeExtension[project]
 
     init {
         group = NodePlugin.NODE_GROUP
         description = "Install node packages from package.json."
         dependsOn(NpmSetupTask.NAME)
         project.afterEvaluate {
-            npmCommand = listOf(extension.npmInstallCommand)
+            npmCommand = listOf(nodeExtension.npmInstallCommand)
 
-            val nodeModulesDirectory = File(extension.nodeModulesDir, "node_modules")
+            val nodeModulesDirectory = File(nodeExtension.nodeModulesDir, "node_modules")
             if (nodeModulesOutputFilter != null) {
                 val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
                 nodeModulesOutputFilter?.invoke(nodeModulesFileTree)
@@ -40,7 +37,7 @@ open class NpmInstallTask : NpmTask() {
     @PathSensitive(PathSensitivity.RELATIVE)
     @InputFile
     protected fun getPackageJsonFile(): File? {
-        val file = File(extension.nodeModulesDir, "package.json")
+        val file = File(nodeExtension.nodeModulesDir, "package.json")
         return file.takeIf { it.exists() }
     }
 
@@ -48,7 +45,7 @@ open class NpmInstallTask : NpmTask() {
     @Optional
     @InputFile
     protected fun getNpmShrinkwrap(): File? {
-        val file = File(extension.nodeModulesDir, "npm-shrinkwrap.json")
+        val file = File(nodeExtension.nodeModulesDir, "npm-shrinkwrap.json")
         return file.takeIf { it.exists() }
     }
 
@@ -56,18 +53,18 @@ open class NpmInstallTask : NpmTask() {
     @Optional
     @InputFile
     protected fun getPackageLockFileAsInput(): File? {
-        val lockFile = File(extension.nodeModulesDir, "package-lock.json")
+        val lockFile = File(nodeExtension.nodeModulesDir, "package-lock.json")
         return lockFile.takeIf { npmCommand[0] == "ci" && it.exists() }
     }
 
     @Optional
     @OutputFile
     protected fun getPackageLockFileAsOutput(): File? {
-        val file = File(extension.nodeModulesDir, "package-lock.json")
+        val file = File(nodeExtension.nodeModulesDir, "package-lock.json")
         return file.takeIf { npmCommand[0] == "install" && it.exists() }
     }
 
-    // Configurable; Groovy support
+    // For Groovy DSL
     @Suppress("unused")
     fun setNodeModulesOutputFilter(nodeModulesOutputFilter: Closure<ConfigurableFileTree>) {
         this.nodeModulesOutputFilter = { nodeModulesOutputFilter.invoke(this) }

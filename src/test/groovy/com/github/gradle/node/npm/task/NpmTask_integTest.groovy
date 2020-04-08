@@ -1,4 +1,4 @@
-package com.github.gradle.node.npm
+package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
@@ -6,8 +6,9 @@ import org.gradle.util.GradleVersion
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
-class NpmTask_integTest
-        extends AbstractIntegTest {
+import java.util.regex.Pattern
+
+class NpmTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
@@ -65,7 +66,8 @@ class NpmTask_integTest
         result1.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":env").outcome == TaskOutcome.SUCCESS
-        result1.output.contains("PATH=")
+        // Sometimes the PATH variable is not defined in Windows Powershell, but the PATHEXT is
+        Pattern.compile("^PATH(?:EXT)?=.+\$", Pattern.MULTILINE).matcher(result1.output).find()
 
         when:
         def result2 = build(":env", "-DcustomEnv=true")
@@ -158,7 +160,7 @@ class NpmTask_integTest
 
         then:
         result10.task(":version").outcome == TaskOutcome.SUCCESS
-        result10.output.contains("> Task :version${System.lineSeparator()}6.4.1")
+        result10.output.contains("> Task :version${System.lineSeparator()}6.13.4")
     }
 
     def 'execute npm command using the npm version specified in the package.json file'() {

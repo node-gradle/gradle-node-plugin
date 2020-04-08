@@ -1,4 +1,4 @@
-package com.github.gradle.node.yarn
+package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
@@ -12,12 +12,9 @@ import java.io.File
  * yarn install that only gets executed if gradle decides so.
  */
 open class YarnInstallTask : YarnTask() {
-
-    @Suppress("MemberVisibilityCanBePrivate") // Configurable
+    private val nodeExtension by lazy { NodeExtension[project] }
     @get:Internal
     var nodeModulesOutputFilter: (ConfigurableFileTree.() -> Unit)? = null
-
-    private val extension = NodeExtension[project]
 
     init {
         group = NodePlugin.NODE_GROUP
@@ -25,7 +22,7 @@ open class YarnInstallTask : YarnTask() {
         dependsOn(YarnSetupTask.NAME)
 
         project.afterEvaluate {
-            val nodeModulesDirectory = File(extension.nodeModulesDir, "node_modules")
+            val nodeModulesDirectory = File(nodeExtension.nodeModulesDir, "node_modules")
             if (nodeModulesOutputFilter != null) {
                 val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
                 nodeModulesOutputFilter?.invoke(nodeModulesFileTree)
@@ -40,7 +37,7 @@ open class YarnInstallTask : YarnTask() {
     @Optional
     @InputFile
     protected fun getPackageJsonFile(): File? {
-        val packageJsonFile = File(extension.nodeModulesDir, "package.json")
+        val packageJsonFile = File(nodeExtension.nodeModulesDir, "package.json")
         return packageJsonFile.takeIf { it.exists() }
     }
 
@@ -48,11 +45,11 @@ open class YarnInstallTask : YarnTask() {
     @Optional
     @InputFile
     protected fun getYarnLockFile(): File? {
-        val lockFile = File(extension.nodeModulesDir, "yarn.lock")
+        val lockFile = File(nodeExtension.nodeModulesDir, "yarn.lock")
         return lockFile.takeIf { it.exists() }
     }
 
-    // Configurable; Groovy support
+    // For Groovy DSL
     @Suppress("unused")
     fun setNodeModulesOutputFilter(nodeModulesOutputFilter: Closure<ConfigurableFileTree>) {
         this.nodeModulesOutputFilter = { nodeModulesOutputFilter.invoke(this) }
