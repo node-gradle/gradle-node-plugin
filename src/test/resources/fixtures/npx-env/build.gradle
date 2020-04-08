@@ -48,7 +48,7 @@ if (isPropertyEnabled("customWorkingDir")) {
 }
 
 if (isPropertyEnabled("outputFile")) {
-    env.execOverrides {
+    env.execOverrides = {
         it.standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
     }
 }

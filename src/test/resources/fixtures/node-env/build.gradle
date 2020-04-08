@@ -49,7 +49,7 @@ if (ignoreExitValue) {
 }
 
 if (outputFile) {
-    env.execOverrides {
+    env.execOverrides = {
         it.standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
     }
 }

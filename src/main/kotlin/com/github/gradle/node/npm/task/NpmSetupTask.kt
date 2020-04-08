@@ -6,11 +6,13 @@ import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.util.Alias
+import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.invoke
 import org.gradle.process.ExecSpec
 import java.util.*
 
@@ -52,6 +54,12 @@ open class NpmSetupTask : DefaultTask() {
         set.add(nodeExtension.npmVersion)
         set.add(nodeExtension.npmWorkDir)
         return set
+    }
+
+    // For Groovy DSL
+    @Suppress("unused")
+    fun setExecOverrides(execOverrides: Closure<ExecSpec>) {
+        this.execOverrides = { execOverrides.invoke(this) }
     }
 
     @TaskAction

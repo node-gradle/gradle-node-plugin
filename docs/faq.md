@@ -150,7 +150,7 @@ parameters such as the working directory.
 ```gradle
 task myScript(type: NpmTask) {
   npmCommand = ['run', 'hello']
-  execOverrides {
+  execOverrides = {
     // The it variable contains the `ExecSpec`
     it.ignoreExitValue = true
     it.workingDir = file('./myWorkingDirectory')

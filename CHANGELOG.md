@@ -12,6 +12,7 @@ Version 3.0 *(not yet released)*
 This version breaks backward compatibility. It should not visible for most non Groovy DSL users. Here is what changed:
 * All the package names were updated (they were inherited from the forked project)
 * Thanks to the Kotlin rewrite, some properties now have a stronger typing.
+* Change the syntax when using `execOverrides`. Use now `execOverrides = {}` instead of `execOverrides {}`.
 
 Version 2.2.3 *(2020-02-28)*
 ----------------------------

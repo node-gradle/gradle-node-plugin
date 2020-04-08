@@ -3,14 +3,11 @@ package com.github.gradle.node.task
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.exec.NodeExecRunner
-import com.github.gradle.node.util.MutableAlias
-import com.github.gradle.node.util.OverrideMapAlias
-import org.gradle.api.Action
+import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecResult
-import org.gradle.process.ExecSpec
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
+import org.gradle.kotlin.dsl.invoke
 import org.gradle.process.ExecSpec
 import java.io.File
 
@@ -42,8 +39,10 @@ open class NodeTask : DefaultTask() {
         dependsOn(NodeSetupTask.NAME)
     }
 
-    fun execOverrides(execOverrides: Action<ExecSpec>) {
-        execRunner.execOverrides = execOverrides
+    // For Groovy DSL
+    @Suppress("unused")
+    fun setExecOverrides(execOverrides: Closure<ExecSpec>) {
+        this.execOverrides = { execOverrides.invoke(this) }
     }
 
     @TaskAction

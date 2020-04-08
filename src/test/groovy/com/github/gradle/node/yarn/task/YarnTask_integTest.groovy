@@ -109,20 +109,18 @@ class YarnTask_integTest extends AbstractIntegTest {
         result5.task(":env").outcome == TaskOutcome.FAILED
         result5.output.contains("error Command \"notExistingCommand\" not found.")
 
-        if (gradleVersion >= GradleVersion.version("5.6")) {
-            when:
-            def result6 = build(":env", "-DoutputFile=true")
+        when:
+        def result6 = build(":env", "-DoutputFile=true")
 
-            then:
-            result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-            result6.task(":yarnSetup").outcome == TaskOutcome.SKIPPED
-            result6.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
-            result6.task(":env").outcome == TaskOutcome.SUCCESS
-            !result6.output.contains("PATH=")
-            def outputFile = file("build/standard-output.txt")
-            outputFile.exists()
-            outputFile.text.contains("PATH=")
-        }
+        then:
+        result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result6.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
+        result6.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
+        result6.task(":env").outcome == TaskOutcome.SUCCESS
+        !result6.output.contains("PATH=")
+        def outputFile = file("build/standard-output.txt")
+        outputFile.exists()
+        outputFile.text.contains("PATH=")
 
         when:
         def result7 = build(":pwd")

@@ -2,7 +2,6 @@ package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
-import org.gradle.util.GradleVersion
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
@@ -109,20 +108,18 @@ class NpmTask_integTest extends AbstractIntegTest {
         result5.task(":env").outcome == TaskOutcome.FAILED
         result5.output.contains("Usage: npm <command>")
 
-        if (gradleVersion >= GradleVersion.version("5.6")) {
-            when:
-            def result6 = build(":env", "-DoutputFile=true")
+        when:
+        def result6 = build(":env", "-DoutputFile=true")
 
-            then:
-            result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-            result6.task(":npmSetup").outcome == TaskOutcome.SKIPPED
-            result6.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
-            result6.task(":env").outcome == TaskOutcome.SUCCESS
-            !result6.output.contains("PATH=")
-            def outputFile = file("build/standard-output.txt")
-            outputFile.exists()
-            outputFile.text.contains("PATH=")
-        }
+        then:
+        result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result6.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result6.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+        result6.task(":env").outcome == TaskOutcome.SUCCESS
+        !result6.output.contains("PATH=")
+        def outputFile = file("build/standard-output.txt")
+        outputFile.exists()
+        outputFile.text.contains("PATH=")
 
         when:
         def result7 = build(":pwd")
