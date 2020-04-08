@@ -143,10 +143,10 @@ class NpxTask_integTest extends AbstractIntegTest {
         result6.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result6.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result6.task(":env").outcome == TaskOutcome.SUCCESS
-        !result6.output.contains("PATH=")
+        !environmentDumpContainsPathVariable(result6.output)
         def outputFile = file("build/standard-output.txt")
         outputFile.exists()
-        outputFile.text.contains("PATH=")
+        environmentDumpContainsPathVariable(outputFile.text)
 
         when:
         def result7 = build(":pwd")

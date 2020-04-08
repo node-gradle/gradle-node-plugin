@@ -9,6 +9,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import java.util.regex.Pattern
+
 @RunWithMultipleGradleVersions
 abstract class AbstractIntegTest extends Specification {
     @Rule
@@ -106,5 +108,10 @@ abstract class AbstractIntegTest extends Specification {
 
     protected final boolean fileExists(String path) {
         return new File(this.projectDir, path).exists()
+    }
+
+    protected boolean environmentDumpContainsPathVariable(environmentDump) {
+        // Sometimes the PATH variable is not defined in Windows Powershell, but the PATHEXT is
+        return Pattern.compile("^PATH(?:EXT)?=.+\$", Pattern.MULTILINE).matcher(environmentDump).find()
     }
 }
