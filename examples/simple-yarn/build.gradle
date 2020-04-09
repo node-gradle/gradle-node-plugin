@@ -1,5 +1,9 @@
 apply plugin: 'com.github.node-gradle.node'
 
+node {
+    download = false
+}
+
 task helloWorld(type: NodeTask, dependsOn: 'yarn') {
     script = file('src/node/index.js')
 }
