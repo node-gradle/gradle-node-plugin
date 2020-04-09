@@ -22,8 +22,8 @@ with the `com.github.node-gradle.node` identifier.
 Here's how you get started using this plugin. If you do not find what you are looking for, please add an 
 issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issues).
 
-* [Installing](docs/installing.md)
-* [Node Plugin](docs/node.md)
+* [Installation](docs/installation.md)
+* [Usage](docs/usage.md)
 * [FAQ](docs/faq.md)
 * [Changelog](CHANGELOG.md)
 
@@ -52,12 +52,24 @@ Here's the documentation for older releases of the plugin:
 
 ## Building the Plugin
 
+### Prerequisites
+
+Some integration test ensure that this plugin is able to use the globally installed Node.js, npm or yarn tools.
+This requires those tools are globally installed on your system in order to get all integration tests pass.
+
+### Command
+
 To build the plugin, just type the following command:
 
 ```bash
-./gradlew clean build
+./gradlew build
 ```
 
+To speed up the build, we can skip integration tests on older Gradle versions.
+
+```bash
+./gradlew build -PtestOnlyCurrentGradleVersion=true
+```
 
 ## Contributing
 

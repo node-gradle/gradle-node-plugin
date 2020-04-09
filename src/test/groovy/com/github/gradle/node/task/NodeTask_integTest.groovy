@@ -5,12 +5,11 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
-class NodeTask_integTest
-        extends AbstractIntegTest {
+class NodeTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'exec simple node program and check up-to-date detection'() {
+    def 'download specified node version and exec simple node program and check up-to-date detection'() {
         given:
         copyResources("fixtures/node")
 
@@ -86,7 +85,7 @@ class NodeTask_integTest
         result9.output.contains("Version: v12.13.0")
     }
 
-    def 'exec node program with custom settings and check up-to-date detection'() {
+    def 'download default node version and exec node program with custom settings and check up-to-date detection'() {
         given:
         copyResources("fixtures/node-env")
 
@@ -134,7 +133,7 @@ class NodeTask_integTest
         then:
         result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result6.task(":env").outcome == TaskOutcome.SUCCESS
-        result6.output.contains("Detected custom environment: custom environment value")
+        result6.output.contains("Detected custom environment: custom value")
 
         when:
         environmentVariables.set("NEW_ENV_VARIABLE", "Let's make the whole environment change")
@@ -209,10 +208,33 @@ class NodeTask_integTest
         result15.output.contains("I had to fail")
 
         when:
-        def result16 = build(":version")
+        def result16 = build("env", "-DoutputFile=true")
 
         then:
-        result16.task(":version").outcome == TaskOutcome.SUCCESS
-        result16.output.contains("Version: v10.14.0")
+        result16.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result16.task(":env").outcome == TaskOutcome.SUCCESS
+        !result16.output.contains("No custom environment")
+        def outputFile = file("build/standard-output.txt")
+        outputFile.exists()
+        outputFile.text.contains("No custom environment")
+
+        when:
+        def result17 = build(":version")
+
+        then:
+        result17.task(":version").outcome == TaskOutcome.SUCCESS
+        result17.output.contains("Version: v12.16.1")
+    }
+
+    def 'try to use custom repositories when the download url is null'() {
+        given:
+        copyResources("fixtures/node-no-download-url")
+
+        when:
+        def result = buildAndFail("nodeSetup")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.FAILED
+        result.output.contains("Cannot resolve external dependency org.nodejs:node:12.16.1 because no repositories are defined.")
     }
 }

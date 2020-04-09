@@ -9,7 +9,7 @@ node {
 
 task env(type: NpmTask) {
     dependsOn npmInstall
-    npmCommand = ["run", "printenv"]
+    npmCommand = ["run", "print-env"]
     outputs.upToDateWhen {
         true
     }
@@ -33,7 +33,8 @@ task version(type: NpmTask) {
 }
 
 if (isPropertyEnabled("customEnv")) {
-    env.environment = [CUSTOM: "custom value"]
+    def qualifier = "custom"
+    env.environment = [CUSTOM: "${qualifier} value"]
 }
 
 if (isPropertyEnabled("ignoreExitValue")) {
@@ -46,6 +47,12 @@ if (isPropertyEnabled("notExistingCommand")) {
 
 if (isPropertyEnabled("customWorkingDir")) {
     pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
+}
+
+if (isPropertyEnabled("outputFile")) {
+    env.execOverrides = {
+        it.standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+    }
 }
 
 def isPropertyEnabled(name) {

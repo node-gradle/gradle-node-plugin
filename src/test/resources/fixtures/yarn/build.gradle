@@ -16,7 +16,8 @@ task test(type: YarnTask) {
     args = changeInputs ? [] : ["test"]
     inputs.dir("node_modules")
     inputs.file("package.json")
-    inputs.files("index.js", "test.js")
+    inputs.dir("src")
+    inputs.dir("test")
     outputs.upToDateWhen {
         true
     }

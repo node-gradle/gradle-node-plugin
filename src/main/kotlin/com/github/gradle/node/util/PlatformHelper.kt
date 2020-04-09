@@ -3,7 +3,6 @@ package com.github.gradle.node.util
 import java.util.*
 
 open class PlatformHelper constructor(private val props: Properties = System.getProperties()) {
-
     open val osName: String by lazy {
         val name = property("os.name").toLowerCase()
         when {

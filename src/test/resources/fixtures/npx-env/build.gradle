@@ -9,7 +9,8 @@ node {
 
 task env(type: NpxTask) {
     dependsOn npmInstall
-    command = "printenv"
+    command = "print-env"
+    args = ["PATH", "CUSTOM"]
     outputs.upToDateWhen {
         true
     }
@@ -18,7 +19,7 @@ task env(type: NpxTask) {
 task pwd(type: NpxTask) {
     dependsOn npmInstall
     command = "jseval"
-    args = ["console.log(`Working directory is '\${process.cwd()}'`);"]
+    args = ["console.log(`workingDirectory='\${process.cwd()}'`);"]
     outputs.upToDateWhen {
         true
     }
@@ -30,7 +31,8 @@ task version(type: NpxTask) {
 }
 
 if (isPropertyEnabled("customEnv")) {
-    env.environment = [CUSTOM: "custom value"]
+    def qualifier = "custom"
+    env.environment = [CUSTOM: "${qualifier} value"]
 }
 
 if (isPropertyEnabled("ignoreExitValue")) {
@@ -43,6 +45,12 @@ if (isPropertyEnabled("notExistingCommand")) {
 
 if (isPropertyEnabled("customWorkingDir")) {
     pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
+}
+
+if (isPropertyEnabled("outputFile")) {
+    env.execOverrides = {
+        it.standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+    }
 }
 
 def isPropertyEnabled(name) {

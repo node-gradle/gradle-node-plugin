@@ -1,0 +1,15 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+node {
+    download = true
+    distBaseUrl = null
+}
+
+task countRepositories {
+    dependsOn nodeSetup
+    doLast {
+        println "Project repositories: ${repositories.size()}"
+    }
+}

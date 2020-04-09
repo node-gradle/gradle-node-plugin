@@ -14,9 +14,9 @@ task test(type: NpmTask) {
     dependsOn npmInstall
     npmCommand = changeInputs ? ['run', 'test'] : ['run']
     args = changeInputs ? [] : ['test']
-    inputs.dir('node_modules')
     inputs.file('package.json')
-    inputs.files('index.js', 'test.js')
+    inputs.dir('src')
+    inputs.dir('test')
     outputs.upToDateWhen {
         true
     }

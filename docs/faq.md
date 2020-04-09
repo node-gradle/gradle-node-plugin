@@ -143,14 +143,14 @@ task command(type: NpxTask) {
 }
 ````
 
-The `execOverride` option enables to customize all the other thinks that can be configured in an `ExecSpec` thanks to
+The `execOverrides` option enables to customize all the other thinks that can be configured in an `ExecSpec` thanks to
 a closure that takes the `ExecSpec` as parameter. Note that it is executed last, possibly overriding already set 
 parameters such as the working directory.
 
 ```gradle
 task myScript(type: NpmTask) {
   npmCommand = ['run', 'hello']
-  execOverrides {
+  execOverrides = {
     // The it variable contains the `ExecSpec`
     it.ignoreExitValue = true
     it.workingDir = file('./myWorkingDirectory')

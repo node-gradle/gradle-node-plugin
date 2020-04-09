@@ -1,0 +1,27 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+task hello(type: NodeTask) {
+    script = file("hello.js")
+}
+
+task countRepositories {
+    dependsOn nodeSetup
+    doLast {
+        println "Project repositories: ${repositories.size()}"
+    }
+}
+
+task npmHelp(type: NpmTask) {
+    npmCommand = ["--help"]
+    ignoreExitValue = true
+}
+
+task npxHelp(type: NpxTask) {
+    command = "--help"
+}
+
+task yarnHelp(type: YarnTask) {
+    yarnCommand = ["--help"]
+}
