@@ -1,10 +1,7 @@
 package com.github.gradle.node.exec
 
 import com.github.gradle.node.NodeExtension
-import com.github.gradle.node.variant.Variant
-import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.invoke
 import java.io.File
 
 internal class ExecRunner {

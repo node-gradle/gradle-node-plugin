@@ -2,6 +2,7 @@ package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmSetupTask
+import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import java.io.File
@@ -26,14 +27,16 @@ open class YarnSetupTask : NpmSetupTask() {
 
     @OutputDirectory
     fun getYarnDir(): File {
-        return variant.yarnDir
+        val variantComputer = VariantComputer()
+        return variantComputer.computeYarnDir(nodeExtension)
     }
 
     override fun computeCommand(): List<String> {
         val version = nodeExtension.yarnVersion
+        val yarnDir = getYarnDir()
         val yarnPackage = if (version.isNotBlank()) "yarn@$version" else "yarn"
         return listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(),
-                "--prefix", variant.yarnDir.absolutePath, yarnPackage) + args
+                "--prefix", yarnDir.absolutePath, yarnPackage) + args
     }
 
     override fun isTaskEnabled(): Boolean {

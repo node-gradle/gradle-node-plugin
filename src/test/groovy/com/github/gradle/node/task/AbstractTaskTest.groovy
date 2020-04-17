@@ -14,34 +14,34 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
     ExecResult execResult
     ExecSpec execSpec
     Properties props
-    NodeExtension ext
+    NodeExtension nodeExtension
 
     def setup() {
-        this.props = new Properties()
-        PlatformHelper.INSTANCE = new PlatformHelper(this.props)
+        props = new Properties()
+        PlatformHelper.INSTANCE = new PlatformHelper(props)
 
-        this.execResult = Mock(ExecResult)
+        execResult = Mock(ExecResult)
 
-        this.project.apply plugin: 'com.github.node-gradle.node'
-        this.ext = NodeExtension.get(this.project)
+        project.apply plugin: 'com.github.node-gradle.node'
+        nodeExtension = NodeExtension.get(project)
 
         mockExec()
     }
 
     private void mockExec() {
         // Create mock to track exec calls
-        ProcessOperations processOperations = Spy(this.project.getProcessOperations())
+        ProcessOperations processOperations = Spy(project.getProcessOperations())
         processOperations.exec(_ as Action<ExecSpec>) >> { Action<ExecSpec> action ->
-            action.execute(this.execSpec)
-            return this.execResult
+            action.execute(execSpec)
+            return execResult
         }
         // Gradle does not allow us to easily inject our own services; manually override the ProcessOperations service
-        Field processOperationsField = this.project.getClass().getDeclaredFields()
+        Field processOperationsField = project.getClass().getDeclaredFields()
                 .findAll { it.name ==~ /\w+processOperations\w+/ }
                 .tap { assert it.size() == 1 }
                 .first()
         processOperationsField.setAccessible(true)
-        processOperationsField.set(this.project, processOperations)
+        processOperationsField.set(project, processOperations)
     }
 
     protected containsPath(final Map<String, ?> env) {

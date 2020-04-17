@@ -2,7 +2,9 @@ package com.github.gradle.node.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.util.Alias
+import com.github.gradle.node.util.PlatformHelper
+import com.github.gradle.node.variant.VariantComputer
+import com.github.gradle.node.variant.VariantComputer.Dependency
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -12,41 +14,47 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 open class NodeSetupTask : DefaultTask() {
-    private val config = NodeExtension[project]
-    private val variant by lazy { config.variant }
+    private val variantComputer = VariantComputer()
+    private val nodeExtension = NodeExtension[project]
 
     @get:OutputDirectory
-    val nodeDir by Alias { variant::nodeDir }
+    val nodeDir by lazy {
+        variantComputer.computeNodeDir(nodeExtension)
+    }
 
     init {
         group = NodePlugin.NODE_GROUP
         description = "Download and install a local node/npm version."
         isEnabled = false
         project.afterEvaluate {
-            isEnabled = NodeExtension[project].download
+            isEnabled = nodeExtension.download
         }
     }
 
     @Input
     fun getInput(): Set<String?> {
-        return setOf(config.download.toString(), variant.archiveDependency, variant.exeDependency)
+        val (archiveDependency, exeDependency) = variantComputer.computeDependency(nodeExtension)
+        return setOf(nodeExtension.download.toString(), archiveDependency, exeDependency)
     }
 
     @TaskAction
     fun exec() {
         addRepositoryIfNeeded()
-        if (!variant.exeDependency.isNullOrBlank()) {
-            copyNodeExe()
+        val dependency = variantComputer.computeDependency(nodeExtension)
+        if (!dependency.exeDependency.isNullOrBlank()) {
+            copyNodeExe(dependency)
         }
         deleteExistingNode()
-        unpackNodeArchive()
+        unpackNodeArchive(dependency)
         setExecutableFlag()
     }
 
-    private fun copyNodeExe() {
+    private fun copyNodeExe(dependency: Dependency) {
+        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
+        val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
         project.copy {
-            from(getNodeExeFile())
-            into(variant.nodeBinDir)
+            from(getNodeExeFile(dependency))
+            into(nodeBinDir)
             rename("node.*\\.exe", "node.exe")
         }
     }
@@ -55,17 +63,20 @@ open class NodeSetupTask : DefaultTask() {
         project.delete(nodeDir.parent)
     }
 
-    private fun unpackNodeArchive() {
-        if (getNodeArchiveFile().name.endsWith("zip")) {
+    private fun unpackNodeArchive(dependency: Dependency) {
+        val nodeArchiveFile = getNodeArchiveFile(dependency)
+        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
+        val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
+        if (nodeArchiveFile.name.endsWith("zip")) {
             project.copy {
-                from(project.zipTree(getNodeArchiveFile()))
+                from(project.zipTree(nodeArchiveFile))
                 into(nodeDir.parent)
             }
-        } else if (!variant.exeDependency.isNullOrBlank()) {
+        } else if (!dependency.exeDependency.isNullOrBlank()) {
             // Remap lib/node_modules to node_modules (the same directory as node.exe) because that's how the zip dist does it
             project.copy {
-                from(project.tarTree(getNodeArchiveFile()))
-                into(variant.nodeBinDir)
+                from(project.tarTree(nodeArchiveFile))
+                into(nodeBinDir)
                 val nodeModulesPattern = Regex("""^.*?[\\/]lib[\\/](node_modules.*$)""")
                 eachFile {
                     val file = this
@@ -81,34 +92,37 @@ open class NodeSetupTask : DefaultTask() {
             }
         } else {
             project.copy {
-                from(project.tarTree(getNodeArchiveFile()))
+                from(project.tarTree(nodeArchiveFile))
                 into(nodeDir.parent)
             }
             // Fix broken symlink
-            val npm = Paths.get(variant.nodeBinDir.path, "npm")
+            val npm = Paths.get(nodeBinDir.path, "npm")
+            val npmScriptFile = variantComputer.computeNpmScriptFile(nodeDir, "npm")
             if (Files.deleteIfExists(npm)) {
-                Files.createSymbolicLink(
-                        npm,
-                        variant.nodeBinDir.toPath().relativize(Paths.get(variant.npmScriptFile)))
+                Files.createSymbolicLink(npm, nodeBinDir.toPath().relativize(Paths.get(npmScriptFile)))
             }
-            val npx = Paths.get(variant.nodeBinDir.path, "npx")
+            val npx = Paths.get(nodeBinDir.path, "npx")
+            val npxScriptFile = variantComputer.computeNpmScriptFile(nodeDir, "npx")
             if (Files.deleteIfExists(npx)) {
-                Files.createSymbolicLink(
-                        npx,
-                        variant.nodeBinDir.toPath().relativize(Paths.get(variant.npxScriptFile)))
+                Files.createSymbolicLink(npx, nodeBinDir.toPath().relativize(Paths.get(npxScriptFile)))
             }
         }
     }
 
     private fun setExecutableFlag() {
-        if (!variant.isWindows) {
-            File(variant.nodeExec).setExecutable(true)
+        if (!PlatformHelper.INSTANCE.isWindows) {
+            val nodeDir = variantComputer.computeNodeDir(nodeExtension)
+            val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
+            val nodeExec = variantComputer.computeNodeExec(nodeExtension, nodeBinDir)
+            File(nodeExec).setExecutable(true)
         }
     }
 
-    private fun getNodeExeFile(): File? = variant.exeDependency?.let { resolveSingle(it) }
+    private fun getNodeExeFile(dependency: Dependency): File? =
+            dependency.exeDependency?.let { resolveSingle(it) }
 
-    private fun getNodeArchiveFile(): File = resolveSingle(variant.archiveDependency)
+    private fun getNodeArchiveFile(dependency: Dependency): File =
+            resolveSingle(dependency.archiveDependency)
 
     private fun resolveSingle(name: String): File {
         val dep = project.dependencies.create(name)
@@ -118,7 +132,7 @@ open class NodeSetupTask : DefaultTask() {
     }
 
     private fun addRepositoryIfNeeded() {
-        config.distBaseUrl?.let { addRepository(it) }
+        nodeExtension.distBaseUrl?.let { addRepository(it) }
     }
 
     private fun addRepository(distUrl: String) {
