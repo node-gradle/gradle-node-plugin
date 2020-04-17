@@ -4,21 +4,22 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.exec.ExecConfiguration
 import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
+import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Project
 import java.io.File
 
 internal class NpmExecRunner {
+    private val variantComputer = VariantComputer()
+
     fun executeNpmCommand(project: Project, nodeExecConfiguration: NodeExecConfiguration) {
-        val nodeExtension = NodeExtension[project]
-        val npmExecConfiguration = NpmExecConfiguration(nodeExtension.variant.npmExec, "npm-cli.js",
-                nodeExtension.variant.npmScriptFile)
+        val npmExecConfiguration = NpmExecConfiguration("npm"
+        ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpmExec(nodeExtension, npmBinDir) }
         executeCommand(project, nodeExecConfiguration, npmExecConfiguration)
     }
 
     fun executeNpxCommand(project: Project, nodeExecConfiguration: NodeExecConfiguration) {
-        val nodeExtension = NodeExtension[project]
-        val npxExecConfiguration = NpmExecConfiguration(nodeExtension.variant.npxExec, "npx-cli.js",
-                nodeExtension.variant.npxScriptFile)
+        val npxExecConfiguration = NpmExecConfiguration("npx"
+        ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpxExec(nodeExtension, npmBinDir) }
         executeCommand(project, nodeExecConfiguration, npxExecConfiguration)
     }
 
@@ -37,15 +38,21 @@ internal class NpmExecRunner {
     }
 
     private fun computeExecutable(nodeExtension: NodeExtension, npmExecConfiguration: NpmExecConfiguration): ExecutableAndScript {
-        val executable = npmExecConfiguration.command
+        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
+        val npmDir = variantComputer.computeNpmDir(nodeExtension, nodeDir)
+        val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
+        val npmBinDir = variantComputer.computeNpmBinDir(npmDir)
+        val nodeExec = variantComputer.computeNodeExec(nodeExtension, nodeBinDir)
+        val executable = npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDir)
+        val npmScriptFile = variantComputer.computeNpmScriptFile(nodeDir, npmExecConfiguration.command)
         if (nodeExtension.download) {
             val localCommandScript = nodeExtension.nodeModulesDir.toPath()
                     .resolve("node_modules").resolve("npm").resolve("bin")
-                    .resolve(npmExecConfiguration.localCommandScript).toFile()
+                    .resolve("${npmExecConfiguration.command}-cli.js").toFile()
             if (localCommandScript.exists()) {
-                return ExecutableAndScript(nodeExtension.variant.nodeExec, localCommandScript.absolutePath)
+                return ExecutableAndScript(nodeExec, localCommandScript.absolutePath)
             } else if (!File(executable).exists()) {
-                return ExecutableAndScript(nodeExtension.variant.nodeExec, npmExecConfiguration.commandScript)
+                return ExecutableAndScript(nodeExec, npmScriptFile)
             }
         }
         return ExecutableAndScript(executable)
@@ -60,9 +67,10 @@ internal class NpmExecRunner {
         if (!nodeExtension.download) {
             return null
         }
-        val variant = nodeExtension.variant
-        val npmBinDir = variant.npmBinDir.absolutePath
-        val nodeBinDir = variant.nodeBinDir.absolutePath
-        return npmBinDir + File.pathSeparator + nodeBinDir
+        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
+        val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
+        val npmDir = variantComputer.computeNpmDir(nodeExtension, nodeDir)
+        val npmBinDir = variantComputer.computeNpmBinDir(npmDir)
+        return npmBinDir.absolutePath + File.pathSeparator + nodeBinDir.absolutePath
     }
 }

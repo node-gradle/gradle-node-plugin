@@ -1,9 +1,7 @@
 package com.github.gradle.node
 
-import com.github.gradle.node.variant.Variant
 import org.gradle.api.Project
 import java.io.File
-import kotlin.properties.Delegates
 
 open class NodeExtension(project: Project) {
     private val cacheDir = File(project.projectDir, ".gradle")
@@ -20,7 +18,6 @@ open class NodeExtension(project: Project) {
     var npmInstallCommand = "install"
     var yarnCommand = "yarn"
     var download = false
-    var variant by Delegates.notNull<Variant>()
 
     companion object {
         const val NAME = "node"

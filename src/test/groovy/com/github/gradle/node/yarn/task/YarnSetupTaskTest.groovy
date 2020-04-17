@@ -6,16 +6,16 @@ import org.gradle.process.ExecSpec
 class YarnSetupTaskTest extends AbstractTaskTest {
     def "exec yarnSetup task without any yarn version specified"() {
         given:
-        this.execSpec = Mock(ExecSpec)
+        execSpec = Mock(ExecSpec)
 
-        def task = this.project.tasks.create('simple', YarnSetupTask)
+        def task = project.tasks.create('simple', YarnSetupTask)
 
         when:
-        this.project.evaluate()
+        project.evaluate()
         task.exec()
 
         then:
-        1 * this.execSpec.setArgs({ args ->
+        1 * execSpec.setArgs({ args ->
             def expectedYarnInstallPath = projectDir.toPath().resolve('.gradle').resolve('yarn')
                     .resolve('yarn-latest').toAbsolutePath().toString()
             def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedYarnInstallPath, 'yarn']
@@ -26,17 +26,17 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
     def "exec yarnSetup task with yarn version specified"() {
         given:
-        this.ext.yarnVersion = '1.22.4'
-        this.execSpec = Mock(ExecSpec)
+        nodeExtension.yarnVersion = '1.22.4'
+        execSpec = Mock(ExecSpec)
 
-        def task = this.project.tasks.create('simple', YarnSetupTask)
+        def task = project.tasks.create('simple', YarnSetupTask)
 
         when:
-        this.project.evaluate()
+        project.evaluate()
         task.exec()
 
         then:
-        1 * this.execSpec.setArgs({ args ->
+        1 * execSpec.setArgs({ args ->
             def expectedYarnInstallPath = projectDir.toPath().resolve('.gradle').resolve('yarn')
                     .resolve('yarn-v1.22.4').toAbsolutePath().toString()
             def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedYarnInstallPath, 'yarn@1.22.4']

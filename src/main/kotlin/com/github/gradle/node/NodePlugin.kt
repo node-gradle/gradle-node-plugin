@@ -6,7 +6,6 @@ import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
-import com.github.gradle.node.variant.VariantBuilder
 import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnSetupTask
 import com.github.gradle.node.yarn.task.YarnTask
@@ -25,9 +24,6 @@ class NodePlugin : Plugin<Project> {
         addTasks()
         addNpmRule()
         addYarnRule()
-        this.project.afterEvaluate {
-            nodeExtension.variant = VariantBuilder().build(nodeExtension)
-        }
     }
 
     private fun addGlobalTypes() {

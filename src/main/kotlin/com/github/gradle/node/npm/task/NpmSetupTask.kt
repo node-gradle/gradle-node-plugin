@@ -5,7 +5,7 @@ import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.NodeSetupTask
-import com.github.gradle.node.util.Alias
+import com.github.gradle.node.variant.VariantComputer
 import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -23,9 +23,6 @@ open class NpmSetupTask : DefaultTask() {
     @get:Internal
     protected val nodeExtension by lazy { NodeExtension[project] }
 
-    @get:Internal
-    protected val variant by Alias { nodeExtension::variant }
-
     @get:Input
     var args = listOf<String>()
 
@@ -36,7 +33,11 @@ open class NpmSetupTask : DefaultTask() {
     var execOverrides: (ExecSpec.() -> Unit)? = null
 
     @get:OutputDirectory
-    val npmDir by Alias { variant::npmDir }
+    val npmDir by lazy {
+        val variantComputer = VariantComputer()
+        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
+        variantComputer.computeNpmDir(nodeExtension, nodeDir)
+    }
 
     init {
         group = NodePlugin.NODE_GROUP

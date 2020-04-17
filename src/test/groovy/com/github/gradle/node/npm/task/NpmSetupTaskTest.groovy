@@ -6,13 +6,13 @@ import org.gradle.process.ExecSpec
 class NpmSetupTaskTest extends AbstractTaskTest {
     def "disable npmSetup task when no npm version is specified"() {
         given:
-        this.props.setProperty('os.name', 'Linux')
-        this.execSpec = Mock(ExecSpec)
+        props.setProperty('os.name', 'Linux')
+        execSpec = Mock(ExecSpec)
 
-        def task = this.project.tasks.create('simple', NpmSetupTask)
+        def task = project.tasks.create('simple', NpmSetupTask)
 
         when:
-        this.project.evaluate()
+        project.evaluate()
 
         then:
         !task.isEnabled()
@@ -20,18 +20,18 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
     def "exec npmSetup task (version specified)"() {
         given:
-        this.props.setProperty('os.name', 'Linux')
-        this.ext.npmVersion = '6.4.1'
-        this.execSpec = Mock(ExecSpec)
+        props.setProperty('os.name', 'Linux')
+        nodeExtension.npmVersion = '6.4.1'
+        execSpec = Mock(ExecSpec)
 
-        def task = this.project.tasks.create('simple', NpmSetupTask)
+        def task = project.tasks.create('simple', NpmSetupTask)
 
         when:
-        this.project.evaluate()
+        project.evaluate()
         task.exec()
 
         then:
-        1 * this.execSpec.setArgs({ args ->
+        1 * execSpec.setArgs({ args ->
             def expectedNpmInstallPath = projectDir.toPath().resolve('.gradle').resolve('npm')
                     .resolve('npm-v6.4.1').toAbsolutePath().toString()
             def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedNpmInstallPath, 'npm@6.4.1']
