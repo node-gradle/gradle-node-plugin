@@ -24,14 +24,13 @@ internal class YarnExecRunner {
         execRunner.execute(project, execConfiguration)
     }
 
-    private fun computeAdditionalBinPath(nodeExtension: NodeExtension, nodeDir: File, yarnBinDir: File): String? {
+    private fun computeAdditionalBinPath(nodeExtension: NodeExtension, nodeDir: File, yarnBinDir: File): List<String> {
         if (!nodeExtension.download) {
-            return null
+            return listOf()
         }
         val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
         val npmDir = variantComputer.computeNpmDir(nodeExtension, nodeDir)
         val npmBinDir = variantComputer.computeNpmBinDir(npmDir)
-        return yarnBinDir.absolutePath + File.pathSeparator + npmBinDir.absolutePath +
-                File.pathSeparator + nodeBinDir.absolutePath
+        return listOf(yarnBinDir, npmBinDir, nodeBinDir).map { file -> file.absolutePath }
     }
 }

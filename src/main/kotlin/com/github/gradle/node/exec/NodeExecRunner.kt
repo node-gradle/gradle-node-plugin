@@ -25,5 +25,5 @@ internal class NodeExecRunner {
     }
 
     private fun computeAdditionalBinPath(nodeExtension: NodeExtension, nodeBinDir: File) =
-            if (nodeExtension.download) nodeBinDir.absolutePath else null
+            if (nodeExtension.download) listOf(nodeBinDir.absolutePath) else listOf()
 }

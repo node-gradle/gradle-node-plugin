@@ -6,7 +6,7 @@ import java.io.File
 internal data class ExecConfiguration(
         val executable: String,
         val args: List<String> = listOf(),
-        val additionalBinPath: String? = null,
+        val additionalBinPaths: List<String> = listOf(),
         val environment: Map<String, String> = mapOf(),
         val workingDir: File? = null,
         val ignoreExitValue: Boolean = false,

@@ -37,7 +37,8 @@ internal class NpmExecRunner {
         execRunner.execute(project, execConfiguration)
     }
 
-    private fun computeExecutable(nodeExtension: NodeExtension, npmExecConfiguration: NpmExecConfiguration): ExecutableAndScript {
+    private fun computeExecutable(nodeExtension: NodeExtension, npmExecConfiguration: NpmExecConfiguration):
+            ExecutableAndScript {
         val nodeDir = variantComputer.computeNodeDir(nodeExtension)
         val npmDir = variantComputer.computeNpmDir(nodeExtension, nodeDir)
         val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
@@ -63,14 +64,14 @@ internal class NpmExecRunner {
             val script: String? = null
     )
 
-    private fun computeAdditionalBinPath(nodeExtension: NodeExtension): String? {
+    private fun computeAdditionalBinPath(nodeExtension: NodeExtension): List<String> {
         if (!nodeExtension.download) {
-            return null
+            return listOf()
         }
         val nodeDir = variantComputer.computeNodeDir(nodeExtension)
         val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
         val npmDir = variantComputer.computeNpmDir(nodeExtension, nodeDir)
         val npmBinDir = variantComputer.computeNpmBinDir(npmDir)
-        return npmBinDir.absolutePath + File.pathSeparator + nodeBinDir.absolutePath
+        return listOf(npmBinDir, nodeBinDir).map { file -> file.absolutePath }
     }
 }

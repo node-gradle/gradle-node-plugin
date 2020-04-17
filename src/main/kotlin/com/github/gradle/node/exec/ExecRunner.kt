@@ -20,13 +20,14 @@ internal class ExecRunner {
         val execEnvironment = mutableMapOf<String, String>()
         execEnvironment += System.getenv()
         execEnvironment += execConfiguration.environment
-        if (execConfiguration.additionalBinPath != null) {
+        if (execConfiguration.additionalBinPaths.isNotEmpty()) {
             // Take care of Windows environments that may contain "Path" OR "PATH" - both existing
             // possibly (but not in parallel as of now)
             val pathEnvironmentVariableName = if (execEnvironment["Path"] != null) "Path" else "PATH"
             val actualPath = execEnvironment[pathEnvironmentVariableName]
+            val additionalPathsSerialized = execConfiguration.additionalBinPaths.joinToString(File.pathSeparator)
             execEnvironment[pathEnvironmentVariableName] =
-                    "${execConfiguration.additionalBinPath}${File.pathSeparator}${actualPath}"
+                    "${additionalPathsSerialized}${File.pathSeparator}${actualPath}"
         }
         return execEnvironment
     }
