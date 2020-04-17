@@ -6,76 +6,119 @@ import com.github.gradle.node.util.mapIf
 import com.github.gradle.node.util.tokenize
 import java.io.File
 
-class VariantBuilder @JvmOverloads constructor(
+internal class VariantBuilder @JvmOverloads constructor(
         private val platformHelper: PlatformHelper = PlatformHelper.INSTANCE
 ) {
     fun build(nodeExtension: NodeExtension): Variant {
-        val osName = platformHelper.osName
-        val osArch = platformHelper.osArch
-        val isWindows = platformHelper.isWindows
+        val nodeDir = computeNodeDir(nodeExtension)
+        val nodeBinDir = computeNodeBinDir(nodeDir)
+        val nodeExec = computeNodeExec(nodeExtension, nodeBinDir)
+        val npmDir = computeNpmDir(nodeExtension, nodeDir)
+        val npmBinDir = computeNodeBinDir(npmDir)
+        val npmExec = computeNpmExec(nodeExtension, npmBinDir)
+        val npmScriptFile = computeNpmScriptFile(nodeDir, "npm")
+        val npxExec = computeNpxExec(nodeExtension, npmBinDir)
+        val npxScriptFile = computeNpmScriptFile(nodeDir, "npx")
+        val yarnDir = computeYarnDir(nodeExtension)
+        val yarnBinDir = computeNodeBinDir(yarnDir)
+        val yarnExec = computeYarnExec(nodeExtension, yarnBinDir)
+        val dependency = computeDependency(nodeExtension)
 
-        var nodeExec = "node"
-        val nodeDir: File = computeNodeDir(nodeExtension, osName, osArch)
-        val nodeBinDir: File
-        var npmExec: String
-        val npmDir: File = if (nodeExtension.npmVersion.isNotBlank()) computeNpmDir(nodeExtension) else nodeDir
-        val npmBinDir: File
-        val npmScriptFile: String
-        var npxExec: String
-        val npxScriptFile: String
-        var yarnExec: String
-        val yarnDir: File = computeYarnDir(nodeExtension)
-        val yarnBinDir: File
-        val archiveDependency: String
-        val exeDependency: String?
-
-        if (isWindows) {
-            nodeBinDir = nodeDir
-            npmExec = nodeExtension.npmCommand.mapIf({ it == "npm" }) { "npm.cmd" }
-            npmBinDir = npmDir
-            npmScriptFile = File(nodeDir, "node_modules/npm/bin/npm-cli.js").path
-            npxExec = nodeExtension.npxCommand.mapIf({ it == "npx" }) { "npx.cmd" }
-            npxScriptFile = File(nodeDir, "node_modules/npm/bin/npx-cli.js").path
-            yarnExec = nodeExtension.yarnCommand.mapIf({ it == "yarn" }) { "yarn.cmd" }
-            yarnBinDir = yarnDir
-            if (hasWindowsZip(nodeExtension)) {
-                archiveDependency = computeArchiveDependency(nodeExtension, osName, osArch, "zip")
-                exeDependency = null
-            } else {
-                archiveDependency =
-                        computeArchiveDependency(nodeExtension, "linux", "x86", "tar.gz")
-                exeDependency = computeExeDependency(nodeExtension)
-            }
-        } else {
-            nodeBinDir = File(nodeDir, "bin")
-            npmExec = nodeExtension.npmCommand
-            npmBinDir = File(npmDir, "bin")
-            npmScriptFile = File(nodeDir, "lib/node_modules/npm/bin/npm-cli.js").path
-            npxExec = nodeExtension.npxCommand
-            npxScriptFile = File(nodeDir, "lib/node_modules/npm/bin/npx-cli.js").path
-            yarnExec = nodeExtension.yarnCommand
-            yarnBinDir = File(yarnDir, "bin")
-            archiveDependency = computeArchiveDependency(nodeExtension, osName, osArch, "tar.gz")
-            exeDependency = null
-        }
-
-        if (nodeExtension.download) {
-            nodeExec = nodeExec.mapIf({ it == "node" && isWindows }) { "node.exe" }
-            nodeExec = File(nodeBinDir, nodeExec).absolutePath
-            npmExec = File(npmBinDir, npmExec).absolutePath
-            npxExec = File(npmBinDir, npxExec).absolutePath
-            yarnExec = File(yarnBinDir, yarnExec).absolutePath
-        }
-
-        return Variant(isWindows, nodeExec, nodeDir, nodeBinDir, npmExec, npmDir, npmBinDir, npmScriptFile,
-                npxExec, npxScriptFile, yarnExec, yarnDir, yarnBinDir, archiveDependency, exeDependency
-        )
+        return Variant(platformHelper.isWindows, nodeExec, nodeDir, nodeBinDir, npmExec, npmDir, npmBinDir,
+                npmScriptFile, npxExec, npxScriptFile, yarnExec, yarnDir, yarnBinDir, dependency.archiveDependency,
+                dependency.exeDependency)
     }
 
-    private fun computeArchiveDependency(nodeExtension: NodeExtension, osName: String?, osArch: String?,
-                                         type: String): String {
+    private fun computeNodeDir(nodeExtension: NodeExtension): File {
+        val osName = platformHelper.osName
+        val osArch = platformHelper.osArch
         val version = nodeExtension.version
-        return "org.nodejs:node:$version:$osName-$osArch@$type"
+        val dirName = "node-v$version-$osName-$osArch"
+        return File(nodeExtension.workDir, dirName)
+    }
+
+    private fun computeNodeBinDir(nodeDir: File) =
+            if (platformHelper.isWindows) nodeDir else File(nodeDir, "bin")
+
+    private fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDir: File): String {
+        if (nodeExtension.download) {
+            val nodeCommand = if (platformHelper.isWindows) "node.exe" else "node"
+            return File(nodeBinDir, nodeCommand).absolutePath
+        }
+        return "node"
+    }
+
+    private fun computeNpmDir(nodeExtension: NodeExtension, nodeDir: File): File {
+        return if (nodeExtension.npmVersion.isNotBlank()) {
+            val directoryName = "npm-v${nodeExtension.npmVersion}"
+            File(nodeExtension.npmWorkDir, directoryName)
+        } else nodeDir
+    }
+
+    private fun computeNpmExec(nodeExtension: NodeExtension, npmBinDir: File): String {
+        val npmCommand = if (platformHelper.isWindows) {
+            nodeExtension.npmCommand.mapIf({ it == "npm" }) { "npm.cmd" }
+        } else nodeExtension.npmCommand
+        return if (nodeExtension.download) File(npmBinDir, npmCommand).absolutePath else npmCommand
+    }
+
+    private fun computeNpmScriptFile(nodeDir: File, command: String): String {
+        return if (platformHelper.isWindows) File(nodeDir, "node_modules/npm/bin/$command-cli.js").path
+        else File(nodeDir, "lib/node_modules/npm/bin/$command-cli.js").path
+    }
+
+    private fun computeNpxExec(nodeExtension: NodeExtension, npmBinDir: File): String {
+        val npxCommand = if (platformHelper.isWindows) {
+            nodeExtension.npxCommand.mapIf({ it == "npx" }) { "npx.cmd" }
+        } else nodeExtension.npxCommand
+        return if (nodeExtension.download) File(npmBinDir, npxCommand).absolutePath else npxCommand
+    }
+
+    private fun computeYarnDir(nodeExtension: NodeExtension): File {
+        val dirnameSuffix = if (nodeExtension.yarnVersion.isNotBlank()) {
+            "-v${nodeExtension.yarnVersion}"
+        } else "-latest"
+        val dirname = "yarn$dirnameSuffix"
+        return File(nodeExtension.yarnWorkDir, dirname)
+    }
+
+    private fun computeYarnExec(nodeExtension: NodeExtension, yarnBinDir: File): String {
+        val yarnCommand = if (platformHelper.isWindows) {
+            nodeExtension.yarnCommand.mapIf({ it == "yarn" }) { "yarn.cmd" }
+        } else nodeExtension.yarnCommand
+        return if (nodeExtension.download) File(yarnBinDir, yarnCommand).absolutePath else yarnCommand
+    }
+
+    private fun computeDependency(nodeExtension: NodeExtension): Dependency {
+        val osName = platformHelper.osName
+        val osArch = platformHelper.osArch
+        return if (platformHelper.isWindows) {
+            return if (hasWindowsZip(nodeExtension)) {
+                val archiveDependency = computeArchiveDependency(nodeExtension, osName, osArch, "zip")
+                Dependency(archiveDependency)
+            } else {
+                val archiveDependency =
+                        computeArchiveDependency(nodeExtension, "linux", "x86", "tar.gz")
+                val exeDependency = computeExeDependency(nodeExtension)
+                Dependency(archiveDependency, exeDependency)
+            }
+        } else {
+            val archiveDependency = computeArchiveDependency(nodeExtension, osName, osArch, "tar.gz")
+            Dependency(archiveDependency)
+        }
+    }
+
+    private data class Dependency(
+            val archiveDependency: String,
+            val exeDependency: String? = null
+    )
+
+    private fun hasWindowsZip(nodeExtension: NodeExtension): Boolean {
+        val (majorVersion, minorVersion, microVersion) =
+                nodeExtension.version.tokenize(".").map { it.toInt() }
+        return majorVersion == 4 && minorVersion >= 5
+                || majorVersion == 6 && (minorVersion > 2 || minorVersion == 2 && microVersion >= 1)
+                || majorVersion > 6
     }
 
     private fun computeExeDependency(nodeExtension: NodeExtension): String {
@@ -95,26 +138,9 @@ class VariantBuilder @JvmOverloads constructor(
         }
     }
 
-    private fun hasWindowsZip(nodeExtension: NodeExtension): Boolean {
-        val (majorVersion, minorVersion, microVersion) = nodeExtension.version.tokenize(".").map { it.toInt() }
-        return majorVersion == 4 && minorVersion >= 5
-                || majorVersion == 6 && (minorVersion > 2 || minorVersion == 2 && microVersion >= 1)
-                || majorVersion > 6
-    }
-
-    private fun computeNpmDir(nodeExtension: NodeExtension): File {
-        return File(nodeExtension.npmWorkDir, "npm-v${nodeExtension.npmVersion}")
-    }
-
-    private fun computeYarnDir(nodeExtension: NodeExtension): File {
-        val dirnameSuffix = if (nodeExtension.yarnVersion.isNotBlank()) "-v${nodeExtension.yarnVersion}" else "-latest"
-        val dirname = "yarn$dirnameSuffix"
-        return File(nodeExtension.yarnWorkDir, dirname)
-    }
-
-    private fun computeNodeDir(nodeExtension: NodeExtension, osName: String?, osArch: String?): File {
+    private fun computeArchiveDependency(nodeExtension: NodeExtension, osName: String?, osArch: String?,
+                                         type: String): String {
         val version = nodeExtension.version
-        val dirName = "node-v$version-$osName-$osArch"
-        return File(nodeExtension.workDir, dirName)
+        return "org.nodejs:node:$version:$osName-$osArch@$type"
     }
 }
