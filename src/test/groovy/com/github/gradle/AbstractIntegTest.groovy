@@ -24,13 +24,13 @@ abstract class AbstractIntegTest extends Specification {
 
     def setup(GradleVersion gradleVersion) {
         this.gradleVersion = gradleVersion
-        this.projectDir = this.temporaryFolder.root.toPath().toRealPath().toFile()
-        this.buildFile = createFile('build.gradle')
+        projectDir = temporaryFolder.root.toPath().toRealPath().toFile()
+        buildFile = createFile('build.gradle')
     }
 
     protected final GradleRunner newRunner(final String... args) {
         return GradleRunner.create().
-                withProjectDir(this.projectDir).
+                withProjectDir(projectDir).
                 withArguments(args).
                 withPluginClasspath().
                 forwardOutput().
@@ -50,7 +50,7 @@ abstract class AbstractIntegTest extends Specification {
     }
 
     protected final File createFile(final String name) {
-        return new File(this.temporaryFolder.getRoot(), name)
+        return new File(temporaryFolder.getRoot(), name)
     }
 
     protected final void writeFile(final String name, final String text) {
@@ -72,7 +72,7 @@ abstract class AbstractIntegTest extends Specification {
     }
 
     protected final void writeBuild(final String text) {
-        this.buildFile << text
+        buildFile << text
     }
 
     protected final File directory(String path, File baseDir = getProjectDir()) {
@@ -107,7 +107,7 @@ abstract class AbstractIntegTest extends Specification {
     }
 
     protected final boolean fileExists(String path) {
-        return new File(this.projectDir, path).exists()
+        return new File(projectDir, path).exists()
     }
 
     protected boolean environmentDumpContainsPathVariable(environmentDump) {

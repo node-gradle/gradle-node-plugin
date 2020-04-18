@@ -8,12 +8,17 @@ Version 3.0 *(not yet released)*
 * Improve the Kotlin DSL support
 * Upgrade default Node.js version to 12.16.1, the latest LTS version
 * Add full support of lazy configuration (issue #39)
+* Gradle >= 5.6.4 is supported (instead of Gradle >= 5.0.0 before).
 
 This version breaks backward compatibility. It should not visible for most non Groovy DSL users. Here is what changed:
 * All the package were renamed (they were inherited from the original forked project):
   * `com.moowork.gradle.node` renamed to `com.github.gradle.node`
   * `com.moowork.gradle.node.npm` renamed to `com.github.gradle.node.npm.task`
   * `com.moowork.gradle.node.yarn` renamed to `com.github.gradle.node.yan.task`
+* All the configuration properties (the `node` extension and all tasks) are now some 
+[lazy properties](https://docs.gradle.org/current/userguide/lazy_configuration.html#lazy_properties) as recommended by 
+Gradle. This makes this plugin fully compatible with lazy configuration (tasks will be configured only if they need to 
+run).
 * Thanks to the Kotlin rewrite, some properties now have a stronger typing.
 * Change the way we configure `execOverrides` on all tasks supporting this property.
 Use now `execOverrides = { ... }` instead of `execOverrides { ... }`.

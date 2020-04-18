@@ -2,11 +2,11 @@ package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmSetupTask
+import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
-import java.io.File
-import java.util.*
 
 /**
  * Setup a specific version of Yarn to be used by the build.
@@ -18,25 +18,23 @@ open class YarnSetupTask : NpmSetupTask() {
     }
 
     @Input
-    override fun getInput(): Set<Any?> {
-        val set: MutableSet<Any?> = HashSet()
-        set.add(nodeExtension.download)
-        set.add(nodeExtension.yarnVersion)
-        return set
+    override fun getInput(): Provider<Set<String>> {
+        return zip(nodeExtension.yarnVersion, nodeExtension.yarnWorkDir)
+                .map { (yarnVersion, yarnWorkDir) -> setOf(yarnVersion, yarnWorkDir.asFile.toString()) }
     }
 
-    @OutputDirectory
-    fun getYarnDir(): File {
+    @get:OutputDirectory
+    val yarnDir by lazy {
         val variantComputer = VariantComputer()
-        return variantComputer.computeYarnDir(nodeExtension)
+        variantComputer.computeYarnDir(nodeExtension)
     }
 
     override fun computeCommand(): List<String> {
-        val version = nodeExtension.yarnVersion
-        val yarnDir = getYarnDir()
+        val version = nodeExtension.yarnVersion.get()
+        val yarnDir = yarnDir.get()
         val yarnPackage = if (version.isNotBlank()) "yarn@$version" else "yarn"
         return listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(),
-                "--prefix", yarnDir.absolutePath, yarnPackage) + args
+                "--prefix", yarnDir.asFile.absolutePath, yarnPackage) + args.get()
     }
 
     override fun isTaskEnabled(): Boolean {

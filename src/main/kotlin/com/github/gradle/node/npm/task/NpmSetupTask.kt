@@ -5,14 +5,18 @@ import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.NodeSetupTask
+import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import groovy.lang.Closure
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
 import java.util.*
 
@@ -24,13 +28,16 @@ open class NpmSetupTask : DefaultTask() {
     protected val nodeExtension by lazy { NodeExtension[project] }
 
     @get:Input
-    var args = listOf<String>()
+    val args = project.objects.listProperty<String>()
 
     @get:Input
-    var ignoreExitValue = false
+    val ignoreExitValue = project.objects.property<Boolean>().convention(false)
 
     @get:Internal
-    var execOverrides: (ExecSpec.() -> Unit)? = null
+    val execOverrides = project.objects.property<(ExecSpec.() -> Unit)>()
+
+    @get:Input
+    val download by lazy { nodeExtension.download }
 
     @get:OutputDirectory
     val npmDir by lazy {
@@ -49,38 +56,37 @@ open class NpmSetupTask : DefaultTask() {
     }
 
     @Input
-    open fun getInput(): Set<Any?> {
-        val set: MutableSet<Any?> = HashSet()
-        set.add(nodeExtension.download)
-        set.add(nodeExtension.npmVersion)
-        set.add(nodeExtension.npmWorkDir)
-        return set
+    open fun getInput(): Provider<Set<String>> {
+        return zip(nodeExtension.npmVersion, nodeExtension.npmWorkDir)
+                .map { (npmVersion, npmWorkingDir) ->
+                    setOf(npmVersion, npmWorkingDir.asFile.toString())
+                }
     }
 
     // For Groovy DSL
     @Suppress("unused")
     fun setExecOverrides(execOverrides: Closure<ExecSpec>) {
-        this.execOverrides = { execOverrides.invoke(this) }
+        this.execOverrides.set { execOverrides.invoke(this) }
     }
 
     @TaskAction
     fun exec() {
         val command = computeCommand()
-        val nodeExecConfiguration = NodeExecConfiguration(command, ignoreExitValue = ignoreExitValue,
-                execOverrides = execOverrides)
+        val nodeExecConfiguration = NodeExecConfiguration(command, ignoreExitValue = ignoreExitValue.get(),
+                execOverrides = execOverrides.orNull)
         val npmExecRunner = NpmExecRunner()
         npmExecRunner.executeNpmCommand(project, nodeExecConfiguration)
     }
 
     protected open fun computeCommand(): List<String> {
-        val version = nodeExtension.npmVersion
+        val version = nodeExtension.npmVersion.get()
         return listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix",
-                npmDir.absolutePath, "npm@$version") + args
+                npmDir.get().asFile.absolutePath, "npm@$version") + args.get()
     }
 
     @Internal
     protected open fun isTaskEnabled(): Boolean {
-        return nodeExtension.npmVersion.isNotBlank()
+        return nodeExtension.npmVersion.get().isNotBlank()
     }
 
     companion object {

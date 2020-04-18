@@ -5,18 +5,18 @@ import com.github.gradle.AbstractProjectTest
 class NodeExtensionTest extends AbstractProjectTest {
     def "check default values for extension"() {
         when:
-        this.project.apply plugin: 'com.github.node-gradle.node'
-        def ext = NodeExtension.get(this.project)
+        project.apply plugin: 'com.github.node-gradle.node'
+        def nodeExtension = NodeExtension.get(project)
 
         then:
-        ext != null
-        ext.npmCommand == 'npm'
-        ext.npxCommand == 'npx'
-        ext.distBaseUrl == 'https://nodejs.org/dist'
-        ext.workDir != null
-        ext.nodeModulesDir != null
-        ext.version == '12.16.1'
-        !ext.download
-        ext.npmVersion == ''
+        nodeExtension != null
+        nodeExtension.npmCommand.get() == 'npm'
+        nodeExtension.npxCommand.get() == 'npx'
+        nodeExtension.distBaseUrl.get() == 'https://nodejs.org/dist'
+        nodeExtension.workDir.get() != null
+        nodeExtension.nodeModulesDir.get() != null
+        nodeExtension.version.get() == '12.16.1'
+        !nodeExtension.download.get()
+        nodeExtension.npmVersion.get() == ''
     }
 }

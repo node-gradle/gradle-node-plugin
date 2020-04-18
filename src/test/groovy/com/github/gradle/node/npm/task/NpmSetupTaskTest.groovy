@@ -21,7 +21,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
     def "exec npmSetup task (version specified)"() {
         given:
         props.setProperty('os.name', 'Linux')
-        nodeExtension.npmVersion = '6.4.1'
+        nodeExtension.npmVersion.set('6.4.1')
         execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NpmSetupTask)

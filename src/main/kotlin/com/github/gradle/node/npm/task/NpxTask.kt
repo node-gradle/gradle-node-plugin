@@ -9,27 +9,29 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.mapProperty
+import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
-import java.io.File
 
 open class NpxTask : DefaultTask() {
     @get:Input
-    var command: String? = null
+    val command = project.objects.property<String>()
 
     @get:Input
-    var args = listOf<String>()
+    val args = project.objects.listProperty<String>()
 
     @get:Input
-    var ignoreExitValue = false
+    val ignoreExitValue = project.objects.property<Boolean>().convention(false)
 
     @get:Internal
-    var workingDir: File? = null
+    val workingDir = project.objects.directoryProperty()
 
     @get:Input
-    var environment: Map<String, String> = mapOf()
+    val environment = project.objects.mapProperty<String, String>()
 
     @get:Internal
-    var execOverrides: (ExecSpec.() -> Unit)? = null
+    val execOverrides = project.objects.property<(ExecSpec.() -> Unit)>()
 
     init {
         group = NodePlugin.NODE_GROUP
@@ -39,16 +41,17 @@ open class NpxTask : DefaultTask() {
     // For Groovy DSL
     @Suppress("unused")
     fun setExecOverrides(execOverrides: Closure<ExecSpec>) {
-        this.execOverrides = { execOverrides.invoke(this) }
+        this.execOverrides.set { execOverrides.invoke(this) }
     }
 
     @TaskAction
     fun exec() {
         val fullCommand: MutableList<String> = mutableListOf()
-        command?.let { fullCommand.add(it) }
-        fullCommand.addAll(args)
+        command.orNull?.let { fullCommand.add(it) }
+        fullCommand.addAll(args.get())
         val nodeExecConfiguration =
-                NodeExecConfiguration(fullCommand, environment, workingDir, ignoreExitValue, execOverrides)
+                NodeExecConfiguration(fullCommand, environment.get(), workingDir.asFile.orNull,
+                        ignoreExitValue.get(), execOverrides.orNull)
         val npmExecRunner = NpmExecRunner()
         npmExecRunner.executeNpxCommand(project, nodeExecConfiguration)
     }

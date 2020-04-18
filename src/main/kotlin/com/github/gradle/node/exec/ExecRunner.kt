@@ -33,7 +33,8 @@ internal class ExecRunner {
     }
 
     private fun computeWorkingDir(project: Project, execConfiguration: ExecConfiguration): File? {
-        val workingDir = execConfiguration.workingDir ?: NodeExtension[project].nodeModulesDir
+        val nodeExtension = NodeExtension[project]
+        val workingDir = execConfiguration.workingDir ?: nodeExtension.nodeModulesDir.get().asFile
         workingDir.mkdirs()
         return workingDir
     }

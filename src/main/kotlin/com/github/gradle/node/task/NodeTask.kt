@@ -8,31 +8,33 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.mapProperty
+import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
-import java.io.File
 
 open class NodeTask : DefaultTask() {
     @get:InputFile
     @get:PathSensitive(RELATIVE)
-    var script: File? = null
+    val script = project.objects.fileProperty()
 
     @get:Input
-    var options = listOf<String>()
+    val options = project.objects.listProperty<String>()
 
     @get:Input
-    var args = listOf<String>()
+    val args = project.objects.listProperty<String>()
 
     @get:Input
-    var ignoreExitValue = false
+    val ignoreExitValue = project.objects.property<Boolean>().convention(false)
 
     @get:Internal
-    var workingDir: File? = null
+    val workingDir = project.objects.directoryProperty()
 
     @get:Input
-    var environment: Map<String, String> = mapOf()
+    val environment = project.objects.mapProperty<String, String>()
 
     @get:Internal
-    var execOverrides: (ExecSpec.() -> Unit)? = null
+    val execOverrides = project.objects.property<(ExecSpec.() -> Unit)>()
 
     init {
         group = NodePlugin.NODE_GROUP
@@ -42,15 +44,16 @@ open class NodeTask : DefaultTask() {
     // For Groovy DSL
     @Suppress("unused")
     fun setExecOverrides(execOverrides: Closure<ExecSpec>) {
-        this.execOverrides = { execOverrides.invoke(this) }
+        this.execOverrides.set { execOverrides.invoke(this) }
     }
 
     @TaskAction
     fun exec() {
-        val currentScript = checkNotNull(script) { "Required script property is not set." }
-        val command = options.plus(currentScript.absolutePath).plus(args)
+        val currentScript = script.get().asFile
+        val command = options.get().plus(currentScript.absolutePath).plus(args.get())
         val nodeExecConfiguration =
-                NodeExecConfiguration(command, environment, workingDir, ignoreExitValue, execOverrides)
+                NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull,
+                        ignoreExitValue.get(), execOverrides.orNull)
         val nodeExecRunner = NodeExecRunner()
         nodeExecRunner.execute(project, nodeExecConfiguration)
     }
