@@ -10,18 +10,17 @@ class NpmTaskTest extends AbstractTaskTest {
         execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NpmTask)
-        task.args = ['a', 'b']
-        task.environment = ['a': '1']
-        task.ignoreExitValue = true
-        task.workingDir = projectDir
-        task.execOverrides = {}
+        task.args.set(['a', 'b'])
+        task.environment.set(['a': '1'])
+        task.ignoreExitValue.set(true)
+        task.workingDir.set(projectDir)
 
         when:
         project.evaluate()
         task.exec()
 
         then:
-        task.args == ['a', 'b']
+        task.args.set(['a', 'b'])
         1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setEnvironment({ it['a'] == '1' && containsPath(it) })
         1 * execSpec.setExecutable('npm')
@@ -34,18 +33,17 @@ class NpmTaskTest extends AbstractTaskTest {
         execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NpmTask)
-        task.args = ['a', 'b']
-        task.environment = ['a': '1']
-        task.ignoreExitValue = true
-        task.workingDir = projectDir
-        task.execOverrides = {}
+        task.args.set(['a', 'b'])
+        task.environment.set(['a': '1'])
+        task.ignoreExitValue.set(true)
+        task.workingDir.set(projectDir)
 
         when:
         project.evaluate()
         task.exec()
 
         then:
-        task.args == ['a', 'b']
+        task.args.get() == ['a', 'b']
         1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setEnvironment({ it['a'] == '1' && containsPath(it) })
         1 * execSpec.setExecutable('npm.cmd')
@@ -55,7 +53,7 @@ class NpmTaskTest extends AbstractTaskTest {
     def "exec npm task (download)"() {
         given:
         props.setProperty('os.name', 'Linux')
-        nodeExtension.download = true
+        nodeExtension.download.set(true)
         execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NpmTask)

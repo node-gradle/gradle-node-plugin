@@ -4,8 +4,10 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.exec.ExecConfiguration
 import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
+import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import java.io.File
 
 internal class NpmExecRunner {
@@ -25,38 +27,55 @@ internal class NpmExecRunner {
 
     private fun executeCommand(project: Project, nodeExecConfiguration: NodeExecConfiguration,
                                npmExecConfiguration: NpmExecConfiguration) {
-        val nodeExtension = NodeExtension[project]
-        val additionalBinPath = computeAdditionalBinPath(nodeExtension)
-        val executableAndScript = computeExecutable(nodeExtension, npmExecConfiguration)
-        val argsPrefix = if (executableAndScript.script != null) listOf(executableAndScript.script) else listOf()
-        val args = argsPrefix.plus(nodeExecConfiguration.command)
-        val execConfiguration = ExecConfiguration(executableAndScript.executable, args, additionalBinPath,
-                nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
-                nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
+        val execConfiguration =
+                computeExecConfiguration(project, npmExecConfiguration, nodeExecConfiguration).get()
         val execRunner = ExecRunner()
         execRunner.execute(project, execConfiguration)
     }
 
+    private fun computeExecConfiguration(project: Project, npmExecConfiguration: NpmExecConfiguration,
+                                         nodeExecConfiguration: NodeExecConfiguration): Provider<ExecConfiguration> {
+        val nodeExtension = NodeExtension[project]
+        val additionalBinPathProvider = computeAdditionalBinPath(project, nodeExtension)
+        val executableAndScriptProvider =
+                computeExecutable(nodeExtension, npmExecConfiguration)
+        return zip(additionalBinPathProvider, executableAndScriptProvider)
+                .map { (additionalBinPath, executableAndScript) ->
+                    val argsPrefix =
+                            if (executableAndScript.script != null) listOf(executableAndScript.script) else listOf()
+                    val args = argsPrefix.plus(nodeExecConfiguration.command)
+                    ExecConfiguration(executableAndScript.executable, args, additionalBinPath,
+                            nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
+                            nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
+                }
+    }
+
     private fun computeExecutable(nodeExtension: NodeExtension, npmExecConfiguration: NpmExecConfiguration):
-            ExecutableAndScript {
-        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
-        val npmDir = variantComputer.computeNpmDir(nodeExtension, nodeDir)
-        val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
-        val npmBinDir = variantComputer.computeNpmBinDir(npmDir)
-        val nodeExec = variantComputer.computeNodeExec(nodeExtension, nodeBinDir)
-        val executable = npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDir)
-        val npmScriptFile = variantComputer.computeNpmScriptFile(nodeDir, npmExecConfiguration.command)
-        if (nodeExtension.download) {
-            val localCommandScript = nodeExtension.nodeModulesDir.toPath()
-                    .resolve("node_modules").resolve("npm").resolve("bin")
-                    .resolve("${npmExecConfiguration.command}-cli.js").toFile()
-            if (localCommandScript.exists()) {
-                return ExecutableAndScript(nodeExec, localCommandScript.absolutePath)
-            } else if (!File(executable).exists()) {
-                return ExecutableAndScript(nodeExec, npmScriptFile)
+            Provider<ExecutableAndScript> {
+        val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+        val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
+        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+        val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)
+        val nodeExecProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
+        val executableProvider =
+                npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDirProvider)
+        val npmScriptFileProvider =
+                variantComputer.computeNpmScriptFile(nodeDirProvider, npmExecConfiguration.command)
+        return zip(nodeExtension.download, nodeExtension.nodeModulesDir, executableProvider, nodeExecProvider,
+                npmScriptFileProvider).map {
+            val (download, nodeModulesDir, executable, nodeExec,
+                    npmScriptFile) = it
+            if (download) {
+                val localCommandScript = nodeModulesDir.dir("node_modules/npm/bin")
+                        .file("${npmExecConfiguration.command}-cli.js").asFile
+                if (localCommandScript.exists()) {
+                    return@map ExecutableAndScript(nodeExec, localCommandScript.absolutePath)
+                } else if (!File(executable).exists()) {
+                    return@map ExecutableAndScript(nodeExec, npmScriptFile)
+                }
             }
+            return@map ExecutableAndScript(executable)
         }
-        return ExecutableAndScript(executable)
     }
 
     private data class ExecutableAndScript(
@@ -64,14 +83,18 @@ internal class NpmExecRunner {
             val script: String? = null
     )
 
-    private fun computeAdditionalBinPath(nodeExtension: NodeExtension): List<String> {
-        if (!nodeExtension.download) {
-            return listOf()
+    private fun computeAdditionalBinPath(project: Project, nodeExtension: NodeExtension): Provider<List<String>> {
+        return nodeExtension.download.flatMap { download ->
+            if (!download) {
+                project.providers.provider { listOf<String>() }
+            }
+            val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+            val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
+            val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)
+            zip(npmBinDirProvider, nodeBinDirProvider).map { (npmBinDir, nodeBinDir) ->
+                listOf(npmBinDir, nodeBinDir).map { file -> file.asFile.absolutePath }
+            }
         }
-        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
-        val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
-        val npmDir = variantComputer.computeNpmDir(nodeExtension, nodeDir)
-        val npmBinDir = variantComputer.computeNpmBinDir(npmDir)
-        return listOf(npmBinDir, nodeBinDir).map { file -> file.absolutePath }
     }
 }

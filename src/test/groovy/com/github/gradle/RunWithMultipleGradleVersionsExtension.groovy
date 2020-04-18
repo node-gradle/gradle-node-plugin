@@ -11,11 +11,11 @@ import org.spockframework.runtime.model.SpecInfo
 import java.lang.reflect.Parameter
 
 class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExtension<RunWithMultipleGradleVersions> {
-    private static final GradleVersion MINIMUM_SUPPORTED_GRADLE_VERSION = GradleVersion.version("5.0")
-    private static final GradleVersion LATEST_GRADLE_5_VERSION = GradleVersion.version("5.6.4")
+    private static final GradleVersion MINIMUM_SUPPORTED_GRADLE_VERSION = GradleVersion.version("5.6.4")
+    private static final GradleVersion MINIMUM_GRADLE_6_VERSION = GradleVersion.version("6.0")
     private static final GradleVersion CURRENT_GRADLE_VERSION = GradleVersion.current()
     private static final GradleVersion[] GRADLE_VERSIONS =
-            [MINIMUM_SUPPORTED_GRADLE_VERSION, LATEST_GRADLE_5_VERSION, CURRENT_GRADLE_VERSION]
+            [MINIMUM_SUPPORTED_GRADLE_VERSION, MINIMUM_GRADLE_6_VERSION, CURRENT_GRADLE_VERSION]
     private GradleVersion gradleVersion
 
     @Override

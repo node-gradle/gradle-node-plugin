@@ -9,18 +9,17 @@ class YarnTaskTest extends AbstractTaskTest {
         execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', YarnTask)
-        task.args = ['a', 'b']
-        task.environment = ['a': '1']
-        task.ignoreExitValue = true
-        task.workingDir = projectDir
-        task.execOverrides = {}
+        task.args.set(['a', 'b'])
+        task.environment.set(['a': '1'])
+        task.ignoreExitValue.set(true)
+        task.workingDir.set(projectDir)
 
         when:
         project.evaluate()
         task.exec()
 
         then:
-        task.args == ['a', 'b']
+        task.args.get() == ['a', 'b']
         1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setEnvironment({ it['a'] == '1' && containsPath(it) })
         1 * execSpec.setArgs(['a', 'b'])
@@ -28,7 +27,7 @@ class YarnTaskTest extends AbstractTaskTest {
 
     def "exec yarn task (download)"() {
         given:
-        nodeExtension.download = true
+        nodeExtension.download.set(true)
         execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', YarnTask)

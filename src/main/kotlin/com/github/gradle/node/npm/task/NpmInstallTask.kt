@@ -4,8 +4,11 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import groovy.lang.Closure
 import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.property
 import java.io.File
 
 /**
@@ -15,19 +18,20 @@ open class NpmInstallTask : NpmTask() {
     private val nodeExtension by lazy { NodeExtension[project] }
 
     @get:Internal
-    var nodeModulesOutputFilter: (ConfigurableFileTree.() -> Unit)? = null
+    val nodeModulesOutputFilter =
+            project.objects.property<(ConfigurableFileTree.() -> Unit)>()
 
     init {
         group = NodePlugin.NODE_GROUP
         description = "Install node packages from package.json."
         dependsOn(NpmSetupTask.NAME)
+        npmCommand.set(nodeExtension.npmInstallCommand.map { listOf(it) })
         project.afterEvaluate {
-            npmCommand = listOf(nodeExtension.npmInstallCommand)
-
-            val nodeModulesDirectory = File(nodeExtension.nodeModulesDir, "node_modules")
-            if (nodeModulesOutputFilter != null) {
+            val nodeModulesDirectory = nodeExtension.nodeModulesDir.get().dir("node_modules")
+            val filter = nodeModulesOutputFilter.orNull
+            if (filter != null) {
                 val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
-                nodeModulesOutputFilter?.invoke(nodeModulesFileTree)
+                filter.invoke(nodeModulesFileTree)
                 outputs.files(nodeModulesFileTree)
             } else {
                 outputs.dir(nodeModulesDirectory)
@@ -35,40 +39,45 @@ open class NpmInstallTask : NpmTask() {
         }
     }
 
-    @PathSensitive(PathSensitivity.RELATIVE)
+    @PathSensitive(RELATIVE)
     @InputFile
-    protected fun getPackageJsonFile(): File? {
-        val file = File(nodeExtension.nodeModulesDir, "package.json")
-        return file.takeIf { it.exists() }
+    protected fun getPackageJsonFile(): Provider<File?> {
+        return projectFileIfExists("package.json")
     }
 
-    @PathSensitive(PathSensitivity.RELATIVE)
+    @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getNpmShrinkwrap(): File? {
-        val file = File(nodeExtension.nodeModulesDir, "npm-shrinkwrap.json")
-        return file.takeIf { it.exists() }
+    protected fun getNpmShrinkwrap(): Provider<File?> {
+        return projectFileIfExists("npm-shrinkwrap.json")
     }
 
-    @PathSensitive(PathSensitivity.RELATIVE)
+    @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getPackageLockFileAsInput(): File? {
-        val lockFile = File(nodeExtension.nodeModulesDir, "package-lock.json")
-        return lockFile.takeIf { npmCommand[0] == "ci" && it.exists() }
+    protected fun getPackageLockFileAsInput(): Provider<File?> {
+        return npmCommand.flatMap { command ->
+            if (command[0] == "ci") projectFileIfExists("package-lock.json") else project.provider { null }
+        }
     }
 
     @Optional
     @OutputFile
-    protected fun getPackageLockFileAsOutput(): File? {
-        val file = File(nodeExtension.nodeModulesDir, "package-lock.json")
-        return file.takeIf { npmCommand[0] == "install" && it.exists() }
+    protected fun getPackageLockFileAsOutput(): Provider<File?> {
+        return npmCommand.flatMap { command ->
+            if (command[0] == "install") projectFileIfExists("package-lock.json") else project.provider { null }
+        }
+    }
+
+    private fun projectFileIfExists(name: String): Provider<File?> {
+        return nodeExtension.nodeModulesDir.map { it.file(name).asFile }
+                .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
     }
 
     // For Groovy DSL
     @Suppress("unused")
     fun setNodeModulesOutputFilter(nodeModulesOutputFilter: Closure<ConfigurableFileTree>) {
-        this.nodeModulesOutputFilter = { nodeModulesOutputFilter.invoke(this) }
+        this.nodeModulesOutputFilter.set { nodeModulesOutputFilter.invoke(this) }
     }
 
     companion object {

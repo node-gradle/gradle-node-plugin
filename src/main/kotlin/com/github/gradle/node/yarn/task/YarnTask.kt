@@ -10,24 +10,31 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.mapProperty
+import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
-import java.io.File
 
 open class YarnTask : DefaultTask() {
     @get:Optional
     @get:Input
-    var yarnCommand = listOf<String>()
+    val yarnCommand = project.objects.listProperty<String>()
+
     @get:Optional
     @get:Input
-    var args = listOf<String>()
+    val args = project.objects.listProperty<String>()
+
     @get:Input
-    var ignoreExitValue = false
+    val ignoreExitValue = project.objects.property<Boolean>().convention(false)
+
     @get:Internal
-    var workingDir: File? = null
+    val workingDir = project.objects.directoryProperty()
+
     @get:Input
-    var environment: Map<String, String> = mapOf()
+    val environment = project.objects.mapProperty<String, String>()
+
     @get:Internal
-    var execOverrides: (ExecSpec.() -> Unit)? = null
+    val execOverrides = project.objects.property<(ExecSpec.() -> Unit)>()
 
     init {
         group = NodePlugin.NODE_GROUP
@@ -37,14 +44,15 @@ open class YarnTask : DefaultTask() {
     // For Groovy DSL
     @Suppress("unused")
     fun setExecOverrides(execOverrides: Closure<ExecSpec>) {
-        this.execOverrides = { execOverrides.invoke(this) }
+        this.execOverrides.set { execOverrides.invoke(this) }
     }
 
     @TaskAction
     fun exec() {
-        val command = yarnCommand.plus(args)
+        val command = yarnCommand.get().plus(args.get())
         val nodeExecConfiguration =
-                NodeExecConfiguration(command, environment, workingDir, ignoreExitValue, execOverrides)
+                NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull,
+                        ignoreExitValue.get(), execOverrides.orNull)
         val yarnExecRunner = YarnExecRunner()
         yarnExecRunner.executeYarnCommand(project, nodeExecConfiguration)
     }

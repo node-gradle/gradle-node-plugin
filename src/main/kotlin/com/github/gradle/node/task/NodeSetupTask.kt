@@ -17,6 +17,15 @@ open class NodeSetupTask : DefaultTask() {
     private val variantComputer = VariantComputer()
     private val nodeExtension = NodeExtension[project]
 
+    @get:Input
+    val download by lazy { nodeExtension.download }
+
+    @get:Input
+    val dependency by lazy {
+        variantComputer.computeDependency(nodeExtension)
+                .map { Pair(it.archiveDependency, it.exeDependency) }
+    }
+
     @get:OutputDirectory
     val nodeDir by lazy {
         variantComputer.computeNodeDir(nodeExtension)
@@ -27,20 +36,14 @@ open class NodeSetupTask : DefaultTask() {
         description = "Download and install a local node/npm version."
         isEnabled = false
         project.afterEvaluate {
-            isEnabled = nodeExtension.download
+            isEnabled = nodeExtension.download.get()
         }
-    }
-
-    @Input
-    fun getInput(): Set<String?> {
-        val (archiveDependency, exeDependency) = variantComputer.computeDependency(nodeExtension)
-        return setOf(nodeExtension.download.toString(), archiveDependency, exeDependency)
     }
 
     @TaskAction
     fun exec() {
         addRepositoryIfNeeded()
-        val dependency = variantComputer.computeDependency(nodeExtension)
+        val dependency = variantComputer.computeDependency(nodeExtension).get()
         if (!dependency.exeDependency.isNullOrBlank()) {
             copyNodeExe(dependency)
         }
@@ -50,33 +53,33 @@ open class NodeSetupTask : DefaultTask() {
     }
 
     private fun copyNodeExe(dependency: Dependency) {
-        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
-        val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
+        val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         project.copy {
             from(getNodeExeFile(dependency))
-            into(nodeBinDir)
+            into(nodeBinDirProvider)
             rename("node.*\\.exe", "node.exe")
         }
     }
 
     private fun deleteExistingNode() {
-        project.delete(nodeDir.parent)
+        project.delete(nodeDir.get().dir("../"))
     }
 
     private fun unpackNodeArchive(dependency: Dependency) {
         val nodeArchiveFile = getNodeArchiveFile(dependency)
-        val nodeDir = variantComputer.computeNodeDir(nodeExtension)
-        val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
+        val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         if (nodeArchiveFile.name.endsWith("zip")) {
             project.copy {
                 from(project.zipTree(nodeArchiveFile))
-                into(nodeDir.parent)
+                into(nodeDirProvider.map { it.dir("../") })
             }
         } else if (!dependency.exeDependency.isNullOrBlank()) {
             // Remap lib/node_modules to node_modules (the same directory as node.exe) because that's how the zip dist does it
             project.copy {
                 from(project.tarTree(nodeArchiveFile))
-                into(nodeBinDir)
+                into(nodeBinDirProvider)
                 val nodeModulesPattern = Regex("""^.*?[\\/]lib[\\/](node_modules.*$)""")
                 eachFile {
                     val file = this
@@ -93,28 +96,29 @@ open class NodeSetupTask : DefaultTask() {
         } else {
             project.copy {
                 from(project.tarTree(nodeArchiveFile))
-                into(nodeDir.parent)
+                into(nodeDirProvider.map { it.dir("../") })
             }
             // Fix broken symlink
-            val npm = Paths.get(nodeBinDir.path, "npm")
-            val npmScriptFile = variantComputer.computeNpmScriptFile(nodeDir, "npm")
+            val nodeBinDirPath = nodeBinDirProvider.get().asFile.toPath()
+            val npm = nodeBinDirPath.resolve("npm")
+            val npmScriptFile = variantComputer.computeNpmScriptFile(nodeDirProvider, "npm").get()
             if (Files.deleteIfExists(npm)) {
-                Files.createSymbolicLink(npm, nodeBinDir.toPath().relativize(Paths.get(npmScriptFile)))
+                Files.createSymbolicLink(npm, nodeBinDirPath.relativize(Paths.get(npmScriptFile)))
             }
-            val npx = Paths.get(nodeBinDir.path, "npx")
-            val npxScriptFile = variantComputer.computeNpmScriptFile(nodeDir, "npx")
+            val npx = nodeBinDirPath.resolve("npx")
+            val npxScriptFile = variantComputer.computeNpmScriptFile(nodeDirProvider, "npx").get()
             if (Files.deleteIfExists(npx)) {
-                Files.createSymbolicLink(npx, nodeBinDir.toPath().relativize(Paths.get(npxScriptFile)))
+                Files.createSymbolicLink(npx, nodeBinDirPath.relativize(Paths.get(npxScriptFile)))
             }
         }
     }
 
     private fun setExecutableFlag() {
         if (!PlatformHelper.INSTANCE.isWindows) {
-            val nodeDir = variantComputer.computeNodeDir(nodeExtension)
-            val nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
-            val nodeExec = variantComputer.computeNodeExec(nodeExtension, nodeBinDir)
-            File(nodeExec).setExecutable(true)
+            val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+            val nodeExecProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
+            File(nodeExecProvider.get()).setExecutable(true)
         }
     }
 
@@ -132,7 +136,7 @@ open class NodeSetupTask : DefaultTask() {
     }
 
     private fun addRepositoryIfNeeded() {
-        nodeExtension.distBaseUrl?.let { addRepository(it) }
+        nodeExtension.distBaseUrl.orNull?.let { addRepository(it) }
     }
 
     private fun addRepository(distUrl: String) {

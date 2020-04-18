@@ -24,34 +24,37 @@ class NodePlugin : Plugin<Project> {
         addTasks()
         addNpmRule()
         addYarnRule()
+        this.project.afterEvaluate {
+            nodeExtension.finalize()
+        }
     }
 
     private fun addGlobalTypes() {
-        addGlobalTaskType(NodeTask::class.java)
-        addGlobalTaskType(NpmTask::class.java)
-        addGlobalTaskType(NpxTask::class.java)
-        addGlobalTaskType(YarnTask::class.java)
+        addGlobalTaskType<NodeTask>()
+        addGlobalTaskType<NpmTask>()
+        addGlobalTaskType<NpxTask>()
+        addGlobalTaskType<YarnTask>()
     }
 
-    private fun addGlobalTaskType(type: Class<*>) {
-        project.extensions.extraProperties[type.simpleName] = type
+    private inline fun <reified T> addGlobalTaskType() {
+        project.extensions.extraProperties[T::class.java.simpleName] = T::class.java
     }
 
     private fun addTasks() {
-        project.tasks.create(NpmInstallTask.NAME, NpmInstallTask::class)
-        project.tasks.create(YarnInstallTask.NAME, YarnInstallTask::class)
-        project.tasks.create(NodeSetupTask.NAME, NodeSetupTask::class)
-        project.tasks.create(NpmSetupTask.NAME, NpmSetupTask::class)
-        project.tasks.create(YarnSetupTask.NAME, YarnSetupTask::class)
+        project.tasks.create<NpmInstallTask>(NpmInstallTask.NAME)
+        project.tasks.create<YarnInstallTask>(YarnInstallTask.NAME)
+        project.tasks.create<NodeSetupTask>(NodeSetupTask.NAME)
+        project.tasks.create<NpmSetupTask>(NpmSetupTask.NAME)
+        project.tasks.create<YarnSetupTask>(YarnSetupTask.NAME)
     }
 
     private fun addNpmRule() { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
         project.tasks.addRule("Pattern: \"npm_<command>\": Executes an NPM command.") {
             val taskName = this
             if (taskName.startsWith("npm_")) {
-                val npmTask = project.tasks.create(taskName, NpmTask::class)
+                val npmTask = project.tasks.create<NpmTask>(taskName)
                 val tokens = taskName.split("_").drop(1) // all except first
-                npmTask.npmCommand = tokens.toMutableList()
+                npmTask.npmCommand.set(tokens)
                 if (tokens.first().equals("run", ignoreCase = true)) {
                     npmTask.dependsOn(NpmInstallTask.NAME)
                 }
@@ -63,9 +66,9 @@ class NodePlugin : Plugin<Project> {
         project.tasks.addRule("Pattern: \"yarn_<command>\": Executes an Yarn command.") {
             val taskName = this
             if (taskName.startsWith("yarn_")) {
-                val yarnTask = project.tasks.create(taskName, YarnTask::class)
+                val yarnTask = project.tasks.create<YarnTask>(taskName)
                 val tokens = taskName.split("_").drop(1) // all except first
-                yarnTask.yarnCommand = tokens.toMutableList()
+                yarnTask.yarnCommand.set(tokens.toMutableList())
                 if (tokens.first().equals("run", ignoreCase = true)) {
                     yarnTask.dependsOn(YarnInstallTask.NAME)
                 }
