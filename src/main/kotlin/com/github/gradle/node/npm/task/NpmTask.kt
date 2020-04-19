@@ -36,7 +36,7 @@ open class NpmTask : DefaultTask() {
     val execOverrides = project.objects.property<Action<ExecSpec>>()
 
     init {
-        group = NodePlugin.NODE_GROUP
+        group = NodePlugin.NPM_GROUP
         dependsOn(NpmSetupTask.NAME)
     }
 

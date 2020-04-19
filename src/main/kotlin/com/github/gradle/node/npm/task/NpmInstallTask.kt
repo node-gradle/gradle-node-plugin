@@ -22,7 +22,7 @@ open class NpmInstallTask : NpmTask() {
             project.objects.property<Action<ConfigurableFileTree>>()
 
     init {
-        group = NodePlugin.NODE_GROUP
+        group = NodePlugin.NPM_GROUP
         description = "Install node packages from package.json."
         dependsOn(NpmSetupTask.NAME)
         npmCommand.set(nodeExtension.npmInstallCommand.map { listOf(it) })
