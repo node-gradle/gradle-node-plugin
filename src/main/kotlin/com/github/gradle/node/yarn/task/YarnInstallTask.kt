@@ -22,7 +22,7 @@ open class YarnInstallTask : YarnTask() {
             project.objects.property<Action<ConfigurableFileTree>>()
 
     init {
-        group = NodePlugin.NODE_GROUP
+        group = NodePlugin.YARN_GROUP
         description = "Install node packages using Yarn."
         dependsOn(YarnSetupTask.NAME)
 

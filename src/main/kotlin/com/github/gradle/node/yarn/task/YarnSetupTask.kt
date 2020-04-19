@@ -12,7 +12,7 @@ import org.gradle.api.tasks.OutputDirectory
  */
 open class YarnSetupTask : NpmSetupTask() {
     init {
-        group = NodePlugin.NODE_GROUP
+        group = NodePlugin.YARN_GROUP
         description = "Setup a specific version of Yarn to be used by the build."
     }
 

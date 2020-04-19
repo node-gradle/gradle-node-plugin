@@ -78,5 +78,7 @@ class NodePlugin : Plugin<Project> {
 
     companion object {
         const val NODE_GROUP = "Node"
+        const val NPM_GROUP = "npm"
+        const val YARN_GROUP = "Yarn"
     }
 }

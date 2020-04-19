@@ -45,7 +45,7 @@ open class NpmSetupTask : DefaultTask() {
     }
 
     init {
-        group = NodePlugin.NODE_GROUP
+        group = NodePlugin.NPM_GROUP
         description = "Setup a specific version of npm to be used by the build."
         dependsOn(NodeSetupTask.NAME)
         project.afterEvaluate {
