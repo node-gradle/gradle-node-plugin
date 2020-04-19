@@ -15,11 +15,8 @@ import java.util.regex.Pattern
 abstract class AbstractIntegTest extends Specification {
     @Rule
     final TemporaryFolder temporaryFolder = new TemporaryFolder()
-
     File projectDir
-
     File buildFile
-
     GradleVersion gradleVersion = null
 
     def setup(GradleVersion gradleVersion) {
@@ -29,12 +26,12 @@ abstract class AbstractIntegTest extends Specification {
     }
 
     protected final GradleRunner newRunner(final String... args) {
-        return GradleRunner.create().
-                withProjectDir(projectDir).
-                withArguments(args).
-                withPluginClasspath().
-                forwardOutput().
-                withGradleVersion(gradleVersion.version)
+        return GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments(args)
+                .withPluginClasspath()
+                .forwardOutput()
+                .withGradleVersion(gradleVersion.version)
     }
 
     protected final BuildResult build(final String... args) {

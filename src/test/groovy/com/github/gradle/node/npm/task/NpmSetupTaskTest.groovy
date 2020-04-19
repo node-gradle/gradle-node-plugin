@@ -15,7 +15,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         project.evaluate()
 
         then:
-        !task.isEnabled()
+        !task.isTaskEnabled()
     }
 
     def "exec npmSetup task (version specified)"() {

@@ -48,8 +48,8 @@ open class NpmSetupTask : DefaultTask() {
         group = NodePlugin.NPM_GROUP
         description = "Setup a specific version of npm to be used by the build."
         dependsOn(NodeSetupTask.NAME)
-        project.afterEvaluate {
-            isEnabled = isTaskEnabled()
+        onlyIf {
+            isTaskEnabled()
         }
     }
 
@@ -62,6 +62,11 @@ open class NpmSetupTask : DefaultTask() {
     @Suppress("unused")
     fun execOverrides(execOverrides: Action<ExecSpec>) {
         this.execOverrides.set(execOverrides)
+    }
+
+    @Internal
+    open fun isTaskEnabled(): Boolean {
+        return nodeExtension.npmVersion.get().isNotBlank()
     }
 
     @TaskAction
@@ -77,11 +82,6 @@ open class NpmSetupTask : DefaultTask() {
         val version = nodeExtension.npmVersion.get()
         return listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix",
                 npmDir.get().asFile.absolutePath, "npm@$version") + args.get()
-    }
-
-    @Internal
-    protected open fun isTaskEnabled(): Boolean {
-        return nodeExtension.npmVersion.get().isNotBlank()
     }
 
     companion object {
