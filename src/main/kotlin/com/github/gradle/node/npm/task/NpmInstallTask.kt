@@ -2,7 +2,7 @@ package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -19,7 +19,7 @@ open class NpmInstallTask : NpmTask() {
 
     @get:Internal
     val nodeModulesOutputFilter =
-            project.objects.property<(ConfigurableFileTree.() -> Unit)>()
+            project.objects.property<Action<ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.NODE_GROUP
@@ -69,15 +69,15 @@ open class NpmInstallTask : NpmTask() {
         }
     }
 
+    // For DSL
+    @Suppress("unused")
+    fun nodeModulesOutputFilter(nodeModulesOutputFilter: Action<ConfigurableFileTree>) {
+        this.nodeModulesOutputFilter.set(nodeModulesOutputFilter)
+    }
+
     private fun projectFileIfExists(name: String): Provider<File?> {
         return nodeExtension.nodeModulesDir.map { it.file(name).asFile }
                 .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
-    }
-
-    // For Groovy DSL
-    @Suppress("unused")
-    fun setNodeModulesOutputFilter(nodeModulesOutputFilter: Closure<ConfigurableFileTree>) {
-        this.nodeModulesOutputFilter.set { nodeModulesOutputFilter.invoke(this) }
     }
 
     companion object {

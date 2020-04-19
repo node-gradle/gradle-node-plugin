@@ -58,7 +58,7 @@ class NodeTaskTest extends AbstractTaskTest {
         task.script.set(script)
         task.workingDir.set(projectDir)
         def baos = new ByteArrayOutputStream()
-        task.setExecOverrides { it.standardOutput = baos }
+        task.execOverrides { standardOutput = baos }
 
         when:
         project.evaluate()

@@ -7,14 +7,13 @@ import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
@@ -34,7 +33,7 @@ open class NpmSetupTask : DefaultTask() {
     val ignoreExitValue = project.objects.property<Boolean>().convention(false)
 
     @get:Internal
-    val execOverrides = project.objects.property<(ExecSpec.() -> Unit)>()
+    val execOverrides = project.objects.property<Action<ExecSpec>>()
 
     @get:Input
     val download by lazy { nodeExtension.download }
@@ -63,10 +62,10 @@ open class NpmSetupTask : DefaultTask() {
                 }
     }
 
-    // For Groovy DSL
+    // For DSL
     @Suppress("unused")
-    fun setExecOverrides(execOverrides: Closure<ExecSpec>) {
-        this.execOverrides.set { execOverrides.invoke(this) }
+    fun execOverrides(execOverrides: Action<ExecSpec>) {
+        this.execOverrides.set(execOverrides)
     }
 
     @TaskAction

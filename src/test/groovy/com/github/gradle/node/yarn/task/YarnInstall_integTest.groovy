@@ -108,7 +108,9 @@ class YarnInstall_integTest extends AbstractIntegTest {
             def changeOutput = System.properties["changeOutput"] ? System.properties["changeOutput"] == "true" : false
             if (changeOutput) {
                 yarn {
-                    nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
+                    nodeModulesOutputFilter { 
+                        exclude("mocha/package.json")
+                    }
                 }
             }
         ''')
@@ -171,7 +173,9 @@ class YarnInstall_integTest extends AbstractIntegTest {
             }
 
             yarn {
-                nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
+                nodeModulesOutputFilter {
+                    it.exclude("mocha/package.json")
+                }
             }
         ''')
         writePackageJson("""

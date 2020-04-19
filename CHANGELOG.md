@@ -24,8 +24,8 @@ Here is what changed:
 Gradle. This makes this plugin fully compatible with lazy configuration (tasks will be configured only if they need to 
 run).
 * Thanks to the Kotlin rewrite, some properties now have a stronger typing.
-* Change the way we configure `execOverrides` on all tasks supporting this property.
-Use now `execOverrides = { ... }` instead of `execOverrides { ... }`.
+* Change the way we configure `nodeModulesOutputFilter` on `npmInstall` and `yarn` tasks. It also affects Groovy DSL 
+users. Use now `nodeModulesOutputFilter { ... }` instead of `nodeModulesOutputFilter = { ... }`.
 
 Version 2.2.3 *(2020-02-28)*
 ----------------------------
