@@ -150,11 +150,12 @@ parameters such as the working directory.
 ```gradle
 task myScript(type: NpmTask) {
   npmCommand = ['run', 'hello']
-  execOverrides = {
+  execOverrides {
     // The it variable contains the `ExecSpec`
     it.ignoreExitValue = true
-    it.workingDir = file('./myWorkingDirectory')
-    it.standardOutput = new FileOutputStream('logs/my.log')
+    // We can also omit it since "it" is implicit
+    workingDir = file('./myWorkingDirectory')
+    standardOutput = new FileOutputStream('logs/my.log')
   }
 }
 ```
@@ -168,19 +169,27 @@ whose root directory is `node_modules`.
 With npm:
 ```gradle
 npmInstall {
-  nodeModulesOutputFilter = { it.exclude("package/package.json") }
+  nodeModulesOutputFilter {
+    exclude("package/package.json")
+  }
 }
 ```
     
-Note that `it` is the implicit closure variable containing the `FileTree` instance. It could also be written this way:
+Note that the `exclude` method comes from a [`FileTree`](https://docs.gradle.org/current/javadoc/org/gradle/api/file/FileTree.html).
+It can be also written this way:
 ```gradle
-nodeModulesOutputFilter = { fileTree -> fileTree.exclude("package/package.json") }
+nodeModulesOutputFilter {
+  fileTree -> fileTree.exclude("package/package.json")
+}
 ```
     
 With yarn:
 ```gradle
 yarn {
-    nodeModulesOutputFilter = { it.exclude("package/**").exclude("anotherPackage") }
+  nodeModulesOutputFilter {
+    exclude("package/**")
+    exclude("anotherPackage")
+  }
 }
 ```
 

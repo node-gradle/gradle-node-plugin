@@ -262,7 +262,9 @@ class NpmInstall_integTest extends AbstractIntegTest {
             }
 
             npmInstall {
-                nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
+                nodeModulesOutputFilter { 
+                    exclude("mocha/package.json")
+                }
             }
         ''')
         writePackageJson("""

@@ -2,7 +2,7 @@ package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -19,7 +19,7 @@ open class YarnInstallTask : YarnTask() {
 
     @get:Internal
     val nodeModulesOutputFilter =
-            project.objects.property<(ConfigurableFileTree.() -> Unit)>()
+            project.objects.property<Action<ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.NODE_GROUP
@@ -64,10 +64,10 @@ open class YarnInstallTask : YarnTask() {
                 .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
     }
 
-    // For Groovy DSL
+    // For DSL
     @Suppress("unused")
-    fun setNodeModulesOutputFilter(nodeModulesOutputFilter: Closure<ConfigurableFileTree>) {
-        this.nodeModulesOutputFilter.set { nodeModulesOutputFilter.invoke(this) }
+    fun nodeModulesOutputFilter(nodeModulesOutputFilter: Action<ConfigurableFileTree>) {
+        this.nodeModulesOutputFilter.set(nodeModulesOutputFilter)
     }
 
     companion object {

@@ -12,7 +12,7 @@ internal class ExecRunner {
             environment = computeEnvironment(execConfiguration)
             isIgnoreExitValue = execConfiguration.ignoreExitValue
             workingDir = computeWorkingDir(project, execConfiguration)
-            execConfiguration.execOverrides?.invoke(this)
+            execConfiguration.execOverrides?.execute(this)
         }
     }
 

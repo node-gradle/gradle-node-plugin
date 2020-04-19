@@ -25,14 +25,14 @@ configure<NodeExtension> {
 
 val npmInstallTask = tasks.withType(NpmInstallTask::class).named("npmInstall")
 npmInstallTask.configure {
-    nodeModulesOutputFilter.set {
+    nodeModulesOutputFilter {
         exclude("notExistingFile")
     }
 }
 
 val yarnInstallTask = tasks.withType(YarnInstallTask::class).named("yarn")
 yarnInstallTask.configure {
-    nodeModulesOutputFilter.set {
+    nodeModulesOutputFilter {
         exclude("notExistingFile")
     }
 }
@@ -44,7 +44,7 @@ val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
     ignoreExitValue.set(false)
     environment.set(mapOf("MY_CUSTOM_VARIABLE" to "hello"))
     workingDir.set(projectDir)
-    execOverrides.set {
+    execOverrides {
         standardOutput = System.out
     }
     inputs.dir("node_modules")
@@ -63,7 +63,7 @@ val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
     ignoreExitValue.set(false)
     environment.set(mapOf("MY_CUSTOM_VARIABLE" to "hello"))
     workingDir.set(projectDir)
-    execOverrides.set {
+    execOverrides {
         standardOutput = System.out
     }
     inputs.dir("node_modules")
@@ -82,7 +82,7 @@ val testTaskUsingYarn = tasks.register<YarnTask>("testYarn") {
     ignoreExitValue.set(false)
     environment.set(mapOf("MY_CUSTOM_VARIABLE" to "hello"))
     workingDir.set(projectDir)
-    execOverrides.set {
+    execOverrides {
         standardOutput = System.out
     }
     inputs.dir("node_modules")
@@ -101,7 +101,7 @@ tasks.register<NodeTask>("run") {
     ignoreExitValue.set(false)
     environment.set(mapOf("MY_CUSTOM_VARIABLE" to "hello"))
     workingDir.set(projectDir)
-    execOverrides.set {
+    execOverrides {
         standardOutput = System.out
     }
     inputs.dir("src")
