@@ -23,15 +23,13 @@ configure<NodeExtension> {
     nodeModulesDir.set(file("${project.projectDir}"))
 }
 
-val npmInstallTask = tasks.withType(NpmInstallTask::class).named("npmInstall")
-npmInstallTask.configure {
+val npmInstallTask = tasks.named<NpmInstallTask>("npmInstall") {
     nodeModulesOutputFilter {
         exclude("notExistingFile")
     }
 }
 
-val yarnInstallTask = tasks.withType(YarnInstallTask::class).named("yarn")
-yarnInstallTask.configure {
+tasks.named<YarnInstallTask>("yarn") {
     nodeModulesOutputFilter {
         exclude("notExistingFile")
     }
