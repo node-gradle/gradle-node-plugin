@@ -10,7 +10,11 @@ Version 3.0 *(not yet released)*
 * Add full support of lazy configuration (issue #39)
 * Gradle >= 5.6.4 is supported (instead of Gradle >= 5.0.0 before).
 
-This version breaks backward compatibility. It should not visible for most non Groovy DSL users. Here is what changed:
+This version breaks backward compatibility. It should not visible for most non Groovy DSL users since the Groovy DSL
+handles transparently most of these changes.
+For Kotlin users, see this [Kotlin DSL example](src/test/resources/fixtures/kotlin/build.gradle.kts) that show how to 
+use this plugin version with Kotlin.
+Here is what changed:
 * All the package were renamed (they were inherited from the original forked project):
   * `com.moowork.gradle.node` renamed to `com.github.gradle.node`
   * `com.moowork.gradle.node.npm` renamed to `com.github.gradle.node.npm.task`
