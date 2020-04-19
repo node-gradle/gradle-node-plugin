@@ -9,7 +9,7 @@ open class NodeExtension(project: Project) {
     val npmWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("npm"))
     val yarnWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("yarn"))
     val nodeModulesDir = project.objects.directoryProperty().convention(project.layout.projectDirectory)
-    val version = project.objects.property<String>().convention("12.16.1")
+    val version = project.objects.property<String>().convention("12.16.2")
     val npmVersion = project.objects.property<String>().convention("")
     val yarnVersion = project.objects.property<String>().convention("")
     val distBaseUrl = project.objects.property<String?>()

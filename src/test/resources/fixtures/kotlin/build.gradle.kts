@@ -11,7 +11,7 @@ plugins {
 }
 
 configure<NodeExtension> {
-    version.set("12.16.1")
+    version.set("12.16.2")
     npmVersion.set("")
     yarnVersion.set("")
     npmInstallCommand.set("install")

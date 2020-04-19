@@ -6,7 +6,7 @@ Version 3.0 *(not yet released)*
 
 * Rewrite the code to Kotlin
 * Improve the Kotlin DSL support
-* Upgrade default Node.js version to 12.16.1, the latest LTS version
+* Upgrade default Node.js version to 12.16.2 and npm to 6.14.4, the latest LTS version
 * Add full support of lazy configuration (issue #39)
 * Gradle >= 5.6.4 is supported (instead of Gradle >= 5.0.0 before).
 
