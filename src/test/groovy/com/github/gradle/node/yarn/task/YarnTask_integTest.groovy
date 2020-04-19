@@ -18,7 +18,7 @@ class YarnTask_integTest extends AbstractIntegTest {
         copyResources('fixtures/javascript-project/', '')
 
         when:
-        def result1 = build(":test")
+        def result1 = build(":test", "--stacktrace")
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS

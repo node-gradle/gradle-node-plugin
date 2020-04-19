@@ -2,12 +2,14 @@ package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
+import com.github.gradle.node.util.zip
 import org.gradle.api.Action
 import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.Directory
+import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
-import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.property
 import java.io.File
 
@@ -25,18 +27,6 @@ open class YarnInstallTask : YarnTask() {
         group = NodePlugin.YARN_GROUP
         description = "Install node packages using Yarn."
         dependsOn(YarnSetupTask.NAME)
-
-        project.afterEvaluate {
-            val nodeModulesDirectory = nodeExtension.nodeModulesDir.get().dir("node_modules")
-            val filter = nodeModulesOutputFilter.orNull
-            if (filter != null) {
-                val nodeModulesFileTree = project.fileTree(nodeModulesDirectory)
-                filter.invoke(nodeModulesFileTree)
-                outputs.files(nodeModulesFileTree)
-            } else {
-                outputs.dir(nodeModulesDirectory)
-            }
-        }
     }
 
     @PathSensitive(RELATIVE)
@@ -62,6 +52,30 @@ open class YarnInstallTask : YarnTask() {
     private fun projectFileIfExists(name: String): Provider<File?> {
         return nodeExtension.nodeModulesDir.map { it.file(name).asFile }
                 .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
+    }
+
+    @Optional
+    @OutputDirectory
+    @Suppress("unused")
+    protected fun getNodeModulesDirectory(): Provider<Directory?> {
+        val filter = nodeModulesOutputFilter.orNull
+        return if (filter == null) nodeExtension.nodeModulesDir.dir("node_modules")
+        else project.providers.provider { null }
+    }
+
+    @Optional
+    @OutputFiles
+    @Suppress("unused")
+    protected fun getNodeModulesFiles(): Provider<FileTree?> {
+        val nodeModulesDirectoryProvider = nodeExtension.nodeModulesDir.dir("node_modules")
+        return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
+                .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
+                    if (nodeModulesOutputFilter != null) {
+                        val fileTree = project.fileTree(nodeModulesDirectory)
+                        nodeModulesOutputFilter.execute(fileTree)
+                        project.providers.provider { fileTree }
+                    } else project.providers.provider { null }
+                }
     }
 
     // For DSL

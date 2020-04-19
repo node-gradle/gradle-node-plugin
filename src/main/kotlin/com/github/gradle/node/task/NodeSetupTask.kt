@@ -34,9 +34,8 @@ open class NodeSetupTask : DefaultTask() {
     init {
         group = NodePlugin.NODE_GROUP
         description = "Download and install a local node/npm version."
-        isEnabled = false
-        project.afterEvaluate {
-            isEnabled = nodeExtension.download.get()
+        onlyIf {
+            nodeExtension.download.get()
         }
     }
 
