@@ -5,7 +5,6 @@ import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.NodeSetupTask
-import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
@@ -55,11 +54,8 @@ open class NpmSetupTask : DefaultTask() {
     }
 
     @Input
-    open fun getInput(): Provider<Set<String>> {
-        return zip(nodeExtension.npmVersion, nodeExtension.npmWorkDir)
-                .map { (npmVersion, npmWorkingDir) ->
-                    setOf(npmVersion, npmWorkingDir.asFile.toString())
-                }
+    protected open fun getVersion(): Provider<String> {
+        return nodeExtension.npmVersion
     }
 
     // For DSL

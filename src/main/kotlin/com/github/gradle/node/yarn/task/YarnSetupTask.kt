@@ -2,7 +2,6 @@ package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmSetupTask
-import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -18,9 +17,8 @@ open class YarnSetupTask : NpmSetupTask() {
     }
 
     @Input
-    override fun getInput(): Provider<Set<String>> {
-        return zip(nodeExtension.yarnVersion, nodeExtension.yarnWorkDir)
-                .map { (yarnVersion, yarnWorkDir) -> setOf(yarnVersion, yarnWorkDir.asFile.toString()) }
+    override fun getVersion(): Provider<String> {
+        return nodeExtension.yarnVersion
     }
 
     @get:OutputDirectory
