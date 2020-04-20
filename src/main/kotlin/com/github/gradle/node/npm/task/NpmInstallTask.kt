@@ -32,21 +32,21 @@ open class NpmInstallTask : NpmTask() {
 
     @PathSensitive(RELATIVE)
     @InputFile
-    protected fun getPackageJsonFile(): Provider<File?> {
+    protected fun getPackageJsonFile(): Provider<File> {
         return projectFileIfExists("package.json")
     }
 
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getNpmShrinkwrap(): Provider<File?> {
+    protected fun getNpmShrinkwrap(): Provider<File> {
         return projectFileIfExists("npm-shrinkwrap.json")
     }
 
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getPackageLockFileAsInput(): Provider<File?> {
+    protected fun getPackageLockFileAsInput(): Provider<File> {
         return npmCommand.flatMap { command ->
             if (command[0] == "ci") projectFileIfExists("package-lock.json") else project.provider { null }
         }
@@ -54,13 +54,13 @@ open class NpmInstallTask : NpmTask() {
 
     @Optional
     @OutputFile
-    protected fun getPackageLockFileAsOutput(): Provider<File?> {
+    protected fun getPackageLockFileAsOutput(): Provider<File> {
         return npmCommand.flatMap { command ->
             if (command[0] == "install") projectFileIfExists("package-lock.json") else project.provider { null }
         }
     }
 
-    private fun projectFileIfExists(name: String): Provider<File?> {
+    private fun projectFileIfExists(name: String): Provider<File> {
         return nodeExtension.nodeModulesDir.map { it.file(name).asFile }
                 .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
     }
@@ -68,7 +68,7 @@ open class NpmInstallTask : NpmTask() {
     @Optional
     @OutputDirectory
     @Suppress("unused")
-    protected fun getNodeModulesDirectory(): Provider<Directory?> {
+    protected fun getNodeModulesDirectory(): Provider<Directory> {
         val filter = nodeModulesOutputFilter.orNull
         return if (filter == null) nodeExtension.nodeModulesDir.dir("node_modules")
         else project.providers.provider { null }
@@ -77,7 +77,7 @@ open class NpmInstallTask : NpmTask() {
     @Optional
     @OutputFiles
     @Suppress("unused")
-    protected fun getNodeModulesFiles(): Provider<FileTree?> {
+    protected fun getNodeModulesFiles(): Provider<FileTree> {
         val nodeModulesDirectoryProvider = nodeExtension.nodeModulesDir.dir("node_modules")
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
                 .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
