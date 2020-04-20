@@ -1,6 +1,8 @@
 package com.github.gradle.node
 
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.property
 
 open class NodeExtension(project: Project) {
@@ -44,12 +46,12 @@ open class NodeExtension(project: Project) {
 
         @JvmStatic
         operator fun get(project: Project): NodeExtension {
-            return project.extensions.getByType(NodeExtension::class.java)
+            return project.extensions.getByType()
         }
 
         @JvmStatic
         fun create(project: Project): NodeExtension {
-            return project.extensions.create(NAME, NodeExtension::class.java, project)
+            return project.extensions.create(NAME, project)
         }
     }
 }
