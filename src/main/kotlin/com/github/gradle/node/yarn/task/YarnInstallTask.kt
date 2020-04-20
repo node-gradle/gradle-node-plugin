@@ -32,24 +32,24 @@ open class YarnInstallTask : YarnTask() {
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getPackageJsonFile(): Provider<File?> {
+    protected fun getPackageJsonFile(): Provider<File> {
         return projectFileIfExists("package.json")
     }
 
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getYarnLockFile(): Provider<File?> {
+    protected fun getYarnLockFile(): Provider<File> {
         return projectFileIfExists("yarn.lock")
     }
 
     @Optional
     @OutputFile
-    protected fun getYarnLockFileAsOutput(): Provider<File?> {
+    protected fun getYarnLockFileAsOutput(): Provider<File> {
         return projectFileIfExists("yarn.lock")
     }
 
-    private fun projectFileIfExists(name: String): Provider<File?> {
+    private fun projectFileIfExists(name: String): Provider<File> {
         return nodeExtension.nodeModulesDir.map { it.file(name).asFile }
                 .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
     }
@@ -57,7 +57,7 @@ open class YarnInstallTask : YarnTask() {
     @Optional
     @OutputDirectory
     @Suppress("unused")
-    protected fun getNodeModulesDirectory(): Provider<Directory?> {
+    protected fun getNodeModulesDirectory(): Provider<Directory> {
         val filter = nodeModulesOutputFilter.orNull
         return if (filter == null) nodeExtension.nodeModulesDir.dir("node_modules")
         else project.providers.provider { null }
@@ -66,7 +66,7 @@ open class YarnInstallTask : YarnTask() {
     @Optional
     @OutputFiles
     @Suppress("unused")
-    protected fun getNodeModulesFiles(): Provider<FileTree?> {
+    protected fun getNodeModulesFiles(): Provider<FileTree> {
         val nodeModulesDirectoryProvider = nodeExtension.nodeModulesDir.dir("node_modules")
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
                 .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
