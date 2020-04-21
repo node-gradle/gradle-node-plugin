@@ -56,7 +56,7 @@ tasks.named<Test>("test") {
         systemProperty("testAllSupportedGradleVersions", "true")
     }
     val processorsCount = Runtime.getRuntime().availableProcessors()
-    maxParallelForks = if (processorsCount > 2) processorsCount.div(2) else 1
+    maxParallelForks = if (processorsCount > 2) processorsCount.div(2) else processorsCount
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         exceptionFormat = TestExceptionFormat.FULL
