@@ -15,12 +15,13 @@ plugins {
     idea
     jacoco
     id("com.gradle.plugin-publish") version "0.11.0"
-    id("com.cinnober.gradle.semver-git") version "2.4.0"
+    id("com.cinnober.gradle.semver-git") version "3.0.0" apply false
 }
 
 group = "com.github.node-gradle"
 
-extra.properties["nextVersion"] = "minor"
+extra["nextVersion"] = "major"
+apply(plugin = "com.cinnober.gradle.semver-git")
 
 val compatibilityVersion = JavaVersion.VERSION_1_8
 
