@@ -1,4 +1,3 @@
-import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
@@ -10,7 +9,7 @@ plugins {
     id("com.github.node-gradle.node")
 }
 
-configure<NodeExtension> {
+node {
     version.set("12.16.2")
     npmVersion.set("")
     yarnVersion.set("")
