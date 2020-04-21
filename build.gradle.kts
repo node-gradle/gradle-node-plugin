@@ -70,12 +70,6 @@ tasks.named<JacocoReport>("jacocoTestReport") {
     }
 }
 
-tasks.register("ci") {
-    dependsOn("build")
-    description = "Continuous integration tasks"
-    group = "Build"
-}
-
 gradlePlugin {
     plugins {
         create("nodePlugin") {
