@@ -5,26 +5,25 @@ Version 3.0 *(not yet released)*
 ----------------------------
 
 * Rewrite the code to Kotlin
-* Improve the Kotlin DSL support
+* Improve the Kotlin DSL support (see this [Kotlin DSL example](src/test/resources/fixtures/kotlin/build.gradle.kts)
+that shows how to use this plugin version with Kotlin)
 * Upgrade default Node.js version to 12.16.2 and npm to 6.14.4, the latest LTS version
 * Add full support of lazy configuration (issue #39)
-* Gradle >= 5.6.4 is supported (instead of Gradle >= 5.0.0 before).
+* Gradle >= 5.6.4 support (instead of Gradle >= 5.0.0 before)
 
 This version breaks backward compatibility. It should not visible for most non Groovy DSL users since the Groovy DSL
 handles transparently most of these changes.
-For Kotlin users, see this [Kotlin DSL example](src/test/resources/fixtures/kotlin/build.gradle.kts) that show how to 
-use this plugin version with Kotlin.
 Here is what changed:
-* All the package were renamed (they were inherited from the original forked project):
-  * `com.moowork.gradle.node` renamed to `com.github.gradle.node`
+* All the packages were renamed (they were inherited from the original forked project):
+  * `com.moowork.gradle.node` (and all children) renamed to `com.github.gradle.node`
   * `com.moowork.gradle.node.npm` renamed to `com.github.gradle.node.npm.task`
   * `com.moowork.gradle.node.yarn` renamed to `com.github.gradle.node.yan.task`
 * All the configuration properties (the `node` extension and all tasks) are now some 
 [lazy properties](https://docs.gradle.org/current/userguide/lazy_configuration.html#lazy_properties) as recommended by 
 Gradle. This makes this plugin fully compatible with lazy configuration (tasks will be configured only if they need to 
-run).
+run and configuration properties are read only at runtime if needed and not at configuration time).
 * Thanks to the Kotlin rewrite, some properties now have a stronger typing.
-* Change the way we configure `nodeModulesOutputFilter` on `npmInstall` and `yarn` tasks. It also affects Groovy DSL 
+* Change the syntax to configure `nodeModulesOutputFilter` on `npmInstall` and `yarn` tasks. It also affects Groovy DSL 
 users. Use now `nodeModulesOutputFilter { ... }` instead of `nodeModulesOutputFilter = { ... }`.
 
 Version 2.2.3 *(2020-02-28)*
