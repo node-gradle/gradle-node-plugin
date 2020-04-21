@@ -67,10 +67,12 @@ To build the plugin, just type the following command:
 ./gradlew build
 ```
 
-To speed up the build, we can skip integration tests on older Gradle versions.
+The integration tests are run using multiple Gradle versions to ensure it works on all supported versions.
+But this takes a lot of time. To speed up the build, the tests run only on the current Gradle versions.
+To run the tests against all Gradle versions, use the following option (it is done by the CI).
 
 ```bash
-./gradlew build -PtestOnlyCurrentGradleVersion=true
+./gradlew build -PtestAllSupportedGradleVersions=true
 ```
 
 ## Contributing
