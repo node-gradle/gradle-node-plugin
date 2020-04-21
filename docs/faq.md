@@ -2,6 +2,10 @@
 
 This page contains a collection of frequently asked questions.
 
+# How to use this plugin using the Kotlin DSL?
+
+See this [Kotlin DSL example](src/test/resources/fixtures/kotlin/build.gradle.kts). It shows how to use all the 
+configuration properties.
 
 # How to avoid node/npm/yarn task execution if no changes in web files?
 
