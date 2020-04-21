@@ -4,7 +4,6 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
         gradlePluginPortal()
     }
 
@@ -17,21 +16,18 @@ buildscript {
 }
 
 plugins {
-    id("idea")
-    id("groovy")
-    id("maven-publish")
+    `java-gradle-plugin`
+    groovy
     `kotlin-dsl`
+    idea
+    jacoco
+    id("com.gradle.plugin-publish") version "0.11.0"
     id("com.cinnober.gradle.semver-git") version "2.4.0"
 }
 
 group = "com.github.node-gradle"
 
 extra.properties["nextVersion"] = "minor"
-
-apply(from = "$rootDir/gradle/additional-artifacts.gradle")
-apply(from = "$rootDir/gradle/coverage.gradle.kts")
-apply(from = "$rootDir/gradle/ci.gradle.kts")
-apply(from = "$rootDir/gradle/publishing.gradle")
 
 val compatibilityVersion = JavaVersion.VERSION_1_8
 
@@ -73,11 +69,38 @@ tasks.named<Test>("test") {
     }
 }
 
-configure<GradlePluginDevelopmentExtension> {
+tasks.named<JacocoReport>("jacocoTestReport") {
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+}
+
+tasks.register("ci") {
+    dependsOn("build")
+    description = "Continuous integration tasks"
+    group = "Build"
+}
+
+gradlePlugin {
     plugins {
         create("nodePlugin") {
             id = "com.github.node-gradle.node"
             implementationClass = "com.github.gradle.node.NodePlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/node-gradle/gradle-node-plugin"
+    vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
+
+    (plugins) {
+        "nodePlugin" {
+            id = "com.github.node-gradle.node"
+            displayName = "Gradle Node.js Plugin"
+            description = "Gradle plugin for executing Node.js scripts. Supports npm and Yarn."
+            tags = listOf("java", "gradle", "node", "node.js", "npm", "yarn")
         }
     }
 }
