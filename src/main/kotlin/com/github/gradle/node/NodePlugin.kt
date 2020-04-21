@@ -15,11 +15,10 @@ import org.gradle.kotlin.dsl.register
 
 class NodePlugin : Plugin<Project> {
     private lateinit var project: Project
-    private lateinit var nodeExtension: NodeExtension
 
     override fun apply(project: Project) {
         this.project = project
-        nodeExtension = NodeExtension.create(project)
+        val nodeExtension = NodeExtension.create(project)
         addGlobalTypes()
         addTasks()
         addNpmRule()
@@ -69,7 +68,7 @@ class NodePlugin : Plugin<Project> {
             if (taskName.startsWith("yarn_")) {
                 project.tasks.register<YarnTask>(taskName).configure {
                     val tokens = taskName.split("_").drop(1) // all except first
-                    yarnCommand.set(tokens.toMutableList())
+                    yarnCommand.set(tokens)
                     if (tokens.first().equals("run", ignoreCase = true)) {
                         dependsOn(YarnInstallTask.NAME)
                     }
