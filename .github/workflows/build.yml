@@ -14,7 +14,7 @@ jobs:
         run: ./gradlew --version
         working-directory: ${{github.workspace}}
       - name: Build
-        run: ./gradlew ci
+        run: ./gradlew ci -PtestAllSupportedGradleVersions=true
         working-directory: ${{github.workspace}}
       - name: Build Example Projects
         run: ./gradlew -p examples build
@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew --version
         working-directory: ${{github.workspace}}
       - name: Build
-        run: ./gradlew ci
+        run: ./gradlew ci -PtestAllSupportedGradleVersions=true
         working-directory: ${{github.workspace}}
       - name: Build Example Projects
         run: ./gradlew -p examples build
@@ -50,7 +50,7 @@ jobs:
         run: ./gradlew --version
         working-directory: ${{github.workspace}}
       - name: Build
-        run: ./gradlew ci
+        run: ./gradlew ci -PtestAllSupportedGradleVersions=true
         working-directory: ${{github.workspace}}
       - name: Build Example Projects
         run: ./gradlew -p examples build

@@ -62,8 +62,8 @@ tasks.named<Test>("test") {
     if (project.hasProperty("skipIT")) {
         exclude("**/*_integTest*")
     }
-    if (project.hasProperty("testOnlyCurrentGradleVersion")) {
-        systemProperty("testOnlyCurrentGradleVersion", "true")
+    if (project.hasProperty("testAllSupportedGradleVersions")) {
+        systemProperty("testAllSupportedGradleVersions", "true")
     }
     val processorsCount = Runtime.getRuntime().availableProcessors()
     maxParallelForks = if (processorsCount > 2) processorsCount.div(2) else 1
