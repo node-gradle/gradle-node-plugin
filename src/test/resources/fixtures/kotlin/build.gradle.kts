@@ -132,8 +132,7 @@ val buildTaskUsingYarn = tasks.register<YarnTask>("buildYarn") {
 }
 
 tasks.register<Zip>("package") {
-    // Using old deprecated properties to get it work with Gradle 5.0
-    archiveName = "app.zip"
-    destinationDir = buildDir
+    archiveFileName.set("app.zip")
+    destinationDirectory.set(buildDir)
     from(buildTaskUsingNpx, buildTaskUsingNpm, buildTaskUsingYarn)
 }
