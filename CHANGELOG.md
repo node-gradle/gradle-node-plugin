@@ -9,7 +9,7 @@ Version 3.0 *(not yet released)*
 that shows how to use this plugin version with Kotlin)
 * Upgrade default Node.js version to 12.16.2 and npm to 6.14.4, the latest LTS version
 * Add full support of lazy configuration (issue #39)
-* Gradle >= 5.6.4 support (instead of Gradle >= 5.0.0 before)
+* Gradle 5.6.4+ support (instead of Gradle 5.0.0+ before)
 
 This version breaks backward compatibility. It should not visible for most non Groovy DSL users since the Groovy DSL
 handles transparently most of these changes.
