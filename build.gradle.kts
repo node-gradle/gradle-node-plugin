@@ -6,6 +6,7 @@ buildscript {
         jcenter()
         gradlePluginPortal()
     }
+    extra["nextVersion"] = "major"
 }
 
 plugins {
@@ -15,13 +16,10 @@ plugins {
     idea
     jacoco
     id("com.gradle.plugin-publish") version "0.11.0"
-    id("com.cinnober.gradle.semver-git") version "3.0.0" apply false
+    id("com.cinnober.gradle.semver-git") version "3.0.0"
 }
 
 group = "com.github.node-gradle"
-
-extra["nextVersion"] = "major"
-apply(plugin = "com.cinnober.gradle.semver-git")
 
 val compatibilityVersion = JavaVersion.VERSION_1_8
 
