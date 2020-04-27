@@ -120,13 +120,6 @@ class YarnInstall_integTest
                 download = true
                 workDir = file('build/node')
             }
-            
-            def changeOutput = System.properties["changeOutput"] ? System.properties["changeOutput"] == "true" : false
-            if (changeOutput) {
-                yarn {
-                    nodeModulesOutputFilter = { it.exclude("mocha/package.json") }
-                }
-            }
         ''')
         writePackageJson("""
             {
