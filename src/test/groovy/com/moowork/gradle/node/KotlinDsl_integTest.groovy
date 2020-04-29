@@ -1,0 +1,54 @@
+package com.moowork.gradle.node
+
+import com.moowork.gradle.AbstractIntegTest
+import org.gradle.testkit.runner.TaskOutcome
+import org.junit.Rule
+import org.junit.contrib.java.lang.system.EnvironmentVariables
+
+import java.util.zip.ZipFile
+
+class KotlinDsl_integTest extends AbstractIntegTest {
+    @Rule
+    EnvironmentVariables environmentVariables = new EnvironmentVariables()
+
+    def 'build project using Kotlin DSL'() {
+        given:
+        copyResources('fixtures/kotlin/', '')
+        copyResources('fixtures/javascript-project/', '')
+
+        when:
+        def result1 = build("run", "--stacktrace")
+
+        then:
+        result1.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+        result1.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result1.task(":yarnSetup").outcome == TaskOutcome.SUCCESS
+        result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result1.task(":testNpx").outcome == TaskOutcome.SUCCESS
+        result1.task(":testNpm").outcome == TaskOutcome.SUCCESS
+        result1.task(":testYarn").outcome == TaskOutcome.SUCCESS
+        result1.task(":run").outcome == TaskOutcome.SUCCESS
+        result1.output.contains("Hello Bobby!")
+        // Ensure tests were executed 3 times
+        result1.output.split("1 passing").length == 4
+
+        when:
+        def result2 = build("package")
+
+        then:
+        result2.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+        result2.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result2.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result2.task(":buildNpx").outcome == TaskOutcome.SUCCESS
+        result2.task(":buildNpm").outcome == TaskOutcome.SUCCESS
+        result2.task(":buildYarn").outcome == TaskOutcome.SUCCESS
+        result2.task(":package").outcome == TaskOutcome.SUCCESS
+        def outputFile = createFile("build/app.zip")
+        outputFile.exists()
+        def zipFile = new ZipFile(outputFile)
+        def zipFileEntries = Collections.list(zipFile.entries())
+        zipFileEntries.findAll { it.name.equals("index.js") }.size() == 3
+        zipFileEntries.findAll { it.name.equals("main.js") }.size() == 3
+        zipFileEntries.size() == 6
+    }
+}
