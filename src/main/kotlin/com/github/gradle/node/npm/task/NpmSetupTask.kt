@@ -6,7 +6,6 @@ import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.variant.VariantComputer
-import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -14,8 +13,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
-import org.gradle.kotlin.dsl.property
-import org.gradle.process.ExecSpec
 import java.util.*
 
 /**
@@ -27,12 +24,6 @@ open class NpmSetupTask : DefaultTask() {
 
     @get:Input
     val args = project.objects.listProperty<String>()
-
-    @get:Input
-    val ignoreExitValue = project.objects.property<Boolean>().convention(false)
-
-    @get:Internal
-    val execOverrides = project.objects.property<Action<ExecSpec>>()
 
     @get:Input
     val download by lazy { nodeExtension.download }
@@ -58,12 +49,6 @@ open class NpmSetupTask : DefaultTask() {
         return nodeExtension.npmVersion
     }
 
-    // For DSL
-    @Suppress("unused")
-    fun execOverrides(execOverrides: Action<ExecSpec>) {
-        this.execOverrides.set(execOverrides)
-    }
-
     @Internal
     open fun isTaskEnabled(): Boolean {
         return nodeExtension.npmVersion.get().isNotBlank()
@@ -72,8 +57,7 @@ open class NpmSetupTask : DefaultTask() {
     @TaskAction
     fun exec() {
         val command = computeCommand()
-        val nodeExecConfiguration = NodeExecConfiguration(command, ignoreExitValue = ignoreExitValue.get(),
-                execOverrides = execOverrides.orNull)
+        val nodeExecConfiguration = NodeExecConfiguration(command)
         val npmExecRunner = NpmExecRunner()
         npmExecRunner.executeNpmCommand(project, nodeExecConfiguration)
     }
