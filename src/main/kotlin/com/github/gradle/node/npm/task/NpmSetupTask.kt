@@ -4,6 +4,7 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
+import com.github.gradle.node.npm.proxy.NpmProxy.Companion.NPM_PROXY_CLI_ARGS
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.DefaultTask
@@ -13,7 +14,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
-import java.util.*
 
 /**
  * npm install that only gets executed if gradle decides so.
@@ -64,30 +64,11 @@ open class NpmSetupTask : DefaultTask() {
 
     protected open fun computeCommand(): List<String> {
         val version = nodeExtension.npmVersion.get()
-        return listOf("install", "--global", "--no-save", *PROXY_SETTINGS.toTypedArray(), "--prefix",
+        return listOf("install", "--global", "--no-save", *NPM_PROXY_CLI_ARGS.toTypedArray(), "--prefix",
                 npmDir.get().asFile.absolutePath, "npm@$version") + args.get()
     }
 
     companion object {
         const val NAME = "npmSetup"
-
-        val PROXY_SETTINGS by lazy {
-            val proxyArgs = ArrayList<String>()
-            for ((proxyProto, proxyParam) in listOf(arrayOf("http", "--proxy"), arrayOf("https", "--https-proxy"))) {
-                var proxyHost = System.getProperty("$proxyProto.proxyHost")
-                val proxyPort = System.getProperty("$proxyProto.proxyPort")
-                if (proxyHost != null && proxyPort != null) {
-                    proxyHost = proxyHost.replace("^https?://".toRegex(), "")
-                    val proxyUser = System.getProperty("$proxyProto.proxyUser")
-                    val proxyPassword = System.getProperty("$proxyProto.proxyPassword")
-                    if (proxyUser != null && proxyPassword != null) {
-                        proxyArgs.add("$proxyParam $proxyProto://$proxyUser:$proxyPassword@$proxyHost:$proxyPort")
-                    } else {
-                        proxyArgs.add("$proxyParam $proxyProto://$proxyHost:$proxyPort")
-                    }
-                }
-            }
-            return@lazy proxyArgs.toList()
-        }
     }
 }
