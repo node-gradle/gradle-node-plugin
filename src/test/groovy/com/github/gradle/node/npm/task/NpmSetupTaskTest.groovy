@@ -40,7 +40,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
             def expectedNpmInstallPath = projectDir.toPath().resolve('.gradle').resolve('npm')
                     .resolve('npm-v6.4.1').toAbsolutePath().toString()
             def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedNpmInstallPath, 'npm@6.4.1']
-            return args.collect { fixAbsolutePath(it) } == expectedArgs
+            return fixAbsolutePaths(args) == expectedArgs
         })
     }
 
@@ -64,7 +64,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
                     .resolve('npm-v6.4.1').toAbsolutePath().toString()
             def expectedArgs = ['--proxy', 'http://my-proxy.net:1234',
                                 'install', '--global', '--no-save', '--prefix', expectedNpmInstallPath, 'npm@6.4.1']
-            return args.collect { fixAbsolutePath(it) } == expectedArgs
+            return fixAbsolutePaths(args) == expectedArgs
         })
     }
 }

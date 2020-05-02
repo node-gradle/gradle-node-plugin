@@ -70,13 +70,15 @@ class NpmTaskTest extends AbstractTaskTest {
 
         then:
         1 * execSpec.setIgnoreExitValue(false)
-        1 * execSpec.setExecutable(fixAbsolutePath(nodeDir.resolve("bin").resolve("node")
-                .toAbsolutePath().toString()))
+        1 * execSpec.setExecutable({ executable ->
+            def expectedNodePath = nodeDir.resolve("bin").resolve("node")
+            return fixAbsolutePath(executable) == expectedNodePath.toAbsolutePath().toString()
+        })
         1 * execSpec.setArgs({ args ->
             def command = nodeDir
                     .resolve("lib").resolve("node_modules").resolve("npm").resolve("bin")
                     .resolve("npm-cli.js").toAbsolutePath().toString()
-            return args == [fixAbsolutePath(command), "run", "command"]
+            return fixAbsolutePaths(args) == [command, "run", "command"]
         })
     }
 
@@ -99,13 +101,15 @@ class NpmTaskTest extends AbstractTaskTest {
 
         then:
         1 * execSpec.setIgnoreExitValue(false)
-        1 * execSpec.setExecutable(fixAbsolutePath(nodeDir.resolve("bin").resolve("node")
-                .toAbsolutePath().toString()))
+        1 * execSpec.setExecutable({ executable ->
+            def nodeExecutable = nodeDir.resolve("bin").resolve("node")
+            return fixAbsolutePath(executable) == nodeExecutable.toAbsolutePath().toString()
+        })
         1 * execSpec.setArgs({ args ->
             def npmScript = nodeDir
                     .resolve("lib").resolve("node_modules").resolve("npm").resolve("bin")
                     .resolve("npm-cli.js").toAbsolutePath().toString()
-            return args == [fixAbsolutePath(npmScript), "--proxy", "http://host:1234", "run", "command"]
+            return fixAbsolutePaths(args) == [npmScript, "--proxy", "http://host:1234", "run", "command"]
         })
     }
 

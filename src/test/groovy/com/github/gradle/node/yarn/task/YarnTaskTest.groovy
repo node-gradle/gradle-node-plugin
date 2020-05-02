@@ -43,9 +43,11 @@ class YarnTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        1 * execSpec.setExecutable(fixAbsolutePath(projectDir.toPath().resolve(".gradle")
-                .resolve("yarn").resolve("yarn-latest").resolve("bin").resolve("yarn")
-                .toAbsolutePath().toString()))
+        1 * execSpec.setExecutable({ executable ->
+            def yarnExecutable = projectDir.toPath().resolve(".gradle")
+                    .resolve("yarn").resolve("yarn-latest").resolve("bin").resolve("yarn")
+            return fixAbsolutePath(executable) == yarnExecutable.toAbsolutePath().toString()
+        })
         1 * execSpec.setArgs(["run", "command"])
     }
 
@@ -66,9 +68,11 @@ class YarnTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        1 * execSpec.setExecutable(fixAbsolutePath(projectDir.toPath().resolve(".gradle")
-                .resolve("yarn").resolve("yarn-latest").resolve("bin").resolve("yarn")
-                .toAbsolutePath().toString()))
+        1 * execSpec.setExecutable({ executable ->
+            def yarnExecutable = projectDir.toPath().resolve(".gradle")
+                    .resolve("yarn").resolve("yarn-latest").resolve("bin").resolve("yarn")
+            return fixAbsolutePath(executable) == yarnExecutable.toAbsolutePath().toString()
+        })
         1 * execSpec.setArgs(["--https-proxy", "https://me:password@1.2.3.4:443", "run", "command"])
     }
 }

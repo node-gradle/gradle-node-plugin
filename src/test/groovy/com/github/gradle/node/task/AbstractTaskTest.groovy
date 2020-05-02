@@ -49,6 +49,10 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
     }
 
     // Workaround a strange issue on Github actions macOS hosts
+    protected List<String> fixAbsolutePaths(Iterable<String> path) {
+        return path.collect { fixAbsolutePath(it) }
+    }
+
     protected fixAbsolutePath(String path) {
         return path.replace('^/private/', '/')
     }

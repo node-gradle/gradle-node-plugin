@@ -27,7 +27,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
                     .resolve('yarn-latest').toAbsolutePath().toString()
             def expectedArgs = ['--proxy', 'http://my-proxy:80', 'install', '--global', '--no-save',
                                 '--prefix', expectedYarnInstallPath, 'yarn']
-            return args.collect { fixAbsolutePath(it) } == expectedArgs
+            return fixAbsolutePaths(args) == expectedArgs
         })
     }
 
@@ -47,7 +47,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
             def expectedYarnInstallPath = projectDir.toPath().resolve('.gradle').resolve('yarn')
                     .resolve('yarn-v1.22.4').toAbsolutePath().toString()
             def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedYarnInstallPath, 'yarn@1.22.4']
-            return args.collect { fixAbsolutePath(it) } == expectedArgs
+            return fixAbsolutePaths(args) == expectedArgs
         })
     }
 }
