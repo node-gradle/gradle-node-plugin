@@ -25,22 +25,6 @@ open class NodeExtension(project: Project) {
         distBaseUrl.set("https://nodejs.org/dist")
     }
 
-    internal fun finalize() {
-        workDir.finalizeValue()
-        npmWorkDir.finalizeValue()
-        yarnWorkDir.finalizeValue()
-        nodeModulesDir.finalizeValue()
-        version.finalizeValue()
-        npmVersion.finalizeValue()
-        yarnVersion.finalizeValue()
-        distBaseUrl.finalizeValue()
-        npmCommand.finalizeValue()
-        npxCommand.finalizeValue()
-        npmInstallCommand.finalizeValue()
-        yarnCommand.finalizeValue()
-        download.finalizeValue()
-    }
-
     companion object {
         const val NAME = "node"
 

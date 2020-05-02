@@ -23,9 +23,6 @@ class NodePlugin : Plugin<Project> {
         addTasks()
         addNpmRule()
         addYarnRule()
-        project.afterEvaluate {
-            nodeExtension.finalize()
-        }
     }
 
     private fun addGlobalTypes() {
