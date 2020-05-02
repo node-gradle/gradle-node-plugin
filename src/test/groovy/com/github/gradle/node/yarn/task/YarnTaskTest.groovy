@@ -32,6 +32,7 @@ class YarnTaskTest extends AbstractTaskTest {
 
     def "exec yarn task (download)"() {
         given:
+        props.setProperty('os.name', 'Linux')
         nodeExtension.download.set(true)
         execSpec = Mock(ExecSpec)
 
@@ -53,6 +54,7 @@ class YarnTaskTest extends AbstractTaskTest {
 
     def "exec yarn task (download) with configured proxy"() {
         given:
+        props.setProperty('os.name', 'Linux')
         nodeExtension.download.set(true)
         execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpsProxyHost("1.2.3.4")

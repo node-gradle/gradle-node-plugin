@@ -11,6 +11,7 @@ class NpmInstallTaskTest extends AbstractTaskTest {
 
     def "exec npm install task with configured proxy"() {
         given:
+        props.setProperty('os.name', 'Linux')
         execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)

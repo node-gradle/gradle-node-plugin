@@ -48,12 +48,13 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
         return env['PATH'] != null || env['Path'] != null
     }
 
-    // Workaround a strange issue on Github actions macOS hosts
+    // Workaround a strange issue on Github actions macOS and Windows hosts
     protected List<String> fixAbsolutePaths(Iterable<String> path) {
         return path.collect { fixAbsolutePath(it) }
     }
 
     protected fixAbsolutePath(String path) {
-        return path.replace('^/private/', '/')
+        return path.replace('/private/', '/')
+                .replace('C:\\Users\\runneradmin\\', 'C:\\Users\\RUNNER~1\\')
     }
 }
