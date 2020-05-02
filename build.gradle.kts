@@ -45,7 +45,16 @@ dependencies {
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
 }
 
-tasks.named<Test>("test") {
+tasks.compileTestGroovy {
+    // Should be
+    // classpath += files(sourceSets.test.get().kotlin.classesDirectory)
+    // but enable to get it compile in the Kotlin DSL - works in the Groovy DSL as this
+    // classpath += files(sourceSets.test.kotlin.classesDirectory)
+    // This workaround works
+    classpath += files("${buildDir}/classes/kotlin/test")
+}
+
+tasks.test {
     useJUnitPlatform()
     if (project.hasProperty("skipIT")) {
         exclude("**/*_integTest*")
@@ -61,7 +70,7 @@ tasks.named<Test>("test") {
     }
 }
 
-tasks.named<JacocoReport>("jacocoTestReport") {
+tasks.jacocoTestReport {
     reports {
         xml.isEnabled = true
         html.isEnabled = true

@@ -7,14 +7,7 @@ import org.junit.jupiter.api.Test
 class NpmProxyTest {
     @AfterEach
     internal fun tearDown() {
-        System.clearProperty("http.proxyHost")
-        System.clearProperty("http.proxyPort")
-        System.clearProperty("http.proxyUser")
-        System.clearProperty("http.proxyPassword")
-        System.clearProperty("https.proxyHost")
-        System.clearProperty("https.proxyPort")
-        System.clearProperty("https.proxyUser")
-        System.clearProperty("https.proxyPassword")
+        GradleProxyHelper.resetProxy()
     }
 
     @Test
@@ -26,8 +19,8 @@ class NpmProxyTest {
 
     @Test
     internal fun shouldComputeTheProxyArgsWhenAnHttpProxyIsConfiguredWithoutUserPassword() {
-        System.setProperty("http.proxyHost", "1.2.3.4")
-        System.setProperty("http.proxyPort", "8123")
+        GradleProxyHelper.setHttpProxyHost("1.2.3.4")
+        GradleProxyHelper.setHttpProxyPort(8123)
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 
@@ -36,10 +29,10 @@ class NpmProxyTest {
 
     @Test
     internal fun shouldComputeTheProxyArgsWhenAnHttpProxyIsConfiguredWithUserPassword() {
-        System.setProperty("http.proxyHost", "4.3.2.1")
-        System.setProperty("http.proxyPort", "1234")
-        System.setProperty("http.proxyUser", "me/you")
-        System.setProperty("http.proxyPassword", "p@ssword")
+        GradleProxyHelper.setHttpProxyHost("4.3.2.1")
+        GradleProxyHelper.setHttpProxyPort(1234)
+        GradleProxyHelper.setHttpProxyUser("me/you")
+        GradleProxyHelper.setHttpProxyPassword("p@ssword")
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 
@@ -48,8 +41,8 @@ class NpmProxyTest {
 
     @Test
     internal fun shouldComputeTheProxyArgsWhenAnHttpsProxyIsConfiguredWithoutUserPassword() {
-        System.setProperty("https.proxyHost", "1.2.3.4")
-        System.setProperty("https.proxyPort", "8123")
+        GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
+        GradleProxyHelper.setHttpsProxyPort(8123)
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 
@@ -58,10 +51,10 @@ class NpmProxyTest {
 
     @Test
     internal fun shouldComputeTheProxyArgsWhenAnHttpsProxyIsConfiguredWithUserPassword() {
-        System.setProperty("https.proxyHost", "4.3.2.1")
-        System.setProperty("https.proxyPort", "1234")
-        System.setProperty("https.proxyUser", "me/you")
-        System.setProperty("https.proxyPassword", "p@ssword")
+        GradleProxyHelper.setHttpsProxyHost("4.3.2.1")
+        GradleProxyHelper.setHttpsProxyPort(1234)
+        GradleProxyHelper.setHttpsProxyUser("me/you")
+        GradleProxyHelper.setHttpsProxyPassword("p@ssword")
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 
@@ -70,23 +63,23 @@ class NpmProxyTest {
 
     @Test
     internal fun shouldComputeTheProxyArgsWhenBothAnHttpAndHttpsProxyAreConfigured() {
-        System.setProperty("http.proxyHost", "4.3.2.1")
-        System.setProperty("http.proxyPort", "1234")
-        System.setProperty("https.proxyHost", "4.3.2.1")
-        System.setProperty("https.proxyPort", "1234")
-        System.setProperty("https.proxyUser", "me/you")
-        System.setProperty("https.proxyPassword", "p@ssword")
+        GradleProxyHelper.setHttpProxyHost("4.3.2.1")
+        GradleProxyHelper.setHttpProxyPort(1234)
+        GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
+        GradleProxyHelper.setHttpsProxyPort(4321)
+        GradleProxyHelper.setHttpsProxyUser("me/you")
+        GradleProxyHelper.setHttpsProxyPassword("p@ssword")
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 
         assertThat(result).containsExactly("--proxy", "http://4.3.2.1:1234",
-                "--https-proxy", "https://me%2Fyou:p%40ssword@4.3.2.1:1234")
+                "--https-proxy", "https://me%2Fyou:p%40ssword@1.2.3.4:4321")
     }
 
     @Test
     internal fun shouldComputeTheProxyArgsWhenThePortIsNotDefined() {
-        System.setProperty("http.proxyHost", "4.3.2.1")
-        System.setProperty("https.proxyHost", "4.3.2.1")
+        GradleProxyHelper.setHttpProxyHost("4.3.2.1")
+        GradleProxyHelper.setHttpsProxyHost("4.3.2.1")
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 
@@ -95,12 +88,12 @@ class NpmProxyTest {
 
     @Test
     internal fun shouldComputeTheProxyArgsWhenThePassword() {
-        System.setProperty("http.proxyHost", "4.3.2.1")
-        System.setProperty("http.proxyPort", "80")
-        System.setProperty("http.proxyUser", "me")
-        System.setProperty("https.proxyHost", "4.3.2.1")
-        System.setProperty("https.proxyPort", "443")
-        System.setProperty("https.proxyHost", "me")
+        GradleProxyHelper.setHttpProxyHost("4.3.2.1")
+        GradleProxyHelper.setHttpProxyPort(80)
+        GradleProxyHelper.setHttpProxyUser("me")
+        GradleProxyHelper.setHttpsProxyHost("4.3.2.1")
+        GradleProxyHelper.setHttpsProxyPort(443)
+        GradleProxyHelper.setHttpsProxyHost("me")
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 

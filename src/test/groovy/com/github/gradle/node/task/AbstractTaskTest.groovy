@@ -47,4 +47,9 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
     protected containsPath(final Map<String, ?> env) {
         return env['PATH'] != null || env['Path'] != null
     }
+
+    // Workaround a strange issue on Github actions macOS hosts
+    protected fixAbsolutePath(String path) {
+        return path.replace('^/private/', '/')
+    }
 }

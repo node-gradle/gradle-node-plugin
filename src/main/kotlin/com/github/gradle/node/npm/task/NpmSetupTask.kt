@@ -4,7 +4,6 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
-import com.github.gradle.node.npm.proxy.NpmProxy.Companion.NPM_PROXY_CLI_ARGS
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.DefaultTask
@@ -64,8 +63,8 @@ open class NpmSetupTask : DefaultTask() {
 
     protected open fun computeCommand(): List<String> {
         val version = nodeExtension.npmVersion.get()
-        return listOf("install", "--global", "--no-save", *NPM_PROXY_CLI_ARGS.toTypedArray(), "--prefix",
-                npmDir.get().asFile.absolutePath, "npm@$version") + args.get()
+        return listOf("install", "--global", "--no-save", "--prefix", npmDir.get().asFile.absolutePath,
+                "npm@$version") + args.get()
     }
 
     companion object {

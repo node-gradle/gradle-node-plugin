@@ -1,9 +1,14 @@
 package com.github.gradle.node.yarn.task
 
+import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
 class YarnTaskTest extends AbstractTaskTest {
+    def cleanup() {
+        GradleProxyHelper.resetProxy()
+    }
+
     def "exec yarn task"() {
         given:
         execSpec = Mock(ExecSpec)
@@ -31,12 +36,39 @@ class YarnTaskTest extends AbstractTaskTest {
         execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', YarnTask)
+        task.args.set(["run", "command"])
 
         when:
         project.evaluate()
         task.exec()
 
         then:
-        1 * execSpec.setIgnoreExitValue(false)
+        1 * execSpec.setExecutable(fixAbsolutePath(projectDir.toPath().resolve(".gradle")
+                .resolve("yarn").resolve("yarn-latest").resolve("bin").resolve("yarn")
+                .toAbsolutePath().toString()))
+        1 * execSpec.setArgs(["run", "command"])
+    }
+
+    def "exec yarn task (download) with configured proxy"() {
+        given:
+        nodeExtension.download.set(true)
+        execSpec = Mock(ExecSpec)
+        GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
+        GradleProxyHelper.setHttpsProxyPort(443)
+        GradleProxyHelper.setHttpsProxyUser("me")
+        GradleProxyHelper.setHttpsProxyPassword("password")
+
+        def task = project.tasks.create('simple', YarnTask)
+        task.args.set(["run", "command"])
+
+        when:
+        project.evaluate()
+        task.exec()
+
+        then:
+        1 * execSpec.setExecutable(fixAbsolutePath(projectDir.toPath().resolve(".gradle")
+                .resolve("yarn").resolve("yarn-latest").resolve("bin").resolve("yarn")
+                .toAbsolutePath().toString()))
+        1 * execSpec.setArgs(["--https-proxy", "https://me:password@1.2.3.4:443", "run", "command"])
     }
 }

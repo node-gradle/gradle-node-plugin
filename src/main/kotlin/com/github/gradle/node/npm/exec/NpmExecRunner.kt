@@ -4,6 +4,7 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.exec.ExecConfiguration
 import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
+import com.github.gradle.node.npm.proxy.NpmProxy.Companion.computeNpmProxyCliArgs
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Project
@@ -16,7 +17,16 @@ internal class NpmExecRunner {
     fun executeNpmCommand(project: Project, nodeExecConfiguration: NodeExecConfiguration) {
         val npmExecConfiguration = NpmExecConfiguration("npm"
         ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpmExec(nodeExtension, npmBinDir) }
-        executeCommand(project, nodeExecConfiguration, npmExecConfiguration)
+        executeCommand(project, addProxyCliArgs(nodeExecConfiguration), npmExecConfiguration)
+    }
+
+    private fun addProxyCliArgs(nodeExecConfiguration: NodeExecConfiguration): NodeExecConfiguration {
+        val npmProxyCliArgs = computeNpmProxyCliArgs()
+        if (npmProxyCliArgs.isNotEmpty()) {
+            val commandWithProxy = npmProxyCliArgs.plus(nodeExecConfiguration.command)
+            return nodeExecConfiguration.copy(command = commandWithProxy)
+        }
+        return nodeExecConfiguration
     }
 
     fun executeNpxCommand(project: Project, nodeExecConfiguration: NodeExecConfiguration) {

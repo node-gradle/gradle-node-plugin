@@ -237,5 +237,4 @@ class YarnInstall_integTest extends AbstractIntegTest {
         // This time the build should not be up-to-date since not the whole node_modules directory is excluded
         result6.task(":yarn").outcome == TaskOutcome.SUCCESS
     }
-
 }

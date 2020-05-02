@@ -5,10 +5,6 @@ import kotlin.text.Charsets.UTF_8
 
 internal class NpmProxy {
     companion object {
-        val NPM_PROXY_CLI_ARGS by lazy {
-            return@lazy computeNpmProxyCliArgs()
-        }
-
         fun computeNpmProxyCliArgs(): List<String> {
             val proxyArgs = ArrayList<String>()
             for ((proxyProto, proxyParam) in listOf(arrayOf("http", "--proxy"), arrayOf("https", "--https-proxy"))) {

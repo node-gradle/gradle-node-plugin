@@ -4,6 +4,7 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.exec.ExecConfiguration
 import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
+import com.github.gradle.node.npm.proxy.NpmProxy
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Project
@@ -20,11 +21,19 @@ internal class YarnExecRunner {
         val yarnExecProvider = variantComputer.computeYarnExec(nodeExtension, yarnBinDirProvider)
         val additionalBinPathProvider =
                 computeAdditionalBinPath(project, nodeExtension, nodeDirProvider, yarnBinDirProvider)
-        val execConfiguration = ExecConfiguration(yarnExecProvider.get(), nodeExecConfiguration.command,
+        val execConfiguration = ExecConfiguration(yarnExecProvider.get(), computeYarnCommand(nodeExecConfiguration),
                 additionalBinPathProvider.get(), nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
                 nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
         val execRunner = ExecRunner()
         execRunner.execute(project, execConfiguration)
+    }
+
+    private fun computeYarnCommand(nodeExecConfiguration: NodeExecConfiguration): List<String> {
+        val npmProxyCliArgs = NpmProxy.computeNpmProxyCliArgs()
+        return if (npmProxyCliArgs.isNotEmpty())
+            npmProxyCliArgs.plus(nodeExecConfiguration.command)
+        else
+            nodeExecConfiguration.command
     }
 
     private fun computeAdditionalBinPath(project: Project, nodeExtension: NodeExtension,

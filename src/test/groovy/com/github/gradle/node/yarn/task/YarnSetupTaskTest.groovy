@@ -1,12 +1,19 @@
 package com.github.gradle.node.yarn.task
 
+import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
 class YarnSetupTaskTest extends AbstractTaskTest {
-    def "exec yarnSetup task without any yarn version specified"() {
+    def cleanup() {
+        GradleProxyHelper.resetProxy()
+    }
+
+    def "exec yarnSetup task without any yarn version specified and proxy configured"() {
         given:
         execSpec = Mock(ExecSpec)
+        GradleProxyHelper.setHttpProxyHost("my-proxy")
+        GradleProxyHelper.setHttpProxyPort(80)
 
         def task = project.tasks.create('simple', YarnSetupTask)
 
@@ -18,15 +25,15 @@ class YarnSetupTaskTest extends AbstractTaskTest {
         1 * execSpec.setArgs({ args ->
             def expectedYarnInstallPath = projectDir.toPath().resolve('.gradle').resolve('yarn')
                     .resolve('yarn-latest').toAbsolutePath().toString()
-            def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedYarnInstallPath, 'yarn']
-            // Workaround a strange issue on Github actions macOS hosts
-            return args.collect { it.replace("^/private/", "/") } == expectedArgs
+            def expectedArgs = ['--proxy', 'http://my-proxy:80', 'install', '--global', '--no-save',
+                                '--prefix', expectedYarnInstallPath, 'yarn']
+            return args.collect { fixAbsolutePath(it) } == expectedArgs
         })
     }
 
     def "exec yarnSetup task with yarn version specified"() {
         given:
-        nodeExtension.yarnVersion = '1.22.4'
+        nodeExtension.yarnVersion.set('1.22.4')
         execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', YarnSetupTask)
@@ -40,8 +47,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
             def expectedYarnInstallPath = projectDir.toPath().resolve('.gradle').resolve('yarn')
                     .resolve('yarn-v1.22.4').toAbsolutePath().toString()
             def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedYarnInstallPath, 'yarn@1.22.4']
-            // Workaround a strange issue on Github actions macOS hosts
-            return args.collect { it.replace("^/private/", "/") } == expectedArgs
+            return args.collect { fixAbsolutePath(it) } == expectedArgs
         })
     }
 }
