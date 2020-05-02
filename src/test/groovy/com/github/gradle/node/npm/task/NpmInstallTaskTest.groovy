@@ -5,6 +5,10 @@ import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
 class NpmInstallTaskTest extends AbstractTaskTest {
+    def cleanup() {
+        GradleProxyHelper.resetProxy()
+    }
+
     def "exec npm install task with configured proxy"() {
         given:
         execSpec = Mock(ExecSpec)
