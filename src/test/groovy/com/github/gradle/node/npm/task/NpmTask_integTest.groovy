@@ -11,8 +11,8 @@ class NpmTask_integTest extends AbstractIntegTest {
 
     def 'execute npm command with a package.json file and check inputs up-to-date detection'() {
         given:
-        copyResources('fixtures/npm/', '')
-        copyResources('fixtures/javascript-project/', '')
+        copyResources("fixtures/npm/")
+        copyResources("fixtures/javascript-project/")
 
         when:
         def result1 = build(":test")
@@ -52,8 +52,8 @@ class NpmTask_integTest extends AbstractIntegTest {
 
     def 'execute npm command with custom execution configuration and check up-to-date-detection'() {
         given:
-        copyResources('fixtures/npm-env/', '')
-        copyResources('fixtures/env/', '')
+        copyResources("fixtures/npm-env/")
+        copyResources("fixtures/env/")
 
         when:
         def result1 = build(":env")
@@ -159,8 +159,8 @@ class NpmTask_integTest extends AbstractIntegTest {
 
     def 'execute npm command using the npm version specified in the package.json file'() {
         given:
-        copyResources('fixtures/npm/', '')
-        copyResources('fixtures/npm-present/', '')
+        copyResources("fixtures/npm/")
+        copyResources("fixtures/npm-present/")
 
         when:
         def result = build(":version")

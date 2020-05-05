@@ -30,7 +30,7 @@ class NpmRule_integTest extends AbstractIntegTest {
             }
         ''')
 
-        copyResources('fixtures/npm-missing/package.json', 'package.json')
+        copyResources("fixtures/npm-missing/package.json", "package.json")
 
         when:
         def result = buildTask('npm_run_echoTest')
@@ -48,7 +48,7 @@ class NpmRule_integTest extends AbstractIntegTest {
             }
         ''')
 
-        copyResources('fixtures/npm-present/')
+        copyResources("fixtures/npm-present/")
 
         when:
         def result = build('npm_run_npmVersion')

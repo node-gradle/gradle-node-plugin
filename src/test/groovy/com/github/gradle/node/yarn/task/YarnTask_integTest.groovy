@@ -14,8 +14,8 @@ class YarnTask_integTest extends AbstractIntegTest {
 
     def 'execute yarn command with a package.json file and check inputs up-to-date detection'() {
         given:
-        copyResources('fixtures/yarn/', '')
-        copyResources('fixtures/javascript-project/', '')
+        copyResources("fixtures/yarn")
+        copyResources("fixtures/javascript-project")
 
         when:
         def result1 = build(":test", "--stacktrace")
@@ -55,8 +55,8 @@ class YarnTask_integTest extends AbstractIntegTest {
 
     def 'execute yarn command with custom execution configuration and check up-to-date-detection'() {
         given:
-        copyResources('fixtures/yarn-env/', '')
-        copyResources('fixtures/env/', '')
+        copyResources("fixtures/yarn-env")
+        copyResources("fixtures/env")
 
         when:
         def result1 = build(":env")

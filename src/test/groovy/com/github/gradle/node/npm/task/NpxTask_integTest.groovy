@@ -36,8 +36,8 @@ class NpxTask_integTest extends AbstractIntegTest {
 
     def 'execute npx command with a package.json file and check inputs up-to-date detection'() {
         given:
-        copyResources('fixtures/npx/', '')
-        copyResources('fixtures/javascript-project/', '')
+        copyResources("fixtures/npx/")
+        copyResources("fixtures/javascript-project/")
 
         when:
         def result1 = build(":test")
@@ -81,8 +81,8 @@ class NpxTask_integTest extends AbstractIntegTest {
 
     def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
         given:
-        copyResources('fixtures/npx-env/', '')
-        copyResources('fixtures/env/', '')
+        copyResources("fixtures/npx-env/")
+        copyResources("fixtures/env/")
 
         when:
         def result1 = build(":env")
@@ -189,8 +189,8 @@ class NpxTask_integTest extends AbstractIntegTest {
 
     def 'execute npx command using the npm version specified in the package.json file'() {
         given:
-        copyResources('fixtures/npx/', '')
-        copyResources('fixtures/npm-present/', '')
+        copyResources("fixtures/npx/")
+        copyResources("fixtures/npm-present/")
 
         when:
         def result = build(":version")

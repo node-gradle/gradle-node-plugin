@@ -72,10 +72,20 @@ abstract class AbstractIntegTest extends Specification {
         buildFile << text
     }
 
-    protected final File directory(String path, File baseDir = getProjectDir()) {
-        return new File(baseDir, path).with {
-            mkdirs()
-            it
+    protected void copyResources(String source, String destination = "") {
+        ClassLoader classLoader = getClass().getClassLoader()
+        URL resource = classLoader.getResource(source)
+        if (resource == null) {
+            throw new RuntimeException("Could not find classpath resource: $source")
+        }
+
+        File resourceFile = new File(resource.toURI())
+        if (resourceFile.file) {
+            File destinationFile = file(destination)
+            FileUtils.copyFile(resourceFile, destinationFile)
+        } else {
+            def destinationDir = directory(destination)
+            FileUtils.copyDirectory(resourceFile, destinationDir)
         }
     }
 
@@ -87,19 +97,10 @@ abstract class AbstractIntegTest extends Specification {
         return file
     }
 
-    protected void copyResources(String srcDir, String destination = "") {
-        ClassLoader classLoader = getClass().getClassLoader()
-        URL resource = classLoader.getResource(srcDir)
-        if (resource == null) {
-            throw new RuntimeException("Could not find classpath resource: $srcDir")
-        }
-
-        File destinationFile = file(destination)
-        File resourceFile = new File(resource.toURI())
-        if (resourceFile.file) {
-            FileUtils.copyFile(resourceFile, destinationFile)
-        } else {
-            FileUtils.copyDirectory(resourceFile, destinationFile)
+    protected final File directory(String path, File baseDir = getProjectDir()) {
+        return new File(baseDir, path).with {
+            mkdirs()
+            it
         }
     }
 

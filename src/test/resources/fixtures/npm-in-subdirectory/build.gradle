@@ -1,0 +1,29 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+node {
+    nodeProjectDir = file("${projectDir}/javascript-project")
+}
+
+task buildNpx(type: NpxTask) {
+    dependsOn npmInstall
+    command = "babel"
+    args = ["src", "--out-dir", "output-npx"]
+    inputs.dir("javascript-project/src")
+    inputs.dir("javascript-project/node_modules")
+    outputs.dir("javascript-project/output-npx")
+}
+
+task buildNpm(type: NpmTask) {
+    dependsOn npmInstall
+    npmCommand = ["run", "build"]
+    args = ["--", "--out-dir", "output-npm"]
+    inputs.dir("javascript-project/src")
+    inputs.dir("javascript-project/node_modules")
+    outputs.dir("javascript-project/output-npm")
+}
+
+task build {
+    dependsOn buildNpx, buildNpm
+}

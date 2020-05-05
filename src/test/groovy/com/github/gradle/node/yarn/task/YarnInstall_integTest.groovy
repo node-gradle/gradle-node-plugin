@@ -73,31 +73,6 @@ class YarnInstall_integTest extends AbstractIntegTest {
         result.outcome == TaskOutcome.UP_TO_DATE
     }
 
-    def 'install packages with yarn in different directory'() {
-        given:
-        writeBuild('''
-            plugins {
-                id 'com.github.node-gradle.node'
-            }
-
-            node {
-                yarnWorkDir = file('build/yarn')
-                nodeProjectDir = file('subdirectory')
-            }
-        ''')
-        writeFile('subdirectory/package.json', """{
-            "name": "example",
-            "dependencies": {
-            }
-        }""")
-
-        when:
-        def result = buildTask('yarn')
-
-        then:
-        result.outcome == TaskOutcome.SUCCESS
-    }
-
     def 'verity output configuration'() {
         given:
         writeBuild('''

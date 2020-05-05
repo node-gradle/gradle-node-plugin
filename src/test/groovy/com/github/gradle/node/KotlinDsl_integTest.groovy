@@ -13,8 +13,8 @@ class KotlinDsl_integTest extends AbstractIntegTest {
 
     def 'build project using Kotlin DSL'() {
         given:
-        copyResources('fixtures/kotlin/', '')
-        copyResources('fixtures/javascript-project/', '')
+        copyResources("fixtures/kotlin/")
+        copyResources("fixtures/javascript-project/")
 
         when:
         def result1 = build("run")

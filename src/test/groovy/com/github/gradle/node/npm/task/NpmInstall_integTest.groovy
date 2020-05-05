@@ -79,30 +79,6 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
-    def 'install packages with npm in different directory'() {
-        given:
-        writeBuild('''
-            plugins {
-                id 'com.github.node-gradle.node'
-            }
-
-            node {
-                nodeProjectDir = file('subdirectory')
-            }
-        ''')
-        writeFile('subdirectory/package.json', """{
-            "name": "example",
-            "dependencies": {
-            }
-        }""")
-
-        when:
-        def result = build('npmInstall')
-
-        then:
-        result.task(':npmInstall').outcome == TaskOutcome.SUCCESS
-    }
-
     def 'configure npm install to use the ci command through extension'() {
         given:
         writeBuild('''
