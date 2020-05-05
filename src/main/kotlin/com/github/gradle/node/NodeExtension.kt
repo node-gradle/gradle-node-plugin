@@ -10,7 +10,7 @@ open class NodeExtension(project: Project) {
     val workDir = project.objects.directoryProperty().convention(cacheDir.dir("nodejs"))
     val npmWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("npm"))
     val yarnWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("yarn"))
-    val nodeModulesDir = project.objects.directoryProperty().convention(project.layout.projectDirectory)
+    val nodeProjectDir = project.objects.directoryProperty().convention(project.layout.projectDirectory)
     val version = project.objects.property<String>().convention("12.16.2")
     val npmVersion = project.objects.property<String>().convention("")
     val yarnVersion = project.objects.property<String>().convention("")
@@ -20,6 +20,9 @@ open class NodeExtension(project: Project) {
     val npmInstallCommand = project.objects.property<String>().convention("install")
     val yarnCommand = project.objects.property<String>().convention("yarn")
     val download = project.objects.property<Boolean>().convention(false)
+
+    @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")
+    val nodeModulesDir = nodeProjectDir
 
     init {
         distBaseUrl.set("https://nodejs.org/dist")

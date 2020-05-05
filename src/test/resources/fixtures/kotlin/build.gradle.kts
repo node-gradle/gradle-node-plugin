@@ -19,7 +19,7 @@ node {
     workDir.set(file("${project.buildDir}/nodejs"))
     npmWorkDir.set(file("${project.buildDir}/npm"))
     yarnWorkDir.set(file("${project.buildDir}/yarn"))
-    nodeModulesDir.set(file("${project.projectDir}"))
+    nodeProjectDir.set(file("${project.projectDir}"))
 }
 
 val npmInstallTask = tasks.named<NpmInstallTask>("npmInstall") {

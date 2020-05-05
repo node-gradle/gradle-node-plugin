@@ -61,7 +61,7 @@ open class NpmInstallTask : NpmTask() {
     }
 
     private fun projectFileIfExists(name: String): Provider<File> {
-        return nodeExtension.nodeModulesDir.map { it.file(name).asFile }
+        return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
                 .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
     }
 
@@ -70,7 +70,7 @@ open class NpmInstallTask : NpmTask() {
     @Suppress("unused")
     protected fun getNodeModulesDirectory(): Provider<Directory> {
         val filter = nodeModulesOutputFilter.orNull
-        return if (filter == null) nodeExtension.nodeModulesDir.dir("node_modules")
+        return if (filter == null) nodeExtension.nodeProjectDir.dir("node_modules")
         else project.providers.provider { null }
     }
 
@@ -78,7 +78,7 @@ open class NpmInstallTask : NpmTask() {
     @OutputFiles
     @Suppress("unused")
     protected fun getNodeModulesFiles(): Provider<FileTree> {
-        val nodeModulesDirectoryProvider = nodeExtension.nodeModulesDir.dir("node_modules")
+        val nodeModulesDirectoryProvider = nodeExtension.nodeProjectDir.dir("node_modules")
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
                 .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
                     if (nodeModulesOutputFilter != null) {

@@ -87,7 +87,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
             }
 
             node {
-                nodeModulesDir = file('subdirectory')
+                nodeProjectDir = file('subdirectory')
             }
         ''')
         writeFile('subdirectory/package.json', """{

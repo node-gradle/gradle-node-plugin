@@ -218,8 +218,8 @@ node {
   // Set the work directory for Yarn
   yarnWorkDir = file("${project.buildDir}/yarn")
 
-  // Set the work directory where node_modules should be located
-  nodeModulesDir = file("${project.projectDir}")
+  // Set the Node.js project directory (where package.json and node_modules are be located)
+  nodeProjectDir = file("${project.projectDir}")
 }
 ```
 

@@ -82,7 +82,7 @@ class YarnInstall_integTest extends AbstractIntegTest {
 
             node {
                 yarnWorkDir = file('build/yarn')
-                nodeModulesDir = file('subdirectory')
+                nodeProjectDir = file('subdirectory')
             }
         ''')
         writeFile('subdirectory/package.json', """{

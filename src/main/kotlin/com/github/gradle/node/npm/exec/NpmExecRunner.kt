@@ -71,12 +71,12 @@ internal class NpmExecRunner {
                 npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDirProvider)
         val npmScriptFileProvider =
                 variantComputer.computeNpmScriptFile(nodeDirProvider, npmExecConfiguration.command)
-        return zip(nodeExtension.download, nodeExtension.nodeModulesDir, executableProvider, nodeExecProvider,
+        return zip(nodeExtension.download, nodeExtension.nodeProjectDir, executableProvider, nodeExecProvider,
                 npmScriptFileProvider).map {
-            val (download, nodeModulesDir, executable, nodeExec,
+            val (download, nodeProjectDir, executable, nodeExec,
                     npmScriptFile) = it
             if (download) {
-                val localCommandScript = nodeModulesDir.dir("node_modules/npm/bin")
+                val localCommandScript = nodeProjectDir.dir("node_modules/npm/bin")
                         .file("${npmExecConfiguration.command}-cli.js").asFile
                 if (localCommandScript.exists()) {
                     return@map ExecutableAndScript(nodeExec, localCommandScript.absolutePath)
