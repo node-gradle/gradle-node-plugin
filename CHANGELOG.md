@@ -13,7 +13,8 @@ that shows how to use this plugin version with Kotlin)
 * Add full support of lazy configuration (issue [#39](https://github.com/node-gradle/gradle-node-plugin/issues/39))
 * Fix some remaining input/output declaration issues (issue
  [#34](https://github.com/node-gradle/gradle-node-plugin/issues/34))
-* Gradle 5.6.4+ support (instead of Gradle 5.0.0+ before) 
+* Gradle 5.6.4+ support (instead of Gradle 5.0.0+ before)
+* Node.js 10+ support 
 
 This version breaks backward compatibility. It should not visible for most Groovy DSL users since the Groovy DSL
 handles transparently most of these changes.
