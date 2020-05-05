@@ -23,82 +23,7 @@ class VariantComputerTest extends Specification {
     }
 
     @Unroll
-    def "test variant on windows version <4 (#osArch)"() {
-        given:
-        def project = ProjectBuilder.builder().build()
-
-        props.setProperty("os.name", "Windows 8")
-        props.setProperty("os.arch", osArch)
-
-        def nodeExtension = new NodeExtension(project)
-        nodeExtension.download.set(true)
-        nodeExtension.version.set('5.12.0')
-        nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
-        def variantComputer = new VariantComputer()
-
-        when:
-        def computedDependency = variantComputer.computeDependency(nodeExtension)
-        def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
-        def computeNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
-        def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computeNodeBinDir)
-        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npm")
-        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npx")
-
-        then:
-        computedDependency.get().exeDependency == exeDependency
-        computedDependency.get().archiveDependency == 'org.nodejs:node:5.12.0:linux-x86@tar.gz'
-        computedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
-        computeNodeBinDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
-        computedNodeExec.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node.exe")
-        computedNpmScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npm-cli.js")
-        computedNpxScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npx-cli.js")
-
-        where:
-        osArch   | nodeDir                | exeDependency
-        'x86'    | 'node-v5.12.0-win-x86' | 'org.nodejs:win-x86/node:5.12.0@exe'
-        'x86_64' | 'node-v5.12.0-win-x64' | 'org.nodejs:win-x64/node:5.12.0@exe'
-    }
-
-    @Unroll
-    def "test variant on windows version 4.+ with exe (#osArch)"() {
-        given:
-        def project = ProjectBuilder.builder().build()
-
-        props.setProperty("os.name", "Windows 8")
-        props.setProperty("os.arch", osArch)
-
-        def nodeExtension = new NodeExtension(project)
-        nodeExtension.download.set(true)
-        nodeExtension.version.set('4.0.0')
-        nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
-        def variantComputer = new VariantComputer()
-
-        when:
-        def computedDependency = variantComputer.computeDependency(nodeExtension)
-        def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
-        def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
-        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npm")
-        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npx")
-
-        then:
-        computedDependency.get().exeDependency == exeDependency
-        computedDependency.get().archiveDependency == 'org.nodejs:node:4.0.0:linux-x86@tar.gz'
-
-        computedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
-        computedNodeBinDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
-        computedNodeExec.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node.exe")
-        computedNpmScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npm-cli.js")
-        computedNpxScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npx-cli.js")
-
-        where:
-        osArch   | nodeDir               | exeDependency
-        'x86'    | 'node-v4.0.0-win-x86' | 'org.nodejs:win-x86/node:4.0.0@exe'
-        'x86_64' | 'node-v4.0.0-win-x64' | 'org.nodejs:win-x64/node:4.0.0@exe'
-    }
-
-    @Unroll
-    def "test variant on windows without exe (#version #osArch)"() {
+    def "test variant on windows (#version #osArch)"() {
         given:
         def project = ProjectBuilder.builder().build()
 
@@ -116,7 +41,7 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer()
 
         when:
-        def computedDependency = variantComputer.computeDependency(nodeExtension)
+        def computedArchiveDependency = variantComputer.computeArchiveDependency(nodeExtension)
         def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
@@ -124,8 +49,7 @@ class VariantComputerTest extends Specification {
         def computedNpxScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npx")
 
         then:
-        computedDependency.get().exeDependency == null
-        computedDependency.get().archiveDependency == depName
+        computedArchiveDependency.get() == depName
 
         computedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
         computedNodeBinDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
@@ -158,7 +82,7 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer()
 
         when:
-        def computedDependency = variantComputer.computeDependency(nodeExtension)
+        def computedArchiveDependency = variantComputer.computeArchiveDependency(nodeExtension)
         def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
@@ -166,8 +90,7 @@ class VariantComputerTest extends Specification {
         def computedNpxScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npx")
 
         then:
-        computedDependency.get().exeDependency == null
-        computedDependency.get().archiveDependency == depName
+        computedArchiveDependency.get() == depName
 
         computedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
         computedNodeBinDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + 'bin')
@@ -204,7 +127,7 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer(platformHelperSpy)
 
         when:
-        def computedDependency = variantComputer.computeDependency(nodeExtension)
+        def computedArchiveDependency = variantComputer.computeArchiveDependency(nodeExtension)
         def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
@@ -212,8 +135,7 @@ class VariantComputerTest extends Specification {
         def computedNpxScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npx")
 
         then:
-        computedDependency.get().exeDependency == null
-        computedDependency.get().archiveDependency == depName
+        computedArchiveDependency.get() == depName
 
         computedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
         computedNodeBinDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + 'bin')

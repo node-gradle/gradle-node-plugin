@@ -1,13 +1,6 @@
 package com.github.gradle.node.util
 
-import java.util.*
 import java.util.concurrent.TimeUnit
-
-/**
- * Tokenizes the given string into a list using the provided delimiter set.
- */
-@Suppress("UNCHECKED_CAST")
-internal fun String.tokenize(delimiters: String = " \t\n\r\u000C"): List<String> = StringTokenizer(this, delimiters).toList() as List<String>
 
 /**
  * Executes the given command and returns its output.

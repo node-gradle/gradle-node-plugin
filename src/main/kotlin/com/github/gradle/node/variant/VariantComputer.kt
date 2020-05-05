@@ -3,7 +3,6 @@ package com.github.gradle.node.variant
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.util.mapIf
-import com.github.gradle.node.util.tokenize
 import com.github.gradle.node.util.zip
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
@@ -97,66 +96,10 @@ internal class VariantComputer @JvmOverloads constructor(
     private fun computeProductBinDir(productDirProvider: Provider<Directory>) =
             if (platformHelper.isWindows) productDirProvider else productDirProvider.map { it.dir("bin") }
 
-    fun computeDependency(nodeExtension: NodeExtension): Provider<Dependency> {
+    fun computeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
         val osName = platformHelper.osName
         val osArch = platformHelper.osArch
-        return if (platformHelper.isWindows) {
-            hasWindowsZip(nodeExtension).flatMap { windowsZip ->
-                if (windowsZip) {
-                    computeArchiveDependency(nodeExtension, osName, osArch, "zip")
-                            .map { archiveDependency -> Dependency(archiveDependency) }
-                } else {
-                    val archiveDependencyProvider =
-                            computeArchiveDependency(nodeExtension, "linux", "x86", "tar.gz")
-                    val exeDependencyProvider = computeExeDependency(nodeExtension)
-                    zip(archiveDependencyProvider, exeDependencyProvider)
-                            .map { (archiveDependency, exeDependency) ->
-                                Dependency(archiveDependency, exeDependency)
-                            }
-                }
-            }
-        } else {
-            computeArchiveDependency(nodeExtension, osName, osArch, "tar.gz")
-                    .map { archiveDependency -> Dependency(archiveDependency) }
-        }
-    }
-
-    internal data class Dependency(
-            val archiveDependency: String,
-            val exeDependency: String? = null
-    )
-
-    private fun hasWindowsZip(nodeExtension: NodeExtension): Provider<Boolean> {
-        return nodeExtension.version.map { version ->
-            val (majorVersion, minorVersion, microVersion) =
-                    version.tokenize(".").map { it.toInt() }
-            majorVersion == 4 && minorVersion >= 5
-                    || majorVersion == 6 && (minorVersion > 2 || minorVersion == 2 && microVersion >= 1)
-                    || majorVersion > 6
-        }
-    }
-
-    private fun computeExeDependency(nodeExtension: NodeExtension): Provider<String> {
-        return nodeExtension.version.map { version ->
-            val majorVersion = version.tokenize(".").first().toInt()
-            if (majorVersion > 3) {
-                if (platformHelper.osArch == "x86") {
-                    "org.nodejs:win-x86/node:${version}@exe"
-                } else {
-                    "org.nodejs:win-x64/node:${version}@exe"
-                }
-            } else {
-                if (platformHelper.osArch == "x86") {
-                    "org.nodejs:node:${version}@exe"
-                } else {
-                    "org.nodejs:x64/node:${version}@exe"
-                }
-            }
-        }
-    }
-
-    private fun computeArchiveDependency(nodeExtension: NodeExtension, osName: String, osArch: String,
-                                         type: String): Provider<String> {
+        val type = if (platformHelper.isWindows) "zip" else "tar.gz"
         return nodeExtension.version.map { version -> "org.nodejs:node:$version:$osName-$osArch@$type" }
     }
 }
