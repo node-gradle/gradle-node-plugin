@@ -29,9 +29,8 @@ class Npm_integTest extends AbstractIntegTest {
         then:
         // Not up-to-date because the package-lock.json now exists
         result2.task(":npmInstall").outcome == TaskOutcome.SUCCESS
-        // Not up-to-date because npm install ran again and updated node_modules
-        result2.task(":buildNpx").outcome == TaskOutcome.SUCCESS
-        result2.task(":buildNpm").outcome == TaskOutcome.SUCCESS
+        result2.task(":buildNpx").outcome == TaskOutcome.UP_TO_DATE
+        result2.task(":buildNpm").outcome == TaskOutcome.UP_TO_DATE
 
         when:
         def result3 = build("build")
