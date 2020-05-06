@@ -21,6 +21,7 @@ open class NodeExtension(project: Project) {
     val yarnCommand = project.objects.property<String>().convention("yarn")
     val download = project.objects.property<Boolean>().convention(false)
 
+    @Suppress("unused")
     @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")
     val nodeModulesDir = nodeProjectDir
 
