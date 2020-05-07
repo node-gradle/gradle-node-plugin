@@ -15,7 +15,5 @@ jobs:
           java-version: 8
       - name: Build
         run: ./gradlew build
-        working-directory: ${{github.workspace}}
       - name: Publish
         run: ./gradlew publishPlugins -Pgradle.publish.key={{secrets.PLUGIN_PORTAL_KEY}} -Pgradle.publish.secret={{secrets.PLUGIN_PORTAL_SECRET}}
-        working-directory: ${{github.workspace}}
