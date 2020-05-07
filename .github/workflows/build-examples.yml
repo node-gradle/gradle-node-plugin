@@ -9,7 +9,7 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: 8
+          java-version: 11
       - name: Gradle Version
         run: ./gradlew --version
       - name: Build Node.js Scripts Project
