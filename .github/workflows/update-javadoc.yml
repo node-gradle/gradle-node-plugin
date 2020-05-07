@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - javadoc
 jobs:
   linux:
     runs-on: ubuntu-latest
