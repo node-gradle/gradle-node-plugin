@@ -4,9 +4,6 @@ node {
     download = false
 }
 
-task helloWorld(type: NodeTask, dependsOn: 'yarn') {
+task helloWorld(type: NodeTask, dependsOn: 'npmInstall') {
     script = file('src/node/index.js')
-}
-
-task build(dependsOn: 'helloWorld') {
 }

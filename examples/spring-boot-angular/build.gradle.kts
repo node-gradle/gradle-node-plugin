@@ -21,4 +21,13 @@ dependencies {
     implementation(platform(SpringBootPlugin.BOM_COORDINATES))
     implementation(project(":webapp"))
     implementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.github.bonigarcia:webdrivermanager:3.8.1")
+    testImplementation("org.seleniumhq.selenium:selenium-java")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }

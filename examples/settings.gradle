@@ -1,3 +1,0 @@
-include ':simple-node'
-include ':simple-yarn'
-includeBuild '..'

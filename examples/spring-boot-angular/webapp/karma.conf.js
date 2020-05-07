@@ -1,15 +1,6 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
-const os = require('os');
-
-function computeAvailableBrowsers() {
-  if (os.platform() === 'linux') {
-    return ['ChromiumHeadless'];
-  }
-  return ['ChromeHeadless'];
-}
-
 module.exports = function (config) {
   config.set({
     basePath: '',
@@ -17,6 +8,7 @@ module.exports = function (config) {
     plugins: [
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
+      require('karma-firefox-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage-istanbul-reporter'),
       require('@angular-devkit/build-angular/plugins/karma')
@@ -34,7 +26,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: computeAvailableBrowsers(),
+    browsers: ['FirefoxHeadless'],
     singleRun: true,
     restartOnFileChange: true
   });
