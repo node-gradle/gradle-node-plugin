@@ -17,6 +17,8 @@ plugins {
     jacoco
     id("com.gradle.plugin-publish") version "0.11.0"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
+    id("org.jetbrains.dokka") version "0.10.1"
+
 }
 
 group = "com.github.node-gradle"
@@ -75,6 +77,11 @@ tasks.jacocoTestReport {
         xml.isEnabled = true
         html.isEnabled = true
     }
+}
+
+tasks.dokka {
+    outputFormat = "javadoc"
+    configuration { jdkVersion = 8 }
 }
 
 gradlePlugin {
