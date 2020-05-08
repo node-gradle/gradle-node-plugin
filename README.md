@@ -6,12 +6,12 @@
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 ![Version](https://img.shields.io/badge/Version-2.2.3-orange.svg)
 
-This plugin enables you to use a lot of [NodeJS](https://nodejs.org)-based technologies as part of your 
-build without having NodeJS installed locally on your system. It integrates the following NodeJS-based system
+This plugin enables you to use a lot of [Node.js](https://nodejs.org)-based technologies as part of your 
+build without having Node.js installed locally on your system. It integrates the following Node.js-based system
 with Gradle:
 
-* [NodeJS](https://nodejs.org)
-* [Npm](https://www.npmjs.com/)
+* [Node.js](https://nodejs.org)
+* [npm](https://www.npmjs.com/)
 * [Yarn](https://yarnpkg.com/)
 
 The plugin is published in the [Gradle plugins portal](https://plugins.gradle.org/plugin/com.github.node-gradle.node)
@@ -31,10 +31,11 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 * [Example Projects](examples)
 
 
-## Documentation for older releases
+## Releases history
 
 Here's the documentation for older releases of the plugin:
 
+* [2.2.3](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.3/README.md) (current)
 * [2.2.2](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.2/README.md)
 * [2.2.1](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.1/README.md)
 * [2.2.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.0/README.md)

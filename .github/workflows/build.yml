@@ -12,10 +12,8 @@ jobs:
           java-version: 8
       - name: Gradle Version
         run: ./gradlew --version
-        working-directory: ${{github.workspace}}
       - name: Build
         run: ./gradlew build -PtestAllSupportedGradleVersions=true
-        working-directory: ${{github.workspace}}
   windows:
     runs-on: windows-latest
     steps:
@@ -27,10 +25,8 @@ jobs:
           java-version: 8
       - name: Gradle Version
         run: ./gradlew --version
-        working-directory: ${{github.workspace}}
       - name: Build
         run: ./gradlew build -PtestAllSupportedGradleVersions=true
-        working-directory: ${{github.workspace}}
   macos:
     runs-on: macos-latest
     steps:
@@ -42,7 +38,5 @@ jobs:
           java-version: 8
       - name: Gradle Version
         run: ./gradlew --version
-        working-directory: ${{github.workspace}}
       - name: Build
         run: ./gradlew build -PtestAllSupportedGradleVersions=true
-        working-directory: ${{github.workspace}}

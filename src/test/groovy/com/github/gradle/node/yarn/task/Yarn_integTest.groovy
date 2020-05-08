@@ -13,6 +13,7 @@ class Yarn_integTest extends AbstractIntegTest {
         def result1 = build("build")
 
         then:
+        result1.task(":yarnSetup").outcome == TaskOutcome.SUCCESS
         result1.task(":yarn").outcome == TaskOutcome.SUCCESS
         result1.task(":build").outcome == TaskOutcome.SUCCESS
         createFile("javascript-project/yarn.lock").isFile()
@@ -25,6 +26,7 @@ class Yarn_integTest extends AbstractIntegTest {
         def result2 = build("build", "--info")
 
         then:
+        result2.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
         // Not up-to-date because the package-lock.json now exists
         result2.task(":yarn").outcome == TaskOutcome.SUCCESS
         result2.task(":build").outcome == TaskOutcome.UP_TO_DATE
@@ -33,6 +35,7 @@ class Yarn_integTest extends AbstractIntegTest {
         def result3 = build("build")
 
         then:
+        result3.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":build").outcome == TaskOutcome.UP_TO_DATE
     }
