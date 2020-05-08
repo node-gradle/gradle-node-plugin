@@ -28,6 +28,7 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 * [Usage](docs/usage.md)
 * [FAQ](docs/faq.md)
 * [Changelog](CHANGELOG.md)
+* [Example Projects](examples)
 
 
 ## Releases history

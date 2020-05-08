@@ -14,8 +14,6 @@ jobs:
         run: ./gradlew --version
       - name: Build
         run: ./gradlew build -PtestAllSupportedGradleVersions=true
-      - name: Build Example Projects
-        run: ./gradlew -p examples build
   windows:
     runs-on: windows-latest
     steps:
@@ -29,8 +27,6 @@ jobs:
         run: ./gradlew --version
       - name: Build
         run: ./gradlew build -PtestAllSupportedGradleVersions=true
-      - name: Build Example Projects
-        run: ./gradlew -p examples build
   macos:
     runs-on: macos-latest
     steps:
@@ -44,5 +40,3 @@ jobs:
         run: ./gradlew --version
       - name: Build
         run: ./gradlew build -PtestAllSupportedGradleVersions=true
-      - name: Build Example Projects
-        run: ./gradlew -p examples build

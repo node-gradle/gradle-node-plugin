@@ -1,12 +1,17 @@
-apply plugin: 'com.github.node-gradle.node'
+buildscript {
+    dependencies {
+        classpath "com.github.node-gradle:gradle-node-plugin:3.0.0"
+    }
+}
+
+plugins {
+    id 'com.github.node-gradle.node'
+}
 
 node {
     download = false
 }
 
-task helloWorld(type: NodeTask, dependsOn: 'npmInstall') {
-    script = file('src/node/index.js')
-}
-
-task build(dependsOn: 'helloWorld') {
+task helloWorld(type: NodeTask) {
+    script = file("hello.js")
 }
