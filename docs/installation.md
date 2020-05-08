@@ -15,7 +15,7 @@ You can also install the plugins by using the traditional Gradle way:
 buildscript {
   repositories {
     maven {
-      url "https://plugins.gradle.org/m2/"
+      gradlePluginPortal()
     } 
   }
 

@@ -1,12 +1,15 @@
 # Usage
 
-This plugin enables you to run any [NodeJS](https://nodejs.org) script as part of your build. It does
-not require NodeJS (or NPM) being installed on your system but it is able to use them.
+This plugin enables you to run any [Node.js](https://nodejs.org) script as part of your build. It does
+not require Node.js (or NPM) being installed on your system but it is able to use them.
 
-By default, it will use the globally installed tools (NodeJS, npm and Yarn).
-If it is specified in the configuration, it is able to download and manage NodeJS distributions,
+By default, it will use the globally installed tools (Node.js, npm and Yarn).
+If it is specified in the configuration, it is able to download and manage Node.js distributions,
 unpack them into your local `.gradle` directory and use them from there.
-It can also install [NPM](https://www.npmjs.com/) packages from NPM or [Yarn](https://yarnpkg.com/).
+It also automatically installs [npm](https://www.npmjs.com/) when installing Node.js.
+
+Is is also able to install [Yarn](https://yarnpkg.com/) by downloading it from a npm registry.
+
 The version of each tool to use can be specified in the configuration.
 
 To start using the plugin, add this into your `build.gradle` 
@@ -19,9 +22,9 @@ plugins {
 }
 ```
 
-## Running a NodeJS Script
+## Running a Node.js Script
 
-To use this plugin you have to define some tasks in your `build.gradle` file. If you have a NodeJS 
+To use this plugin you have to define some tasks in your `build.gradle` file. If you have a Node.js 
 script in `src/scripts/my.js`, then you can execute this by defining the following Gradle task:
 
 ```gradle
@@ -48,7 +51,7 @@ task myScript(type: NodeTask) {
 }
 ```
 
-When executing this task for the first time, it will run a `nodeSetup` task that downloads NodeJS 
+When executing this task for the first time, it will run a `nodeSetup` task that downloads Node.js 
 (for your platform) and NPM (Node Package Manager) if on Windows (other platforms include 
 it into the distribution).
 
@@ -189,27 +192,28 @@ You can configure the plugin using the "node" extension block, like this:
 
 ```gradle
 node {
-  // Version of node to use.
-  version = '0.11.10'
-
-  // Version of npm to use.
-  npmVersion = '2.1.5'
-
-  // Version of Yarn to use.
-  yarnVersion = '0.16.1'
-  
-  // Override the install command used by npmInstall
-  npmInstallCommand = 'install'
-
-  // Base URL for fetching node distributions (change if you have a mirror).
-  // Or set to null if you want to add the repository on your own.
-  distBaseUrl = 'https://nodejs.org/dist'
-
   // If true, it will download node using above parameters.
   // If false, it will try to use globally installed node.
   download = true
 
-  // Set the work directory for unpacking node
+  // Version of node to use (only used if download is true)
+  version = '0.11.10'
+
+  // Version of npm to use
+  npmVersion = '2.1.5'
+
+  // Version of Yarn to use
+  yarnVersion = '0.16.1'
+  
+  // Base URL for fetching node distributions (change if you have a mirror).
+  // Only used if download is true.
+  // Or set to null if you want to add the repository on your own.
+  distBaseUrl = 'https://nodejs.org/dist'
+
+  // Override the install command used by npmInstall
+  npmInstallCommand = 'install'
+
+  // Set the work directory for unpacking node 
   workDir = file("${project.buildDir}/nodejs")
 
   // Set the work directory for NPM
@@ -223,10 +227,10 @@ node {
 }
 ```
 
-**Note** that `download` flag is default to `false`. This will change in future versions.
+**Note** that the `download` flag is `false` by default. 
 
 
-## Using a Custom (project-local) Version of `npm`
+### Using a Custom (project-local) Version of `npm`
 
 If `npmVersion` is specified, the plugin installs that version of `npm` into `npmWorkDir`
 by the `npmSetup` task and use it.
@@ -237,7 +241,7 @@ use it.
 Otherwise, the plugin will use the `npm` bundled with the version of node installation.
 
 
-## Using a Custom (project-local) Version of `yarn`
+### Using a Custom (project-local) Version of `yarn`
 
 The plugin never uses a locally-installed `yarn` because it may be deleted during
 `yarn` execution.
