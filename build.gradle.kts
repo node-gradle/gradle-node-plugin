@@ -79,7 +79,7 @@ tasks.jacocoTestReport {
 
 gradlePlugin {
     plugins {
-        create("nodePlugin") {
+        register("nodePlugin") {
             id = "com.github.node-gradle.node"
             implementationClass = "com.github.gradle.node.NodePlugin"
         }
