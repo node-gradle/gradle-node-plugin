@@ -17,6 +17,7 @@ plugins {
     jacoco
     id("com.gradle.plugin-publish") version "0.11.0"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
+    id ("com.jfrog.bintray") version "1.8.5"
 }
 
 group = "com.github.node-gradle"
@@ -86,6 +87,10 @@ gradlePlugin {
     }
 }
 
+val pluginName = "Gradle Node.js Plugin"
+val pluginDescription = "Gradle plugin for executing Node.js scripts. Supports npm and Yarn."
+val pluginTags = listOf("java", "gradle", "node", "node.js", "npm", "yarn")
+
 pluginBundle {
     website = "https://github.com/node-gradle/gradle-node-plugin"
     vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
@@ -93,9 +98,33 @@ pluginBundle {
     (plugins) {
         "nodePlugin" {
             id = "com.github.node-gradle.node"
-            displayName = "Gradle Node.js Plugin"
-            description = "Gradle plugin for executing Node.js scripts. Supports npm and Yarn."
-            tags = listOf("java", "gradle", "node", "node.js", "npm", "yarn")
+            displayName = pluginName
+            description = pluginDescription
+            tags = pluginTags
         }
     }
+}
+
+bintray {
+    user = project.properties.getOrDefault("bintrayUser", "") as String
+    key = project.properties.getOrDefault("bintrayKey", "") as String
+
+    pkg(delegateClosureOf<com.jfrog.bintray.gradle.BintrayExtension.PackageConfig> {
+        repo = "maven"
+        name = "node-gradle"
+        userOrg = "node-gradle"
+        setLicenses("Apache-2.0")
+        websiteUrl = "https://github.com/node-gradle/gradle-node-plugin"
+        vcsUrl = "https://github.com/node-gradle/gradle-node-plugin.git"
+        desc = pluginDescription
+        setLabels(*pluginTags.toTypedArray())
+        publicDownloadNumbers = true
+        version(delegateClosureOf<com.jfrog.bintray.gradle.BintrayExtension.VersionConfig> {
+            name = project.version.toString()
+        })
+        filesSpec(closureOf<com.jfrog.bintray.gradle.tasks.RecordingCopyTask> {
+            from("build/libs")
+            into(".")
+        })
+    })
 }
