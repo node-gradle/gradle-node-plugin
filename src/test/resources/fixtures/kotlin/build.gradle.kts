@@ -1,8 +1,6 @@
-import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeTask
-import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnTask
 
 plugins {
@@ -22,13 +20,15 @@ node {
     nodeProjectDir.set(file("${project.projectDir}"))
 }
 
-val npmInstallTask = tasks.named<NpmInstallTask>("npmInstall") {
+val npmInstallTask = tasks.npmInstall
+
+tasks.npmInstall {
     nodeModulesOutputFilter {
         exclude("notExistingFile")
     }
 }
 
-tasks.named<YarnInstallTask>("yarn") {
+tasks.yarn {
     nodeModulesOutputFilter {
         exclude("notExistingFile")
     }

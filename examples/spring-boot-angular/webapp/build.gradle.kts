@@ -6,7 +6,7 @@ plugins {
   id("com.github.node-gradle.node")
 }
 
-val npmInstallTask = tasks.named("npmInstall")
+val npmInstallTask = tasks.npmInstall
 
 val lintTask = tasks.register<NpxTask>("lintWebapp") {
   command.set("ng")
@@ -39,7 +39,7 @@ val testTask = tasks.register<NpxTask>("testWebapp") {
   outputs.upToDateWhen { true }
 }
 
-tasks.named("build") {
+tasks.build {
   dependsOn(lintTask, buildTask, testTask)
 }
 
