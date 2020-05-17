@@ -4,6 +4,10 @@ import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
+import com.github.gradle.node.pnpm.task.PnpmInstallTask
+import com.github.gradle.node.pnpm.task.PnpmSetupTask
+import com.github.gradle.node.pnpm.task.PnpmTask
+import com.github.gradle.node.pnpm.task.PnpxTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
 import com.github.gradle.node.yarn.task.YarnInstallTask
@@ -22,6 +26,7 @@ class NodePlugin : Plugin<Project> {
         addGlobalTypes()
         addTasks()
         addNpmRule()
+        addPnpmRule()
         addYarnRule()
     }
 
@@ -29,6 +34,8 @@ class NodePlugin : Plugin<Project> {
         addGlobalTaskType<NodeTask>()
         addGlobalTaskType<NpmTask>()
         addGlobalTaskType<NpxTask>()
+        addGlobalTaskType<PnpmTask>()
+        addGlobalTaskType<PnpxTask>()
         addGlobalTaskType<YarnTask>()
     }
 
@@ -38,9 +45,11 @@ class NodePlugin : Plugin<Project> {
 
     private fun addTasks() {
         project.tasks.register<NpmInstallTask>(NpmInstallTask.NAME)
+        project.tasks.register<PnpmInstallTask>(PnpmInstallTask.NAME)
         project.tasks.register<YarnInstallTask>(YarnInstallTask.NAME)
         project.tasks.register<NodeSetupTask>(NodeSetupTask.NAME)
         project.tasks.register<NpmSetupTask>(NpmSetupTask.NAME)
+        project.tasks.register<PnpmSetupTask>(PnpmSetupTask.NAME)
         project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME)
     }
 
@@ -53,6 +62,21 @@ class NodePlugin : Plugin<Project> {
                     npmCommand.set(tokens)
                     if (tokens.first().equals("run", ignoreCase = true)) {
                         dependsOn(NpmInstallTask.NAME)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun addPnpmRule() { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
+        project.tasks.addRule("Pattern: \"npm_<command>\": Executes an PNPM command.") {
+            val taskName = this
+            if (taskName.startsWith("pnpm_")) {
+                project.tasks.register<PnpmTask>(taskName) {
+                    val tokens = taskName.split("_").drop(1) // all except first
+                    pnpmCommand.set(tokens)
+                    if (tokens.first().equals("run", ignoreCase = true)) {
+                        dependsOn(PnpmInstallTask.NAME)
                     }
                 }
             }
@@ -77,6 +101,7 @@ class NodePlugin : Plugin<Project> {
     companion object {
         const val NODE_GROUP = "Node"
         const val NPM_GROUP = "npm"
+        const val PNPM_GROUP = "pnpm"
         const val YARN_GROUP = "Yarn"
     }
 }
