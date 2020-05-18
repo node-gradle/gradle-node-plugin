@@ -34,6 +34,11 @@ run and configuration properties are read only at runtime if needed and not at c
 * Change the syntax to configure `nodeModulesOutputFilter` on `npmInstall` and `yarn` tasks. It also affects Groovy DSL 
 users. Use now `nodeModulesOutputFilter { ... }` instead of `nodeModulesOutputFilter = { ... }`.
 
+Version 2.2.4 *(2020-05-18)*
+----------------------------
+
+* Fix a duplicated `node_modules` output declaration in the `yarn` task. This fix speeds up this task.
+
 Version 2.2.3 *(2020-02-28)*
 ----------------------------
 

@@ -4,7 +4,7 @@
 
 ![Build Status](https://github.com/node-gradle/gradle-node-plugin/workflows/Build/badge.svg?branch=master)
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-![Version](https://img.shields.io/badge/Version-2.2.3-orange.svg)
+![Version](https://img.shields.io/badge/Version-2.2.4-orange.svg)
 
 This plugin enables you to use a lot of [Node.js](https://nodejs.org)-based technologies as part of your 
 build without having Node.js installed locally on your system. It integrates the following Node.js-based system
