@@ -16,4 +16,4 @@ jobs:
       - name: Build
         run: ./gradlew build
       - name: Publish
-        run: ./gradlew publishPlugins -Pgradle.publish.key={{secrets.PLUGIN_PORTAL_KEY}} -Pgradle.publish.secret={{secrets.PLUGIN_PORTAL_SECRET}}
+        run: ./gradlew publishPlugins -Pgradle.publish.key=${{secrets.PLUGIN_PORTAL_KEY}} -Pgradle.publish.secret=${{secrets.PLUGIN_PORTAL_SECRET}}
