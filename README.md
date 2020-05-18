@@ -35,7 +35,8 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 
 Here's the documentation for older releases of the plugin:
 
-* [2.2.3](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.3/README.md) (current)
+* [2.2.4](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.4/README.md) (current)
+* [2.2.3](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.3/README.md)
 * [2.2.2](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.2/README.md)
 * [2.2.1](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.1/README.md)
 * [2.2.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.0/README.md)
