@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 2.2.4 *(2020-05-18)*
+----------------------------
+
+* Fix a duplicated `node_modules` output declaration in the `yarn` task. This fix speeds up this task.
+
 Version 2.2.3 *(2020-02-28)*
 ----------------------------
 

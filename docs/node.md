@@ -10,7 +10,7 @@ file (see [Installing](installing.md) for details):
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "2.2.3"
+  id "com.github.node-gradle.node" version "2.2.4"
 }
 ```
 
