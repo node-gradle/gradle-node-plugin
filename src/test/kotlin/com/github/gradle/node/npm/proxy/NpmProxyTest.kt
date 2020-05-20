@@ -87,16 +87,45 @@ class NpmProxyTest {
     }
 
     @Test
-    internal fun shouldComputeTheProxyArgsWhenThePassword() {
+    internal fun shouldComputeTheProxyArgsWhenThePasswordIsNotDefined() {
         GradleProxyHelper.setHttpProxyHost("4.3.2.1")
         GradleProxyHelper.setHttpProxyPort(80)
         GradleProxyHelper.setHttpProxyUser("me")
-        GradleProxyHelper.setHttpsProxyHost("4.3.2.1")
+        GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
         GradleProxyHelper.setHttpsProxyPort(443)
-        GradleProxyHelper.setHttpsProxyHost("me")
+        GradleProxyHelper.setHttpsProxyUser("me")
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 
-        assertThat(result).containsExactly("--proxy", "http://4.3.2.1:80", "--https-proxy", "https://me:443")
+        assertThat(result).containsExactly("--proxy", "http://4.3.2.1:80", "--https-proxy", "https://1.2.3.4:443")
+    }
+
+    @Test
+    internal fun shouldComputeTheProxyArgsWhenAllTheParametersAreDefined() {
+        GradleProxyHelper.setHttpProxyHost("4.3.2.1")
+        GradleProxyHelper.setHttpProxyPort(80)
+        GradleProxyHelper.setHttpProxyUser("me")
+        GradleProxyHelper.setHttpProxyPassword("pass")
+        GradleProxyHelper.setHttpProxyIgnoredHosts("host.com", "anotherHost.com")
+        GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
+        GradleProxyHelper.setHttpsProxyPort(443)
+        GradleProxyHelper.setHttpsProxyUser("you")
+        GradleProxyHelper.setHttpsProxyPassword("word")
+        GradleProxyHelper.setHttpsProxyIgnoredHosts("anotherHost.com", "yetAnotherHost.com")
+
+        val result = NpmProxy.computeNpmProxyCliArgs()
+
+        assertThat(result).containsExactly("--proxy", "http://me:pass@4.3.2.1:80", "--https-proxy",
+                "https://you:word@1.2.3.4:443", "-c", "noproxy=host.com,anotherHost.com,yetAnotherHost.com")
+    }
+
+    @Test
+    internal fun shouldComputeTheProxyArgsWhenOnlyIgnoredHostsAreConfigured() {
+        GradleProxyHelper.setHttpProxyIgnoredHosts("a", "b")
+        GradleProxyHelper.setHttpsProxyIgnoredHosts("a", "b")
+
+        val result = NpmProxy.computeNpmProxyCliArgs()
+
+        assertThat(result).isEmpty()
     }
 }

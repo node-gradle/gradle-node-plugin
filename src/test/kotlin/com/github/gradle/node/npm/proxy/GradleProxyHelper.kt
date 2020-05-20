@@ -23,6 +23,11 @@ class GradleProxyHelper {
         }
 
         @JvmStatic
+        fun setHttpProxyIgnoredHosts(vararg hosts: String) {
+            System.setProperty("http.nonProxyHosts", hosts.joinToString("|"))
+        }
+
+        @JvmStatic
         fun setHttpsProxyHost(host: String) {
             System.setProperty("https.proxyHost", host)
         }
@@ -43,15 +48,23 @@ class GradleProxyHelper {
         }
 
         @JvmStatic
+        fun setHttpsProxyIgnoredHosts(vararg hosts: String) {
+            val value = hosts.joinToString("|")
+            System.setProperty("https.nonProxyHosts", value)
+        }
+
+        @JvmStatic
         fun resetProxy() {
             System.clearProperty("http.proxyHost")
             System.clearProperty("http.proxyPort")
             System.clearProperty("http.proxyUser")
             System.clearProperty("http.proxyPassword")
+            System.clearProperty("http.nonProxyHosts")
             System.clearProperty("https.proxyHost")
             System.clearProperty("https.proxyPort")
             System.clearProperty("https.proxyUser")
             System.clearProperty("https.proxyPassword")
+            System.clearProperty("https.nonProxyHosts")
         }
     }
 }
