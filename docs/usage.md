@@ -224,6 +224,10 @@ node {
 
   // Set the Node.js project directory (where package.json and node_modules are be located)
   nodeProjectDir = file("${project.projectDir}")
+
+  // Whether the plugin automatically should add the proxy configuration to npm and yarn commands
+  // according the proxy configuration defined for Gradle
+  useGradleProxySettings = true
 }
 ```
 
