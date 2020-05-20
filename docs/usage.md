@@ -194,6 +194,7 @@ You can configure the plugin using the "node" extension block, like this:
 node {
   // If true, it will download node using above parameters.
   // If false, it will try to use globally installed node.
+  // False by default
   download = true
 
   // Version of node to use (only used if download is true)
@@ -230,9 +231,6 @@ node {
   useGradleProxySettings = true
 }
 ```
-
-**Note** that the `download` flag is `false` by default. 
-
 
 ### Using a Custom (project-local) Version of `npm`
 
