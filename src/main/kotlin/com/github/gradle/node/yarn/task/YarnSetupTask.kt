@@ -1,7 +1,6 @@
 package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.npm.proxy.NpmProxy.Companion.computeNpmProxyCliArgs
 import com.github.gradle.node.npm.task.NpmSetupTask
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.provider.Provider
@@ -32,8 +31,8 @@ open class YarnSetupTask : NpmSetupTask() {
         val version = nodeExtension.yarnVersion.get()
         val yarnDir = yarnDir.get()
         val yarnPackage = if (version.isNotBlank()) "yarn@$version" else "yarn"
-        return listOf("install", "--global", "--no-save", *computeNpmProxyCliArgs().toTypedArray(),
-                "--prefix", yarnDir.asFile.absolutePath, yarnPackage) + args.get()
+        return listOf("install", "--global", "--no-save", "--prefix", yarnDir.asFile.absolutePath, yarnPackage)
+                .plus(args.get())
     }
 
     override fun isTaskEnabled(): Boolean {

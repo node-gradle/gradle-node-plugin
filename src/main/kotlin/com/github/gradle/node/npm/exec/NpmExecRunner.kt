@@ -17,14 +17,18 @@ internal class NpmExecRunner {
     fun executeNpmCommand(project: Project, nodeExecConfiguration: NodeExecConfiguration) {
         val npmExecConfiguration = NpmExecConfiguration("npm"
         ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpmExec(nodeExtension, npmBinDir) }
-        executeCommand(project, addProxyCliArgs(nodeExecConfiguration), npmExecConfiguration)
+        val nodeExtension = NodeExtension[project]
+        executeCommand(project, addProxyCliArgs(nodeExtension, nodeExecConfiguration), npmExecConfiguration)
     }
 
-    private fun addProxyCliArgs(nodeExecConfiguration: NodeExecConfiguration): NodeExecConfiguration {
-        val npmProxyCliArgs = computeNpmProxyCliArgs()
-        if (npmProxyCliArgs.isNotEmpty()) {
-            val commandWithProxy = npmProxyCliArgs.plus(nodeExecConfiguration.command)
-            return nodeExecConfiguration.copy(command = commandWithProxy)
+    private fun addProxyCliArgs(nodeExtension: NodeExtension,
+                                nodeExecConfiguration: NodeExecConfiguration): NodeExecConfiguration {
+        if (nodeExtension.useGradleProxySettings.get()) {
+            val npmProxyCliArgs = computeNpmProxyCliArgs()
+            if (npmProxyCliArgs.isNotEmpty()) {
+                val commandWithProxy = npmProxyCliArgs.plus(nodeExecConfiguration.command)
+                return nodeExecConfiguration.copy(command = commandWithProxy)
+            }
         }
         return nodeExecConfiguration
     }

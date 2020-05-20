@@ -131,4 +131,24 @@ class NpmTaskTest extends AbstractTaskTest {
         1 * execSpec.setExecutable('npm')
         1 * execSpec.setArgs(['--https-proxy', 'https://my-super-proxy.net:11235', 'a', 'b'])
     }
+
+    def "exec npm task with configured proxy but disabled"() {
+        given:
+        props.setProperty('os.name', 'Linux')
+        execSpec = Mock(ExecSpec)
+        GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
+        GradleProxyHelper.setHttpsProxyPort(11235)
+        nodeExtension.useGradleProxySettings.set(false)
+
+        def task = project.tasks.create('simple', NpmTask)
+        task.args.set(['a', 'b'])
+
+        when:
+        project.evaluate()
+        task.exec()
+
+        then:
+        1 * execSpec.setExecutable('npm')
+        1 * execSpec.setArgs(['a', 'b'])
+    }
 }

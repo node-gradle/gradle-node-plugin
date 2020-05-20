@@ -20,6 +20,7 @@ open class NodeExtension(project: Project) {
     val npmInstallCommand = project.objects.property<String>().convention("install")
     val yarnCommand = project.objects.property<String>().convention("yarn")
     val download = project.objects.property<Boolean>().convention(false)
+    val useGradleProxySettings = project.objects.property<Boolean>().convention(true)
 
     @Suppress("unused")
     @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")

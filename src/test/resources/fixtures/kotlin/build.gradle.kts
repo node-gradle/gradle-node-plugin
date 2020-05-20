@@ -18,6 +18,7 @@ node {
     npmWorkDir.set(file("${project.buildDir}/npm"))
     yarnWorkDir.set(file("${project.buildDir}/yarn"))
     nodeProjectDir.set(file("${project.projectDir}"))
+    useGradleProxySettings.set(true)
 }
 
 val npmInstallTask = tasks.npmInstall

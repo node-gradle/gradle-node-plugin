@@ -31,6 +31,28 @@ class YarnSetupTaskTest extends AbstractTaskTest {
         })
     }
 
+    def "exec yarnSetup task without any yarn version specified and proxy configured but disabled"() {
+        given:
+        execSpec = Mock(ExecSpec)
+        GradleProxyHelper.setHttpProxyHost("my-proxy")
+        GradleProxyHelper.setHttpProxyPort(80)
+        nodeExtension.useGradleProxySettings.set(false)
+
+        def task = project.tasks.create('simple', YarnSetupTask)
+
+        when:
+        project.evaluate()
+        task.exec()
+
+        then:
+        1 * execSpec.setArgs({ args ->
+            def expectedYarnInstallPath = projectDir.toPath().resolve('.gradle').resolve('yarn')
+                    .resolve('yarn-latest').toAbsolutePath().toString()
+            def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedYarnInstallPath, 'yarn']
+            return fixAbsolutePaths(args) == expectedArgs
+        })
+    }
+
     def "exec yarnSetup task with yarn version specified"() {
         given:
         nodeExtension.yarnVersion.set('1.22.4')
