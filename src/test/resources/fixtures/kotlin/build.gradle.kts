@@ -3,7 +3,14 @@ import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeTask
 import com.github.gradle.node.yarn.task.YarnTask
 
+// This file shows how to use this plugin with the Kotlin DSL.
+// All the properties are set, most of the time with the default value.
+// /!\ We recommend to set only the values for which the default value is not satisfying.
+
 plugins {
+    // You have to specify the plugin version, for instance
+    // id("com.github.node-gradle.node") version "3.0.0"
+    // This works as is in the integration tests context
     id("com.github.node-gradle.node")
 }
 
@@ -21,8 +28,6 @@ node {
     useGradleProxySettings.set(true)
 }
 
-val npmInstallTask = tasks.npmInstall
-
 tasks.npmInstall {
     nodeModulesOutputFilter {
         exclude("notExistingFile")
@@ -36,7 +41,7 @@ tasks.yarn {
 }
 
 val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
-    dependsOn(npmInstallTask)
+    dependsOn(tasks.npmInstall)
     command.set("mocha")
     args.set(listOf("test", "--grep", "should say hello"))
     ignoreExitValue.set(false)
@@ -55,7 +60,7 @@ val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
 }
 
 val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
-    dependsOn(npmInstallTask)
+    dependsOn(tasks.npmInstall)
     npmCommand.set(listOf("run", "test"))
     args.set(listOf("test"))
     ignoreExitValue.set(false)
@@ -74,7 +79,7 @@ val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
 }
 
 val testTaskUsingYarn = tasks.register<YarnTask>("testYarn") {
-    dependsOn(npmInstallTask)
+    dependsOn(tasks.npmInstall)
     yarnCommand.set(listOf("run", "test"))
     args.set(listOf("test"))
     ignoreExitValue.set(false)
@@ -109,7 +114,7 @@ tasks.register<NodeTask>("run") {
 }
 
 val buildTaskUsingNpx = tasks.register<NpxTask>("buildNpx") {
-    dependsOn(npmInstallTask)
+    dependsOn(tasks.npmInstall)
     command.set("babel")
     args.set(listOf("src", "--out-dir", "${buildDir}/npx-output"))
     inputs.dir("src")
@@ -117,7 +122,7 @@ val buildTaskUsingNpx = tasks.register<NpxTask>("buildNpx") {
 }
 
 val buildTaskUsingNpm = tasks.register<NpmTask>("buildNpm") {
-    dependsOn(npmInstallTask)
+    dependsOn(tasks.npmInstall)
     npmCommand.set(listOf("run", "build"))
     args.set(listOf("--", "--out-dir", "${buildDir}/npm-output"))
     inputs.dir("src")
@@ -125,7 +130,7 @@ val buildTaskUsingNpm = tasks.register<NpmTask>("buildNpm") {
 }
 
 val buildTaskUsingYarn = tasks.register<YarnTask>("buildYarn") {
-    dependsOn(npmInstallTask)
+    dependsOn(tasks.npmInstall)
     yarnCommand.set(listOf("run", "build"))
     args.set(listOf("--out-dir", "${buildDir}/yarn-output"))
     inputs.dir("src")

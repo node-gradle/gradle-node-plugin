@@ -2,16 +2,16 @@ import com.github.gradle.node.npm.task.NpxTask
 
 plugins {
   java
-  // You need to specify the version to use (we don't need to do it in the demo since we use the plugin source)
+  // You have to specify the plugin version, for instance
+  // id("com.github.node-gradle.node") version "3.0.0"
+  // This works as is here because we use the plugin source
   id("com.github.node-gradle.node")
 }
-
-val npmInstallTask = tasks.npmInstall
 
 val lintTask = tasks.register<NpxTask>("lintWebapp") {
   command.set("ng")
   args.set(listOf("lint"))
-  dependsOn(npmInstallTask)
+  dependsOn(tasks.npmInstall)
   inputs.dir("src")
   inputs.dir("node_modules")
   inputs.files("angular.json", "browserslist", "tsconfig.json", "tsconfig.app.json", "tsconfig.spec.json",
@@ -22,7 +22,7 @@ val lintTask = tasks.register<NpxTask>("lintWebapp") {
 val buildTask = tasks.register<NpxTask>("buildWebapp") {
   command.set("ng")
   args.set(listOf("build", "--prod"))
-  dependsOn(npmInstallTask, lintTask)
+  dependsOn(tasks.npmInstall, lintTask)
   inputs.dir(project.fileTree("src").exclude("**/*.spec.ts"))
   inputs.dir("node_modules")
   inputs.files("angular.json", "browserslist", "tsconfig.json", "tsconfig.app.json", "tsconfig.spec.json")
@@ -32,7 +32,7 @@ val buildTask = tasks.register<NpxTask>("buildWebapp") {
 val testTask = tasks.register<NpxTask>("testWebapp") {
   command.set("ng")
   args.set(listOf("test"))
-  dependsOn(npmInstallTask, lintTask)
+  dependsOn(tasks.npmInstall, lintTask)
   inputs.dir("src")
   inputs.dir("node_modules")
   inputs.files("angular.json", "browserslist", "tsconfig.json", "tsconfig.app.json", "tsconfig.spec.json")
