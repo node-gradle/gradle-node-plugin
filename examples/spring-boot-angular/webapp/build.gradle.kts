@@ -39,17 +39,17 @@ val testTask = tasks.register<NpxTask>("testWebapp") {
   outputs.upToDateWhen { true }
 }
 
-tasks.build {
-  dependsOn(lintTask, buildTask, testTask)
-}
-
-
 sourceSets {
   java {
     main {
       resources {
+        // This makes the processResources task automatically depend on the buildWebapp one
         srcDir(buildTask)
       }
     }
   }
+}
+
+tasks.test {
+  dependsOn(lintTask, testTask)
 }
