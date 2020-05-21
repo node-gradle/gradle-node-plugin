@@ -21,9 +21,9 @@ node {
     npmInstallCommand.set("install")
     distBaseUrl.set("https://nodejs.org/dist")
     download.set(false)
-    workDir.set(file("${project.buildDir}/nodejs"))
-    npmWorkDir.set(file("${project.buildDir}/npm"))
-    yarnWorkDir.set(file("${project.buildDir}/yarn"))
+    workDir.set(file("${project.projectDir}/.cache/nodejs"))
+    npmWorkDir.set(file("${project.projectDir}/.cache/npm"))
+    yarnWorkDir.set(file("${project.projectDir}/.cache/yarn"))
     nodeProjectDir.set(file("${project.projectDir}"))
     useGradleProxySettings.set(true)
 }
