@@ -140,7 +140,6 @@ task buildAngularApp(type: NpxTask) {
 }
 ```
 
-
 ## Executing Yarn Tasks
 
 When adding the node plugin, you will have a yarn task already added. This task will 
@@ -188,10 +187,15 @@ task addExpress(type: YarnTask) {
 
 ## Configuring the Plugin
 
-You can configure the plugin using the "node" extension block, like this:
+You can configure the plugin through the `node` extension.
+
+Here is the list of all available configuration properties using the Groovy DSL.
+See [here](../src/test/resources/fixtures/kotlin/build.gradle.kts) to see a Kotlin DSL example.
+
+The values shown here are the default ones. We recommend to define only the ones for which the 
+default value is not satisfying.
 
 ```gradle
-// The values presented here are the default values
 node {
     // Whether to download and install a specific Node.js version or not
     // If false, it will use the globally installed Node.js
@@ -232,7 +236,9 @@ node {
     // The directory where yarn is installed (when a Yarn task is used)
     yarnWorkDir = file("${project.projectDir}/.gradle/yarn")
     
-    // Set the Node.js project directory (where package.json and node_modules are be located)
+    // The Node.js project directory location
+    // This is where the package.json file and node_modules directory are located
+    // By default it is at the root of the current project
     nodeProjectDir = file("${project.projectDir}")
     
     // Whether the plugin automatically should add the proxy configuration to npm and yarn commands
