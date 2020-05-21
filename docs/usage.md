@@ -191,44 +191,55 @@ task addExpress(type: YarnTask) {
 You can configure the plugin using the "node" extension block, like this:
 
 ```gradle
+// The values presented here are the default values
 node {
-  // If true, it will download node using above parameters.
-  // If false, it will try to use globally installed node.
-  // False by default
-  download = true
-
-  // Version of node to use (only used if download is true)
-  version = '0.11.10'
-
-  // Version of npm to use
-  npmVersion = '2.1.5'
-
-  // Version of Yarn to use
-  yarnVersion = '0.16.1'
-  
-  // Base URL for fetching node distributions (change if you have a mirror).
-  // Only used if download is true.
-  // Or set to null if you want to add the repository on your own.
-  distBaseUrl = 'https://nodejs.org/dist'
-
-  // Override the install command used by npmInstall
-  npmInstallCommand = 'install'
-
-  // Set the work directory for unpacking node 
-  workDir = file("${project.buildDir}/nodejs")
-
-  // Set the work directory for NPM
-  npmWorkDir = file("${project.buildDir}/npm")
-
-  // Set the work directory for Yarn
-  yarnWorkDir = file("${project.buildDir}/yarn")
-
-  // Set the Node.js project directory (where package.json and node_modules are be located)
-  nodeProjectDir = file("${project.projectDir}")
-
-  // Whether the plugin automatically should add the proxy configuration to npm and yarn commands
-  // according the proxy configuration defined for Gradle
-  useGradleProxySettings = true
+    // Whether to download and install a specific Node.js version or not
+    // If false, it will use the globally installed Node.js
+    // If true, it will download node using above parameters
+    // Note that npm is bundled with Node.js
+    download = false
+    
+    // Version of node to download and install (only used if download is true)
+    // It will be unpacked in the workDir
+    version = "12.16.2"
+    
+    // Version of npm to use
+    // If specified, installs it in the npmWorkDir
+    // If empty, the plugin will use the npm command bundled with Node.js
+    npmVersion = ""
+    
+    // Version of Yarn to use
+    // Any Yarn task first installs Yarn in the yarnWorkDir
+    // It uses the specified version if defined and the latest version otherwise (by default)
+    yarnVersion = ""
+    
+    // Base URL for fetching node distributions
+    // Only used if download is true
+    // Change it if you want to use a mirror
+    // Or set to null if you want to add the repository on your own.
+    distBaseUrl = "https://nodejs.org/dist"
+    
+    // The npm command executed by the npmInstall task
+    // By default it is install but it can be changed to ci
+    npmInstallCommand = "install"
+    
+    // The directory where Node.js is unpacked (when download is true) 
+    workDir = file("${project.projectDir}/.gradle/nodejs")
+    
+    // The directory where npm is installed (when a specific version is defined)
+    npmWorkDir = file("${project.projectDir}/.gradle/npm")
+    
+    // The directory where yarn is installed (when a Yarn task is used)
+    yarnWorkDir = file("${project.projectDir}/.gradle/yarn")
+    
+    // Set the Node.js project directory (where package.json and node_modules are be located)
+    nodeProjectDir = file("${project.projectDir}")
+    
+    // Whether the plugin automatically should add the proxy configuration to npm and yarn commands
+    // according the proxy configuration defined for Gradle
+    // Disable this option if you want to configure the proxy for npm or yarn on your own
+    // (in the .npmrc file for instance)
+    useGradleProxySettings = true
 }
 ```
 
