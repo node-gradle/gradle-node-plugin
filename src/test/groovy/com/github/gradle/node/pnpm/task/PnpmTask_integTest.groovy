@@ -93,7 +93,7 @@ class PnpmTask_integTest extends AbstractIntegTest {
         result4.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":env").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("ERROR  Unknown command 'notExistingCommand'")
+        result4.output.contains("Unknown command 'notExistingCommand'")
 
         when:
         def result5 = buildAndFail(":env", "-DnotExistingCommand=true")
@@ -103,7 +103,7 @@ class PnpmTask_integTest extends AbstractIntegTest {
         result5.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.FAILED
-        result5.output.contains("ERROR  Unknown command 'notExistingCommand'")
+        result5.output.contains("Unknown command 'notExistingCommand'")
 
         when:
         def result6 = build(":pwd")

@@ -1,15 +1,24 @@
 package com.github.gradle.node.pnpm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.util.PlatformHelper
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
+import spock.lang.IgnoreIf
+
+import java.util.regex.Pattern
 
 class PnpxTask_integTest
         extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
+    /**
+     * Pertaining issue in pnpx
+     * https://github.com/pnpm/pnpm/issues/948
+     */
+    @IgnoreIf({ PlatformHelper.INSTANCE.isWindows() })
     def 'execute pnpx command with no package.json file'() {
         given:
         writeBuild('''
@@ -38,6 +47,11 @@ class PnpxTask_integTest
         result.output.contains("--case, -C  Which case to convert to")
     }
 
+    /**
+     * Pertaining issue in pnpx
+     * https://github.com/pnpm/pnpm/issues/948
+     */
+    @IgnoreIf({ PlatformHelper.INSTANCE.isWindows() })
     def 'execute pnpx command with a package.json file and check inputs up-to-date detection'() {
         given:
         copyResources('fixtures/pnpx/', '')
@@ -96,7 +110,8 @@ class PnpxTask_integTest
         result1.task(":pnpmSetup").outcome == TaskOutcome.SUCCESS
         result1.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":env").outcome == TaskOutcome.SUCCESS
-        result1.output.contains("PATH=")
+        // Sometimes the PATH variable is not defined in Windows Powershell, but the PATHEXT is
+        Pattern.compile("^PATH(?:EXT)?=.+\$", Pattern.MULTILINE).matcher(result1.output).find()
 
         when:
         def result2 = build(":env", "-DcustomEnv=true")
@@ -126,7 +141,7 @@ class PnpxTask_integTest
         result4.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":env").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("ERROR  404")
+        result4.output.contains("404 Not Found: notExistingCommand")
 
         when:
         def result5 = buildAndFail(":env", "-DnotExistingCommand=true")
@@ -136,7 +151,7 @@ class PnpxTask_integTest
         result5.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.FAILED
-        result5.output.contains("ERROR  404")
+        result5.output.contains("404 Not Found: notExistingCommand")
 
         when:
         def result6 = build(":pwd")

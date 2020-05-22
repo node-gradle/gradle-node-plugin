@@ -69,7 +69,7 @@ class NodePlugin : Plugin<Project> {
     }
 
     private fun addPnpmRule() { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
-        project.tasks.addRule("Pattern: \"npm_<command>\": Executes an PNPM command.") {
+        project.tasks.addRule("Pattern: \"pnpm_<command>\": Executes an PNPM command.") {
             val taskName = this
             if (taskName.startsWith("pnpm_")) {
                 project.tasks.register<PnpmTask>(taskName) {
