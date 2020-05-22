@@ -223,7 +223,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result17.task(":version").outcome == TaskOutcome.SUCCESS
-        result17.output.contains("Version: v12.16.2")
+        result17.output.contains("Version: v12.16.3")
     }
 
     def 'try to use custom repositories when the download url is null'() {
@@ -235,6 +235,6 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.FAILED
-        result.output.contains("Cannot resolve external dependency org.nodejs:node:12.16.2 because no repositories are defined.")
+        result.output.contains("Cannot resolve external dependency org.nodejs:node:12.16.3 because no repositories are defined.")
     }
 }

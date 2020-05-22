@@ -59,7 +59,7 @@ class NpmTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(true)
         execSpec = Mock(ExecSpec)
         def nodeDir = projectDir.toPath().resolve(".gradle").resolve("nodejs")
-                .resolve("node-v12.16.2-linux-x64")
+                .resolve("node-v12.16.3-linux-x64")
 
         def task = project.tasks.create('simple', NpmTask)
         task.args.set(["run", "command"])
@@ -88,7 +88,7 @@ class NpmTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(true)
         execSpec = Mock(ExecSpec)
         def nodeDir = projectDir.toPath().resolve(".gradle").resolve("nodejs")
-                .resolve("node-v12.16.2-linux-x64")
+                .resolve("node-v12.16.3-linux-x64")
         GradleProxyHelper.setHttpProxyHost("host")
         GradleProxyHelper.setHttpProxyPort(123)
 
