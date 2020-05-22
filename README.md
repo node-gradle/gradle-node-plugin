@@ -21,6 +21,9 @@ It supports Gradle 5.6.4+ and Node.js 10+.
 
 ## Documentation
 
+⚠️ This is the documentation of the development version. See below in the releases history to read the 
+documentation of the version you're using.
+
 Here's how you get started using this plugin. If you do not find what you are looking for, please add an 
 issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issues).
 
