@@ -9,16 +9,16 @@ import spock.lang.IgnoreIf
 
 import java.util.regex.Pattern
 
+/**
+ * Pertaining issue in pnpx
+ * https://github.com/pnpm/pnpm/issues/948
+ */
+@IgnoreIf({ PlatformHelper.INSTANCE.isWindows() })
 class PnpxTask_integTest
         extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    /**
-     * Pertaining issue in pnpx
-     * https://github.com/pnpm/pnpm/issues/948
-     */
-    @IgnoreIf({ PlatformHelper.INSTANCE.isWindows() })
     def 'execute pnpx command with no package.json file'() {
         given:
         writeBuild('''
@@ -47,11 +47,6 @@ class PnpxTask_integTest
         result.output.contains("--case, -C  Which case to convert to")
     }
 
-    /**
-     * Pertaining issue in pnpx
-     * https://github.com/pnpm/pnpm/issues/948
-     */
-    @IgnoreIf({ PlatformHelper.INSTANCE.isWindows() })
     def 'execute pnpx command with a package.json file and check inputs up-to-date detection'() {
         given:
         copyResources('fixtures/pnpx/', '')
