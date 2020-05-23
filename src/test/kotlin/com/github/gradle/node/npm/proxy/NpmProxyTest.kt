@@ -106,17 +106,21 @@ class NpmProxyTest {
         GradleProxyHelper.setHttpProxyPort(80)
         GradleProxyHelper.setHttpProxyUser("me")
         GradleProxyHelper.setHttpProxyPassword("pass")
-        GradleProxyHelper.setHttpProxyIgnoredHosts("host.com", "anotherHost.com")
+        GradleProxyHelper.setHttpProxyIgnoredHosts("host.com", "anotherHost.com", "host.com:1234",
+                "sameProtocol.com:8888")
         GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
         GradleProxyHelper.setHttpsProxyPort(443)
         GradleProxyHelper.setHttpsProxyUser("you")
         GradleProxyHelper.setHttpsProxyPassword("word")
-        GradleProxyHelper.setHttpsProxyIgnoredHosts("anotherHost.com", "yetAnotherHost.com")
+        GradleProxyHelper.setHttpsProxyIgnoredHosts("anotherHost.com", "yetAnotherHost.com:4321",
+                "sameProtocol.com:8888")
 
         val result = NpmProxy.computeNpmProxyCliArgs()
 
         assertThat(result).containsExactly("--proxy", "http://me:pass@4.3.2.1:80", "--https-proxy",
-                "https://you:word@1.2.3.4:443", "-c", "noproxy=host.com,anotherHost.com,yetAnotherHost.com")
+                "https://you:word@1.2.3.4:443", "-c",
+                "noproxy=host.com:80,anotherHost.com:80,host.com:1234,sameProtocol.com:8888,anotherHost.com:443" +
+                        ",yetAnotherHost.com:4321")
     }
 
     @Test

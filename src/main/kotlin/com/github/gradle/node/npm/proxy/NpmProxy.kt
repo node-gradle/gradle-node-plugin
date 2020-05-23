@@ -1,8 +1,8 @@
 package com.github.gradle.node.npm.proxy
 
 import java.net.URLEncoder
-import java.util.*
 import java.util.stream.Collectors.toList
+import java.util.stream.Stream
 import kotlin.text.Charsets.UTF_8
 
 internal class NpmProxy {
@@ -41,10 +41,19 @@ internal class NpmProxy {
         }
 
         private fun computeProxyIgnoredHosts(): List<String> {
-            return listOf("http.nonProxyHosts", "https.nonProxyHosts").stream()
-                    .map { System.getProperty(it) }
-                    .filter(Objects::nonNull)
-                    .flatMap { it.split("|").stream() }
+            return Stream.of(Pair("http.nonProxyHosts", 80), Pair("https.nonProxyHosts", 443))
+                    .map { (property, port) ->
+                        val propertyValue = System.getProperty(property)
+                        if (propertyValue != null) {
+                            val hosts = propertyValue.split("|")
+                            return@map hosts.map { host ->
+                                if (host.contains(":")) host
+                                else "$host:$port"
+                            }
+                        }
+                        return@map listOf<String>()
+                    }
+                    .flatMap(List<String>::stream)
                     .distinct()
                     .collect(toList())
         }
