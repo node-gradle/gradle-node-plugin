@@ -8,7 +8,7 @@ import org.mockserver.junit.MockServerRule
 import java.util.stream.Collectors
 
 import static org.mockserver.model.HttpRequest.request
-import static org.mockserver.verify.VerificationTimes.once
+import static org.mockserver.verify.VerificationTimes.atLeast
 
 class NpmProxy_integTest extends AbstractIntegTest {
     @Rule
@@ -34,8 +34,8 @@ class NpmProxy_integTest extends AbstractIntegTest {
             mockServerRule.client.verify(request()
                     .withMethod("GET")
                     .withSecure(secure)
-                    .withHeader("Host", "registry.npmjs.org:${secure ? 443 : 80}")
-                    .withPath("/case"), once())
+                    .withHeader("Host", "registry.npmjs.org:${secure ? 443 : 80}"),
+                    atLeast(1))
         }
 
         where:
