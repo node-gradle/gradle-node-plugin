@@ -27,7 +27,7 @@ class NpmProxy_integTest extends AbstractIntegTest {
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         !result.output.contains("npm WARN registry Using stale data from https://registry.npmjs.org/ due " +
                 "to a request error during revalidation.")
-        createFile("node_modules/chcase-cli/package.json").exists()
+        createFile("node_modules/case/package.json").exists()
         if (ignoreHost) {
             mockServerRule.client.verifyZeroInteractions()
         } else {
@@ -35,7 +35,7 @@ class NpmProxy_integTest extends AbstractIntegTest {
                     .withMethod("GET")
                     .withSecure(secure)
                     .withHeader("Host", "registry.npmjs.org:${secure ? 443 : 80}")
-                    .withPath("/chcase-cli"), once())
+                    .withPath("/case"), once())
         }
 
         where:

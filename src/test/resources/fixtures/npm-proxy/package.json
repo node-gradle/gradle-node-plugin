@@ -1,6 +1,6 @@
 {
   "name": "example",
   "dependencies": {
-    "chcase-cli": "1.0.0"
+    "case": "1.6.3"
   }
 }
