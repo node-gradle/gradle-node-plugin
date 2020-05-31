@@ -34,8 +34,9 @@ internal class NpmExecRunner {
     }
 
     fun executeNpxCommand(project: Project, nodeExecConfiguration: NodeExecConfiguration) {
-        val npxExecConfiguration = NpmExecConfiguration("npx"
-        ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpxExec(nodeExtension, npmBinDir) }
+        val npxExecConfiguration = NpmExecConfiguration("npx") { variantComputer, nodeExtension, npmBinDir ->
+            variantComputer.computeNpxExec(nodeExtension, npmBinDir)
+        }
         executeCommand(project, nodeExecConfiguration, npxExecConfiguration)
     }
 
