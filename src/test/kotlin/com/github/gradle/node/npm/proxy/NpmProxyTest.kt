@@ -118,8 +118,8 @@ class NpmProxyTest {
         val result = NpmProxy.computeNpmProxyCliArgs()
 
         assertThat(result).containsExactly("--proxy", "http://me:pass@4.3.2.1:80", "--https-proxy",
-                "https://you:word@1.2.3.4:443", "-c",
-                "noproxy=host.com:80,anotherHost.com:80,host.com:1234,sameProtocol.com:8888,anotherHost.com:443" +
+                "https://you:word@1.2.3.4:443",
+                "--noproxy=host.com:80,anotherHost.com:80,host.com:1234,sameProtocol.com:8888,anotherHost.com:443" +
                         ",yetAnotherHost.com:4321")
     }
 
