@@ -61,8 +61,7 @@ internal class NpmProxy {
         private fun computeProxyIgnoredHostsArgs(proxyArgs: MutableList<String>) {
             val proxyIgnoredHosts = computeProxyIgnoredHosts()
             if (proxyIgnoredHosts.isNotEmpty()) {
-                proxyArgs.add("-c")
-                proxyArgs.add("noproxy=" + proxyIgnoredHosts.joinToString(","))
+                proxyArgs.add("--noproxy=" + proxyIgnoredHosts.joinToString(","))
             }
         }
     }
