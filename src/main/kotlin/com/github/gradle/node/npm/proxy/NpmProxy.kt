@@ -7,29 +7,29 @@ import kotlin.text.Charsets.UTF_8
 
 internal class NpmProxy {
     companion object {
-        fun computeNpmProxyCliArgs(): List<String> {
-            val proxyArgs = computeProxyUrlArgs()
-            if (proxyArgs.isNotEmpty()) {
-                computeProxyIgnoredHostsArgs(proxyArgs)
+        fun computeNpmProxyEnvironmentVariables(): Map<String, String> {
+            val proxyEnvironmentVariables = computeProxyUrlEnvironmentVariables()
+            if (proxyEnvironmentVariables.isNotEmpty()) {
+                addProxyIgnoredHostsEnvironmentVariable(proxyEnvironmentVariables)
             }
-            return proxyArgs.toList()
+            return proxyEnvironmentVariables.toMap()
         }
 
-        private fun computeProxyUrlArgs(): MutableList<String> {
-            val proxyArgs = mutableListOf<String>()
+        private fun computeProxyUrlEnvironmentVariables(): MutableMap<String, String> {
+            val proxyArgs = mutableMapOf<String, String>()
             for ((proxyProto, proxyParam) in
-            listOf(arrayOf("http", "--proxy"), arrayOf("https", "--https-proxy"))) {
+            listOf(arrayOf("http", "HTTP_PROXY"), arrayOf("https", "HTTPS_PROXY"))) {
                 var proxyHost = System.getProperty("$proxyProto.proxyHost")
                 val proxyPort = System.getProperty("$proxyProto.proxyPort")
                 if (proxyHost != null && proxyPort != null) {
                     proxyHost = proxyHost.replace("^https?://".toRegex(), "")
                     val proxyUser = System.getProperty("$proxyProto.proxyUser")
                     val proxyPassword = System.getProperty("$proxyProto.proxyPassword")
-                    proxyArgs.add(proxyParam)
                     if (proxyUser != null && proxyPassword != null) {
-                        proxyArgs.add("$proxyProto://${encode(proxyUser)}:${encode(proxyPassword)}@$proxyHost:$proxyPort")
+                        proxyArgs[proxyParam] =
+                                "$proxyProto://${encode(proxyUser)}:${encode(proxyPassword)}@$proxyHost:$proxyPort"
                     } else {
-                        proxyArgs.add("$proxyProto://$proxyHost:$proxyPort")
+                        proxyArgs[proxyParam] = "$proxyProto://$proxyHost:$proxyPort"
                     }
                 }
             }
@@ -38,6 +38,13 @@ internal class NpmProxy {
 
         private fun encode(value: String): String {
             return URLEncoder.encode(value, UTF_8.toString())
+        }
+
+        private fun addProxyIgnoredHostsEnvironmentVariable(proxyEnvironmentVariables: MutableMap<String, String>) {
+            val proxyIgnoredHosts = computeProxyIgnoredHosts()
+            if (proxyIgnoredHosts.isNotEmpty()) {
+                proxyEnvironmentVariables["NO_PROXY"] = proxyIgnoredHosts.joinToString(", ")
+            }
         }
 
         private fun computeProxyIgnoredHosts(): List<String> {
@@ -56,13 +63,6 @@ internal class NpmProxy {
                     .flatMap(List<String>::stream)
                     .distinct()
                     .collect(toList())
-        }
-
-        private fun computeProxyIgnoredHostsArgs(proxyArgs: MutableList<String>) {
-            val proxyIgnoredHosts = computeProxyIgnoredHosts()
-            if (proxyIgnoredHosts.isNotEmpty()) {
-                proxyArgs.add("--noproxy=" + proxyIgnoredHosts.joinToString(","))
-            }
         }
     }
 }

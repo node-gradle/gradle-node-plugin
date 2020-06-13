@@ -5,14 +5,17 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.mockserver.junit.MockServerRule
 
-import java.util.stream.Collectors
-
+import static java.util.stream.Collectors.joining
 import static org.mockserver.model.HttpRequest.request
-import static org.mockserver.verify.VerificationTimes.atLeast
+import static org.mockserver.verify.VerificationTimes.exactly
 
 class NpmProxy_integTest extends AbstractIntegTest {
     @Rule
     public MockServerRule mockServerRule = new MockServerRule(this)
+
+    void cleanup() {
+        mockServerRule.client.reset()
+    }
 
     def 'install packages using proxy'(boolean secure, boolean ignoreHost) {
         given:
@@ -34,18 +37,24 @@ class NpmProxy_integTest extends AbstractIntegTest {
             mockServerRule.client.verify(request()
                     .withMethod("GET")
                     .withSecure(secure)
+                    .withPath("/case")
                     .withHeader("Host", "registry.npmjs.org:${secure ? 443 : 80}"),
-                    atLeast(1))
+                    exactly(1))
+            mockServerRule.client.verify(request()
+                    .withMethod("POST")
+                    .withSecure(secure)
+                    .withPath("/-/npm/v1/security/audits/quick")
+                    .withHeader("Host", "registry.npmjs.org:${secure ? 443 : 80}"),
+                    exactly(1))
         }
 
         where:
         secure | ignoreHost
         false  | false
-        // -c noproxy=registry.npmjs.org:80 is not recognized by npm
-        // false  | true
+//        false  | true
         // Does not work with HTTPS for now, certificate issue
-        // true   | true
         // true   | false
+        // true   | true
     }
 
     private def writeGradleProperties(boolean secure, boolean ignoreHost) {
@@ -60,7 +69,7 @@ class NpmProxy_integTest extends AbstractIntegTest {
         def gradlePropertiesFile = createFile("gradle.properties")
         def gradlePropertiesFileContents = properties.entrySet().stream()
                 .map { entry -> "systemProp.${prefix}.${entry.key}=${entry.value}" }
-                .collect(Collectors.joining("\n"))
+                .collect(joining("\n"))
         gradlePropertiesFile.text = gradlePropertiesFileContents
     }
 

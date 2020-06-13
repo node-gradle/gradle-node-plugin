@@ -24,7 +24,8 @@ class NpmInstallTaskTest extends AbstractTaskTest {
 
         then:
         1 * execSpec.setExecutable("npm")
-        1 * execSpec.setArgs(["--https-proxy", "https://my-super-proxy.net:11235", "install"])
+        1 * execSpec.setArgs(["install"])
+        1 * execSpec.setEnvironment({ environment -> environment["HTTPS_PROXY"] == "https://my-super-proxy.net:11235" })
     }
 
     def "exec npm install task with configured proxy but disabled"() {

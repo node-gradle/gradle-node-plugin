@@ -22,22 +22,22 @@ internal class YarnExecRunner {
         val additionalBinPathProvider =
                 computeAdditionalBinPath(project, nodeExtension, nodeDirProvider, yarnBinDirProvider)
         val execConfiguration = ExecConfiguration(yarnExecProvider.get(),
-                computeYarnCommand(nodeExtension, nodeExecConfiguration), additionalBinPathProvider.get(),
-                nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
+                nodeExecConfiguration.command, additionalBinPathProvider.get(),
+                addNpmProxyEnvironment(nodeExtension, nodeExecConfiguration), nodeExecConfiguration.workingDir,
                 nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
         val execRunner = ExecRunner()
         execRunner.execute(project, execConfiguration)
     }
 
-    private fun computeYarnCommand(nodeExtension: NodeExtension,
-                                   nodeExecConfiguration: NodeExecConfiguration): List<String> {
+    private fun addNpmProxyEnvironment(nodeExtension: NodeExtension,
+                                       nodeExecConfiguration: NodeExecConfiguration): Map<String, String> {
         if (nodeExtension.useGradleProxySettings.get()) {
-            val npmProxyCliArgs = NpmProxy.computeNpmProxyCliArgs()
-            if (npmProxyCliArgs.isNotEmpty()) {
-                return npmProxyCliArgs.plus(nodeExecConfiguration.command)
+            val npmProxyEnvironmentVariables = NpmProxy.computeNpmProxyEnvironmentVariables()
+            if (npmProxyEnvironmentVariables.isNotEmpty()) {
+                return nodeExecConfiguration.environment.plus(npmProxyEnvironmentVariables)
             }
         }
-        return nodeExecConfiguration.command
+        return nodeExecConfiguration.environment
     }
 
     private fun computeAdditionalBinPath(project: Project, nodeExtension: NodeExtension,

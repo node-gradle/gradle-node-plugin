@@ -109,8 +109,9 @@ class NpmTaskTest extends AbstractTaskTest {
             def npmScript = nodeDir
                     .resolve("lib").resolve("node_modules").resolve("npm").resolve("bin")
                     .resolve("npm-cli.js").toAbsolutePath().toString()
-            return fixAbsolutePaths(args) == [npmScript, "--proxy", "http://host:1234", "run", "command"]
+            return fixAbsolutePaths(args) == [npmScript, "run", "command"]
         })
+        1 * execSpec.setEnvironment({ environment -> environment["HTTP_PROXY"] == "http://host:123" })
     }
 
     def "exec npm task with configured proxy"() {
@@ -129,7 +130,8 @@ class NpmTaskTest extends AbstractTaskTest {
 
         then:
         1 * execSpec.setExecutable('npm')
-        1 * execSpec.setArgs(['--https-proxy', 'https://my-super-proxy.net:11235', 'a', 'b'])
+        1 * execSpec.setArgs(['a', 'b'])
+        1 * execSpec.setEnvironment({ environment -> environment["HTTPS_PROXY"] == "https://my-super-proxy.net:11235" })
     }
 
     def "exec npm task with configured proxy but disabled"() {
