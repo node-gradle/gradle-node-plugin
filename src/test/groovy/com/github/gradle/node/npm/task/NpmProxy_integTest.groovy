@@ -52,7 +52,7 @@ class NpmProxy_integTest extends AbstractIntegTest {
         secure | ignoreHost
         false  | false
 //        false  | true
-        // Does not work with HTTPS for now, certificate issue
+        // Does not work with HTTPS for now, protocol issue
         // true   | false
         // true   | true
     }
@@ -78,7 +78,7 @@ class NpmProxy_integTest extends AbstractIntegTest {
         if (secure) {
             def certificate = readMockServerCertificate()
                     .replace("\n", "\\n")
-            file.text = "ca=${certificate}"
+            file.text = "ca=\"${certificate}\""
         } else {
             file.text = "registry=http://registry.npmjs.org/"
         }
