@@ -20,7 +20,8 @@ class NpmProxy_integTest extends AbstractIntegTest {
     def 'install packages using proxy'(boolean secure, boolean ignoreHost) {
         given:
         copyResources("fixtures/npm-proxy/")
-        writeGradleProperties(secure, ignoreHost)
+        def port = secure ? 443 : 80
+        writeGradleProperties(secure, ignoreHost, port)
         writeNpmConfiguration(secure)
 
         when:
@@ -38,33 +39,33 @@ class NpmProxy_integTest extends AbstractIntegTest {
                     .withMethod("GET")
                     .withSecure(secure)
                     .withPath("/case")
-                    .withHeader("Host", "registry.npmjs.org:${secure ? 443 : 80}"),
+                    .withHeader("Host", "registry.npmjs.org:${port}"),
                     exactly(1))
             mockServerRule.client.verify(request()
                     .withMethod("POST")
                     .withSecure(secure)
                     .withPath("/-/npm/v1/security/audits/quick")
-                    .withHeader("Host", "registry.npmjs.org:${secure ? 443 : 80}"),
+                    .withHeader("Host", "registry.npmjs.org:${port}"),
                     exactly(1))
         }
 
         where:
         secure | ignoreHost
         false  | false
-//        false  | true
+        false  | true
         // Does not work with HTTPS for now, protocol issue
         // true   | false
         // true   | true
     }
 
-    private def writeGradleProperties(boolean secure, boolean ignoreHost) {
+    private def writeGradleProperties(boolean secure, boolean ignoreHost, int port) {
         def prefix = secure ? "https" : "http"
         def properties = [
                 "proxyHost": "localhost",
                 "proxyPort": "${mockServerRule.port}"
         ]
         if (ignoreHost) {
-            properties["nonProxyHosts"] = "registry.npmjs.org"
+            properties["nonProxyHosts"] = "registry.npmjs.org:${port}"
         }
         def gradlePropertiesFile = createFile("gradle.properties")
         def gradlePropertiesFileContents = properties.entrySet().stream()

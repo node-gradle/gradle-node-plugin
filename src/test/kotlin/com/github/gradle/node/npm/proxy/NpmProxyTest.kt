@@ -124,8 +124,7 @@ class NpmProxyTest {
         assertThat(result).containsExactly(
                 entry("HTTP_PROXY", "http://me:pass@4.3.2.1:80"),
                 entry("HTTPS_PROXY", "https://you:word@1.2.3.4:443"),
-                entry("NO_PROXY", "host.com:80, anotherHost.com:80, host.com:1234, sameProtocol.com:8888, " +
-                        "anotherHost.com:443, yetAnotherHost.com:4321"))
+                entry("NO_PROXY", "host.com, anotherHost.com, sameProtocol.com, yetAnotherHost.com"))
     }
 
     @Test

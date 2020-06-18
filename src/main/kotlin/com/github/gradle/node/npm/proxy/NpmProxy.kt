@@ -48,15 +48,16 @@ internal class NpmProxy {
         }
 
         private fun computeProxyIgnoredHosts(): List<String> {
-            return Stream.of(Pair("http.nonProxyHosts", 80), Pair("https.nonProxyHosts", 443))
-                    .map { (property, port) ->
+            return Stream.of("http.nonProxyHosts", "https.nonProxyHosts")
+                    .map { property ->
                         val propertyValue = System.getProperty(property)
                         if (propertyValue != null) {
                             val hosts = propertyValue.split("|")
-                            return@map hosts.map { host ->
-                                if (host.contains(":")) host
-                                else "$host:$port"
-                            }
+                            return@map hosts
+                                    .map { host ->
+                                        if (host.contains(":")) host.split(":")[0]
+                                        else host
+                                    }
                         }
                         return@map listOf<String>()
                     }
