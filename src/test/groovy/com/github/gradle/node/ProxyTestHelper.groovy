@@ -37,15 +37,16 @@ class ProxyTestHelper {
     }
 
     void writeYarnConfiguration(boolean secure, int port) {
+        def protocol = secure ? "https" : "http"
         def file = createFile(".yarnrc")
+        def configuration = "registry \"${protocol}://localhost:${port}/\""
         if (secure) {
             def certificateFile = createFile("certificate.pem")
             certificateFile.text = readMockServerCertificate()
-            file.text = """cafile \"${projectDirectory}/certificate.pem\"
-strict-ssl false"""
-        } else {
-            file.text = "registry \"http://localhost:${port}/\""
+            configuration = """${configuration}
+cafile \"${projectDirectory}/certificate.pem\""""
         }
+        file.text = configuration
     }
 
     private def readMockServerCertificate() {

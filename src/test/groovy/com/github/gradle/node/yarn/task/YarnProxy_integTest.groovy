@@ -48,7 +48,7 @@ class YarnProxy_integTest extends AbstractIntegTest {
                     if (secure) {
                         return request.withSocketAddress(targetHost, 443, HTTPS).withSecure(true)
                     }
-                    return request.withSocketAddress(targetHost, 80, HTTP)
+                    return request.withSocketAddress(targetHost, 80, HTTP).withSecure(false)
                 }, { request, response ->
                     if (response.getBody().contentType == "application/vnd.npm.install-v1+json") {
                         // Let's rewrite download URLs in the JSON to make them target to the proxied registry
