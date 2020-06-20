@@ -1,28 +1,35 @@
 package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.ProxyTestHelper
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.mockserver.junit.MockServerRule
+import org.mockserver.integration.ClientAndServer
+import org.mockserver.socket.PortFactory
 
-import static java.util.stream.Collectors.joining
+import static org.mockserver.integration.ClientAndServer.startClientAndServer
 import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.verify.VerificationTimes.exactly
 
 class NpmProxy_integTest extends AbstractIntegTest {
-    @Rule
-    public MockServerRule mockServerRule = new MockServerRule(this)
+    private ClientAndServer proxyMockServer
+
+    void setup() {
+        proxyMockServer = startClientAndServer(PortFactory.findFreePort())
+    }
 
     void cleanup() {
-        mockServerRule.client.reset()
+        proxyMockServer.stop()
     }
 
     def 'install packages using proxy'(boolean secure, boolean ignoreHost) {
         given:
         copyResources("fixtures/npm-proxy/")
+        copyResources("fixtures/proxy/")
+        def proxyTestHelper = new ProxyTestHelper(projectDir)
         def port = secure ? 443 : 80
-        writeGradleProperties(secure, ignoreHost, port)
-        writeNpmConfiguration(secure)
+        proxyTestHelper.writeGradleProperties(secure, ignoreHost, proxyMockServer.localPort,
+                "registry.npmjs.org:${port}")
+        proxyTestHelper.writeNpmConfiguration(secure)
 
         when:
         def result = build("npmInstall")
@@ -33,15 +40,15 @@ class NpmProxy_integTest extends AbstractIntegTest {
                 "to a request error during revalidation.")
         createFile("node_modules/case/package.json").exists()
         if (ignoreHost) {
-            mockServerRule.client.verifyZeroInteractions()
+            proxyMockServer.verifyZeroInteractions()
         } else {
-            mockServerRule.client.verify(request()
+            proxyMockServer.verify(request()
                     .withMethod("GET")
                     .withSecure(secure)
                     .withPath("/case")
                     .withHeader("Host", "registry.npmjs.org:${port}"),
                     exactly(1))
-            mockServerRule.client.verify(request()
+            proxyMockServer.verify(request()
                     .withMethod("POST")
                     .withSecure(secure)
                     .withPath("/-/npm/v1/security/audits/quick")
@@ -56,38 +63,5 @@ class NpmProxy_integTest extends AbstractIntegTest {
         // Does not work with HTTPS for now, protocol issue
         // true   | false
         // true   | true
-    }
-
-    private def writeGradleProperties(boolean secure, boolean ignoreHost, int port) {
-        def prefix = secure ? "https" : "http"
-        def properties = [
-                "proxyHost": "localhost",
-                "proxyPort": "${mockServerRule.port}"
-        ]
-        if (ignoreHost) {
-            properties["nonProxyHosts"] = "registry.npmjs.org:${port}"
-        }
-        def gradlePropertiesFile = createFile("gradle.properties")
-        def gradlePropertiesFileContents = properties.entrySet().stream()
-                .map { entry -> "systemProp.${prefix}.${entry.key}=${entry.value}" }
-                .collect(joining("\n"))
-        gradlePropertiesFile.text = gradlePropertiesFileContents
-    }
-
-    private def writeNpmConfiguration(boolean secure) {
-        def file = createFile(".npmrc")
-        if (secure) {
-            def certificate = readMockServerCertificate()
-                    .replace("\n", "\\n")
-            file.text = "ca=\"${certificate}\""
-        } else {
-            file.text = "registry=http://registry.npmjs.org/"
-        }
-    }
-
-    private def readMockServerCertificate() {
-        def stream = getClass().getClassLoader()
-                .getResourceAsStream("org/mockserver/socket/CertificateAuthorityCertificate.pem")
-        return stream.text
     }
 }

@@ -1,0 +1,11 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+task cleanCaseCache(type: YarnTask) {
+    yarnCommand = ["cache", "clean", "case"]
+}
+
+yarn {
+    dependsOn cleanCaseCache
+}
