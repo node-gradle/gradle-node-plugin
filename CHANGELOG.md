@@ -9,7 +9,7 @@ Version 3.0 *(not yet released)*
 for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/57))
 * Improve the Kotlin DSL support (see this [Kotlin DSL example](src/test/resources/fixtures/kotlin/build.gradle.kts)
 that shows how to use this plugin version with Kotlin)
-* Upgrade default Node.js version to 12.16.3 (bundled with npm 6.14.4), the latest LTS version
+* Upgrade default Node.js version to 12.18.1 (bundled with npm 6.14.5), the latest LTS version
 * Add full support of lazy configuration (issue [#39](https://github.com/node-gradle/gradle-node-plugin/issues/39))
 * Fix some remaining input/output declaration issues (issue
  [#34](https://github.com/node-gradle/gradle-node-plugin/issues/34))

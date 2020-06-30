@@ -15,7 +15,7 @@ class NodeExtensionTest extends AbstractProjectTest {
         nodeExtension.distBaseUrl.get() == 'https://nodejs.org/dist'
         nodeExtension.workDir.get() != null
         nodeExtension.nodeProjectDir.get() != null
-        nodeExtension.version.get() == '12.16.3'
+        nodeExtension.version.get() == '12.18.1'
         !nodeExtension.download.get()
         nodeExtension.npmVersion.get() == ''
     }
