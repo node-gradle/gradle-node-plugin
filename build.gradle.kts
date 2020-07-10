@@ -43,6 +43,7 @@ dependencies {
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.spockframework:spock-core:1.3-groovy-2.5")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
+    testImplementation("org.mock-server:mockserver-netty:5.10.0")
 }
 
 tasks.compileTestGroovy {
