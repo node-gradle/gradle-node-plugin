@@ -1,15 +1,20 @@
 package com.moowork.gradle.node.exec
 
 import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.util.ProjectApiHelper
 import com.moowork.gradle.node.variant.Variant
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.process.ExecResult
+import org.gradle.process.ExecSpec
 
 abstract class ExecRunner
 {
     protected Project project
+
+    protected ProjectApiHelper projectApi;
 
     protected NodeExtension ext
 
@@ -30,6 +35,8 @@ abstract class ExecRunner
     public ExecRunner( final Project project )
     {
         this.project = project
+        this.ext = NodeExtension.get( project )
+        this.projectApi = ProjectApiHelper.newInstance(project)
     }
 
     @Internal
@@ -56,9 +63,10 @@ abstract class ExecRunner
         def realArgs = args
         def execEnvironment = computeExecEnvironment()
         def execWorkingDir = computeWorkingDir()
-        return this.project.exec( {
+        return this.project.exec({
+            ExecSpec it ->
             it.executable = realExec
-            it.args = realArgs
+            it.args = realArgs.collect {it.toString()}
             it.environment = execEnvironment
             it.ignoreExitValue = this.ignoreExitValue
             it.workingDir = execWorkingDir
@@ -67,12 +75,12 @@ abstract class ExecRunner
             {
                 this.execOverrides( it )
             }
-        } )
+        })
     }
 
     private File computeWorkingDir()
     {
-        File workingDir = this.workingDir != null ? this.workingDir : this.project.node.nodeModulesDir
+        File workingDir = this.workingDir != null ? this.workingDir : this.ext.nodeModulesDir
         if (!workingDir.exists())
         {
             workingDir.mkdirs()
@@ -80,11 +88,11 @@ abstract class ExecRunner
         return workingDir
     }
 
-    private Map<Object, Object> computeExecEnvironment()
+    private Map<String, Object> computeExecEnvironment()
     {
-        def environment = [:]
+        Map<String, Object> environment = [:]
         environment << System.getenv()
-        environment << this.environment
+        this.environment.each {environment[it.getKey().toString()] = it.getValue()}
         String path = computeAdditionalBinPath()
         if (path != null)
         {
@@ -103,7 +111,6 @@ abstract class ExecRunner
 
     public final ExecResult execute()
     {
-        this.ext = NodeExtension.get( this.project )
         this.variant = this.ext.variant
         return doExecute()
     }

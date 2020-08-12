@@ -44,7 +44,7 @@ class NpmExecRunner
 
     @Internal
     protected File getLocalCommandScript() {
-        return project.file(new File(this.ext.nodeModulesDir, 'node_modules/npm/bin/npm-cli.js'))
+        return projectApi.file(new File(this.ext.nodeModulesDir, 'node_modules/npm/bin/npm-cli.js'))
     }
 
     @Internal

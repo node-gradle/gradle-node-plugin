@@ -19,7 +19,7 @@ class NpxExecRunner
     @Override
     @Internal
     protected File getLocalCommandScript() {
-        return project.file(new File(this.ext.nodeModulesDir, 'node_modules/npm/bin/npx-cli.js'))
+        return projectApi.file(new File(this.ext.nodeModulesDir, 'node_modules/npm/bin/npx-cli.js'))
     }
 
     @Override
