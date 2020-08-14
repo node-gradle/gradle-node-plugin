@@ -12,9 +12,7 @@ import org.gradle.process.ExecSpec
 
 abstract class ExecRunner
 {
-    protected Project project
-
-    protected ProjectApiHelper projectApi;
+    protected ProjectApiHelper projectApi
 
     protected NodeExtension ext
 
@@ -34,7 +32,6 @@ abstract class ExecRunner
 
     public ExecRunner( final Project project )
     {
-        this.project = project
         this.ext = NodeExtension.get( project )
         this.projectApi = ProjectApiHelper.newInstance(project)
     }
@@ -63,7 +60,7 @@ abstract class ExecRunner
         def realArgs = args
         def execEnvironment = computeExecEnvironment()
         def execWorkingDir = computeWorkingDir()
-        return this.project.exec({
+        return this.projectApi.exec({
             ExecSpec it ->
             it.executable = realExec
             it.args = realArgs.collect {it.toString()}

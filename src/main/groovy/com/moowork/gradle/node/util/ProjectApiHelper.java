@@ -1,6 +1,5 @@
 package com.moowork.gradle.node.util;
 
-import groovy.lang.Closure;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.file.ProjectLayout;

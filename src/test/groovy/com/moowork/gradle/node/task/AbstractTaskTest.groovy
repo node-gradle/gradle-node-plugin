@@ -2,6 +2,7 @@ package com.moowork.gradle.node.task
 
 import com.moowork.gradle.AbstractProjectTest
 import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.util.LegacyProjectApiHelper
 import com.moowork.gradle.node.util.PlatformHelper
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
@@ -32,7 +33,7 @@ abstract class AbstractTaskTest
 
     private void mockExec()
     {
-        this.project.metaClass.invokeMethod = { String name, Object[] args ->
+        LegacyProjectApiHelper.metaClass.invokeMethod = { String name, Object[] args ->
             if ( name == 'exec' )
             {
                 Closure closure = (Closure) args.first()

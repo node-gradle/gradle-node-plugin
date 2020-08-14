@@ -6,6 +6,7 @@ import com.moowork.gradle.node.util.BackwardsCompat
 import com.moowork.gradle.node.variant.Variant
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
@@ -20,13 +21,11 @@ class SetupTask
 {
     public final static String NAME = 'nodeSetup'
 
-    private NodeExtension config
-
-    protected Variant variant
+    private Provider<NodeExtension> config
 
     SetupTask()
     {
-
+        this.config = project.provider({ NodeExtension.get( this.project ) })
         this.group = NodePlugin.NODE_GROUP
         this.description = 'Download and install a local node/npm version.'
         this.enabled = false
@@ -35,40 +34,25 @@ class SetupTask
     @Input
     public Set<String> getInput()
     {
-        configureIfNeeded()
-
         def set = new HashSet<>()
-        set.add( this.config.download )
-        set.add( this.variant.archiveDependency )
-        set.add( this.variant.exeDependency )
+        set.add( this.config.get().download )
+        set.add( this.config.get().variant.archiveDependency )
+        set.add( this.config.get().variant.exeDependency )
         return set
     }
 
     @OutputDirectory
     public File getNodeDir()
     {
-        configureIfNeeded()
-        return this.variant.nodeDir
-    }
-
-    private void configureIfNeeded()
-    {
-        if ( this.config != null )
-        {
-            return
-        }
-
-        this.config = NodeExtension.get( this.project )
-        this.variant = this.config.variant
+        return this.config.get().variant.nodeDir
     }
 
     @TaskAction
     void exec()
     {
-        configureIfNeeded()
         addRepositoryIfNeeded()
 
-        if ( this.variant.exeDependency )
+        if ( this.config.get().variant.exeDependency )
         {
             copyNodeExe()
         }
@@ -82,7 +66,7 @@ class SetupTask
     {
         this.project.copy {
             from getNodeExeFile()
-            into this.variant.nodeBinDir
+            into this.config.get().variant.nodeBinDir
             rename 'node.+\\.exe', 'node.exe'
         }
     }
@@ -101,12 +85,12 @@ class SetupTask
                 into getNodeDir().parent
             }
         }
-        else if ( this.variant.exeDependency )
+        else if ( this.config.get().variant.exeDependency )
         {
             //Remap lib/node_modules to node_modules (the same directory as node.exe) because that's how the zip dist does it
             this.project.copy {
                 from this.project.tarTree( getNodeArchiveFile() )
-                into this.variant.nodeBinDir
+                into this.config.get().variant.nodeBinDir
                 eachFile {
                     def m = it.path =~ /^.*?[\\/]lib[\\/](node_modules.*$)/
                     if ( m.matches() )
@@ -128,6 +112,8 @@ class SetupTask
                 from this.project.tarTree( getNodeArchiveFile() )
                 into getNodeDir().parent
             }
+
+            def variant = config.get().variant
             // Fix broken symlink
             Path npm = Paths.get( variant.nodeBinDir.path, 'npm' )
             if ( Files.deleteIfExists( npm ) )
@@ -146,22 +132,22 @@ class SetupTask
 
     private void setExecutableFlag()
     {
-        if ( !this.variant.windows )
+        if ( !this.config.get().variant.windows )
         {
-            new File( this.variant.nodeExec ).setExecutable( true )
+            new File( this.config.get().variant.nodeExec ).setExecutable( true )
         }
     }
 
     @Internal
     protected File getNodeExeFile()
     {
-        return resolveSingle( this.variant.exeDependency )
+        return resolveSingle( this.config.get().variant.exeDependency )
     }
 
     @Internal
     protected File getNodeArchiveFile()
     {
-        return resolveSingle( this.variant.archiveDependency )
+        return resolveSingle( this.config.get().variant.archiveDependency )
     }
 
     private File resolveSingle( String name )
@@ -173,8 +159,8 @@ class SetupTask
     }
 
     private void addRepositoryIfNeeded() {
-        if ( this.config.distBaseUrl != null ) {
-            addRepository this.config.distBaseUrl
+        if ( this.config.get().distBaseUrl != null ) {
+            addRepository this.config.get().distBaseUrl
         }
     }
 
