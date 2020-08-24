@@ -106,6 +106,11 @@ pluginBundle {
             tags = listOf("java", "gradle", "node", "node.js", "npm", "yarn")
         }
     }
+
+    mavenCoordinates {
+        groupId = "com.github.node-gradle"
+        artifactId = "gradle-node-plugin"
+    }
 }
 
 tasks.wrapper {
