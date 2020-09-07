@@ -1,8 +1,6 @@
-Changelog
-=========
+# Changelog
 
-Version 3.0 *(not yet released)*
-----------------------------
+## Version 3.0 *(not yet released)*
 
 * Rewrite the code to Kotlin (issue [#17](https://github.com/node-gradle/gradle-node-plugin/issues/17))
 (thanks [mikejhill](https://github.com/mikejhill)
@@ -16,7 +14,9 @@ that shows how to use this plugin version with Kotlin)
 * Gradle 5.6.4+ support (instead of Gradle 5.0.0+ before)
 * Node.js 10+ support (issue [#100](https://github.com/node-gradle/gradle-node-plugin/issues/100))
 
-This version breaks backward compatibility. It should not visible for most Groovy DSL users since the Groovy DSL
+### Breaking changes
+
+This version **breaks backward compatibility**. It should not visible for most Groovy DSL users since the Groovy DSL
 handles transparently most of these changes.
 Here is what changed:
 * All the packages were renamed (they were inherited from the original forked project):
@@ -34,31 +34,26 @@ run and configuration properties are read only at runtime if needed and not at c
 * Change the syntax to configure `nodeModulesOutputFilter` on `npmInstall` and `yarn` tasks. It also affects Groovy DSL 
 users. Use now `nodeModulesOutputFilter { ... }` instead of `nodeModulesOutputFilter = { ... }`.
 
-Version 2.2.4 *(2020-05-18)*
-----------------------------
+## Version 2.2.4 *(2020-05-18)*
 
 * Fix a duplicated `node_modules` output declaration in the `yarn` task. This fix speeds up this task.
 
-Version 2.2.3 *(2020-02-28)*
-----------------------------
+## Version 2.2.3 *(2020-02-28)*
 
 The previous release (2.2.2) was released by error from the development branch which contains an entire Kotlin rewrite 
 of the plugin code and many backward compatibility breaks. This new version replaces the previous one and adds one fix.
 * Make npm and npx symlinks relative. PR #68
 * NpmSetupTask does not work when using separate http and https proxy settings #69
 
-Version 2.2.2 *(2020-02-21)*
-----------------------------
+## Version 2.2.2 *(2020-02-21)*
 
 * Make npm and npx symlinks relative. PR #68
 
-Version 2.2.1 *(2020-01-31)*
-----------------------------
+## Version 2.2.1 *(2020-01-31)*
 
 * Only use fileTree for npmInstall output if a filter is configured. Hotfix for #63
 
-Version 2.2.0 *(2019-10-13)*
-----------------------------
+## Version 2.2.0 *(2019-10-13)*
 
 * Improve the inputs declarations of tasks:
   * `NodeTask`'s `script` now has relative path sensitivity (issue [#41](https://github.com/node-gradle/gradle-node-plugin/issues/41))
@@ -74,43 +69,35 @@ Version 2.2.0 *(2019-10-13)*
 * Gradle 6 compatibility (all integration tests run also on Gradle 6.0-rc-2)
 * Improve the integration tests coverage
 
-Version 2.1.1 *(2019-09-28)*
-----------------------------
+## Version 2.1.1 *(2019-09-28)*
 
 * Fix an issue in `NodeTask`, `NpmTask`, `NpxTask` and `YarnTask` that caused the up-to-date checking to be too much sensitive regarding the environment: any change of an environment variable caused the task to be considered as out-of-date
 * Improve the inputs declarations of the `YarnTask`
 
-Version 2.1.0 *(2019-09-19)*
-----------------------------
+## Version 2.1.0 *(2019-09-19)*
 * Adds NpxTask for making use of https://www.npmjs.com/package/npx PR #32 
 * Improved up-to-date checks PR #32 
 * Support ARM even if the JDK reports aarch64 #33
 * Setting distBaseUrl to null disables repository adding PR #25 
 
-Version 2.0.0 *(2019-07-29)*
-----------------------------
+## Version 2.0.0 *(2019-07-29)*
 * Only support Gradle 5.x officially.
 * Drop support for grunt/gulp plugins.
 
-Version 1.5.1 *(2019-06-19)*
-----------------------------
+## Version 1.5.1 *(2019-06-19)*
 * Fix inputs/outputs for NpmInstallTask/YarnInstallTask. 
 
-Version 1.5.0 *(2019-06-19)*
-----------------------------
+## Version 1.5.0 *(2019-06-19)*
 * Backport from srs: Added gradle build cache support for npm install (bjornmagnusson)
 
-Version 1.4.0 *(2019-05-20)*
-----------------------------
+## Version 1.4.0 *(2019-05-20)*
 * Adds npmInstallCommand for overriding NpmInstallTasks behaviour.
 
-Version 1.3.0 *(2018-12-04)*
-----------------------------
+## Version 1.3.0 *(2018-12-04)*
 * Relocated to com.github.node-gradle.(node|grunt|gulp)
 * Conditionally use `metadataSources` on gradle >= 4.5 (#1)
 
-Version 1.2.0 *(2017-06-14)*
-----------------------------
+## Version 1.2.0 *(2017-06-14)*
 
 * Support using Gradle Build Cache with Yarn tasks (#205) _(mark-vieira)_
 * Bumped Gradle wrapper version to 3.5
@@ -120,13 +107,11 @@ Version 1.2.0 *(2017-06-14)*
 * Added gruntFile in grunt extension to use different file (#189)
 * npm_* tasks using nodeModulesDir (##136) _(janario)_
 
-Version 1.1.1 *(2017-01-16)*
-----------------------------
+## Version 1.1.1 *(2017-01-16)*
 
 * Plugin publishing problems (#188)
 
-Version 1.1.0 *(2017-01-13)*
-----------------------------
+## Version 1.1.0 *(2017-01-13)*
 
 * Override environment instead of setting it (#176) _(s0x)_
 * Fix typo in resolveSingle (#166) _(s0x)_
@@ -134,14 +119,12 @@ Version 1.1.0 *(2017-01-13)*
 * Fix symlink problem using NPM (#164, #165, #181) _(s0x)_
 * Set PATH variable for node, npm and yarn (#134, #146, #149, #164, #179) _(s0x)_
 
-Version 1.0.1 *(2016-12-04)*
-----------------------------
+## Version 1.0.1 *(2016-12-04)*
 
 * Publish directly to plugins.gradle.org instead of bintray (#172)
 * Fixed problem with resolving Grunt and Gulp plugins (#170)
 
-Version 1.0.0 *(2016-12-02)*
-----------------------------
+## Version 1.0.0 *(2016-12-02)*
 
 * Move npm and yarn classes into separate package (#158)
 * Move grunt plugin code to this plugin (#159)
