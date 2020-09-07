@@ -14,7 +14,7 @@ val lintTask = tasks.register<NpxTask>("lintWebapp") {
   dependsOn(tasks.npmInstall)
   inputs.dir("src")
   inputs.dir("node_modules")
-  inputs.files("angular.json", "browserslist", "tsconfig.json", "tsconfig.app.json", "tsconfig.spec.json",
+  inputs.files("angular.json", ".browserslistrc", "tsconfig.json", "tsconfig.app.json", "tsconfig.spec.json",
     "tslint.json")
   outputs.upToDateWhen { true }
 }
@@ -25,7 +25,7 @@ val buildTask = tasks.register<NpxTask>("buildWebapp") {
   dependsOn(tasks.npmInstall, lintTask)
   inputs.dir(project.fileTree("src").exclude("**/*.spec.ts"))
   inputs.dir("node_modules")
-  inputs.files("angular.json", "browserslist", "tsconfig.json", "tsconfig.app.json", "tsconfig.spec.json")
+  inputs.files("angular.json", ".browserslistrc", "tsconfig.json", "tsconfig.app.json")
   outputs.dir("${project.buildDir}/webapp")
 }
 
@@ -35,7 +35,7 @@ val testTask = tasks.register<NpxTask>("testWebapp") {
   dependsOn(tasks.npmInstall, lintTask)
   inputs.dir("src")
   inputs.dir("node_modules")
-  inputs.files("angular.json", "browserslist", "tsconfig.json", "tsconfig.app.json", "tsconfig.spec.json")
+  inputs.files("angular.json", ".browserslistrc", "tsconfig.json", "tsconfig.spec.json", "karma.conf.js")
   outputs.upToDateWhen { true }
 }
 
