@@ -5,6 +5,8 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
+import static com.github.gradle.node.NodeExtension.DEFAULT_NPM_VERSION
+
 class NpmTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
@@ -154,7 +156,7 @@ class NpmTask_integTest extends AbstractIntegTest {
 
         then:
         result10.task(":version").outcome == TaskOutcome.SUCCESS
-        result10.output.contains("> Task :version${System.lineSeparator()}6.14.5")
+        result10.output.contains("> Task :version${System.lineSeparator()}${DEFAULT_NPM_VERSION}")
     }
 
     def 'execute npm command using the npm version specified in the package.json file'() {

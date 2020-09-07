@@ -11,7 +11,7 @@ open class NodeExtension(project: Project) {
     val npmWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("npm"))
     val yarnWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("yarn"))
     val nodeProjectDir = project.objects.directoryProperty().convention(project.layout.projectDirectory)
-    val version = project.objects.property<String>().convention("12.18.1")
+    val version = project.objects.property<String>().convention(DEFAULT_NODE_VERSION)
     val npmVersion = project.objects.property<String>().convention("")
     val yarnVersion = project.objects.property<String>().convention("")
     val distBaseUrl = project.objects.property<String>()
@@ -32,6 +32,8 @@ open class NodeExtension(project: Project) {
 
     companion object {
         const val NAME = "node"
+        const val DEFAULT_NODE_VERSION = "12.18.1"
+        const val DEFAULT_NPM_VERSION = "6.14.5"
 
         @JvmStatic
         operator fun get(project: Project): NodeExtension {

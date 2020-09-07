@@ -1,8 +1,11 @@
 package com.github.gradle.node.npm.task
 
+
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
+
+import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
 
 class NpmTaskTest extends AbstractTaskTest {
     def cleanup() {
@@ -59,7 +62,7 @@ class NpmTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(true)
         execSpec = Mock(ExecSpec)
         def nodeDir = projectDir.toPath().resolve(".gradle").resolve("nodejs")
-                .resolve("node-v12.18.1-linux-x64")
+                .resolve("node-v${DEFAULT_NODE_VERSION}-linux-x64")
 
         def task = project.tasks.create('simple', NpmTask)
         task.args.set(["run", "command"])
@@ -88,7 +91,7 @@ class NpmTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(true)
         execSpec = Mock(ExecSpec)
         def nodeDir = projectDir.toPath().resolve(".gradle").resolve("nodejs")
-                .resolve("node-v12.18.1-linux-x64")
+                .resolve("node-v${DEFAULT_NODE_VERSION}-linux-x64")
         GradleProxyHelper.setHttpProxyHost("host")
         GradleProxyHelper.setHttpProxyPort(123)
 
