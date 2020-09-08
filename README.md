@@ -34,7 +34,7 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 * [Example Projects](examples)
 
 
-## Releases history
+## Releases History
 
 Here's the documentation for older releases of the plugin:
 
