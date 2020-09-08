@@ -35,17 +35,17 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.6.1"))
+    testImplementation(platform("org.junit:junit-bom:5.6.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
-    testImplementation("org.assertj:assertj-core:3.15.0")
-    testImplementation("cglib:cglib-nodep:3.2.9")
+    testImplementation("org.assertj:assertj-core:3.17.2")
+    testImplementation("cglib:cglib-nodep:3.3.0")
     testImplementation("org.objenesis:objenesis:3.1")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.spockframework:spock-core:1.3-groovy-2.5")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
-    testImplementation("org.mock-server:mockserver-netty:5.10.0")
+    testImplementation("org.mock-server:mockserver-netty:5.11.1")
 }
 
 tasks.compileTestGroovy {
