@@ -184,7 +184,6 @@ task addExpress(type: YarnTask) {
 }
 ```
 
-
 ## Configuring the Plugin
 
 You can configure the plugin through the `node` extension.
@@ -269,3 +268,16 @@ the `yarnSetup` task and use it.
 
 If you would like the plugin to install use a custom version of yarn, you can set
 `yarnVersion` in the `node` extension block.
+
+## Using a Proxy
+
+By default and unless if `useGradleProxySettings` is `false`, the plugin will configure 
+`npm` and `yarn` to get them use the proxy configuration defined in the 
+[Gradle project configuration](https://docs.gradle.org/current/userguide/build_environment.html#sec:accessing_the_web_via_a_proxy).
+This is done by automatically setting the `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` 
+environment variables when invoking `npm` and `yarn`.
+
+Note that `npm` and `yarn` support host exclusion (`NO_PROXY`) variable but
+they do not support host name and port exclusion. In the case some host names and ports
+are defined in the proxy exclusion, the port will be removed. The exclusion will apply to 
+both HTTP and HTTPS protocols. 
