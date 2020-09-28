@@ -204,6 +204,12 @@ node {
   // If false, it will try to use globally installed node.
   download = true
 
+  //if true (the default), it will enable Gradle Task Rules for `yarn_*`, `npm_*` and `npm_*` task names,
+  //to support automatic task creation.
+  //if false, it will not register task rules when the plugin is applied, 
+  //so all rule-generated tasks will need to be configured manually (excluding static `yarn_setup`,`node_setup`,`npm_install`,`yarn_install`)   
+  taskRules = true
+
   // Set the work directory for unpacking node
   workDir = file("${project.buildDir}/nodejs")
 
