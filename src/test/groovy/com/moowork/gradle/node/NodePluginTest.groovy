@@ -57,4 +57,18 @@ class NodePluginTest
         yarnRule.apply( 'yarn_upgrade' )
         this.project.tasks.getAsMap().containsKey( 'yarn_upgrade' )
     }
+
+    def 'check disabled task rules'()
+    {
+        when:
+        this.project.apply plugin: 'com.github.node-gradle.node'
+        this.project.node.taskRules = false
+        this.project.evaluate()
+
+        then:
+        this.project.tasks.getRules().size() == 0
+        //test for the lack of rule driven task
+        this.project.tasks.findByName("npm_run_install") == null
+
+    }
 }

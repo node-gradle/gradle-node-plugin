@@ -36,10 +36,13 @@ class NodePlugin
 
         addGlobalTypes()
         addTasks()
-        addNpmRule()
-        addYarnRule()
 
         this.project.afterEvaluate {
+            if (this.config.taskRules) {
+                addNpmRule()
+                addYarnRule()
+            }
+
             this.config.variant = new VariantBuilder( this.config ).build()
             configureSetupTask()
             configureNpmSetupTask()

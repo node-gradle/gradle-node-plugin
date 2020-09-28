@@ -33,6 +33,8 @@ class NodeExtension
 
     boolean download = false
 
+    boolean taskRules = true
+
     Variant variant
 
     NodeExtension( final Project project )
