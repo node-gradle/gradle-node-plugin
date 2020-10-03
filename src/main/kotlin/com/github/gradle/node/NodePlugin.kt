@@ -18,11 +18,13 @@ class NodePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         this.project = project
-        NodeExtension.create(project)
+        var node = NodeExtension.create(project)
         addGlobalTypes()
         addTasks()
-        addNpmRule()
-        addYarnRule()
+        if (!node.disableTaskRules.get()) {
+            addNpmRule()
+            addYarnRule()
+        }
     }
 
     private fun addGlobalTypes() {

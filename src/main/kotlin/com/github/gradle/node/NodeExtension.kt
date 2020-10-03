@@ -20,6 +20,7 @@ open class NodeExtension(project: Project) {
     val npmInstallCommand = project.objects.property<String>().convention("install")
     val yarnCommand = project.objects.property<String>().convention("yarn")
     val download = project.objects.property<Boolean>().convention(false)
+    val disableTaskRules = project.objects.property<Boolean>().convention(true)
     val useGradleProxySettings = project.objects.property<Boolean>().convention(true)
 
     @Suppress("unused")
