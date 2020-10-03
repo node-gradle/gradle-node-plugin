@@ -38,7 +38,7 @@ class NodePlugin
         addTasks()
 
         this.project.afterEvaluate {
-            if (this.config.taskRules) {
+            if (!this.config.disableTaskRules) {
                 addNpmRule()
                 addYarnRule()
             }

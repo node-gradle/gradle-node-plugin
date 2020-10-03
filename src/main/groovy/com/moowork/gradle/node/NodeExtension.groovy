@@ -33,7 +33,7 @@ class NodeExtension
 
     boolean download = false
 
-    boolean taskRules = true
+    boolean disableTaskRules = false
 
     Variant variant
 

@@ -21,6 +21,6 @@ class NodeExtensionTest
         ext.version == '10.14.0'
         !ext.download
         ext.npmVersion == ''
-        ext.taskRules == true
+        ext.disableTaskRules == false
     }
 }

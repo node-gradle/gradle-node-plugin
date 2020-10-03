@@ -62,7 +62,7 @@ class NodePluginTest
     {
         when:
         this.project.apply plugin: 'com.github.node-gradle.node'
-        this.project.node.taskRules = false
+        this.project.node.disableTaskRules = true
         this.project.evaluate()
 
         then:
