@@ -13,6 +13,7 @@ class YarnRule_integTest extends AbstractIntegTest {
 
             node {
                 yarnWorkDir = file('build/yarn')
+                disableTaskRules = false
             }
         """)
         writeEmptyPackageJson()
@@ -29,6 +30,10 @@ class YarnRule_integTest extends AbstractIntegTest {
         writeBuild("""
             plugins {
                 id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                disableTaskRules = false
             }
         """)
 

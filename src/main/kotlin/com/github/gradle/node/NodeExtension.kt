@@ -87,6 +87,12 @@ open class NodeExtension(project: Project) {
      */
     val nodeProxySettings = project.objects.property<ProxySettings>().convention(ProxySettings.SMART)
 
+    /**
+     * Whether the plugin automatically should add task rules
+     * to enable tasks like `npm_install` to exist automatically without being defined
+     */
+    val disableTaskRules = project.objects.property<Boolean>().convention(true)
+    
     @Suppress("unused")
     @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")
     val nodeModulesDir = nodeProjectDir
