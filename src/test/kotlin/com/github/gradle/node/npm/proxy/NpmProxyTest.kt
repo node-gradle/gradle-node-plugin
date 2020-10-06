@@ -47,7 +47,7 @@ class NpmProxyTest {
 
         val result = NpmProxy.computeNpmProxyEnvironmentVariables()
 
-        assertThat(result).containsExactly(entry("HTTPS_PROXY", "https://1.2.3.4:8123"))
+        assertThat(result).containsExactly(entry("HTTPS_PROXY", "http://1.2.3.4:8123"))
     }
 
     @Test
@@ -59,7 +59,7 @@ class NpmProxyTest {
 
         val result = NpmProxy.computeNpmProxyEnvironmentVariables()
 
-        assertThat(result).containsExactly(entry("HTTPS_PROXY", "https://me%2Fyou:p%40ssword@4.3.2.1:1234"))
+        assertThat(result).containsExactly(entry("HTTPS_PROXY", "http://me%2Fyou:p%40ssword@4.3.2.1:1234"))
     }
 
     @Test
@@ -75,7 +75,7 @@ class NpmProxyTest {
 
         assertThat(result).containsExactly(
                 entry("HTTP_PROXY", "http://4.3.2.1:1234"),
-                entry("HTTPS_PROXY", "https://me%2Fyou:p%40ssword@1.2.3.4:4321"))
+                entry("HTTPS_PROXY", "http://me%2Fyou:p%40ssword@1.2.3.4:4321"))
     }
 
     @Test
@@ -101,7 +101,7 @@ class NpmProxyTest {
 
         assertThat(result).containsExactly(
                 entry("HTTP_PROXY", "http://4.3.2.1:80"),
-                entry("HTTPS_PROXY", "https://1.2.3.4:443"))
+                entry("HTTPS_PROXY", "http://1.2.3.4:443"))
     }
 
     @Test
@@ -123,7 +123,7 @@ class NpmProxyTest {
 
         assertThat(result).containsExactly(
                 entry("HTTP_PROXY", "http://me:pass@4.3.2.1:80"),
-                entry("HTTPS_PROXY", "https://you:word@1.2.3.4:443"),
+                entry("HTTPS_PROXY", "http://you:word@1.2.3.4:443"),
                 entry("NO_PROXY", "host.com, anotherHost.com, sameProtocol.com, yetAnotherHost.com"))
     }
 

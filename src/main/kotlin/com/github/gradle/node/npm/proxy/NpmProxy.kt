@@ -27,9 +27,9 @@ internal class NpmProxy {
                     val proxyPassword = System.getProperty("$proxyProto.proxyPassword")
                     if (proxyUser != null && proxyPassword != null) {
                         proxyArgs[proxyParam] =
-                                "$proxyProto://${encode(proxyUser)}:${encode(proxyPassword)}@$proxyHost:$proxyPort"
+                                "http://${encode(proxyUser)}:${encode(proxyPassword)}@$proxyHost:$proxyPort"
                     } else {
-                        proxyArgs[proxyParam] = "$proxyProto://$proxyHost:$proxyPort"
+                        proxyArgs[proxyParam] = "http://$proxyHost:$proxyPort"
                     }
                 }
             }
