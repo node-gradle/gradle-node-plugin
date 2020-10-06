@@ -136,4 +136,16 @@ class NpmProxyTest {
 
         assertThat(result).isEmpty()
     }
+
+    @Test
+    internal fun shouldNotConfigureEnvironmentVariables() {
+        assertThat(NpmProxy.hasProxyConfiguration(getEnv("HTTP_PROXY"))).isTrue
+        assertThat(NpmProxy.hasProxyConfiguration(getEnv("proXy"))).isTrue
+        assertThat(NpmProxy.hasProxyConfiguration(getEnv("NPM_CONFIG_PROXY"))).isTrue
+        assertThat(NpmProxy.hasProxyConfiguration(getEnv("HELLO"))).isFalse
+    }
+
+    private fun getEnv(key: String): Map<String, String> {
+        return mapOf(key to "yes")
+    }
 }

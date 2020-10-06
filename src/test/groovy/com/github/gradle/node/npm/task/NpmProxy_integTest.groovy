@@ -64,4 +64,39 @@ class NpmProxy_integTest extends AbstractIntegTest {
         // true   | false
         // true   | true
     }
+
+    def 'install packages using pre-configured proxy'() {
+        given:
+        copyResources("fixtures/npm-proxy/")
+        copyResources("fixtures/proxy/")
+        def proxyTestHelper = new ProxyTestHelper(projectDir)
+        def port = 443
+        proxyTestHelper.writeGradleProperties(false, false, proxyMockServer.localPort+5,
+                null)
+        proxyTestHelper.writeNpmConfiguration(false)
+        def proxyAddress = "http://localhost:${proxyMockServer.localPort}".toString()
+
+        when:
+
+        def result = buildWithEnvironment(["HTTP_PROXY": proxyAddress, "HTTPS_PROXY": proxyAddress]
+                                          ,"npmInstall")
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        !result.output.contains("npm WARN registry Using stale data from https://registry.npmjs.org/ due " +
+                "to a request error during revalidation.")
+        createFile("node_modules/case/package.json").exists()
+        proxyMockServer.verify(request()
+                .withMethod("GET")
+                .withSecure(false)
+                .withPath("/case")
+                .withHeader("Host", "registry.npmjs.org:${port}"),
+                exactly(1))
+        proxyMockServer.verify(request()
+                .withMethod("POST")
+                .withSecure(false)
+                .withPath("/-/npm/v1/security/audits/quick")
+                .withHeader("Host", "registry.npmjs.org:${port}"),
+                exactly(1))
+    }
 }

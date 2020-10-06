@@ -6,13 +6,38 @@ import java.util.stream.Stream
 import kotlin.text.Charsets.UTF_8
 
 internal class NpmProxy {
+
     companion object {
+        // These are the environment variables that HTTPing applications checks, proxy is on and off.
+        // FTP skipped in hopes of a better future.
+        private val proxyVariables = listOf(
+                "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "PROXY"
+        )
+
+        // And since npm also takes settings in the form of environment variables with the
+        // NPM_CONFIG_<setting> format, we should check those. Hopefully nobody does this.
+        private val npmProxyVariables = listOf(
+                "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_NOPROXY"
+        )
+
         fun computeNpmProxyEnvironmentVariables(): Map<String, String> {
             val proxyEnvironmentVariables = computeProxyUrlEnvironmentVariables()
             if (proxyEnvironmentVariables.isNotEmpty()) {
                 addProxyIgnoredHostsEnvironmentVariable(proxyEnvironmentVariables)
             }
             return proxyEnvironmentVariables.toMap()
+        }
+
+        /**
+         * Returns true if the given map of environment variables already has
+         * proxy settings configured.
+         *
+         * @param env map of environment variables
+         */
+        fun hasProxyConfiguration(env: Map<String, String>): Boolean {
+            return env.keys.any {
+                proxyVariables.contains(it.toUpperCase()) || npmProxyVariables.contains(it.toUpperCase())
+            }
         }
 
         private fun computeProxyUrlEnvironmentVariables(): MutableMap<String, String> {
