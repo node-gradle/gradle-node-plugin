@@ -70,7 +70,8 @@ class NpmProxy_integTest extends AbstractIntegTest {
         copyResources("fixtures/npm-proxy/")
         copyResources("fixtures/proxy/")
         def proxyTestHelper = new ProxyTestHelper(projectDir)
-        def port = 443
+        def port = 80
+        // Intentionally write the wrong port to the file
         proxyTestHelper.writeGradleProperties(false, false, proxyMockServer.localPort+5,
                 null)
         proxyTestHelper.writeNpmConfiguration(false)
@@ -78,7 +79,10 @@ class NpmProxy_integTest extends AbstractIntegTest {
 
         when:
 
-        def result = buildWithEnvironment(["HTTP_PROXY": proxyAddress, "HTTPS_PROXY": proxyAddress]
+        Map<String, String> env = new HashMap<>()
+        env.putAll(System.getenv())
+        env.putAll(["HTTP_PROXY": proxyAddress, "HTTPS_PROXY": proxyAddress])
+        def result = buildWithEnvironment(env
                                           ,"npmInstall")
 
         then:
