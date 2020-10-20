@@ -95,4 +95,58 @@ class YarnProxy_integTest extends AbstractIntegTest {
         // true   | false
         // true   | true
     }
+
+    def 'install packages using pre-configured proxy'() {
+        given:
+        copyResources("fixtures/yarn-proxy/")
+        copyResources("fixtures/proxy/")
+        // Install yarn before setting the proxy (npm does not work with HTTPS proxy)
+        build("yarnSetup")
+        def proxyTestHelper = new ProxyTestHelper(projectDir)
+        // Intentionally write the wrong port to the file
+        proxyTestHelper.writeGradleProperties(false, false, proxyMockServer.localPort+5,
+                "localhost:${registryMockServer.localPort}")
+        proxyTestHelper.writeYarnConfiguration(false, registryMockServer.localPort)
+        def proxyAddress = "http://localhost:${proxyMockServer.localPort}".toString()
+        registryMockServer.when(request())
+                .forward({ request ->
+                    request.removeHeader("host")
+                    def targetHost = "registry.npmjs.org"
+                    request.withHeader("host", targetHost)
+                    return request.withSocketAddress(targetHost, 80, HTTP).withSecure(false)
+                }, { request, response ->
+                    if (response.getBody().contentType == "application/vnd.npm.install-v1+json") {
+                        // Let's rewrite download URLs in the JSON to make them target to the proxied registry
+                        def body = response.getBodyAsString()
+                        def updatedBody = body.replaceAll("https://registry.npmjs.org/",
+                                "http://localhost:${registryMockServer.localPort}/")
+                        response.withBody(updatedBody)
+                                .removeHeader("Content-Length")
+                                .withHeader("Content-Length",
+                                        updatedBody.getBytes(UTF_8).length.toString())
+                    }
+                    return response
+                })
+
+        when:
+        Map<String, String> env = new HashMap<>()
+        env.putAll(System.getenv())
+        env.putAll(["HTTP_PROXY": proxyAddress, "HTTPS_PROXY": proxyAddress])
+        def result = buildWithEnvironment(env, "yarn")
+
+        then:
+        result.task(":cleanCaseCache").outcome == TaskOutcome.SUCCESS
+        result.task(":yarn").outcome == TaskOutcome.SUCCESS
+        createFile("node_modules/case/package.json").exists()
+        proxyMockServer.verify(request()
+                .withMethod("GET")
+                .withPath("/case")
+                .withHeader("Host", "localhost:${registryMockServer.localPort}"),
+                exactly(1))
+        proxyMockServer.verify(request()
+                .withMethod("GET")
+                .withPath("/case/-/case-1.6.3.tgz")
+                .withHeader("Host", "localhost:${registryMockServer.localPort}"),
+                exactly(1))
+    }
 }

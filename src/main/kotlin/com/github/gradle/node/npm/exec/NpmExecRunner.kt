@@ -5,6 +5,7 @@ import com.github.gradle.node.exec.ExecConfiguration
 import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy.Companion.computeNpmProxyEnvironmentVariables
+import com.github.gradle.node.npm.proxy.NpmProxy.Companion.hasProxyConfiguration
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Project
@@ -24,7 +25,8 @@ internal class NpmExecRunner {
 
     private fun addProxyEnvironmentVariables(nodeExtension: NodeExtension,
                                              nodeExecConfiguration: NodeExecConfiguration): NodeExecConfiguration {
-        if (nodeExtension.useGradleProxySettings.get()) {
+        if (nodeExtension.useGradleProxySettings.get()
+                && !hasProxyConfiguration(System.getenv())) {
             val npmProxyEnvironmentVariables = computeNpmProxyEnvironmentVariables()
             if (npmProxyEnvironmentVariables.isNotEmpty()) {
                 val environmentVariables =

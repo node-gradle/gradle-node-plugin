@@ -64,4 +64,43 @@ class NpmProxy_integTest extends AbstractIntegTest {
         // true   | false
         // true   | true
     }
+
+    def 'install packages using pre-configured proxy'() {
+        given:
+        copyResources("fixtures/npm-proxy/")
+        copyResources("fixtures/proxy/")
+        def proxyTestHelper = new ProxyTestHelper(projectDir)
+        def port = 80
+        // Intentionally write the wrong port to the file
+        proxyTestHelper.writeGradleProperties(false, false, proxyMockServer.localPort+5,
+                null)
+        proxyTestHelper.writeNpmConfiguration(false)
+        def proxyAddress = "http://localhost:${proxyMockServer.localPort}".toString()
+
+        when:
+
+        Map<String, String> env = new HashMap<>()
+        env.putAll(System.getenv())
+        env.putAll(["HTTP_PROXY": proxyAddress, "HTTPS_PROXY": proxyAddress])
+        def result = buildWithEnvironment(env
+                                          ,"npmInstall")
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        !result.output.contains("npm WARN registry Using stale data from https://registry.npmjs.org/ due " +
+                "to a request error during revalidation.")
+        createFile("node_modules/case/package.json").exists()
+        proxyMockServer.verify(request()
+                .withMethod("GET")
+                .withSecure(false)
+                .withPath("/case")
+                .withHeader("Host", "registry.npmjs.org:${port}"),
+                exactly(1))
+        proxyMockServer.verify(request()
+                .withMethod("POST")
+                .withSecure(false)
+                .withPath("/-/npm/v1/security/audits/quick")
+                .withHeader("Host", "registry.npmjs.org:${port}"),
+                exactly(1))
+    }
 }

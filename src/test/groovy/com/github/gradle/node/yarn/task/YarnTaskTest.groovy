@@ -76,7 +76,7 @@ class YarnTaskTest extends AbstractTaskTest {
             return fixAbsolutePath(executable) == yarnExecutable.toAbsolutePath().toString()
         })
         1 * execSpec.setArgs(["run", "command"])
-        1 * execSpec.setEnvironment({ environment -> environment["HTTPS_PROXY"] == "https://me:password@1.2.3.4:443" })
+        1 * execSpec.setEnvironment({ environment -> environment["HTTPS_PROXY"] == "http://me:password@1.2.3.4:443" })
     }
 
     def "exec yarn task (download) with configured proxy but disabled"() {

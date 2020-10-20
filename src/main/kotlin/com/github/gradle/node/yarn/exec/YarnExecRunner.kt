@@ -31,7 +31,8 @@ internal class YarnExecRunner {
 
     private fun addNpmProxyEnvironment(nodeExtension: NodeExtension,
                                        nodeExecConfiguration: NodeExecConfiguration): Map<String, String> {
-        if (nodeExtension.useGradleProxySettings.get()) {
+        if (nodeExtension.useGradleProxySettings.get()
+                && !NpmProxy.hasProxyConfiguration(System.getenv())) {
             val npmProxyEnvironmentVariables = NpmProxy.computeNpmProxyEnvironmentVariables()
             if (npmProxyEnvironmentVariables.isNotEmpty()) {
                 return nodeExecConfiguration.environment.plus(npmProxyEnvironmentVariables)
