@@ -63,7 +63,10 @@ open class NpmSetupTask : DefaultTask() {
 
     protected open fun computeCommand(): List<String> {
         val version = nodeExtension.npmVersion.get()
-        return listOf("install", "--global", "--no-save", "--prefix", npmDir.get().asFile.absolutePath,
+        val directory = npmDir.get().asFile
+        // npm < 7 creates the directory if it's missing, >= 7 fails if it's missing
+        directory.mkdirs()
+        return listOf("install", "--global", "--no-save", "--prefix", directory.absolutePath,
                 "npm@$version") + args.get()
     }
 
