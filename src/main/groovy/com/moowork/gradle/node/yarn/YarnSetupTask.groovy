@@ -46,7 +46,11 @@ class YarnSetupTask
             pkg += "@${yarnVersion}"
         }
 
-        this.setArgs(['install', '--global', '--no-save'] + proxySettings() + ['--prefix', this.getVariant().yarnDir.absolutePath, pkg])
+        def directory = this.getVariant().yarnDir
+        // npm < 7 creates the directory if it's missing, >= 7 fails if it's missing
+         // create the directory since we use npm to install yarn.
+        directory.mkdirs()
+        this.setArgs(['install', '--global', '--no-save'] + proxySettings() + ['--prefix', directory.absolutePath, pkg])
         enabled = true
     }
 }

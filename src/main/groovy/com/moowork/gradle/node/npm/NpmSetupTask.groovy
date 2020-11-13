@@ -117,7 +117,10 @@ class NpmSetupTask
         if ( !npmVersion.isEmpty() )
         {
             logger.debug( "Setting npmVersion to ${npmVersion}" )
-            setArgs(['install', '--global', '--no-save'] + proxySettings() + ['--prefix', getVariant().npmDir.absolutePath, "npm@${npmVersion}"])
+            def directory = getVariant().npmDir
+            // npm < 7 creates the directory if it's missing, >= 7 fails if it's missing
+            directory.mkdirs()
+            setArgs(['install', '--global', '--no-save'] + proxySettings() + ['--prefix', directory.absolutePath, "npm@${npmVersion}"])
             enabled = true
         }
     }
