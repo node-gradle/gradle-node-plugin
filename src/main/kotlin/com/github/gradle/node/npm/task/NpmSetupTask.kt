@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
+import java.io.File
 
 /**
  * npm install that only gets executed if gradle decides so.
@@ -65,7 +66,7 @@ open class NpmSetupTask : DefaultTask() {
         val version = nodeExtension.npmVersion.get()
         val directory = npmDir.get().asFile
         // npm < 7 creates the directory if it's missing, >= 7 fails if it's missing
-        directory.mkdirs()
+        File(directory, "lib").mkdirs()
         return listOf("install", "--global", "--no-save", "--prefix", directory.absolutePath,
                 "npm@$version") + args.get()
     }
