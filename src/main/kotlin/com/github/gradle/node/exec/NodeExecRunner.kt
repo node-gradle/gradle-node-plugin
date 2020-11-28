@@ -1,22 +1,21 @@
 package com.github.gradle.node.exec
 
 import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
-import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 
 internal class NodeExecRunner {
-    fun execute(project: Project, nodeExecConfiguration: NodeExecConfiguration) {
-        val execConfiguration = buildExecConfiguration(project, nodeExecConfiguration).get()
+    fun execute(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration) {
+        val execConfiguration = buildExecConfiguration(extension, nodeExecConfiguration).get()
         val execRunner = ExecRunner()
-        execRunner.execute(project, execConfiguration)
+        execRunner.execute(project, extension, execConfiguration)
     }
 
-    private fun buildExecConfiguration(project: Project, nodeExecConfiguration: NodeExecConfiguration):
+    private fun buildExecConfiguration(nodeExtension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration):
             Provider<ExecConfiguration> {
-        val nodeExtension = NodeExtension[project]
         val variantComputer = VariantComputer()
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)

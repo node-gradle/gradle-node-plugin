@@ -5,14 +5,24 @@ import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.DefaultTask
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import javax.inject.Inject
 
-open class NodeSetupTask : DefaultTask() {
+abstract class NodeSetupTask : DefaultTask() {
+
+    @get:Inject
+    abstract val objects: ObjectFactory
+
+    @get:Inject
+    abstract val providers: ProviderFactory
+
     private val variantComputer = VariantComputer()
     private val nodeExtension = NodeExtension[project]
 

@@ -1,4 +1,4 @@
-package com.github.gradle.node.npm.proxy;
+package com.github.gradle.node.npm.proxy
 
 class GradleProxyHelper {
     companion object {

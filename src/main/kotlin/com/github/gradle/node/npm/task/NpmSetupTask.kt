@@ -5,25 +5,39 @@ import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.NodeSetupTask
+import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.DefaultTask
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
 import java.io.File
+import javax.inject.Inject
 
 /**
  * npm install that only gets executed if gradle decides so.
  */
-open class NpmSetupTask : DefaultTask() {
+abstract class NpmSetupTask : DefaultTask() {
+
+    @get:Inject
+    abstract val objects: ObjectFactory
+
+    @get:Inject
+    abstract val providers: ProviderFactory
+
     @get:Internal
-    protected val nodeExtension by lazy { NodeExtension[project] }
+    protected val nodeExtension = NodeExtension[project]
+
+    @get:Internal
+    val projectHelper = ProjectApiHelper.newInstance(project)
 
     @get:Input
-    val args = project.objects.listProperty<String>()
+    val args = objects.listProperty<String>()
 
     @get:Input
     val download by lazy { nodeExtension.download }
@@ -58,8 +72,8 @@ open class NpmSetupTask : DefaultTask() {
     fun exec() {
         val command = computeCommand()
         val nodeExecConfiguration = NodeExecConfiguration(command)
-        val npmExecRunner = NpmExecRunner()
-        npmExecRunner.executeNpmCommand(project, nodeExecConfiguration)
+        val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
+        npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration)
     }
 
     protected open fun computeCommand(): List<String> {

@@ -1,6 +1,5 @@
 package com.github.gradle.node.yarn.task
 
-import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.zip
 import org.gradle.api.Action
@@ -16,8 +15,7 @@ import java.io.File
 /**
  * yarn install that only gets executed if gradle decides so.
  */
-open class YarnInstallTask : YarnTask() {
-    private val nodeExtension by lazy { NodeExtension[project] }
+abstract class YarnInstallTask : YarnTask() {
 
     @get:Internal
     val nodeModulesOutputFilter =
