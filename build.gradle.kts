@@ -62,9 +62,11 @@ tasks.test {
     if (project.hasProperty("skipIT")) {
         exclude("**/*_integTest*")
     }
-    if (project.hasProperty("testAllSupportedGradleVersions")) {
-        systemProperty("testAllSupportedGradleVersions", "true")
-    }
+    systemProperty("testAllSupportedGradleVersions", project.properties["testAllSupportedGradleVersions"] ?: "false")
+    systemProperty("testMinimumSupportedGradleVersion", project.properties["testMinimumSupportedGradleVersion"] ?: "false")
+    systemProperty("testMinimumCurrentGradleVersion", project.properties["testMinimumCurrentGradleVersion"] ?: "false")
+    systemProperty("testCurrentGradleVersion", project.properties["testCurrentGradleVersion"] ?: "true")
+
     val processorsCount = Runtime.getRuntime().availableProcessors()
     maxParallelForks = if (processorsCount > 2) processorsCount.div(2) else processorsCount
     testLogging {

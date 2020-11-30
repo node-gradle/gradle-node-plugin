@@ -26,7 +26,7 @@ jobs:
       - name: Gradle Version
         run: ./gradlew --version
       - name: Build
-        run: ./gradlew build -PtestAllSupportedGradleVersions=true
+        run: ./gradlew build -PtestMinimumSupportedGradleVersion=true -PtestCurrentGradleVersion=true
   macos:
     runs-on: macos-latest
     steps:
