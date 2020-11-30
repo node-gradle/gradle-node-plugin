@@ -39,6 +39,28 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
+    def 'install packages with npm >= 7'() {
+        given:
+        writeBuild('''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                download = true
+                version = '15.2.1'
+                npmVersion = '7.0.1'
+            }
+        ''')
+        writeEmptyPackageJson()
+
+        when:
+        def result = build('npmInstall')
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+    }
+
     def 'install packages with npm and postinstall task requiring npm and node'() {
         given:
         writeBuild('''
