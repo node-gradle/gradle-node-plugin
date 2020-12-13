@@ -50,10 +50,21 @@ class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExt
     }
 
     private static GradleVersion[] computeCandidateGradleVersions() {
+        def versions = [CURRENT_GRADLE_VERSION]
         if (System.getProperty("testAllSupportedGradleVersions").equals("true")) {
             return GRADLE_VERSIONS
         }
-        return [CURRENT_GRADLE_VERSION]
+        if (System.getProperty("testMinimumSupportedGradleVersion").equals("true")) {
+            versions.add(MINIMUM_SUPPORTED_GRADLE_VERSION)
+        }
+        if (System.getProperty("testMinimumCurrentGradleVersion").equals("true")) {
+            versions.add(MINIMUM_GRADLE_6_VERSION)
+        }
+        if (System.getProperty("testCurrentGradleVersion").equals("false")) {
+            versions.remove(CURRENT_GRADLE_VERSION)
+        }
+
+        return versions
     }
 
     private static void enrichParameters(IMethodInvocation invocation, GradleVersion gradleVersion) {
