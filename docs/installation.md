@@ -14,9 +14,7 @@ You can also install the plugins by using the traditional Gradle way:
 ```gradle
 buildscript {
   repositories {
-    maven {
-      gradlePluginPortal()
-    } 
+    gradlePluginPortal()
   }
 
   dependencies {
