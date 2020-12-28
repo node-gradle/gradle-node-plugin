@@ -18,7 +18,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.11.0"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
     id("org.jetbrains.dokka") version "0.10.1"
-
+    id("org.gradle.test-retry") version "1.2.0"
 }
 
 group = "com.github.node-gradle"
@@ -72,6 +72,13 @@ tasks.test {
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         exceptionFormat = TestExceptionFormat.FULL
+    }
+
+    retry {
+        maxRetries.set(3)
+        filter {
+            includeClasses.add("*_integTest")
+        }
     }
 }
 
