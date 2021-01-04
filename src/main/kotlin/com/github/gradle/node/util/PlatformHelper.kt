@@ -22,7 +22,8 @@ open class PlatformHelper constructor(private val props: Properties = System.get
              * As Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch. Unfortunately some JVMs say aarch32/64, so we need an additional
              * conditional. Additionally, the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here.
              */
-            arch == "arm" || arch.startsWith("aarch") -> property("uname").mapIf({ it == "armv8l" }) { "arm64" }
+            arch == "arm" || arch.startsWith("aarch") -> property("uname")
+                .mapIf({ it == "armv8l" || it == "aarch64" }) { "arm64" }
             arch.contains("64") -> "x64"
             else -> "x86"
         }

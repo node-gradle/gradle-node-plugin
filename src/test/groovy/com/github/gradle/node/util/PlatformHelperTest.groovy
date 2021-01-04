@@ -52,6 +52,7 @@ class PlatformHelperTest extends Specification {
         'arm'     | 'armv8l'  | 'arm64'
         'aarch32' | 'arm'     | 'arm'
         'aarch64' | 'arm64'   | 'arm64'
+        'aarch64' | 'aarch64' | 'arm64'
     }
 
     def "throw exception if unsupported os"() {
