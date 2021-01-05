@@ -35,22 +35,24 @@ class PlatformHelperTest extends Specification {
         'SunOS'     | 'x86_64' | 'sunos'  | 'x64'  | false
     }
 
-    def "check that aarch32/64 is handled as arm"() {
-        when:
+    @Unroll
+    def "verify ARM handling #archProp (#unameProp)"() {
+        given:
         this.props.setProperty("os.name", "Linux")
-        this.props.setProperty("os.arch", "aarch64")
+        this.props.setProperty("os.arch", archProp)
+        this.props.setProperty("uname", unameProp)
 
-        then:
+        expect:
         this.helper.getOsName() == "linux"
-        this.helper.getOsArch() != "x64"
+        this.helper.getOsArch() == osArch
 
-        when:
-        this.props.setProperty("os.name", "Linux")
-        this.props.setProperty("os.arch", "aarch32")
-
-        then:
-        this.helper.getOsName() == "linux"
-        this.helper.getOsArch() != "x86"
+        where:
+        archProp  | unameProp | osArch
+        'arm'     | 'armv7l'  | 'armv7l' // Raspberry Pi 3
+        'arm'     | 'armv8l'  | 'arm64'
+        'aarch32' | 'arm'     | 'arm'
+        'aarch64' | 'arm64'   | 'arm64'
+        'aarch64' | 'aarch64' | 'arm64'
     }
 
     def "throw exception if unsupported os"() {
