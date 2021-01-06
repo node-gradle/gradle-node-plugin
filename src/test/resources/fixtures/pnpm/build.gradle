@@ -1,0 +1,28 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == 'true' : false
+
+node {
+    pnpmVersion = "4.12.4"
+    download = true
+    workDir = file('build/node')
+}
+
+task test(type: PnpmTask) {
+    dependsOn pnpmInstall
+    pnpmCommand = changeInputs ? ['run', 'test'] : ['run']
+    args = changeInputs ? [] : ['test']
+    inputs.dir('node_modules')
+    inputs.file('package.json')
+    inputs.files('index.js', 'test.js')
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task version(type: PnpmTask) {
+    dependsOn pnpmInstall
+    pnpmCommand = ["--version"]
+}
