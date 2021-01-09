@@ -17,7 +17,7 @@ plugins {
     jacoco
     id("com.gradle.plugin-publish") version "0.11.0"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "0.10.1"
     id("org.gradle.test-retry") version "1.2.0"
 }
 
@@ -89,25 +89,9 @@ tasks.jacocoTestReport {
     }
 }
 
-tasks.dokkaJavadoc {
-    dokkaSourceSets {
-        named("main") {
-            jdkVersion.set(8)
-            sourceLink {
-                localDirectory.set(file("src/main/kotlin"))
-
-                remoteUrl.set(uri(
-                        "https://github.com/node-gradle/gradle-node-plugin/blob/master/src/main/kotlin"
-                    ).toURL()
-                )
-                remoteLineSuffix.set("#L")
-            }
-
-            externalDocumentationLink {
-                url.set(uri("https://node-gradle.github.io/gradle-node-plugin/").toURL())
-            }
-        }
-    }
+tasks.dokka {
+    outputFormat = "javadoc"
+    configuration { jdkVersion = 8 }
 }
 
 gradlePlugin {
