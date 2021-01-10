@@ -16,6 +16,7 @@ that shows how to use this plugin version with Kotlin)
 * Improved automatic proxy configuration (issue [#113](https://github.com/node-gradle/gradle-node-plugin/issues/113))
 * Use http:// for both HTTP and HTTPS_PROXY
 * npm 7+ support (issue [#123](https://github.com/node-gradle/gradle-node-plugin/issues/123))
+* Improved ARM support (issue [#130](https://github.com/node-gradle/gradle-node-plugin/issues/130))
 
 ### Breaking changes
 
