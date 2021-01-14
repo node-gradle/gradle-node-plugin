@@ -12,26 +12,50 @@ import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
 
+/**
+ * Gradle task for running a Node.js script
+ */
 open class NodeTask : DefaultTask() {
+    /**
+     * Node.js script to run.
+     */
     @get:InputFile
     @get:PathSensitive(RELATIVE)
     val script = project.objects.fileProperty()
 
+    /**
+     * Arguments to be passed to Node.js
+     */
     @get:Input
     val options = project.objects.listProperty<String>()
 
+    /**
+     * Additional arguments for the [script] being run.
+     */
     @get:Input
     val args = project.objects.listProperty<String>()
 
+    /**
+     * If enabled prevents the task from failing if the exit code is not 0. Defaults to false.
+     */
     @get:Input
     val ignoreExitValue = project.objects.property<Boolean>().convention(false)
 
+    /**
+     * Sets the working directory.
+     */
     @get:Internal
     val workingDir = project.objects.directoryProperty()
 
+    /**
+     * Add additional environment variables or override environment variables inherited from the system.
+     */
     @get:Input
     val environment = project.objects.mapProperty<String, String>()
 
+    /**
+     * Overrides for [ExecSpec]
+     */
     @get:Internal
     val execOverrides = project.objects.property<Action<ExecSpec>>()
 
