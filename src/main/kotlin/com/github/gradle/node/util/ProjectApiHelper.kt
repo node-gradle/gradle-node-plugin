@@ -15,7 +15,6 @@ import org.gradle.util.GradleVersion
 import java.io.File
 import javax.inject.Inject
 
-
 abstract class ProjectApiHelper {
     companion object {
         @JvmStatic
@@ -27,11 +26,11 @@ abstract class ProjectApiHelper {
             }
         }
 
-        inline fun enableConfigurationCache(): Boolean {
+        private fun enableConfigurationCache(): Boolean {
             return GradleVersion.current() >= GradleVersion.version("6.6")
         }
-
     }
+
     abstract fun fileTree(directory: Directory?): ConfigurableFileTree?
 
     abstract fun exec(closure: Action<ExecSpec?>?): ExecResult?
@@ -64,7 +63,6 @@ internal open class DefaultProjectApiHelper @Inject constructor(
     override fun exec(closure: Action<ExecSpec?>?): ExecResult {
         return execOperations.exec(closure)
     }
-
 }
 
 internal open class LegacyProjectApiHelper(private val project: Project) : ProjectApiHelper() {

@@ -2,7 +2,6 @@ package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.task.AbstractTaskTest
-import org.gradle.process.ExecSpec
 
 class YarnSetupTaskTest extends AbstractTaskTest {
     def cleanup() {
@@ -11,11 +10,11 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
     def "exec yarnSetup task without any yarn version specified and proxy configured"() {
         given:
-        execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpProxyHost("my-proxy")
         GradleProxyHelper.setHttpProxyPort(80)
 
         def task = project.tasks.create('simple', YarnSetupTask)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()
@@ -33,12 +32,12 @@ class YarnSetupTaskTest extends AbstractTaskTest {
 
     def "exec yarnSetup task without any yarn version specified and proxy configured but disabled"() {
         given:
-        execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpProxyHost("my-proxy")
         GradleProxyHelper.setHttpProxyPort(80)
         nodeExtension.useGradleProxySettings.set(false)
 
         def task = project.tasks.create('simple', YarnSetupTask)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()
@@ -56,9 +55,9 @@ class YarnSetupTaskTest extends AbstractTaskTest {
     def "exec yarnSetup task with yarn version specified"() {
         given:
         nodeExtension.yarnVersion.set('1.22.4')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', YarnSetupTask)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()

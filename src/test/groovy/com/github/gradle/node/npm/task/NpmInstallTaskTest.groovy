@@ -2,7 +2,6 @@ package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.task.AbstractTaskTest
-import org.gradle.process.ExecSpec
 
 class NpmInstallTaskTest extends AbstractTaskTest {
     def cleanup() {
@@ -12,11 +11,11 @@ class NpmInstallTaskTest extends AbstractTaskTest {
     def "exec npm install task with configured proxy"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
 
         def task = project.tasks.getByName("npmInstall")
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()
@@ -31,12 +30,12 @@ class NpmInstallTaskTest extends AbstractTaskTest {
     def "exec npm install task with configured proxy but disabled"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
         nodeExtension.useGradleProxySettings.set(false)
 
         def task = project.tasks.getByName("npmInstall")
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()

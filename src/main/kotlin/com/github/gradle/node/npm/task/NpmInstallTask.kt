@@ -1,6 +1,5 @@
 package com.github.gradle.node.npm.task
 
-import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.zip
 import org.gradle.api.Action
