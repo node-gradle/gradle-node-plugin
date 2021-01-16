@@ -16,9 +16,11 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
     ExecSpec execSpec
     Properties props
     NodeExtension nodeExtension
+    PlatformHelper originalPlatformHelper
 
     def setup() {
         props = new Properties()
+        originalPlatformHelper = PlatformHelper.INSTANCE
         PlatformHelper.INSTANCE = new PlatformHelper(props)
 
         execSpec = Mock(ExecSpec)
@@ -26,6 +28,10 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
 
         project.apply plugin: 'com.github.node-gradle.node'
         nodeExtension = NodeExtension.get(project)
+    }
+
+    def cleanup() {
+        PlatformHelper.INSTANCE = originalPlatformHelper
     }
 
     protected mockProjectApiHelperExec(Task task, String fieldName = "projectHelper") {
