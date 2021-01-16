@@ -17,7 +17,7 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         copyResources("fixtures/javascript-project/")
 
         when:
-        def result1 = build("run")
+        def result1 = build("run", "--configuration-cache")
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
@@ -33,7 +33,7 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         result1.output.split("1 passing").length == 4
 
         when:
-        def result2 = build("package")
+        def result2 = build("package", "--configuration-cache")
 
         then:
         result2.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
