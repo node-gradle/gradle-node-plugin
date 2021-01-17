@@ -26,13 +26,9 @@ abstract class AbstractIntegTest extends Specification {
     }
 
     protected final GradleRunner newRunner(final String... args) {
-        List<String> allArgs = []
-        allArgs.addAll(args)
-        allArgs.addAll(["--warning-mode=fail"])
-        println(allArgs)
         return GradleRunner.create()
                 .withProjectDir(projectDir)
-                .withArguments(allArgs)
+                .withArguments([*args, "--warning-mode=fail"])
                 .withPluginClasspath()
                 .forwardOutput()
                 .withGradleVersion(gradleVersion.version)
