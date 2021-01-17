@@ -18,11 +18,14 @@ class NodePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         this.project = project
-        NodeExtension.create(project)
+        val ext = NodeExtension.create(project)
         addGlobalTypes()
         addTasks()
         addNpmRule()
         addYarnRule()
+        project.afterEvaluate {
+            ext.distBaseUrl.orNull?.let { addRepository(it) }
+        }
     }
 
     private fun addGlobalTypes() {
@@ -70,6 +73,19 @@ class NodePlugin : Plugin<Project> {
                         dependsOn(YarnInstallTask.NAME)
                     }
                 }
+            }
+        }
+    }
+
+    private fun addRepository(distUrl: String) {
+        project.repositories.ivy {
+            setUrl(distUrl)
+            patternLayout {
+                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                ivy("v[revision]/ivy.xml")
+            }
+            metadataSources {
+                artifact()
             }
         }
     }

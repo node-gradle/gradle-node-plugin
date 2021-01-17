@@ -54,7 +54,6 @@ abstract class NodeSetupTask : DefaultTask() {
 
     @TaskAction
     fun exec() {
-        addRepositoryIfNeeded()
         val archiveDependency = variantComputer.computeArchiveDependency(nodeExtension).get()
         deleteExistingNode()
         unpackNodeArchive(archiveDependency)
@@ -113,23 +112,6 @@ abstract class NodeSetupTask : DefaultTask() {
         val conf = project.configurations.detachedConfiguration(dep)
         conf.isTransitive = false
         return conf.resolve().single()
-    }
-
-    private fun addRepositoryIfNeeded() {
-        nodeExtension.distBaseUrl.orNull?.let { addRepository(it) }
-    }
-
-    private fun addRepository(distUrl: String) {
-        project.repositories.ivy {
-            setUrl(distUrl)
-            patternLayout {
-                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-                ivy("v[revision]/ivy.xml")
-            }
-            metadataSources {
-                artifact()
-            }
-        }
     }
 
     companion object {
