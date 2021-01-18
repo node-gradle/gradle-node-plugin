@@ -24,7 +24,9 @@ class NodePlugin : Plugin<Project> {
         addNpmRule()
         addYarnRule()
         project.afterEvaluate {
-            ext.distBaseUrl.orNull?.let { addRepository(it) }
+            if (ext.download.get()) {
+                ext.distBaseUrl.orNull?.let { addRepository(it) }
+            }
         }
     }
 
