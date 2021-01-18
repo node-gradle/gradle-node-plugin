@@ -41,7 +41,7 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer()
 
         when:
-        def computedArchiveDependency = variantComputer.computeArchiveDependency(nodeExtension)
+        def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
         def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
@@ -82,7 +82,7 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer()
 
         when:
-        def computedArchiveDependency = variantComputer.computeArchiveDependency(nodeExtension)
+        def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
         def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
@@ -127,7 +127,7 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer(platformHelperSpy)
 
         when:
-        def computedArchiveDependency = variantComputer.computeArchiveDependency(nodeExtension)
+        def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
         def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)

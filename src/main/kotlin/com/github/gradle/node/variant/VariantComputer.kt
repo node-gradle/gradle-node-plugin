@@ -96,7 +96,7 @@ internal class VariantComputer @JvmOverloads constructor(
     private fun computeProductBinDir(productDirProvider: Provider<Directory>) =
             if (platformHelper.isWindows) productDirProvider else productDirProvider.map { it.dir("bin") }
 
-    fun computeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
+    fun computeNodeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
         val osName = platformHelper.osName
         val osArch = platformHelper.osArch
         val type = if (platformHelper.isWindows) "zip" else "tar.gz"

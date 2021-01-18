@@ -236,7 +236,6 @@ class NodeTask_integTest extends AbstractIntegTest {
         def result = buildAndFail("nodeSetup")
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.FAILED
         result.output.contains("Cannot resolve external dependency org.nodejs:node:${DEFAULT_NODE_VERSION} because no repositories are defined.")
     }
 }

@@ -8,10 +8,7 @@ import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -31,10 +28,8 @@ abstract class NodeSetupTask : DefaultTask() {
     @get:Input
     val download = nodeExtension.download
 
-    @get:Input
-    val archiveDependency by lazy {
-        variantComputer.computeArchiveDependency(nodeExtension)
-    }
+    @get:InputFile
+    val nodeArchiveFile = objects.fileProperty()
 
     @get:OutputDirectory
     val nodeDir by lazy {
@@ -54,9 +49,8 @@ abstract class NodeSetupTask : DefaultTask() {
 
     @TaskAction
     fun exec() {
-        val archiveDependency = variantComputer.computeArchiveDependency(nodeExtension).get()
         deleteExistingNode()
-        unpackNodeArchive(archiveDependency)
+        unpackNodeArchive()
         setExecutableFlag()
     }
 
@@ -66,18 +60,18 @@ abstract class NodeSetupTask : DefaultTask() {
         }
     }
 
-    private fun unpackNodeArchive(archiveDependency: String) {
-        val nodeArchiveFile = getNodeArchiveFile(archiveDependency)
+    private fun unpackNodeArchive() {
+        val archiveFile = nodeArchiveFile.get().asFile
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
-        if (nodeArchiveFile.name.endsWith("zip")) {
+        if (archiveFile.name.endsWith("zip")) {
             projectHelper.copy {
-                from(projectHelper.zipTree(nodeArchiveFile))
+                from(projectHelper.zipTree(archiveFile))
                 into(nodeDirProvider.map { it.dir("../") })
             }
         } else {
             projectHelper.copy {
-                from(projectHelper.tarTree(nodeArchiveFile))
+                from(projectHelper.tarTree(archiveFile))
                 into(nodeDirProvider.map { it.dir("../") })
             }
             // Fix broken symlink
@@ -102,16 +96,6 @@ abstract class NodeSetupTask : DefaultTask() {
             val nodeExecProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
             File(nodeExecProvider.get()).setExecutable(true)
         }
-    }
-
-    private fun getNodeArchiveFile(archiveDependency: String): File =
-            resolveSingle(archiveDependency)
-
-    private fun resolveSingle(name: String): File {
-        val dep = project.dependencies.create(name)
-        val conf = project.configurations.detachedConfiguration(dep)
-        conf.isTransitive = false
-        return conf.resolve().single()
     }
 
     companion object {
