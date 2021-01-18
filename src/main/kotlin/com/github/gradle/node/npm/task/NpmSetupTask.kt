@@ -40,7 +40,7 @@ abstract class NpmSetupTask : DefaultTask() {
     val args = objects.listProperty<String>()
 
     @get:Input
-    val download by lazy { nodeExtension.download }
+    val download = nodeExtension.download
 
     @get:OutputDirectory
     val npmDir by lazy {

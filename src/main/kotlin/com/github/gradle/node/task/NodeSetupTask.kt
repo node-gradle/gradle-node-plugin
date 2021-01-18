@@ -29,7 +29,7 @@ abstract class NodeSetupTask : DefaultTask() {
     private val nodeExtension = NodeExtension[project]
 
     @get:Input
-    val download by lazy { nodeExtension.download }
+    val download = nodeExtension.download
 
     @get:Input
     val archiveDependency by lazy {
