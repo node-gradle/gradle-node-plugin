@@ -32,6 +32,8 @@ interface ProjectApiHelper {
 
     fun fileTree(directory: Directory): ConfigurableFileTree
 
+    fun zipTree(tarPath: File): FileTree
+
     fun tarTree(tarPath: File): FileTree
 
     fun copy(action: Action<CopySpec>): WorkResult
@@ -49,6 +51,10 @@ internal open class DefaultProjectApiHelper @Inject constructor(
 
     override fun fileTree(directory: Directory): ConfigurableFileTree {
         return factory.fileTree().from(directory)
+    }
+
+    override fun zipTree(tarPath: File): FileTree {
+        return archiveOperations.zipTree(tarPath)
     }
 
     override fun tarTree(tarPath: File): FileTree {
@@ -72,6 +78,10 @@ internal open class LegacyProjectApiHelper(private val project: Project) : Proje
 
     override fun fileTree(directory: Directory): ConfigurableFileTree {
         return project.fileTree(directory)
+    }
+
+    override fun zipTree(tarPath: File): FileTree {
+        return project.zipTree(tarPath)
     }
 
     override fun tarTree(tarPath: File): FileTree {

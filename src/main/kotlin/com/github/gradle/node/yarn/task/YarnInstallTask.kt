@@ -18,8 +18,7 @@ import java.io.File
 abstract class YarnInstallTask : YarnTask() {
 
     @get:Internal
-    val nodeModulesOutputFilter =
-            project.objects.property<Action<ConfigurableFileTree>>()
+    val nodeModulesOutputFilter = objects.property<Action<ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.YARN_GROUP
@@ -49,7 +48,7 @@ abstract class YarnInstallTask : YarnTask() {
 
     private fun projectFileIfExists(name: String): Provider<File> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
-                .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
+                .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
 
     @Optional
@@ -58,7 +57,7 @@ abstract class YarnInstallTask : YarnTask() {
     protected fun getNodeModulesDirectory(): Provider<Directory> {
         val filter = nodeModulesOutputFilter.orNull
         return if (filter == null) nodeExtension.nodeProjectDir.dir("node_modules")
-        else project.providers.provider { null }
+        else providers.provider { null }
     }
 
     @Optional
@@ -69,10 +68,10 @@ abstract class YarnInstallTask : YarnTask() {
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
                 .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
                     if (nodeModulesOutputFilter != null) {
-                        val fileTree = project.fileTree(nodeModulesDirectory)
+                        val fileTree = projectHelper.fileTree(nodeModulesDirectory)
                         nodeModulesOutputFilter.execute(fileTree)
-                        project.providers.provider { fileTree }
-                    } else project.providers.provider { null }
+                        providers.provider { fileTree }
+                    } else providers.provider { null }
                 }
     }
 

@@ -6,8 +6,8 @@ import org.gradle.api.file.DirectoryProperty
 import java.io.File
 
 internal class ExecRunner {
-    fun execute(project: ProjectApiHelper, extension: NodeExtension,  execConfiguration: ExecConfiguration) {
-        project.exec {
+    fun execute(projectHelper: ProjectApiHelper, extension: NodeExtension, execConfiguration: ExecConfiguration) {
+        projectHelper.exec {
             executable = execConfiguration.executable
             args = execConfiguration.args
             environment = computeEnvironment(execConfiguration)

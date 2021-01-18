@@ -73,7 +73,7 @@ abstract class NodeSetupTask : DefaultTask() {
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         if (nodeArchiveFile.name.endsWith("zip")) {
             projectHelper.copy {
-                from(project.zipTree(nodeArchiveFile))
+                from(projectHelper.zipTree(nodeArchiveFile))
                 into(nodeDirProvider.map { it.dir("../") })
             }
         } else {
