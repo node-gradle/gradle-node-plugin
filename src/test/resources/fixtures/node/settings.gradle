@@ -1,0 +1,7 @@
+import org.gradle.util.GradleVersion
+
+if (GradleVersion.current() >= GradleVersion.version("6.8")) {
+    dependencyResolutionManagement {
+        repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    }
+}
