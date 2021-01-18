@@ -4,10 +4,9 @@ package com.github.gradle.node.util
 
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileTree
-import org.gradle.api.file.Directory
-import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.WorkResult
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
@@ -15,7 +14,7 @@ import org.gradle.util.GradleVersion
 import java.io.File
 import javax.inject.Inject
 
-abstract class ProjectApiHelper {
+interface ProjectApiHelper {
     companion object {
         @JvmStatic
         fun newInstance(project: Project): ProjectApiHelper {
@@ -31,61 +30,63 @@ abstract class ProjectApiHelper {
         }
     }
 
-    abstract fun fileTree(directory: Directory?): ConfigurableFileTree?
+    fun fileTree(directory: Directory): ConfigurableFileTree
 
-    abstract fun exec(closure: Action<ExecSpec?>?): ExecResult?
+    fun tarTree(tarPath: File): FileTree
+
+    fun copy(action: Action<CopySpec>): WorkResult
+
+    fun delete(action: Action<DeleteSpec>): WorkResult
+
+    fun exec(action: Action<ExecSpec>): ExecResult
 }
 
 internal open class DefaultProjectApiHelper @Inject constructor(
         private val factory: ObjectFactory,
-        private val layout: ProjectLayout,
-        private val execOperations: ExecOperations) : ProjectApiHelper() {
+        private val execOperations: ExecOperations,
+        private val fileSystemOperations: FileSystemOperations,
+        private val archiveOperations: ArchiveOperations) : ProjectApiHelper {
 
-    val buildDirectory: File
-        get() = layout.buildDirectory.get().asFile
-
-    fun file(path: String?): File? {
-        return if (path != null) {
-            layout.projectDirectory.file(path).asFile
-        } else {
-            null
-        }
+    override fun fileTree(directory: Directory): ConfigurableFileTree {
+        return factory.fileTree().from(directory)
     }
 
-    fun file(file: File): File? {
-        return file(file.path)
+    override fun tarTree(tarPath: File): FileTree {
+        return archiveOperations.tarTree(tarPath)
     }
 
-    override fun fileTree(directory: Directory?): ConfigurableFileTree? {
-        return directory?.let { factory.fileTree().from(it) }
+    override fun copy(action: Action<CopySpec>): WorkResult {
+        return fileSystemOperations.copy(action)
     }
 
-    override fun exec(closure: Action<ExecSpec?>?): ExecResult {
-        return execOperations.exec(closure)
+    override fun delete(action: Action<DeleteSpec>): WorkResult {
+        return fileSystemOperations.delete(action)
+    }
+
+    override fun exec(action: Action<ExecSpec>): ExecResult {
+        return execOperations.exec(action)
     }
 }
 
-internal open class LegacyProjectApiHelper(private val project: Project) : ProjectApiHelper() {
-    val buildDirectory: File
-        get() = project.buildDir
+internal open class LegacyProjectApiHelper(private val project: Project) : ProjectApiHelper {
 
-    fun file(path: String?): File? {
-        return path?.let { project.file(it) }
+    override fun fileTree(directory: Directory): ConfigurableFileTree {
+        return project.fileTree(directory)
     }
 
-    fun file(file: File?): File? {
-        return if (file != null) {
-            project.file(file)
-        } else {
-            null
-        }
+    override fun tarTree(tarPath: File): FileTree {
+        return project.tarTree(tarPath)
     }
 
-    override fun fileTree(directory: Directory?): ConfigurableFileTree? {
-        return directory?.let { project.fileTree(it) }
+    override fun copy(action: Action<CopySpec>): WorkResult {
+        return project.copy(action)
     }
 
-    override fun exec(closure: Action<ExecSpec?>?): ExecResult? {
-        return closure?.let { project.exec(it) }
+    override fun delete(action: Action<DeleteSpec>): WorkResult {
+        return project.delete(action)
+    }
+
+    override fun exec(action: Action<ExecSpec>): ExecResult {
+        return project.exec(action)
     }
 }

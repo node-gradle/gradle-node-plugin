@@ -3,11 +3,13 @@ package com.github.gradle.node.task
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.PlatformHelper
+import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -39,6 +41,9 @@ abstract class NodeSetupTask : DefaultTask() {
         variantComputer.computeNodeDir(nodeExtension)
     }
 
+    @get:Internal
+    val projectHelper = ProjectApiHelper.newInstance(project)
+
     init {
         group = NodePlugin.NODE_GROUP
         description = "Download and install a local node/npm version."
@@ -57,7 +62,9 @@ abstract class NodeSetupTask : DefaultTask() {
     }
 
     private fun deleteExistingNode() {
-        project.delete(nodeDir.get().dir("../"))
+        projectHelper.delete {
+            delete(nodeDir.get().dir("../"))
+        }
     }
 
     private fun unpackNodeArchive(archiveDependency: String) {
@@ -65,13 +72,13 @@ abstract class NodeSetupTask : DefaultTask() {
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         if (nodeArchiveFile.name.endsWith("zip")) {
-            project.copy {
+            projectHelper.copy {
                 from(project.zipTree(nodeArchiveFile))
                 into(nodeDirProvider.map { it.dir("../") })
             }
         } else {
-            project.copy {
-                from(project.tarTree(nodeArchiveFile))
+            projectHelper.copy {
+                from(projectHelper.tarTree(nodeArchiveFile))
                 into(nodeDirProvider.map { it.dir("../") })
             }
             // Fix broken symlink
