@@ -1,16 +1,8 @@
 package com.github.gradle.node
 
 import com.github.gradle.AbstractProjectTest
-import com.github.gradle.node.util.PlatformHelper
 
 class NodePluginTest extends AbstractProjectTest {
-    private Properties props
-
-    def setup() {
-        props = new Properties()
-        PlatformHelper.INSTANCE = new PlatformHelper(props)
-    }
-
     def 'check default tasks'() {
         when:
         project.apply plugin: 'com.github.node-gradle.node'
