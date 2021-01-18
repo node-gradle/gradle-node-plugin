@@ -193,7 +193,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.outcome == TaskOutcome.SUCCESS
     }
 
-    def 'verity output configuration'() {
+    def 'verify output configuration'() {
         given:
         writeBuild('''
             plugins {
@@ -252,7 +252,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
         createFile("node_modules/mocha/package.json").exists()
     }
 
-    def 'verity output configuration when filtering node_modules output'() {
+    def 'verify output configuration when filtering node_modules output'() {
         given:
         writeBuild('''
             plugins {
