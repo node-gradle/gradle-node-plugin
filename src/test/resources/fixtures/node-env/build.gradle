@@ -1,3 +1,5 @@
+import org.gradle.util.GradleVersion
+
 plugins {
     id "com.github.node-gradle.node"
 }
@@ -14,11 +16,6 @@ def changeWorkingDir = isPropertyEnabled("changeWorkingDir")
 def fail = isPropertyEnabled("fail")
 def ignoreExitValue = isPropertyEnabled("ignoreExitValue")
 def outputFile = isPropertyEnabled("outputFile")
-
-def isPropertyEnabled(name) {
-    def property = System.properties[name]
-    return property == 'true'
-}
 
 task env(type: NodeTask) {
     script = file("env.js")
@@ -56,4 +53,11 @@ if (outputFile) {
 
 task version(type: NodeTask) {
     script = file("version.js")
+}
+
+def isPropertyEnabled(String name) {
+    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
+        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    }
+    return System.properties[name] != null
 }

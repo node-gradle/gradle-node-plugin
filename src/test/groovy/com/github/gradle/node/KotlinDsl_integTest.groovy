@@ -1,9 +1,7 @@
 package com.github.gradle.node
 
 import com.github.gradle.AbstractIntegTest
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
-import org.gradle.util.GradleVersion
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
@@ -19,7 +17,7 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         copyResources("fixtures/javascript-project/")
 
         when:
-        def result1 = buildWithConfigurationCacheIfAvailable("run")
+        def result1 = build("run")
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
@@ -35,7 +33,7 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         result1.output.split("1 passing").length == 4
 
         when:
-        def result2 = buildWithConfigurationCacheIfAvailable("package")
+        def result2 = build("package")
 
         then:
         result2.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
@@ -52,12 +50,5 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         zipFileEntries.findAll { it.name.endsWith("/index.js") }.size() == 3
         zipFileEntries.findAll { it.name.endsWith("/main.js") }.size() == 3
         zipFileEntries.size() == 9
-    }
-
-    private BuildResult buildWithConfigurationCacheIfAvailable(String... args) {
-        if (gradleVersion >= GradleVersion.version("6.6")) {
-            return build(*[*args, "--configuration-cache"])
-        }
-        return build(args)
     }
 }
