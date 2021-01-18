@@ -55,7 +55,7 @@ class KotlinDsl_integTest extends AbstractIntegTest {
     }
 
     private BuildResult buildWithConfigurationCacheIfAvailable(String... args) {
-        if (gradleVersion >= GradleVersion.version("6.8")) {
+        if (gradleVersion >= GradleVersion.version("6.6")) {
             return build(*[*args, "--configuration-cache"])
         }
         return build(args)
