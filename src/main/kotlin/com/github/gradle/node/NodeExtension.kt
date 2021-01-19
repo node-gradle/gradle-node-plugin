@@ -1,5 +1,6 @@
 package com.github.gradle.node
 
+import com.github.gradle.node.npm.proxy.ProxySetting
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
@@ -82,8 +83,9 @@ open class NodeExtension(project: Project) {
      *
      * Disable this option if you want to configure the proxy for npm or yarn on your own
      * (in the .npmrc file for instance)
+     *
      */
-    val useGradleProxySettings = project.objects.property<Boolean>().convention(true)
+    val useGradleProxySettings = project.objects.property<ProxySetting>().convention(ProxySetting.SMART)
 
     @Suppress("unused")
     @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")

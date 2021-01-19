@@ -244,7 +244,7 @@ node {
     // according the proxy configuration defined for Gradle
     // Disable this option if you want to configure the proxy for npm or yarn on your own
     // (in the .npmrc file for instance)
-    useGradleProxySettings = true
+    useGradleProxySettings = ProxySetting.SMART
 }
 ```
 
@@ -271,7 +271,7 @@ If you would like the plugin to install use a custom version of yarn, you can se
 
 ## Using a Proxy
 
-By default and unless if `useGradleProxySettings` is `false`, the plugin will configure 
+By default and unless if `useGradleProxySettings` is `ProxySetting.OFF`, the plugin will configure 
 `npm` and `yarn` to get them use the proxy configuration defined in the 
 [Gradle project configuration](https://docs.gradle.org/current/userguide/build_environment.html#sec:accessing_the_web_via_a_proxy).
 This is done by automatically setting the `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` 

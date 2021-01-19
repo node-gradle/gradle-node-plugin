@@ -1,5 +1,6 @@
 package com.github.gradle.node
 
+import com.github.gradle.node.npm.proxy.ProxySetting
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
 import com.github.gradle.node.npm.task.NpmTask
@@ -35,13 +36,14 @@ class NodePlugin : Plugin<Project> {
     }
 
     private fun addGlobalTypes() {
-        addGlobalTaskType<NodeTask>()
-        addGlobalTaskType<NpmTask>()
-        addGlobalTaskType<NpxTask>()
-        addGlobalTaskType<YarnTask>()
+        addGlobalType<NodeTask>()
+        addGlobalType<NpmTask>()
+        addGlobalType<NpxTask>()
+        addGlobalType<YarnTask>()
+        addGlobalType<ProxySetting>()
     }
 
-    private inline fun <reified T> addGlobalTaskType() {
+    private inline fun <reified T> addGlobalType() {
         project.extensions.extraProperties[T::class.java.simpleName] = T::class.java
     }
 

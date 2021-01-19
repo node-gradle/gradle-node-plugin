@@ -176,7 +176,7 @@ Note that:
 * For `npm` and `yarn`, it will only work for network requests done directly by the tool (for instance downloading a 
 dependency). This will not work if you run a Node.js script for instance via `npm run`.
 
-To disable this behavior, set `useGradleProxySettings` to `false` in the `node` extension. In this case, the plugin will
+To disable this behavior, set `useGradleProxySettings` to `ProxySetting.OFF` in the `node` extension. In this case, the plugin will
 do nothing regarding proxy and you may want to configure it manually, for instance using the `.npmrc` file as 
 explained [here](https://www.devtech101.com/2016/07/21/how-to-set-npm-proxy-settings-in-npmrc/) for `npm`.
 

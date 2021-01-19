@@ -1,3 +1,4 @@
+import com.github.gradle.node.npm.proxy.ProxySetting
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeTask
@@ -25,7 +26,7 @@ node {
     npmWorkDir.set(file("${project.projectDir}/.cache/npm"))
     yarnWorkDir.set(file("${project.projectDir}/.cache/yarn"))
     nodeProjectDir.set(file("${project.projectDir}"))
-    useGradleProxySettings.set(true)
+    useGradleProxySettings.set(ProxySetting.SMART)
 }
 
 tasks.npmInstall {

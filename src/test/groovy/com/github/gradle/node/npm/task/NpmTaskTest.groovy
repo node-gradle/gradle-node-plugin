@@ -1,6 +1,7 @@
 package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
+import com.github.gradle.node.npm.proxy.ProxySetting
 import com.github.gradle.node.task.AbstractTaskTest
 
 import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
@@ -140,7 +141,7 @@ class NpmTaskTest extends AbstractTaskTest {
         props.setProperty('os.name', 'Linux')
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
-        nodeExtension.useGradleProxySettings.set(false)
+        nodeExtension.useGradleProxySettings.set(ProxySetting.OFF)
 
         def task = project.tasks.create('simple', NpmTask)
         mockProjectApiHelperExec(task)
