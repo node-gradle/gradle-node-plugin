@@ -1,4 +1,5 @@
 com.github.gradle.node
+com.github.gradle.node.npm.proxy
 com.github.gradle.node.npm.task
 com.github.gradle.node.task
 com.github.gradle.node.util
