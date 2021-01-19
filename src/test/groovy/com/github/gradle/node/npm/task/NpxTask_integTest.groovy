@@ -7,6 +7,8 @@ import org.junit.contrib.java.lang.system.EnvironmentVariables
 
 import java.util.regex.Pattern
 
+import static com.github.gradle.node.NodeExtension.DEFAULT_NPM_VERSION
+
 class NpxTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
@@ -184,7 +186,7 @@ class NpxTask_integTest extends AbstractIntegTest {
 
         then:
         result10.task(":version").outcome == TaskOutcome.SUCCESS
-        result10.output.contains("> Task :version${System.lineSeparator()}6.14.5")
+        result10.output.contains("> Task :version${System.lineSeparator()}${DEFAULT_NPM_VERSION}")
     }
 
     def 'execute npx command using the npm version specified in the package.json file'() {
