@@ -1,6 +1,6 @@
 package com.github.gradle.node
 
-import com.github.gradle.node.npm.proxy.ProxySetting
+import com.github.gradle.node.npm.proxy.ProxySettings
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
@@ -85,7 +85,7 @@ open class NodeExtension(project: Project) {
      * (in the .npmrc file for instance)
      *
      */
-    val useGradleProxySettings = project.objects.property<ProxySetting>().convention(ProxySetting.SMART)
+    val nodeProxySettings = project.objects.property<ProxySettings>().convention(ProxySettings.SMART)
 
     @Suppress("unused")
     @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")
@@ -95,10 +95,10 @@ open class NodeExtension(project: Project) {
         distBaseUrl.set("https://nodejs.org/dist")
     }
 
-    @Deprecated("useGradleProxySettings is now an enum",
-        replaceWith = ReplaceWith("useGradleProxySettings.set(i)"))
+    @Deprecated("useGradleProxySettings has been replaced with nodeProxySettings",
+        replaceWith = ReplaceWith("nodeProxySettings.set(i)"))
     fun setUseGradleProxySettings(value: Boolean) {
-        useGradleProxySettings.set(if (value) ProxySetting.SMART else ProxySetting.OFF)
+        nodeProxySettings.set(if (value) ProxySettings.SMART else ProxySettings.OFF)
     }
 
     companion object {

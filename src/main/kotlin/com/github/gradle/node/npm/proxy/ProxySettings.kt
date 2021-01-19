@@ -3,7 +3,7 @@ package com.github.gradle.node.npm.proxy
 /**
  * @since 3.0
  */
-enum class ProxySetting {
+enum class ProxySettings {
     /**
      * The default, this will set the proxy settings only if there's no configuration
      * present in the environment variables already.

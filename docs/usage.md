@@ -244,7 +244,7 @@ node {
     // according the proxy configuration defined for Gradle
     // Disable this option if you want to configure the proxy for npm or yarn on your own
     // (in the .npmrc file for instance)
-    useGradleProxySettings = ProxySetting.SMART
+    nodeProxySettings = ProxySettings.SMART
 }
 ```
 
@@ -281,6 +281,6 @@ Note that:
 * For `npm` and `yarn`, it will only work for network requests done directly by the tool (for instance downloading a dependency). This will not work if you run a Node.js script for instance via `npm run`.
 * `npm` and `yarn` support host exclusion (`NO_PROXY`) variable but they do not support host name and port exclusion. In the case some host names and ports are defined in the proxy exclusion, the port will be removed. The exclusion will apply to both HTTP and HTTPS protocols.
 
-To disable proxy configuration, set `useGradleProxySettings` to `ProxySetting.OFF` in the `node` extension. In this case, the plugin will do nothing regarding the proxy configuration and you may want to configure it manually, for instance using the `.npmrc` file as explained [here](https://www.devtech101.com/2016/07/21/how-to-set-npm-proxy-settings-in-npmrc/) for `npm`.
+To disable proxy configuration, set `nodeProxySettings` to `ProxySettings.OFF` in the `node` extension. In this case, the plugin will do nothing regarding the proxy configuration and you may want to configure it manually, for instance using the `.npmrc` file as explained [here](https://www.devtech101.com/2016/07/21/how-to-set-npm-proxy-settings-in-npmrc/) for `npm`.
 
-To force the proxy configuration to be done even if one of the proxy environment variables is already set (i.e. override the existing proxy configuration), set `useGradleProxySettings` to `ProxySetting.FORCE` in the `node` extension.
+To force the proxy configuration to be done even if one of the proxy environment variables is already set (i.e. override the existing proxy configuration), set `nodeProxySettings` to `ProxySettings.FORCE` in the `node` extension.

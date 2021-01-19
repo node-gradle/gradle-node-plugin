@@ -1,6 +1,6 @@
 package com.github.gradle.node
 
-import com.github.gradle.node.npm.proxy.ProxySetting
+import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
 import com.github.gradle.node.npm.task.NpmTask
@@ -40,7 +40,7 @@ class NodePlugin : Plugin<Project> {
         addGlobalType<NpmTask>()
         addGlobalType<NpxTask>()
         addGlobalType<YarnTask>()
-        addGlobalType<ProxySetting>()
+        addGlobalType<ProxySettings>()
     }
 
     private inline fun <reified T> addGlobalType() {

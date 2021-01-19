@@ -29,7 +29,7 @@ internal abstract class NpmExecRunner {
 
     private fun addProxyEnvironmentVariables(nodeExtension: NodeExtension,
                                              nodeExecConfiguration: NodeExecConfiguration): NodeExecConfiguration {
-        if (NpmProxy.shouldConfigureProxy(System.getenv(), nodeExtension.useGradleProxySettings.get())) {
+        if (NpmProxy.shouldConfigureProxy(System.getenv(), nodeExtension.nodeProxySettings.get())) {
             val npmProxyEnvironmentVariables = computeNpmProxyEnvironmentVariables()
             if (npmProxyEnvironmentVariables.isNotEmpty()) {
                 val environmentVariables =
