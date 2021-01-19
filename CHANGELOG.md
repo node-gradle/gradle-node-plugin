@@ -7,14 +7,14 @@
 for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/57))
 * Improve the Kotlin DSL support (see this [Kotlin DSL example](src/test/resources/fixtures/kotlin/build.gradle.kts)
 that shows how to use this plugin version with Kotlin)
-* Upgrade default Node.js version to 12.18.3 (bundled with npm 6.14.5), the latest LTS version
-* Add full support of lazy configuration (issue [#39](https://github.com/node-gradle/gradle-node-plugin/issues/39))
+* Upgrade default Node.js version to 14.15.4 (bundled with npm 6.14.10), the latest LTS version
+* Add support of lazy configuration (issue [#39](https://github.com/node-gradle/gradle-node-plugin/issues/39))
+* Add support of Gradle Configuration Cache (introduced in Gradle 6.8) (issue [#111](https://github.com/node-gradle/gradle-node-plugin/issues/111))
 * Fix some remaining input/output declaration issues (issue
  [#34](https://github.com/node-gradle/gradle-node-plugin/issues/34))
 * Gradle 5.6.4+ support (instead of Gradle 5.0.0+ before)
 * Node.js 10+ support (issue [#100](https://github.com/node-gradle/gradle-node-plugin/issues/100))
-* Improved automatic proxy configuration (issue [#113](https://github.com/node-gradle/gradle-node-plugin/issues/113))
-* Use http:// for both HTTP and HTTPS_PROXY
+* Improved automatic proxy configuration (issue [#113](https://github.com/node-gradle/gradle-node-plugin/issues/113)), use http:// for both `HTTP_PROXY` and `HTTPS_PROXY`
 * npm 7+ support (issue [#123](https://github.com/node-gradle/gradle-node-plugin/issues/123))
 * Improved ARM support (issue [#130](https://github.com/node-gradle/gradle-node-plugin/issues/130))
 
