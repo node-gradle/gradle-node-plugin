@@ -1,7 +1,5 @@
 package com.github.gradle.node.task
 
-import org.gradle.process.ExecSpec
-
 class NodeTaskTest extends AbstractTaskTest {
     def "script not set"() {
         given:
@@ -18,10 +16,10 @@ class NodeTaskTest extends AbstractTaskTest {
     def "exec node task"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
+        mockProjectApiHelperExec(task)
         task.args.set(['a', 'b'])
         task.options.set(['c', 'd'])
         task.environment.set(['a': '1'])
@@ -47,10 +45,10 @@ class NodeTaskTest extends AbstractTaskTest {
     def "execOverrides test"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
+        mockProjectApiHelperExec(task)
         task.ignoreExitValue.set(true)
 
         def script = new File(projectDir, 'script.js')
@@ -73,9 +71,9 @@ class NodeTaskTest extends AbstractTaskTest {
         given:
         props.setProperty('os.name', 'Linux')
         nodeExtension.download.set(true)
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NodeTask)
+        mockProjectApiHelperExec(task)
         def script = new File(projectDir, 'script.js')
         task.script.set(script)
 
@@ -93,9 +91,9 @@ class NodeTaskTest extends AbstractTaskTest {
         given:
         props.setProperty('os.name', 'Windows')
         nodeExtension.download.set(false)
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NodeTask)
+        mockProjectApiHelperExec(task)
         def script = new File(projectDir, 'script.js')
 
         task.args.set(['a', 'b'])
@@ -117,9 +115,9 @@ class NodeTaskTest extends AbstractTaskTest {
         given:
         props.setProperty('os.name', 'Windows')
         nodeExtension.download.set(true)
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NodeTask)
+        mockProjectApiHelperExec(task)
         def script = new File(projectDir, 'script.js')
         task.script.set(script)
 

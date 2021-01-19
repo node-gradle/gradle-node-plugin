@@ -1,8 +1,10 @@
+import org.gradle.util.GradleVersion
+
 plugins {
     id "com.github.node-gradle.node"
 }
 
-def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == "true" : false
+def changeInputs = isPropertyEnabled("changeInputs")
 
 node {
     yarnVersion = "1.18.0"
@@ -26,4 +28,11 @@ task test(type: YarnTask) {
 task version(type: YarnTask) {
     dependsOn yarn
     yarnCommand = ["--version"]
+}
+
+def isPropertyEnabled(String name) {
+    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
+        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    }
+    return System.properties[name] != null
 }

@@ -3,8 +3,9 @@ package com.github.gradle.node.task
 import com.github.gradle.AbstractProjectTest
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.util.PlatformHelper
+import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.Action
-import org.gradle.api.internal.ProcessOperations
+import org.gradle.api.Task
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 
@@ -15,45 +16,58 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
     ExecSpec execSpec
     Properties props
     NodeExtension nodeExtension
+    PlatformHelper originalPlatformHelper
 
     def setup() {
         props = new Properties()
+        originalPlatformHelper = PlatformHelper.INSTANCE
         PlatformHelper.INSTANCE = new PlatformHelper(props)
 
+        execSpec = Mock(ExecSpec)
         execResult = Mock(ExecResult)
 
         project.apply plugin: 'com.github.node-gradle.node'
         nodeExtension = NodeExtension.get(project)
-
-        mockExec()
     }
 
-    private void mockExec() {
-        // Create mock to track exec calls
-        ProcessOperations processOperations = Spy(project.getProcessOperations())
-        processOperations.exec(_ as Action<ExecSpec>) >> { Action<ExecSpec> action ->
+    def cleanup() {
+        PlatformHelper.INSTANCE = originalPlatformHelper
+    }
+
+    protected mockProjectApiHelperExec(Task task, String fieldName = "projectHelper") {
+        Field projectApiHelperField = findProjectApiHelperTaskField(task, fieldName)
+        projectApiHelperField.setAccessible(true)
+        ProjectApiHelper projectApiHelper = Spy(projectApiHelperField.get(task)) as ProjectApiHelper
+        projectApiHelper.exec(_ as Action<ExecSpec>) >> { Action<ExecSpec> action ->
             action.execute(execSpec)
             return execResult
         }
-        // Gradle does not allow us to easily inject our own services; manually override the ProcessOperations service
-        Field processOperationsField = project.getClass().getDeclaredFields()
-                .findAll { it.name ==~ /\w+processOperations\w+/ }
-                .tap { assert it.size() == 1 }
-                .first()
-        processOperationsField.setAccessible(true)
-        processOperationsField.set(project, processOperations)
+        projectApiHelperField.set(task, projectApiHelper)
+        projectApiHelperField.setAccessible(false)
     }
 
-    protected containsPath(final Map<String, ?> env) {
+    private static Field findProjectApiHelperTaskField(Task task, String fieldName) {
+        Class<?> type = task.getClass()
+        while (type != null) {
+            try {
+                return type.getDeclaredField(fieldName)
+            } catch (NoSuchFieldException _) {
+                type = type.getSuperclass()
+            }
+        }
+        throw new IllegalStateException("No ${fieldName} field found in class ${task.getClass()}")
+    }
+
+    protected static containsPath(final Map<String, ?> env) {
         return env['PATH'] != null || env['Path'] != null
     }
 
     // Workaround a strange issue on Github actions macOS and Windows hosts
-    protected List<String> fixAbsolutePaths(Iterable<String> path) {
+    protected static List<String> fixAbsolutePaths(Iterable<String> path) {
         return path.collect { fixAbsolutePath(it) }
     }
 
-    protected fixAbsolutePath(String path) {
+    protected static fixAbsolutePath(String path) {
         return path.replace('/private/', '/')
                 .replace('C:\\Users\\runneradmin\\', 'C:\\Users\\RUNNER~1\\')
     }

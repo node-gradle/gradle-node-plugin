@@ -3,31 +3,41 @@ package com.github.gradle.node.task
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.PlatformHelper
+import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.tasks.*
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import javax.inject.Inject
 
-open class NodeSetupTask : DefaultTask() {
+abstract class NodeSetupTask : DefaultTask() {
+
+    @get:Inject
+    abstract val objects: ObjectFactory
+
+    @get:Inject
+    abstract val providers: ProviderFactory
+
     private val variantComputer = VariantComputer()
     private val nodeExtension = NodeExtension[project]
 
     @get:Input
-    val download by lazy { nodeExtension.download }
+    val download = nodeExtension.download
 
-    @get:Input
-    val archiveDependency by lazy {
-        variantComputer.computeArchiveDependency(nodeExtension)
-    }
+    @get:InputFile
+    val nodeArchiveFile = objects.fileProperty()
 
     @get:OutputDirectory
     val nodeDir by lazy {
         variantComputer.computeNodeDir(nodeExtension)
     }
+
+    @get:Internal
+    val projectHelper = ProjectApiHelper.newInstance(project)
 
     init {
         group = NodePlugin.NODE_GROUP
@@ -39,29 +49,29 @@ open class NodeSetupTask : DefaultTask() {
 
     @TaskAction
     fun exec() {
-        addRepositoryIfNeeded()
-        val archiveDependency = variantComputer.computeArchiveDependency(nodeExtension).get()
         deleteExistingNode()
-        unpackNodeArchive(archiveDependency)
+        unpackNodeArchive()
         setExecutableFlag()
     }
 
     private fun deleteExistingNode() {
-        project.delete(nodeDir.get().dir("../"))
+        projectHelper.delete {
+            delete(nodeDir.get().dir("../"))
+        }
     }
 
-    private fun unpackNodeArchive(archiveDependency: String) {
-        val nodeArchiveFile = getNodeArchiveFile(archiveDependency)
+    private fun unpackNodeArchive() {
+        val archiveFile = nodeArchiveFile.get().asFile
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
-        if (nodeArchiveFile.name.endsWith("zip")) {
-            project.copy {
-                from(project.zipTree(nodeArchiveFile))
+        if (archiveFile.name.endsWith("zip")) {
+            projectHelper.copy {
+                from(projectHelper.zipTree(archiveFile))
                 into(nodeDirProvider.map { it.dir("../") })
             }
         } else {
-            project.copy {
-                from(project.tarTree(nodeArchiveFile))
+            projectHelper.copy {
+                from(projectHelper.tarTree(archiveFile))
                 into(nodeDirProvider.map { it.dir("../") })
             }
             // Fix broken symlink
@@ -85,33 +95,6 @@ open class NodeSetupTask : DefaultTask() {
             val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
             val nodeExecProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
             File(nodeExecProvider.get()).setExecutable(true)
-        }
-    }
-
-    private fun getNodeArchiveFile(archiveDependency: String): File =
-            resolveSingle(archiveDependency)
-
-    private fun resolveSingle(name: String): File {
-        val dep = project.dependencies.create(name)
-        val conf = project.configurations.detachedConfiguration(dep)
-        conf.isTransitive = false
-        return conf.resolve().single()
-    }
-
-    private fun addRepositoryIfNeeded() {
-        nodeExtension.distBaseUrl.orNull?.let { addRepository(it) }
-    }
-
-    private fun addRepository(distUrl: String) {
-        project.repositories.ivy {
-            setUrl(distUrl)
-            patternLayout {
-                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-                ivy("v[revision]/ivy.xml")
-            }
-            metadataSources {
-                artifact()
-            }
         }
     }
 

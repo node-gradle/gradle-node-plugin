@@ -12,7 +12,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static io.github.bonigarcia.wdm.WebDriverManager.firefoxdriver;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @ExtendWith(SpringExtension.class)
@@ -34,8 +34,8 @@ class WebappTest {
     void shouldServeWebapp() {
         String url = "http://localhost:" + port + "/";
         firefoxDriver.get(url);
-        assertEquals("webapp app is running!",
-                firefoxDriver.findElement(By.cssSelector(".card.highlight-card span")).getText());
+        assertThat(firefoxDriver.findElement(By.cssSelector(".card.highlight-card span")).getText())
+                .isEqualTo("webapp app is running!");
     }
 
     @AfterEach

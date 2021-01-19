@@ -142,10 +142,10 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
             task verifyIO {
                 doLast {
-                    if (!tasks.named("npmInstall").get().outputs.files.contains(project.file('package-lock.json'))) {
+                    if (!tasks.named("npmInstall").get().outputs.files.contains(file('package-lock.json'))) {
                         throw new RuntimeException("package-lock.json is not in INSTALL'S outputs!")
                     }
-                    if (tasks.named("npmInstall").get().inputs.files.contains(project.file('package-lock.json'))) {
+                    if (tasks.named("npmInstall").get().inputs.files.contains(file('package-lock.json'))) {
                         throw new RuntimeException("package-lock.json is in INSTALL'S inputs!")
                     }
                 }
@@ -174,10 +174,10 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
             task verifyIO {
                 doLast {
-                    if (tasks.named("npmInstall").get().outputs.files.contains(project.file('package-lock.json'))) {
+                    if (tasks.named("npmInstall").get().outputs.files.contains(file('package-lock.json'))) {
                         throw new RuntimeException("package-lock.json is in CI'S outputs!")
                     }
-                    if (!tasks.named("npmInstall").get().inputs.files.contains(project.file('package-lock.json'))) {
+                    if (!tasks.named("npmInstall").get().inputs.files.contains(file('package-lock.json'))) {
                         throw new RuntimeException("package-lock.json is not in CI'S inputs!")
                     }
                 }
@@ -193,7 +193,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.outcome == TaskOutcome.SUCCESS
     }
 
-    def 'verity output configuration'() {
+    def 'verify output configuration'() {
         given:
         writeBuild('''
             plugins {
@@ -252,7 +252,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
         createFile("node_modules/mocha/package.json").exists()
     }
 
-    def 'verity output configuration when filtering node_modules output'() {
+    def 'verify output configuration when filtering node_modules output'() {
         given:
         writeBuild('''
             plugins {

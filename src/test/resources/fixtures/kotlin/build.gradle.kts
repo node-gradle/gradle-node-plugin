@@ -140,5 +140,13 @@ val buildTaskUsingYarn = tasks.register<YarnTask>("buildYarn") {
 tasks.register<Zip>("package") {
     archiveFileName.set("app.zip")
     destinationDirectory.set(buildDir)
-    from(buildTaskUsingNpx, buildTaskUsingNpm, buildTaskUsingYarn)
+    from(buildTaskUsingNpx) {
+        into("npx")
+    }
+    from(buildTaskUsingNpm) {
+        into("npm")
+    }
+    from (buildTaskUsingYarn) {
+        into("yarn")
+    }
 }

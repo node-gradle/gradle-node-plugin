@@ -1,6 +1,5 @@
 package com.github.gradle.node.npm.task
 
-import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.zip
 import org.gradle.api.Action
@@ -16,12 +15,10 @@ import java.io.File
 /**
  * npm install that only gets executed if gradle decides so.
  */
-open class NpmInstallTask : NpmTask() {
-    private val nodeExtension by lazy { NodeExtension[project] }
-
+abstract class NpmInstallTask : NpmTask() {
     @get:Internal
     val nodeModulesOutputFilter =
-            project.objects.property<Action<ConfigurableFileTree>>()
+            objects.property<Action<ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.NPM_GROUP
@@ -48,7 +45,7 @@ open class NpmInstallTask : NpmTask() {
     @InputFile
     protected fun getPackageLockFileAsInput(): Provider<File> {
         return npmCommand.flatMap { command ->
-            if (command[0] == "ci") projectFileIfExists("package-lock.json") else project.provider { null }
+            if (command[0] == "ci") projectFileIfExists("package-lock.json") else providers.provider { null }
         }
     }
 
@@ -56,13 +53,13 @@ open class NpmInstallTask : NpmTask() {
     @OutputFile
     protected fun getPackageLockFileAsOutput(): Provider<File> {
         return npmCommand.flatMap { command ->
-            if (command[0] == "install") projectFileIfExists("package-lock.json") else project.provider { null }
+            if (command[0] == "install") projectFileIfExists("package-lock.json") else providers.provider { null }
         }
     }
 
     private fun projectFileIfExists(name: String): Provider<File> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
-                .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
+                .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
 
     @Optional
@@ -71,7 +68,7 @@ open class NpmInstallTask : NpmTask() {
     protected fun getNodeModulesDirectory(): Provider<Directory> {
         val filter = nodeModulesOutputFilter.orNull
         return if (filter == null) nodeExtension.nodeProjectDir.dir("node_modules")
-        else project.providers.provider { null }
+        else providers.provider { null }
     }
 
     @Optional
@@ -82,10 +79,10 @@ open class NpmInstallTask : NpmTask() {
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
                 .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
                     if (nodeModulesOutputFilter != null) {
-                        val fileTree = project.fileTree(nodeModulesDirectory)
+                        val fileTree = projectHelper.fileTree(nodeModulesDirectory)
                         nodeModulesOutputFilter.execute(fileTree)
-                        project.providers.provider { fileTree }
-                    } else project.providers.provider { null }
+                        providers.provider { fileTree }
+                    } else providers.provider { null }
                 }
     }
 

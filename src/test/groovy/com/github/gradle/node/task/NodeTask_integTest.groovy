@@ -143,7 +143,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":env").outcome == TaskOutcome.UP_TO_DATE
+        result7.task(":env").outcome == (isConfigurationCacheEnabled() ? TaskOutcome.SUCCESS : TaskOutcome.UP_TO_DATE)
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date
@@ -236,7 +236,6 @@ class NodeTask_integTest extends AbstractIntegTest {
         def result = buildAndFail("nodeSetup")
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.FAILED
         result.output.contains("Cannot resolve external dependency org.nodejs:node:${DEFAULT_NODE_VERSION} because no repositories are defined.")
     }
 }

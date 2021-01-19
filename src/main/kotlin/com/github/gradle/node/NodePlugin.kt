@@ -6,23 +6,32 @@ import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
+import com.github.gradle.node.variant.VariantComputer
 import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnSetupTask
 import com.github.gradle.node.yarn.task.YarnTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
+import java.io.File
 
 class NodePlugin : Plugin<Project> {
     private lateinit var project: Project
 
     override fun apply(project: Project) {
         this.project = project
-        NodeExtension.create(project)
+        val nodeExtension = NodeExtension.create(project)
         addGlobalTypes()
         addTasks()
         addNpmRule()
         addYarnRule()
+        project.afterEvaluate {
+            if (nodeExtension.download.get()) {
+                nodeExtension.distBaseUrl.orNull?.let { addRepository(it) }
+                configureNodeSetupTask(nodeExtension)
+            }
+        }
     }
 
     private fun addGlobalTypes() {
@@ -72,6 +81,38 @@ class NodePlugin : Plugin<Project> {
                 }
             }
         }
+    }
+
+    private fun addRepository(distUrl: String) {
+        project.repositories.ivy {
+            setUrl(distUrl)
+            patternLayout {
+                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                ivy("v[revision]/ivy.xml")
+            }
+            metadataSources {
+                artifact()
+            }
+        }
+    }
+
+    private fun configureNodeSetupTask(nodeExtension: NodeExtension) {
+        val variantComputer = VariantComputer()
+        val nodeArchiveDependencyProvider = variantComputer.computeNodeArchiveDependency(nodeExtension)
+        val archiveFileProvider = nodeArchiveDependencyProvider
+                .map { nodeArchiveDependency ->
+                    resolveNodeArchiveFile(nodeArchiveDependency)
+                }
+        project.tasks.named<NodeSetupTask>(NodeSetupTask.NAME) {
+            nodeArchiveFile.set(project.layout.file(archiveFileProvider))
+        }
+    }
+
+    private fun resolveNodeArchiveFile(name: String): File {
+        val dependency = project.dependencies.create(name)
+        val configuration = project.configurations.detachedConfiguration(dependency)
+        configuration.isTransitive = false
+        return configuration.resolve().single()
     }
 
     companion object {

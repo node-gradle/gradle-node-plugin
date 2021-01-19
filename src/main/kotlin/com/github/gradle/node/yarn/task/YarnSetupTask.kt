@@ -11,7 +11,7 @@ import java.io.File
 /**
  * Setup a specific version of Yarn to be used by the build.
  */
-open class YarnSetupTask : NpmSetupTask() {
+abstract class YarnSetupTask : NpmSetupTask() {
     init {
         group = NodePlugin.YARN_GROUP
         description = "Setup a specific version of Yarn to be used by the build."

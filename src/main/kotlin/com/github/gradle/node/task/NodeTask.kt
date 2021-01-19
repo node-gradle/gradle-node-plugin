@@ -1,63 +1,80 @@
 package com.github.gradle.node.task
 
+import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.exec.NodeExecRunner
+import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
+import javax.inject.Inject
 
 /**
  * Gradle task for running a Node.js script
  */
-open class NodeTask : DefaultTask() {
+abstract class NodeTask : DefaultTask() {
+    @get:Inject
+    abstract val objects: ObjectFactory
+
+    @get:Inject
+    abstract val providers: ProviderFactory
+
     /**
      * Node.js script to run.
      */
     @get:InputFile
     @get:PathSensitive(RELATIVE)
-    val script = project.objects.fileProperty()
+    val script = objects.fileProperty()
 
     /**
      * Arguments to be passed to Node.js
      */
     @get:Input
-    val options = project.objects.listProperty<String>()
+    val options = objects.listProperty<String>()
 
     /**
      * Additional arguments for the [script] being run.
      */
     @get:Input
-    val args = project.objects.listProperty<String>()
+    val args = objects.listProperty<String>()
 
     /**
      * If enabled prevents the task from failing if the exit code is not 0. Defaults to false.
      */
     @get:Input
-    val ignoreExitValue = project.objects.property<Boolean>().convention(false)
+    val ignoreExitValue = objects.property<Boolean>().convention(false)
 
     /**
      * Sets the working directory.
      */
     @get:Internal
-    val workingDir = project.objects.directoryProperty()
+    val workingDir = objects.directoryProperty()
 
     /**
      * Add additional environment variables or override environment variables inherited from the system.
      */
     @get:Input
-    val environment = project.objects.mapProperty<String, String>()
+    val environment = objects.mapProperty<String, String>()
+
+    @get:Internal
+    val execOverrides = objects.property<Action<ExecSpec>>()
+
+    @get:Internal
+    val projectHelper = ProjectApiHelper.newInstance(project)
 
     /**
      * Overrides for [ExecSpec]
      */
     @get:Internal
-    val execOverrides = project.objects.property<Action<ExecSpec>>()
+    val extension = NodeExtension[project]
 
     init {
         group = NodePlugin.NODE_GROUP
@@ -78,6 +95,6 @@ open class NodeTask : DefaultTask() {
                 NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
         val nodeExecRunner = NodeExecRunner()
-        nodeExecRunner.execute(project, nodeExecConfiguration)
+        nodeExecRunner.execute(projectHelper, extension, nodeExecConfiguration)
     }
 }

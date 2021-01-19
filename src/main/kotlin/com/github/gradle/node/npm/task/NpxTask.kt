@@ -1,10 +1,14 @@
 package com.github.gradle.node.npm.task
 
+import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
+import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -12,25 +16,39 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
+import javax.inject.Inject
 
-open class NpxTask : DefaultTask() {
-    @get:Input
-    val command = project.objects.property<String>()
+abstract class NpxTask : DefaultTask() {
+
+    @get:Inject
+    abstract val objects: ObjectFactory
+
+    @get:Inject
+    abstract val providers: ProviderFactory
 
     @get:Input
-    val args = project.objects.listProperty<String>()
+    val command = objects.property<String>()
 
     @get:Input
-    val ignoreExitValue = project.objects.property<Boolean>().convention(false)
+    val args = objects.listProperty<String>()
+
+    @get:Input
+    val ignoreExitValue = objects.property<Boolean>().convention(false)
 
     @get:Internal
-    val workingDir = project.objects.directoryProperty()
+    val workingDir = objects.directoryProperty()
 
     @get:Input
-    val environment = project.objects.mapProperty<String, String>()
+    val environment = objects.mapProperty<String, String>()
 
     @get:Internal
-    val execOverrides = project.objects.property<Action<ExecSpec>>()
+    val execOverrides = objects.property<Action<ExecSpec>>()
+
+    @get:Internal
+    val projectHelper = ProjectApiHelper.newInstance(project)
+
+    @get:Internal
+    val extension = NodeExtension[project]
 
     init {
         group = NodePlugin.NPM_GROUP
@@ -51,7 +69,7 @@ open class NpxTask : DefaultTask() {
         val nodeExecConfiguration =
                 NodeExecConfiguration(fullCommand, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
-        val npmExecRunner = NpmExecRunner()
-        npmExecRunner.executeNpxCommand(project, nodeExecConfiguration)
+        val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
+        npmExecRunner.executeNpxCommand(projectHelper, extension, nodeExecConfiguration)
     }
 }
