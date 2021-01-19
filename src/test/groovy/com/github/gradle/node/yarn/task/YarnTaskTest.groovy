@@ -1,8 +1,8 @@
 package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
+import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.task.AbstractTaskTest
-import org.gradle.process.ExecSpec
 
 class YarnTaskTest extends AbstractTaskTest {
     def cleanup() {
@@ -86,7 +86,7 @@ class YarnTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpsProxyPort(443)
         GradleProxyHelper.setHttpsProxyUser("me")
         GradleProxyHelper.setHttpsProxyPassword("password")
-        nodeExtension.useGradleProxySettings.set(false)
+        nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.create('simple', YarnTask)
         mockProjectApiHelperExec(task)

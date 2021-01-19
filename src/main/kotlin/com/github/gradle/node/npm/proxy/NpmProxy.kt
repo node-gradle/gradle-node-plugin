@@ -28,6 +28,16 @@ internal class NpmProxy {
             return proxyEnvironmentVariables.toMap()
         }
 
+        fun shouldConfigureProxy(env: Map<String, String>, settings: ProxySettings): Boolean {
+            if (settings == ProxySettings.FORCED) {
+                return true
+            } else if (settings == ProxySettings.SMART) {
+                return !hasProxyConfiguration(env)
+            }
+
+            return false
+        }
+
         /**
          * Returns true if the given map of environment variables already has
          * proxy settings configured.

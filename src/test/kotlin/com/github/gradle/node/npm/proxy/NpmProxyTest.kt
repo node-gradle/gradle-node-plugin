@@ -12,6 +12,18 @@ class NpmProxyTest {
     }
 
     @Test
+    internal fun verifyProxyConfigurationSettings() {
+        assertThat(NpmProxy.shouldConfigureProxy(emptyMap(), ProxySettings.FORCED)).isTrue
+        assertThat(NpmProxy.shouldConfigureProxy(emptyMap(), ProxySettings.OFF)).isFalse
+
+        // No proxy settings present, should be set
+        assertThat(NpmProxy.shouldConfigureProxy(emptyMap(), ProxySettings.SMART)).isTrue
+
+        // Proxy settings present, SMART shouldn't configure.
+        assertThat(NpmProxy.shouldConfigureProxy(mapOf(("HTTP_PROXY" to "")), ProxySettings.SMART)).isFalse
+    }
+
+    @Test
     internal fun shouldComputeTheProxyArgsWhenNoProxyIsConfigured() {
         val result = NpmProxy.computeNpmProxyEnvironmentVariables()
 

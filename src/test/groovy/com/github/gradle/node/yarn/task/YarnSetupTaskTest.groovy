@@ -1,6 +1,7 @@
 package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
+import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.task.AbstractTaskTest
 
 class YarnSetupTaskTest extends AbstractTaskTest {
@@ -34,7 +35,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
         given:
         GradleProxyHelper.setHttpProxyHost("my-proxy")
         GradleProxyHelper.setHttpProxyPort(80)
-        nodeExtension.useGradleProxySettings.set(false)
+        nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.create('simple', YarnSetupTask)
         mockProjectApiHelperExec(task)
