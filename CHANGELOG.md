@@ -26,7 +26,7 @@ Here is what changed:
 * All the packages were renamed (they were inherited from the original forked project):
   * `com.moowork.gradle.node` (and all children) renamed to `com.github.gradle.node`
   * `com.moowork.gradle.node.npm` renamed to `com.github.gradle.node.npm.task`
-  * `com.moowork.gradle.node.yarn` renamed to `com.github.gradle.node.yan.task`
+  * `com.moowork.gradle.node.yarn` renamed to `com.github.gradle.node.yarn.task`
 * All the configuration properties (the `node` extension and all tasks) are now some 
 [lazy properties](https://docs.gradle.org/current/userguide/lazy_configuration.html#lazy_properties) as recommended by 
 Gradle. This makes this plugin fully compatible with lazy configuration (tasks will be configured only if they need to 
