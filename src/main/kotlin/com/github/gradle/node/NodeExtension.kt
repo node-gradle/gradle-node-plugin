@@ -95,6 +95,11 @@ open class NodeExtension(project: Project) {
         distBaseUrl.set("https://nodejs.org/dist")
     }
 
+    @Deprecated("useGradleProxySettings is now an enum",
+        replaceWith = ReplaceWith("useGradleProxySettings.set(i)"))
+    fun setUseGradleProxySettings(value: Boolean) {
+        useGradleProxySettings.set(if (value) ProxySetting.SMART else ProxySetting.OFF)
+    }
 
     companion object {
         const val NAME = "node"
