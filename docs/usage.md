@@ -271,13 +271,16 @@ If you would like the plugin to install use a custom version of yarn, you can se
 
 ## Using a Proxy
 
-By default and unless if `useGradleProxySettings` is `ProxySetting.OFF`, the plugin will configure 
-`npm` and `yarn` to get them use the proxy configuration defined in the 
-[Gradle project configuration](https://docs.gradle.org/current/userguide/build_environment.html#sec:accessing_the_web_via_a_proxy).
-This is done by automatically setting the `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` 
-environment variables when invoking `npm` and `yarn`.
+If your network requires using a proxy to access to the internet, you probably already [configured Gradle to use the proxy](https://docs.gradle.org/current/userguide/build_environment.html#sec:accessing_the_web_via_a_proxy).  In this case, the plugin will by default automatically apply the proxy configuration to all `npm` and `yarn` commands.
 
-Note that `npm` and `yarn` support host exclusion (`NO_PROXY`) variable but
-they do not support host name and port exclusion. In the case some host names and ports
-are defined in the proxy exclusion, the port will be removed. The exclusion will apply to 
-both HTTP and HTTPS protocols. 
+Note that:
+* This is done by automatically setting the `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` environment variables when invoking `npm` and `yarn`.
+* If at least one of those environment variables is already set, no proxy configuration will be done.
+* This does not work with `npx` since it does not support proxy usage.
+* This does work either for all `node` commands. It's the `node` script's responsibility to use the proxy or not.
+* For `npm` and `yarn`, it will only work for network requests done directly by the tool (for instance downloading a dependency). This will not work if you run a Node.js script for instance via `npm run`.
+* `npm` and `yarn` support host exclusion (`NO_PROXY`) variable but they do not support host name and port exclusion. In the case some host names and ports are defined in the proxy exclusion, the port will be removed. The exclusion will apply to both HTTP and HTTPS protocols.
+
+To disable proxy configuration, set `useGradleProxySettings` to `ProxySetting.OFF` in the `node` extension. In this case, the plugin will do nothing regarding the proxy configuration and you may want to configure it manually, for instance using the `.npmrc` file as explained [here](https://www.devtech101.com/2016/07/21/how-to-set-npm-proxy-settings-in-npmrc/) for `npm`.
+
+To force the proxy configuration to be done even if one of the proxy environment variables is already set (i.e. override the existing proxy configuration), set `useGradleProxySettings` to `ProxySetting.FORCE` in the `node` extension.
