@@ -80,8 +80,7 @@ abstract class NpmInstallTask : NpmTask() {
                 .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
                     if (nodeModulesOutputFilter != null) {
                         val fileTree = projectHelper.fileTree(nodeModulesDirectory)
-                        //TODO: have a closer look at this.
-                        nodeModulesOutputFilter.execute(fileTree!!)
+                        nodeModulesOutputFilter.execute(fileTree)
                         providers.provider { fileTree }
                     } else providers.provider { null }
                 }
