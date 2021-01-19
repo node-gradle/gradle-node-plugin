@@ -13,8 +13,6 @@ jobs:
       - name: Gradle Version
         run: ./gradlew --version
       - name: Build Node.js Scripts Project
-        run: ./gradlew -p examples/simple-node helloWorld --configuration-cache
+        run: ./gradlew -p examples/simple-node helloWorld
       - name: Build Spring Boot Angular Project
-        run: ./gradlew -p examples/spring-boot-angular build --configuration-cache
-      - name: Rebuild Spring Boot Angular Project to Reuse the Configuration Cache
-        run: ./gradlew -p examples/spring-boot-angular build --configuration-cache
+        run: ./gradlew -p examples/spring-boot-angular build
