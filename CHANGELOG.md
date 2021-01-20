@@ -15,8 +15,10 @@ that shows how to use this plugin version with Kotlin)
 * Gradle 5.6.4+ support (instead of Gradle 5.0.0+ before)
 * Node.js 10+ support (issue [#100](https://github.com/node-gradle/gradle-node-plugin/issues/100))
 * Improved automatic proxy configuration (issue [#113](https://github.com/node-gradle/gradle-node-plugin/issues/113)), use http:// for both `HTTP_PROXY` and `HTTPS_PROXY`
+* Improved proxy configuration (PR [#135](https://github.com/node-gradle/gradle-node-plugin/pull/135))
 * npm 7+ support (issue [#123](https://github.com/node-gradle/gradle-node-plugin/issues/123))
 * Improved ARM support (issue [#130](https://github.com/node-gradle/gradle-node-plugin/issues/130))
+* Gradle configuration cache support (issue [#111](https://github.com/node-gradle/gradle-node-plugin/issues/111))
 
 ### Breaking changes
 
