@@ -1,0 +1,25 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+import org.gradle.util.GradleVersion
+
+if (GradleVersion.current() >= GradleVersion.version("6.8")) {
+    dependencyResolutionManagement {
+        repositories {
+            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
+            ivy {
+                name = "Node.js"
+                setUrl("https://nodejs.org/dist/")
+                patternLayout {
+                    artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                    ivy("v[revision]/ivy.xml")
+                }
+                metadataSources {
+                    artifact()
+                }
+                content {
+                    includeModule("org.nodejs", "node")
+                }
+            }
+        }
+    }
+}

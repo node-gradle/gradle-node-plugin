@@ -1,0 +1,49 @@
+import org.gradle.util.GradleVersion
+
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    version = "12.13.0"
+    distBaseUrl = null
+    download = true
+    workDir = file("build/node")
+}
+
+def changeScript = isPropertyEnabled("changeScript")
+def changeArgs = isPropertyEnabled("changeArgs")
+
+task hello(type: NodeTask) {
+    script = file("simple.js")
+    args = []
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+if (changeScript) {
+    hello.script = file("name.js")
+}
+
+if (changeArgs) {
+    hello.args = ["Bob", "Alice"]
+}
+
+task executeDirectoryScript(type: NodeTask) {
+    script = file(".")
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task version(type: NodeTask) {
+    script = file("version.js")
+}
+
+def isPropertyEnabled(String name) {
+    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
+        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    }
+    return System.properties[name] != null
+}
