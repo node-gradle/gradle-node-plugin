@@ -87,6 +87,7 @@ class NodePlugin : Plugin<Project> {
 
     private fun addRepository(distUrl: String) {
         project.repositories.ivy {
+            name = "Node.js"
             setUrl(distUrl)
             patternLayout {
                 artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
@@ -94,6 +95,9 @@ class NodePlugin : Plugin<Project> {
             }
             metadataSources {
                 artifact()
+            }
+            content {
+                includeModule("org.nodejs", "node")
             }
         }
     }
