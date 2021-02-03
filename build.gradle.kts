@@ -51,7 +51,7 @@ dependencies {
 tasks.compileTestGroovy {
     // Should be
     // classpath += files(sourceSets.test.get().kotlin.classesDirectory)
-    // but enable to get it compile in the Kotlin DSL - works in the Groovy DSL as this
+    // but unable to get it compile in the Kotlin DSL - works in the Groovy DSL as this
     // classpath += files(sourceSets.test.kotlin.classesDirectory)
     // This workaround works
     classpath += files("${buildDir}/classes/kotlin/test")
