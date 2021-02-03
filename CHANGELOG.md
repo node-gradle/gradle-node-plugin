@@ -19,7 +19,7 @@ that shows how to use this plugin version with Kotlin)
 * npm 7+ support (issue [#123](https://github.com/node-gradle/gradle-node-plugin/issues/123))
 * Improved ARM support (issue [#130](https://github.com/node-gradle/gradle-node-plugin/issues/130))
 * Gradle configuration cache support (issue [#111](https://github.com/node-gradle/gradle-node-plugin/issues/111))
-* Add RepositoryContentDescriptor to IvyRepository #136
+* Add RepositoryContentDescriptor to IvyRepository [#136](https://github.com/node-gradle/gradle-node-plugin/issues/136)
 
 ### Breaking changes
 
