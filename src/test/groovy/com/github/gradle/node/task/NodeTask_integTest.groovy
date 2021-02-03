@@ -1,7 +1,6 @@
 package com.github.gradle.node.task
 
 import com.github.gradle.AbstractIntegTest
-
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.util.GradleVersion
 import org.junit.Assume
@@ -242,16 +241,29 @@ class NodeTask_integTest extends AbstractIntegTest {
         result.output.contains("Cannot resolve external dependency org.nodejs:node:${DEFAULT_NODE_VERSION} because no repositories are defined.")
     }
 
-    def 'make sure build works with FAIL_ON_PROJECT_REPOS'() {
+    def 'make sure build works with FAIL_ON_PROJECT_REPOS using a custom repository'() {
         given:
         Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
-        copyResources("fixtures/node-depresolutionmgmt")
+        copyResources("fixtures/node-fail-on-project-repos-download")
 
         when:
         def result = build("hello")
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":hello").outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'make sure build works with FAIL_ON_PROJECT_REPOS when using the global Node.js (no download)'() {
+        given:
+        Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
+        copyResources("fixtures/node-fail-on-project-repos-no-download")
+
+        when:
+        def result = build("hello")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":hello").outcome == TaskOutcome.SUCCESS
     }
 }

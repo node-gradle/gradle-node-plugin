@@ -1,0 +1,11 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+task hello(type: NodeTask) {
+    script = file("simple.js")
+    args = []
+    outputs.upToDateWhen {
+        true
+    }
+}
