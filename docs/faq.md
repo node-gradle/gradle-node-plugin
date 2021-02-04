@@ -231,10 +231,9 @@ dependencyResolutionManagement {
         // Declare the Node.js download repository
         ivy {
             name = "Node.js"
-            setUrl("https://nodejs.org/dist/")
+            url = "https://nodejs.org/dist/"
             patternLayout {
                 artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-                ivy("v[revision]/ivy.xml")
             }
             metadataSources {
                 artifact()
