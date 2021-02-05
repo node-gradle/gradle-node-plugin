@@ -13,6 +13,7 @@ def buildTask = tasks.register("buildWebapp", NpxTask) {
     args = ["build"]
     dependsOn(yarn)
     inputs.dir(fileTree("src").exclude("**/*.test.js").exclude("**/*.spec.js").exclude("**/__tests__/**/*.js"))
+    inputs.dir("node_modules")
     inputs.dir("public")
     outputs.dir("${buildDir}/webapp")
     environment = ["BUILD_PATH": "${buildDir}/webapp/webroot"]
@@ -22,6 +23,7 @@ def testTask = tasks.register("testWebapp", NpxTask) {
     command = "react-scripts"
     args = ["test"]
     dependsOn(yarn)
+    inputs.dir("node_modules")
     inputs.dir("src")
     inputs.dir("public")
     outputs.upToDateWhen { true }
