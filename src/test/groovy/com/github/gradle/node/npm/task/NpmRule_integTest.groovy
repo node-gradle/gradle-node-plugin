@@ -12,6 +12,10 @@ class NpmRule_integTest extends AbstractIntegTest {
             plugins {
                 id 'com.github.node-gradle.node'
             }
+            
+            node {
+                disableTaskRules = false
+            }
         ''')
         writeEmptyPackageJson()
 
@@ -27,6 +31,10 @@ class NpmRule_integTest extends AbstractIntegTest {
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                disableTaskRules = false
             }
         ''')
 
@@ -45,6 +53,10 @@ class NpmRule_integTest extends AbstractIntegTest {
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                disableTaskRules = false
             }
         ''')
 

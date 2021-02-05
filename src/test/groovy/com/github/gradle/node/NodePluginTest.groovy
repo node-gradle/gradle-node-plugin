@@ -24,4 +24,18 @@ class NodePluginTest extends AbstractProjectTest {
         project.repositories.size() == 0
         !project.configurations.contains('nodeDist')
     }
+
+    def 'check disabled task rules'()
+    {
+        when:
+        this.project.apply plugin: 'com.github.node-gradle.node'
+        this.project.node.disableTaskRules = true
+        this.project.evaluate()
+
+        then:
+        this.project.tasks.getRules().size() == 0
+        //test for the lack of rule driven task
+        this.project.tasks.findByName("npm_run_install") == null
+
+    }
 }

@@ -202,6 +202,12 @@ node {
     // Note that npm is bundled with Node.js
     download = false
     
+    //if false, it will enable Gradle Task Rules for `yarn_*`, `npm_*` and `npx_*` task names,
+    //to support automatic task creation.
+    //if true (the default), it will not register task rules when the plugin is applied, 
+    //so all rule-generated tasks will need to be configured manually (excluding static `yarn_setup`,`node_setup`,`npm_install`,`yarn_install`)   
+    disableTaskRules = true
+
     // Version of node to download and install (only used if download is true)
     // It will be unpacked in the workDir
     version = "12.18.3"

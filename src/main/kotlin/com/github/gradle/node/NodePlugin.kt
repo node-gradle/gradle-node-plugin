@@ -25,8 +25,9 @@ class NodePlugin : Plugin<Project> {
         val nodeExtension = NodeExtension.create(project)
         addGlobalTypes()
         addTasks()
-        addNpmRule()
-        addYarnRule()
+        addNpmRule(nodeExtension)
+        addYarnRule(nodeExtension)
+
         project.afterEvaluate {
             if (nodeExtension.download.get()) {
                 nodeExtension.distBaseUrl.orNull?.let { addRepository(it) }
@@ -55,10 +56,10 @@ class NodePlugin : Plugin<Project> {
         project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME)
     }
 
-    private fun addNpmRule() { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
+    private fun addNpmRule(nodeExtension: NodeExtension) { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
         project.tasks.addRule("Pattern: \"npm_<command>\": Executes an NPM command.") {
             val taskName = this
-            if (taskName.startsWith("npm_")) {
+            if (!nodeExtension.disableTaskRules.get() && taskName.startsWith("npm_")) {
                 project.tasks.register<NpmTask>(taskName) {
                     val tokens = taskName.split("_").drop(1) // all except first
                     npmCommand.set(tokens)
@@ -70,10 +71,10 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addYarnRule() { // note this rule also makes it possible to specify e.g. "dependsOn yarn_install"
+    private fun addYarnRule(nodeExtension: NodeExtension) { // note this rule also makes it possible to specify e.g. "dependsOn yarn_install"
         project.tasks.addRule("Pattern: \"yarn_<command>\": Executes an Yarn command.") {
             val taskName = this
-            if (taskName.startsWith("yarn_")) {
+            if (!nodeExtension.disableTaskRules.get() && taskName.startsWith("yarn_")) {
                 project.tasks.register<YarnTask>(taskName).configure {
                     val tokens = taskName.split("_").drop(1) // all except first
                     yarnCommand.set(tokens)

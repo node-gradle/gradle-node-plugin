@@ -19,6 +19,7 @@ class NodeExtensionTest extends AbstractProjectTest {
         nodeExtension.nodeProjectDir.get() != null
         nodeExtension.version.get() == DEFAULT_NODE_VERSION
         !nodeExtension.download.get()
+        nodeExtension.disableTaskRules.get()
         nodeExtension.npmVersion.get() == ''
     }
 }
