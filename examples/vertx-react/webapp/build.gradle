@@ -1,0 +1,44 @@
+plugins {
+    id "java"
+    // You have to specify the plugin version, for instance
+    // id "com.github.node-gradle.node" version "3.0.0"
+    // This works as is here because we use the plugin source
+    id "com.github.node-gradle.node"
+}
+
+def yarn = tasks.named("yarn")
+
+def buildTask = tasks.register("buildWebapp", NpxTask) {
+    command = "react-scripts"
+    args = ["build"]
+    dependsOn(yarn)
+    inputs.dir(fileTree("src").exclude("**/*.test.js").exclude("**/*.spec.js").exclude("**/__tests__/**/*.js"))
+    inputs.dir("public")
+    outputs.dir("${buildDir}/webapp")
+    environment = ["BUILD_PATH": "${buildDir}/webapp/webroot"]
+}
+
+def testTask = tasks.register("testWebapp", NpxTask) {
+    command = "react-scripts"
+    args = ["test"]
+    dependsOn(yarn)
+    inputs.dir("src")
+    inputs.dir("public")
+    outputs.upToDateWhen { true }
+    environment = ['CI': 'true']
+}
+
+sourceSets {
+    java {
+        main {
+            resources {
+                // This makes the processResources task automatically depend on the buildWebapp one
+                srcDir(buildTask)
+            }
+        }
+    }
+}
+
+tasks.test {
+    dependsOn(testTask)
+}

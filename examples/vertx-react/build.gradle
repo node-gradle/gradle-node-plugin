@@ -1,0 +1,63 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+plugins {
+    id "java"
+    id "application"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+}
+
+group = "com.github.gradle.node"
+version = "1.0.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+def vertxVersion = "4.0.1"
+def junitJupiterVersion = "5.7.0"
+
+def mainVerticleName = "com.github.gradle.node.vertx_react.MainVerticle"
+def launcherClassName = "io.vertx.core.Launcher"
+
+def watchForChange = "src/**/*"
+def doOnChange = "${projectDir}/gradlew classes"
+
+application {
+    // Must use the deprecated version while the shadow jar does not read the new version
+    // See https://github.com/johnrengelman/shadow/issues/609
+    // This causes a warning at build time
+    mainClassName = launcherClassName
+}
+
+dependencies {
+    implementation platform("io.vertx:vertx-stack-depchain:$vertxVersion")
+    implementation "io.vertx:vertx-core"
+    implementation "io.vertx:vertx-web"
+    implementation project(":webapp")
+    testImplementation "io.vertx:vertx-junit5"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitJupiterVersion"
+    testImplementation "io.github.bonigarcia:webdrivermanager:4.3.1"
+    testImplementation "org.seleniumhq.selenium:selenium-java:3.141.59"
+    testImplementation "org.assertj:assertj-core:3.19.0"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.withType(ShadowJar) {
+    archiveClassifier = "fat"
+    manifest {
+        attributes(["Main-Verticle": mainVerticleName])
+    }
+    mergeServiceFiles()
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaExec) {
+    args = ["run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange"]
+}
