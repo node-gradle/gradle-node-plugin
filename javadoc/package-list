@@ -1,0 +1,18 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:com.github.gradle.node.npm.task/NpmInstallTask.Companion///PointingToDeclaration/com/github/gradle/node/npm/task/NpmInstallTask.Companion.html
+$dokka.location:com.github.gradle.node.npm.task/NpmSetupTask.Companion///PointingToDeclaration/com/github/gradle/node/npm/task/NpmSetupTask.Companion.html
+$dokka.location:com.github.gradle.node.task/NodeSetupTask.Companion///PointingToDeclaration/com/github/gradle/node/task/NodeSetupTask.Companion.html
+$dokka.location:com.github.gradle.node.util/PlatformHelper.Companion///PointingToDeclaration/com/github/gradle/node/util/PlatformHelper.Companion.html
+$dokka.location:com.github.gradle.node.util/ProjectApiHelper.Companion///PointingToDeclaration/com/github/gradle/node/util/ProjectApiHelper.Companion.html
+$dokka.location:com.github.gradle.node.yarn.task/YarnInstallTask.Companion///PointingToDeclaration/com/github/gradle/node/yarn/task/YarnInstallTask.Companion.html
+$dokka.location:com.github.gradle.node.yarn.task/YarnSetupTask.Companion///PointingToDeclaration/com/github/gradle/node/yarn/task/YarnSetupTask.Companion.html
+$dokka.location:com.github.gradle.node/NodeExtension.Companion///PointingToDeclaration/com/github/gradle/node/NodeExtension.Companion.html
+$dokka.location:com.github.gradle.node/NodePlugin.Companion///PointingToDeclaration/com/github/gradle/node/NodePlugin.Companion.html
+com.github.gradle.node
+com.github.gradle.node.npm.proxy
+com.github.gradle.node.npm.task
+com.github.gradle.node.task
+com.github.gradle.node.util
+com.github.gradle.node.yarn.task
+
