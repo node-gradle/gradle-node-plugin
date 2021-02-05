@@ -32,8 +32,7 @@ java {
 
 repositories {
     mavenCentral()
-    // Necessary for dokka
-    jcenter()
+    gradlePluginPortal()
 }
 
 dependencies {
