@@ -91,7 +91,6 @@ class NodePlugin : Plugin<Project> {
             setUrl(distUrl)
             patternLayout {
                 artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-                ivy("v[revision]/ivy.xml")
             }
             metadataSources {
                 artifact()
