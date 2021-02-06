@@ -221,7 +221,7 @@ node {
 }
 ```
 
-In the `settings.gradle` file:
+In the `settings.gradle/settings.gradle.kts` file:
 
 ```gradle
 dependencyResolutionManagement {
@@ -231,7 +231,7 @@ dependencyResolutionManagement {
         // Declare the Node.js download repository
         ivy {
             name = "Node.js"
-            url = "https://nodejs.org/dist/"
+            setUrl("https://nodejs.org/dist/")
             patternLayout {
                 artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
             }
