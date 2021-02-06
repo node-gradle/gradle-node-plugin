@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.0 *(not yet released)*
+## Version 3.0 *(2021-02-06)*
 
 * Rewrite the code to Kotlin (issue [#17](https://github.com/node-gradle/gradle-node-plugin/issues/17))
 (thanks [mikejhill](https://github.com/mikejhill)
@@ -23,7 +23,7 @@ that shows how to use this plugin version with Kotlin)
 
 ### Breaking changes
 
-This version **breaks backward compatibility**. It should not visible for most Groovy DSL users since the Groovy DSL
+This version **breaks backward compatibility**. It should not be visible for most Groovy DSL users since the Groovy DSL
 handles transparently most of these changes.
 Here is what changed:
 * All the packages were renamed (they were inherited from the original forked project):

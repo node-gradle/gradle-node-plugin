@@ -8,7 +8,7 @@ If it is specified in the configuration, it is able to download and manage Node.
 unpack them into your local `.gradle` directory and use them from there.
 It also automatically installs [npm](https://www.npmjs.com/) when installing Node.js.
 
-Is is also able to install [Yarn](https://yarnpkg.com/) by downloading it from a npm registry.
+It is also able to install [Yarn](https://yarnpkg.com/) by downloading it from a npm registry.
 
 The version of each tool to use can be specified in the configuration.
 
@@ -18,7 +18,7 @@ file (see [Installing](installation.md) for details):
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "2.2.4"
+  id "com.github.node-gradle.node" version "3.0.0"
 }
 ```
 
