@@ -22,6 +22,26 @@ class NpmRule_integTest extends AbstractIntegTest {
         result.outcome == TaskOutcome.SUCCESS
     }
 
+   def 'can configure npm_ rule task'() {
+        given:
+        writeBuild('''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            npm_run_build {
+                doFirst { project.logger.info('configured') }
+            }
+        ''')
+        writeEmptyPackageJson()
+
+        when:
+        def result = buildTask('help')
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+   }
+
     def 'can execute an npm module using npm_run_'() {
         given:
         writeBuild('''

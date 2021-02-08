@@ -13,6 +13,7 @@ import com.github.gradle.node.yarn.task.YarnSetupTask
 import com.github.gradle.node.yarn.task.YarnTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import java.io.File
@@ -59,7 +60,7 @@ class NodePlugin : Plugin<Project> {
         project.tasks.addRule("Pattern: \"npm_<command>\": Executes an NPM command.") {
             val taskName = this
             if (taskName.startsWith("npm_")) {
-                project.tasks.register<NpmTask>(taskName) {
+                project.tasks.create<NpmTask>(taskName) {
                     val tokens = taskName.split("_").drop(1) // all except first
                     npmCommand.set(tokens)
                     if (tokens.first().equals("run", ignoreCase = true)) {
@@ -74,7 +75,7 @@ class NodePlugin : Plugin<Project> {
         project.tasks.addRule("Pattern: \"yarn_<command>\": Executes an Yarn command.") {
             val taskName = this
             if (taskName.startsWith("yarn_")) {
-                project.tasks.register<YarnTask>(taskName).configure {
+                project.tasks.create<YarnTask>(taskName) {
                     val tokens = taskName.split("_").drop(1) // all except first
                     yarnCommand.set(tokens)
                     if (tokens.first().equals("run", ignoreCase = true)) {

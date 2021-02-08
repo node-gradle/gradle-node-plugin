@@ -42,4 +42,25 @@ class YarnRule_integTest extends AbstractIntegTest {
         result.task(":yarn_run_hello").outcome == TaskOutcome.SUCCESS
         result.output.contains("Hello world!")
     }
+
+    def 'can configure yarn_ rule task'() {
+        given:
+        writeBuild("""
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            yarn_run_build {
+                doFirst { project.logger.info('configured') }
+            }
+        """)
+
+        copyResources("fixtures/yarn-rule/package.json", "package.json")
+
+        when:
+        def result = buildTask("help")
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+    }
 }
