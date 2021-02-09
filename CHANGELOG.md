@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 3.0.1 *(2021-02-09)*
+* Fixes a bug with the task rule preventing it from being configured [#145](https://github.com/node-gradle/gradle-node-plugin/issues/145)
+
 ## Version 3.0 *(2021-02-06)*
 
 * Rewrite the code to Kotlin (issue [#17](https://github.com/node-gradle/gradle-node-plugin/issues/17))
