@@ -50,7 +50,7 @@ This can be done by adding to the arguments for the already defined `npmSetup` t
 ```gradle
 tasks.npmSetup {
     doFirst {
-        args = args + ['--registry', 'http://myregistry.npm.com']
+        args.addAll(['--registry', 'http://myregistry.npm.com'])
     }
 }
 ```
