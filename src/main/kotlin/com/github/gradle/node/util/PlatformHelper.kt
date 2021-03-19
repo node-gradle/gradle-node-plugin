@@ -18,6 +18,8 @@ open class PlatformHelper constructor(private val props: Properties = System.get
     open val osArch: String by lazy {
         val arch = property("os.arch").toLowerCase()
         when {
+            //
+            osName == "darwin" && arch == "aarch64" -> "x64"
             /*
              * As Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch. Unfortunately some JVMs say aarch32/64, so we need an additional
              * conditional. Additionally, the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here.

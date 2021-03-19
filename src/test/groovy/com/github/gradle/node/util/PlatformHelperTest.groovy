@@ -38,21 +38,23 @@ class PlatformHelperTest extends Specification {
     @Unroll
     def "verify ARM handling #archProp (#unameProp)"() {
         given:
-        this.props.setProperty("os.name", "Linux")
+        this.props.setProperty("os.name", osProp)
         this.props.setProperty("os.arch", archProp)
         this.props.setProperty("uname", unameProp)
 
         expect:
-        this.helper.getOsName() == "linux"
+        this.helper.getOsName() == osName
         this.helper.getOsArch() == osArch
 
         where:
-        archProp  | unameProp | osArch
-        'arm'     | 'armv7l'  | 'armv7l' // Raspberry Pi 3
-        'arm'     | 'armv8l'  | 'arm64'
-        'aarch32' | 'arm'     | 'arm'
-        'aarch64' | 'arm64'   | 'arm64'
-        'aarch64' | 'aarch64' | 'arm64'
+        osProp     | archProp  | unameProp | osName   | osArch
+        'Linux'    | 'arm'     | 'armv7l'  | 'linux'  | 'armv7l' // Raspberry Pi 3
+        'Linux'    | 'arm'     | 'armv8l'  | 'linux'  | 'arm64'
+        'Linux'    | 'aarch32' | 'arm'     | 'linux'  | 'arm'
+        'Linux'    | 'aarch64' | 'arm64'   | 'linux'  | 'arm64'
+        'Linux'    | 'aarch64' | 'aarch64' | 'linux'  | 'arm64'
+        // Apple Silicon, we use the x64 emulation until a Node.js bundle is provided for the platform
+        'Mac OS X' | 'aarch64' | 'arm64'   | 'darwin' | 'x64'
     }
 
     def "throw exception if unsupported os"() {
