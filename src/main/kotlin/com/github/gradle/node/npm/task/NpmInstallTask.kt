@@ -49,6 +49,13 @@ abstract class NpmInstallTask : NpmTask() {
         }
     }
 
+    @PathSensitive(RELATIVE)
+    @Optional
+    @InputFile
+    protected fun getYarnLockFile(): Provider<File> {
+        return projectFileIfExists("yarn.lock")
+    }
+
     @Optional
     @OutputFile
     protected fun getPackageLockFileAsOutput(): Provider<File> {
