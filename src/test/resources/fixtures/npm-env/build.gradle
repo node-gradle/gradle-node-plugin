@@ -57,6 +57,15 @@ if (isPropertyEnabled("outputFile")) {
     }
 }
 
+if (isPropertyEnabled("enableHooks")) {
+    env.onSuccess {
+        println("Env task success with status ${it.getExitValue()}")
+    }
+    env.onFailure {
+        println("Env task failure with error ${it.getMessage()}")
+    }
+}
+
 def isPropertyEnabled(String name) {
     if (GradleVersion.current() >= GradleVersion.version("6.6")) {
         return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()

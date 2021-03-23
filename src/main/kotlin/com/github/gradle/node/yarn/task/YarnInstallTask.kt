@@ -7,15 +7,19 @@ import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.property
 import java.io.File
+import javax.inject.Inject
 
 /**
  * yarn install that only gets executed if gradle decides so.
  */
 abstract class YarnInstallTask : YarnTask() {
+    @get:Inject
+    abstract val providers: ProviderFactory
 
     @get:Internal
     val nodeModulesOutputFilter = objects.property<Action<ConfigurableFileTree>>()
@@ -48,7 +52,7 @@ abstract class YarnInstallTask : YarnTask() {
 
     private fun projectFileIfExists(name: String): Provider<File> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
-                .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
+            .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
 
     @Optional
@@ -66,13 +70,13 @@ abstract class YarnInstallTask : YarnTask() {
     protected fun getNodeModulesFiles(): Provider<FileTree> {
         val nodeModulesDirectoryProvider = nodeExtension.nodeProjectDir.dir("node_modules")
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
-                .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
-                    if (nodeModulesOutputFilter != null) {
-                        val fileTree = projectHelper.fileTree(nodeModulesDirectory)
-                        nodeModulesOutputFilter.execute(fileTree)
-                        providers.provider { fileTree }
-                    } else providers.provider { null }
-                }
+            .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
+                if (nodeModulesOutputFilter != null) {
+                    val fileTree = projectHelper.fileTree(nodeModulesDirectory)
+                    nodeModulesOutputFilter.execute(fileTree)
+                    providers.provider { fileTree }
+                } else providers.provider { null }
+            }
     }
 
     // For DSL

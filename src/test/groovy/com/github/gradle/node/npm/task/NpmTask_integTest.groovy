@@ -58,7 +58,7 @@ class NpmTask_integTest extends AbstractIntegTest {
         copyResources("fixtures/env/")
 
         when:
-        def result1 = build(":env")
+        def result1 = build(":env", "-DenableHooks=true")
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
@@ -66,6 +66,8 @@ class NpmTask_integTest extends AbstractIntegTest {
         result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":env").outcome == TaskOutcome.SUCCESS
         environmentDumpContainsPathVariable(result1.output)
+        result1.output.contains("Env task success with status 0")
+        !result1.output.contains("Env task failure")
 
         when:
         def result2 = build(":env", "-DcustomEnv=true")
@@ -98,7 +100,7 @@ class NpmTask_integTest extends AbstractIntegTest {
         result4.output.contains("Usage: npm <command>")
 
         when:
-        def result5 = buildAndFail(":env", "-DnotExistingCommand=true")
+        def result5 = buildAndFail(":env", "-DnotExistingCommand=true", "-DenableHooks=true")
 
         then:
         result5.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -106,6 +108,8 @@ class NpmTask_integTest extends AbstractIntegTest {
         result5.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.FAILED
         result5.output.contains("Usage: npm <command>")
+        result5.output.contains("Env task failure with error Process 'command '")
+        !result5.output.contains("Env task success")
 
         when:
         def result6 = build(":env", "-DoutputFile=true")

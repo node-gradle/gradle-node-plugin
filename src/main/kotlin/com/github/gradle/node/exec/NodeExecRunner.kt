@@ -6,12 +6,17 @@ import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.gradle.process.ExecResult
 
 internal class NodeExecRunner {
-    fun execute(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration) {
+    fun execute(
+        project: ProjectApiHelper,
+        extension: NodeExtension,
+        nodeExecConfiguration: NodeExecConfiguration
+    ): ExecResult {
         val execConfiguration = buildExecConfiguration(extension, nodeExecConfiguration).get()
         val execRunner = ExecRunner()
-        execRunner.execute(project, extension, execConfiguration)
+        return execRunner.execute(project, extension, execConfiguration)
     }
 
     private fun buildExecConfiguration(nodeExtension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration):
@@ -22,18 +27,20 @@ internal class NodeExecRunner {
         val executableProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
         val additionalBinPathProvider = computeAdditionalBinPath(nodeExtension, nodeBinDirProvider)
         return zip(executableProvider, additionalBinPathProvider)
-                .map { (executable, additionalBinPath) ->
-                    ExecConfiguration(executable, nodeExecConfiguration.command, additionalBinPath,
-                            nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
-                            nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
-                }
+            .map { (executable, additionalBinPath) ->
+                ExecConfiguration(
+                    executable, nodeExecConfiguration.command, additionalBinPath,
+                    nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
+                    nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides
+                )
+            }
     }
 
     private fun computeAdditionalBinPath(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<Directory>):
             Provider<List<String>> {
         return zip(nodeExtension.download, nodeBinDirProvider)
-                .map { (download, nodeBinDir) ->
-                    if (download) listOf(nodeBinDir.asFile.absolutePath) else listOf()
-                }
+            .map { (download, nodeBinDir) ->
+                if (download) listOf(nodeBinDir.asFile.absolutePath) else listOf()
+            }
     }
 }

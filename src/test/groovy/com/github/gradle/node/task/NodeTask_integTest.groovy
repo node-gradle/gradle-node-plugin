@@ -95,12 +95,14 @@ class NodeTask_integTest extends AbstractIntegTest {
         copyResources("fixtures/node-env")
 
         when:
-        def result1 = build("env")
+        def result1 = build("env", "-DenableHooks=true")
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
         result1.task(":env").outcome == TaskOutcome.SUCCESS
         result1.output.contains("No custom environment")
+        result1.output.contains("Env task success with status 0")
+        !result1.output.contains("Env task failure")
 
         when:
         def result2 = build("env")
@@ -205,12 +207,14 @@ class NodeTask_integTest extends AbstractIntegTest {
         result14.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result15 = buildAndFail("env", "-Dfail=true")
+        def result15 = buildAndFail("env", "-Dfail=true", "-DenableHooks=true")
 
         then:
         result15.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result15.task(":env").outcome == TaskOutcome.FAILED
         result15.output.contains("I had to fail")
+        result15.output.contains("Env task failure with error Process 'command '")
+        !result15.output.contains("Env task success")
 
         when:
         def result16 = build("env", "-DoutputFile=true")

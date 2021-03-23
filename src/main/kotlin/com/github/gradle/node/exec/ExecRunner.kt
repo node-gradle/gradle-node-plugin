@@ -3,11 +3,16 @@ package com.github.gradle.node.exec
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.process.ExecResult
 import java.io.File
 
 internal class ExecRunner {
-    fun execute(projectHelper: ProjectApiHelper, extension: NodeExtension, execConfiguration: ExecConfiguration) {
-        projectHelper.exec {
+    fun execute(
+        projectHelper: ProjectApiHelper,
+        extension: NodeExtension,
+        execConfiguration: ExecConfiguration
+    ): ExecResult {
+        return projectHelper.exec {
             executable = execConfiguration.executable
             args = execConfiguration.args
             environment = computeEnvironment(execConfiguration)
@@ -28,7 +33,7 @@ internal class ExecRunner {
             val actualPath = execEnvironment[pathEnvironmentVariableName]
             val additionalPathsSerialized = execConfiguration.additionalBinPaths.joinToString(File.pathSeparator)
             execEnvironment[pathEnvironmentVariableName] =
-                    "${additionalPathsSerialized}${File.pathSeparator}${actualPath}"
+                "${additionalPathsSerialized}${File.pathSeparator}${actualPath}"
         }
         return execEnvironment
     }

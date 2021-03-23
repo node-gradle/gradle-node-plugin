@@ -16,6 +16,7 @@ def changeWorkingDir = isPropertyEnabled("changeWorkingDir")
 def fail = isPropertyEnabled("fail")
 def ignoreExitValue = isPropertyEnabled("ignoreExitValue")
 def outputFile = isPropertyEnabled("outputFile")
+def enableHooks = isPropertyEnabled("enableHooks")
 
 task env(type: NodeTask) {
     script = file("env.js")
@@ -48,6 +49,15 @@ if (ignoreExitValue) {
 if (outputFile) {
     env.execOverrides {
         standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+    }
+}
+
+if (enableHooks) {
+    env.onSuccess {
+        println("Env task success with status ${it.getExitValue()}")
+    }
+    env.onFailure {
+        println("Env task failure with error ${it.getMessage()}")
     }
 }
 
