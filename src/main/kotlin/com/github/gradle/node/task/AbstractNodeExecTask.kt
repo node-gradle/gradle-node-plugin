@@ -1,6 +1,8 @@
 package com.github.gradle.node.task
 
 import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.npm.task.TaskHooks
+import com.github.gradle.node.npm.task.internal.TaskHooksImpl
 import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
@@ -52,31 +54,24 @@ abstract class AbstractNodeExecTask : DefaultTask() {
     }
 
     @get:Internal
-    val onSuccess = objects.property<Action<ExecResult>>()
+    val hooks = objects.property<Action<in TaskHooks>>()
 
     // For DSL
     @Suppress("unused")
-    fun onSuccess(onSuccess: Action<ExecResult>) {
-        this.onSuccess.set(onSuccess)
-    }
-
-    @get:Internal
-    val onFailure = objects.property<Action<Exception>>()
-
-    // For DSL
-    @Suppress("unused")
-    fun onFailure(onFailure: Action<Exception>) {
-        this.onFailure.set(onFailure)
+    fun hooks(hooks: Action<in TaskHooks>) {
+        this.hooks.set(hooks)
     }
 
     @TaskAction
     fun exec() {
+        val taskHooks = TaskHooksImpl()
+        hooks.orNull?.execute(taskHooks)
         try {
             val execResult = execInternal()
-            onSuccess.orNull?.execute(execResult)
+            taskHooks.successHandler?.execute(execResult)
         } catch (e: Exception) {
             e.printStackTrace()
-            onFailure.orNull?.execute(e)
+            taskHooks.failureHandler?.execute(e)
             throw e
         }
     }

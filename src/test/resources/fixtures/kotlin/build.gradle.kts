@@ -120,6 +120,14 @@ val buildTaskUsingNpx = tasks.register<NpxTask>("buildNpx") {
     args.set(listOf("src", "--out-dir", "${buildDir}/npx-output"))
     inputs.dir("src")
     outputs.dir("${buildDir}/npx-output")
+    hooks {
+        onSuccess {
+            println("Npx build finished with status ${exitValue}")
+        }
+        onFailure {
+            println("Npx build failed with error ${message}")
+        }
+    }
 }
 
 val buildTaskUsingNpm = tasks.register<NpmTask>("buildNpm") {
@@ -128,6 +136,12 @@ val buildTaskUsingNpm = tasks.register<NpmTask>("buildNpm") {
     args.set(listOf("--", "--out-dir", "${buildDir}/npm-output"))
     inputs.dir("src")
     outputs.dir("${buildDir}/npm-output")
+    hooks {
+        // We do not have to listen to all hooks
+        onSuccess {
+            println("Npm build finished with status ${exitValue}")
+        }
+    }
 }
 
 val buildTaskUsingYarn = tasks.register<YarnTask>("buildYarn") {
@@ -136,6 +150,9 @@ val buildTaskUsingYarn = tasks.register<YarnTask>("buildYarn") {
     args.set(listOf("--out-dir", "${buildDir}/yarn-output"))
     inputs.dir("src")
     outputs.dir("${buildDir}/yarn-output")
+    hooks {
+        // We can even listen to no hook
+    }
 }
 
 tasks.register<Zip>("package") {
@@ -147,7 +164,7 @@ tasks.register<Zip>("package") {
     from(buildTaskUsingNpm) {
         into("npm")
     }
-    from (buildTaskUsingYarn) {
+    from(buildTaskUsingYarn) {
         into("yarn")
     }
 }

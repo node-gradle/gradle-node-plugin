@@ -43,6 +43,8 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         result2.task(":buildNpm").outcome == TaskOutcome.SUCCESS
         result2.task(":buildYarn").outcome == TaskOutcome.SUCCESS
         result2.task(":package").outcome == TaskOutcome.SUCCESS
+        result2.output.contains("Npx build finished with status 0")
+        result2.output.contains("Npm build finished with status 0")
         def outputFile = createFile("build/app.zip")
         outputFile.exists()
         def zipFile = new ZipFile(outputFile)

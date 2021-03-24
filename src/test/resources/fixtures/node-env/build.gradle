@@ -53,11 +53,13 @@ if (outputFile) {
 }
 
 if (enableHooks) {
-    env.onSuccess {
-        println("Env task success with status ${it.getExitValue()}")
-    }
-    env.onFailure {
-        println("Env task failure with error ${it.getMessage()}")
+    env.hooks {
+        onSuccess {
+            println("Env task success with status ${it.getExitValue()}")
+        }
+        onFailure {
+            println("Env task failure with error ${it.getMessage()}")
+        }
     }
 }
 
