@@ -49,20 +49,24 @@ class NodeTaskTest extends AbstractTaskTest {
 
         def task = project.tasks.create('simple', NodeTask)
         mockProjectApiHelperExec(task)
-        task.ignoreExitValue.set(true)
+        task.ignoreExitValue.set(false)
 
         def script = new File(projectDir, 'script.js')
         script.write("console.log(\"hello world\");")
         task.script.set(script)
         task.workingDir.set(projectDir)
         def baos = new ByteArrayOutputStream()
-        task.execOverrides { standardOutput = baos }
+        task.execOverrides {
+            standardOutput = baos
+            ignoreExitValue = false
+        }
 
         when:
         project.evaluate()
         task.exec()
 
         then:
+        // Ignore exit value is always set to true and handled manually
         1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setArgs([script.absolutePath])
     }
@@ -82,7 +86,8 @@ class NodeTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        1 * execSpec.setIgnoreExitValue(false)
+        // Ignore exit value is always set to true and handled manually
+        1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setEnvironment({ containsPath(it) })
         1 * execSpec.setArgs([script.absolutePath])
     }
@@ -105,7 +110,8 @@ class NodeTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        1 * execSpec.setIgnoreExitValue(false)
+        // Ignore exit value is always set to true and handled manually
+        1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setEnvironment({ containsPath(it) })
         1 * execSpec.setExecutable('node')
         1 * execSpec.setArgs(['c', 'd', script.absolutePath, 'a', 'b'])
@@ -127,6 +133,7 @@ class NodeTaskTest extends AbstractTaskTest {
 
         then:
         1 * execSpec.setEnvironment({ containsPath(it) })
-        1 * execSpec.setIgnoreExitValue(false)
+        // Ignore exit value is always set to true and handled manually
+        1 * execSpec.setIgnoreExitValue(true)
     }
 }

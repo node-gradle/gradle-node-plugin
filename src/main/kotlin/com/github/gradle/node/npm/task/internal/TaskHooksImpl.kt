@@ -6,13 +6,13 @@ import org.gradle.process.ExecResult
 
 data class TaskHooksImpl(
     var successHandler: Action<in ExecResult>? = null,
-    var failureHandler: Action<in Exception>? = null
+    var failureHandler: Action<in ExecResult>? = null
 ) : TaskHooks {
     override fun onSuccess(successHandler: Action<in ExecResult>) {
         this.successHandler = successHandler
     }
 
-    override fun onFailure(failureHandler: Action<in Exception>) {
+    override fun onFailure(failureHandler: Action<in ExecResult>) {
         this.failureHandler = failureHandler
     }
 }

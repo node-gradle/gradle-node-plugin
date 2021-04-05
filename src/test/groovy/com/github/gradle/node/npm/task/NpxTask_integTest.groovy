@@ -120,7 +120,7 @@ class NpxTask_integTest extends AbstractIntegTest {
         result3.task(":env").outcome == (isConfigurationCacheEnabled() ? TaskOutcome.SUCCESS : TaskOutcome.UP_TO_DATE)
 
         when:
-        def result4 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
+        def result4 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true", "-DenableHooks=true")
 
         then:
         result4.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -128,6 +128,8 @@ class NpxTask_integTest extends AbstractIntegTest {
         result4.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":env").outcome == TaskOutcome.SUCCESS
         result4.output.contains("E404")
+        result4.output.contains("Env task success with status 1")
+        !result4.output.contains("Env task failure")
 
         when:
         def result5 = buildAndFail(":env", "-DnotExistingCommand=true", "-DenableHooks=true")
@@ -138,7 +140,7 @@ class NpxTask_integTest extends AbstractIntegTest {
         result5.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.FAILED
         result5.output.contains("E404")
-        result5.output.contains("Env task failure with error Process 'command '")
+        result5.output.contains("Env task failure with status 1")
         !result5.output.contains("Env task success")
 
         when:

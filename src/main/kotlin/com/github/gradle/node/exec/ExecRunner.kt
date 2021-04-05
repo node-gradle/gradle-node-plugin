@@ -16,9 +16,10 @@ internal class ExecRunner {
             executable = execConfiguration.executable
             args = execConfiguration.args
             environment = computeEnvironment(execConfiguration)
-            isIgnoreExitValue = execConfiguration.ignoreExitValue
             workingDir = computeWorkingDir(extension.nodeProjectDir, execConfiguration)
             execConfiguration.execOverrides?.execute(this)
+            // Always ignore exit value
+            isIgnoreExitValue = true
         }
     }
 

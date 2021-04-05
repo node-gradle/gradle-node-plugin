@@ -73,7 +73,8 @@ class NpxTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        1 * execSpec.setIgnoreExitValue(false)
+        // Ignore exit value is always set to true and handled manually
+        1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setExecutable(nodeBinDir.get().file("node").asFile.toString())
         1 * execSpec.setArgs([npxScriptFile.get()])
     }

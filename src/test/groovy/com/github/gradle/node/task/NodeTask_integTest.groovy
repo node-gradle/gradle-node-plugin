@@ -192,12 +192,14 @@ class NodeTask_integTest extends AbstractIntegTest {
         result12.output.contains("No custom environment")
 
         when:
-        def result13 = build("env", "-Dfail=true", "-DignoreExitValue=true")
+        def result13 = build("env", "-Dfail=true", "-DignoreExitValue=true", "-DenableHooks=true")
 
         then:
         result13.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result13.task(":env").outcome == TaskOutcome.SUCCESS
         result13.output.contains("I had to fail")
+        result13.output.contains("Env task success with status 1")
+        !result13.output.contains("Env task failure")
 
         when:
         def result14 = build("env", "-Dfail=true", "-DignoreExitValue=true")
@@ -213,7 +215,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         result15.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result15.task(":env").outcome == TaskOutcome.FAILED
         result15.output.contains("I had to fail")
-        result15.output.contains("Env task failure with error Process 'command '")
+        result15.output.contains("Env task failure with status 1")
         !result15.output.contains("Env task success")
 
         when:

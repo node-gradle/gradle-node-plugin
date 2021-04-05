@@ -71,7 +71,8 @@ class NpmTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        1 * execSpec.setIgnoreExitValue(false)
+        // Ignore exit value is always set to true and handled manually
+        1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setExecutable({ executable ->
             def expectedNodePath = nodeDir.resolve("bin").resolve("node")
             return fixAbsolutePath(executable) == expectedNodePath.toAbsolutePath().toString()
@@ -102,7 +103,8 @@ class NpmTaskTest extends AbstractTaskTest {
         task.exec()
 
         then:
-        1 * execSpec.setIgnoreExitValue(false)
+        // Ignore exit value is always set to true and handled manually
+        1 * execSpec.setIgnoreExitValue(true)
         1 * execSpec.setExecutable({ executable ->
             def nodeExecutable = nodeDir.resolve("bin").resolve("node")
             return fixAbsolutePath(executable) == nodeExecutable.toAbsolutePath().toString()

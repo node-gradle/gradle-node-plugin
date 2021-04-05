@@ -63,7 +63,7 @@ if (isPropertyEnabled("enableHooks")) {
             println("Env task success with status ${it.getExitValue()}")
         }
         onFailure {
-            println("Env task failure with error ${it.getMessage()}")
+            println("Env task failure with status ${it.getExitValue()}")
         }
     }
 }

@@ -14,6 +14,7 @@ import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
+import org.gradle.process.internal.ExecException
 import javax.inject.Inject
 
 abstract class AbstractNodeExecTask : DefaultTask() {
@@ -66,13 +67,17 @@ abstract class AbstractNodeExecTask : DefaultTask() {
     fun exec() {
         val taskHooks = TaskHooksImpl()
         hooks.orNull?.execute(taskHooks)
-        try {
-            val execResult = execInternal()
+        val execResult = execInternal()
+        if (!ignoreExitValue.get()) {
+            try {
+                execResult.assertNormalExitValue()
+                taskHooks.successHandler?.execute(execResult)
+            } catch (e: ExecException) {
+                taskHooks.failureHandler?.execute(execResult)
+                throw e
+            }
+        } else {
             taskHooks.successHandler?.execute(execResult)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            taskHooks.failureHandler?.execute(e)
-            throw e
         }
     }
 

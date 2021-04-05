@@ -6,5 +6,5 @@ import org.gradle.process.ExecResult
 interface TaskHooks {
     fun onSuccess(successHandler: Action<in ExecResult>)
 
-    fun onFailure(failureHandler: Action<in Exception>)
+    fun onFailure(failureHandler: Action<in ExecResult>)
 }
