@@ -26,10 +26,7 @@ abstract class NpxTask : AbstractNodeExecTask() {
         command.orNull?.let { fullCommand.add(it) }
         fullCommand.addAll(args.get())
         val nodeExecConfiguration =
-            NodeExecConfiguration(
-                fullCommand, environment.get(), workingDir.asFile.orNull,
-                ignoreExitValue.get(), execOverrides.orNull
-            )
+            NodeExecConfiguration(fullCommand, environment.get(), workingDir.asFile.orNull, execOverrides.orNull)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
         return npmExecRunner.executeNpxCommand(projectHelper, nodeExtension, nodeExecConfiguration)
     }

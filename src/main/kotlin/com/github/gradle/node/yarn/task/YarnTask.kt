@@ -26,10 +26,7 @@ abstract class YarnTask : AbstractNodeExecTask() {
     override fun execInternal(): ExecResult {
         val command = yarnCommand.get().plus(args.get())
         val nodeExecConfiguration =
-            NodeExecConfiguration(
-                command, environment.get(), workingDir.asFile.orNull,
-                ignoreExitValue.get(), execOverrides.orNull
-            )
+            NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull, execOverrides.orNull)
         val yarnExecRunner = objects.newInstance(YarnExecRunner::class.java)
         return yarnExecRunner.executeYarnCommand(projectHelper, nodeExtension, nodeExecConfiguration)
     }

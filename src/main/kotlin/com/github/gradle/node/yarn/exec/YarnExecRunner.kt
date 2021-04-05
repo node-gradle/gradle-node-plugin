@@ -35,7 +35,7 @@ internal abstract class YarnExecRunner {
             yarnExecProvider.get(),
             nodeExecConfiguration.command, additionalBinPathProvider.get(),
             addNpmProxyEnvironment(nodeExtension, nodeExecConfiguration), nodeExecConfiguration.workingDir,
-            nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides
+            nodeExecConfiguration.execOverrides
         )
         val execRunner = ExecRunner()
         return execRunner.execute(project, nodeExtension, execConfiguration)

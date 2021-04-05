@@ -31,7 +31,7 @@ internal class NodeExecRunner {
                 ExecConfiguration(
                     executable, nodeExecConfiguration.command, additionalBinPath,
                     nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
-                    nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides
+                    nodeExecConfiguration.execOverrides
                 )
             }
     }

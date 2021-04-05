@@ -42,10 +42,7 @@ abstract class NodeTask : AbstractNodeExecTask() {
         val currentScript = script.get().asFile
         val command = options.get().plus(currentScript.absolutePath).plus(args.get())
         val nodeExecConfiguration =
-            NodeExecConfiguration(
-                command, environment.get(), workingDir.asFile.orNull,
-                ignoreExitValue.get(), execOverrides.orNull
-            )
+            NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull, execOverrides.orNull)
         val nodeExecRunner = NodeExecRunner()
         return nodeExecRunner.execute(projectHelper, nodeExtension, nodeExecConfiguration)
     }

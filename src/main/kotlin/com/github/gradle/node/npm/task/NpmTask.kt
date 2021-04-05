@@ -26,10 +26,7 @@ abstract class NpmTask : AbstractNodeExecTask() {
     override fun execInternal(): ExecResult {
         val command = npmCommand.get().plus(args.get())
         val nodeExecConfiguration =
-            NodeExecConfiguration(
-                command, environment.get(), workingDir.asFile.orNull, ignoreExitValue.get(),
-                execOverrides.orNull
-            )
+            NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull, execOverrides.orNull)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
         return npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration)
     }

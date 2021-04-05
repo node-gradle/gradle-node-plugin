@@ -84,7 +84,7 @@ internal abstract class NpmExecRunner {
                 ExecConfiguration(
                     executableAndScript.executable, args, additionalBinPath,
                     nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
-                    nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides
+                    nodeExecConfiguration.execOverrides
                 )
             }
     }
