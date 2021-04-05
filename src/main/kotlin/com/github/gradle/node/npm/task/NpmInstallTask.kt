@@ -23,7 +23,7 @@ abstract class NpmInstallTask : NpmTask() {
 
     @get:Internal
     val nodeModulesOutputFilter =
-        objects.property<Action<ConfigurableFileTree>>()
+        objects.property<Action<in ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.NPM_GROUP
@@ -100,7 +100,7 @@ abstract class NpmInstallTask : NpmTask() {
 
     // For DSL
     @Suppress("unused")
-    fun nodeModulesOutputFilter(nodeModulesOutputFilter: Action<ConfigurableFileTree>) {
+    fun nodeModulesOutputFilter(nodeModulesOutputFilter: Action<in ConfigurableFileTree>) {
         this.nodeModulesOutputFilter.set(nodeModulesOutputFilter)
     }
 

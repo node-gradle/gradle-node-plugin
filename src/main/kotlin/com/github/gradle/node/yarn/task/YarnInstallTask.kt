@@ -22,7 +22,7 @@ abstract class YarnInstallTask : YarnTask() {
     abstract val providers: ProviderFactory
 
     @get:Internal
-    val nodeModulesOutputFilter = objects.property<Action<ConfigurableFileTree>>()
+    val nodeModulesOutputFilter = objects.property<Action<in ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.YARN_GROUP
@@ -81,7 +81,7 @@ abstract class YarnInstallTask : YarnTask() {
 
     // For DSL
     @Suppress("unused")
-    fun nodeModulesOutputFilter(nodeModulesOutputFilter: Action<ConfigurableFileTree>) {
+    fun nodeModulesOutputFilter(nodeModulesOutputFilter: Action<in ConfigurableFileTree>) {
         this.nodeModulesOutputFilter.set(nodeModulesOutputFilter)
     }
 

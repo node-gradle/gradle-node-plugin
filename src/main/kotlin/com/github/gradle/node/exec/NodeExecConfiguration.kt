@@ -9,5 +9,5 @@ internal data class NodeExecConfiguration(
         val environment: Map<String, String> = mapOf(),
         val workingDir: File? = null,
         val ignoreExitValue: Boolean = false,
-        val execOverrides: Action<ExecSpec>? = null
+        val execOverrides: Action<in ExecSpec>? = null
 )

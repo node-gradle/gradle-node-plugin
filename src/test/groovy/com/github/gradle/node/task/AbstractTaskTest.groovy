@@ -38,7 +38,7 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
         Field projectApiHelperField = findProjectApiHelperTaskField(task, fieldName)
         projectApiHelperField.setAccessible(true)
         ProjectApiHelper projectApiHelper = Spy(projectApiHelperField.get(task)) as ProjectApiHelper
-        projectApiHelper.exec(_ as Action<ExecSpec>) >> { Action<ExecSpec> action ->
+        projectApiHelper.exec(_ as Action<? extends ExecSpec>) >> { Action<? extends ExecSpec> action ->
             action.execute(execSpec)
             return execResult
         }

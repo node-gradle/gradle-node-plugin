@@ -42,14 +42,14 @@ abstract class AbstractNodeExecTask : DefaultTask() {
     val environment = objects.mapProperty<String, String>()
 
     @get:Internal
-    val execOverrides = objects.property<Action<ExecSpec>>()
+    val execOverrides = objects.property<Action<in ExecSpec>>()
 
     @get:Internal
     val nodeExtension = NodeExtension[project]
 
     // For DSL
     @Suppress("unused")
-    fun execOverrides(execOverrides: Action<ExecSpec>) {
+    fun execOverrides(execOverrides: Action<in ExecSpec>) {
         this.execOverrides.set(execOverrides)
     }
 

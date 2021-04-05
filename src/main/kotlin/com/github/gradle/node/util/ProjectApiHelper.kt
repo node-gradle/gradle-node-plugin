@@ -36,11 +36,11 @@ interface ProjectApiHelper {
 
     fun tarTree(tarPath: File): FileTree
 
-    fun copy(action: Action<CopySpec>): WorkResult
+    fun copy(action: Action<in CopySpec>): WorkResult
 
-    fun delete(action: Action<DeleteSpec>): WorkResult
+    fun delete(action: Action<in DeleteSpec>): WorkResult
 
-    fun exec(action: Action<ExecSpec>): ExecResult
+    fun exec(action: Action<in ExecSpec>): ExecResult
 }
 
 internal open class DefaultProjectApiHelper @Inject constructor(
@@ -61,15 +61,15 @@ internal open class DefaultProjectApiHelper @Inject constructor(
         return archiveOperations.tarTree(tarPath)
     }
 
-    override fun copy(action: Action<CopySpec>): WorkResult {
+    override fun copy(action: Action<in CopySpec>): WorkResult {
         return fileSystemOperations.copy(action)
     }
 
-    override fun delete(action: Action<DeleteSpec>): WorkResult {
+    override fun delete(action: Action<in DeleteSpec>): WorkResult {
         return fileSystemOperations.delete(action)
     }
 
-    override fun exec(action: Action<ExecSpec>): ExecResult {
+    override fun exec(action: Action<in ExecSpec>): ExecResult {
         return execOperations.exec(action)
     }
 }
@@ -88,15 +88,15 @@ internal open class LegacyProjectApiHelper(private val project: Project) : Proje
         return project.tarTree(tarPath)
     }
 
-    override fun copy(action: Action<CopySpec>): WorkResult {
+    override fun copy(action: Action<in CopySpec>): WorkResult {
         return project.copy(action)
     }
 
-    override fun delete(action: Action<DeleteSpec>): WorkResult {
+    override fun delete(action: Action<in DeleteSpec>): WorkResult {
         return project.delete(action)
     }
 
-    override fun exec(action: Action<ExecSpec>): ExecResult {
+    override fun exec(action: Action<in ExecSpec>): ExecResult {
         return project.exec(action)
     }
 }
