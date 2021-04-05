@@ -60,10 +60,10 @@ if (isPropertyEnabled("outputFile")) {
 if (isPropertyEnabled("enableHooks")) {
     env.hooks {
         onSuccess {
-            println("Env task success with status ${it.getExitValue()}")
+            println("Env task success with status ${it.exitValue}")
         }
         onFailure {
-            println("Env task failure with status ${it.getExitValue()}")
+            println("Env task failure with status ${it.exitValue}")
         }
     }
 }

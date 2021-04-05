@@ -127,6 +127,9 @@ val buildTaskUsingNpx = tasks.register<NpxTask>("buildNpx") {
         onFailure {
             println("Npx build failed with status ${exitValue}")
         }
+        onExecFinished {
+            println("Npx command finished with status ${exitValue}")
+        }
     }
 }
 

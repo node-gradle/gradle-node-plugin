@@ -230,11 +230,27 @@ class NodeTask_integTest extends AbstractIntegTest {
         outputFile.text.contains("No custom environment")
 
         when:
-        def result17 = build(":version")
+        def result17 = build("env", "-Dfail=true", "-DignoreExitValue=true", "-DenableExpectFailureHook=true")
 
         then:
-        result17.task(":version").outcome == TaskOutcome.SUCCESS
-        result17.output.contains("Version: v${DEFAULT_NODE_VERSION}")
+        result17.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result17.task(":env").outcome == TaskOutcome.SUCCESS
+        result17.output.contains("Failed as expected")
+
+        when:
+        def result18 = buildAndFail("env", "-DignoreExitValue=true", "-DenableExpectFailureHook=true")
+
+        then:
+        result18.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result18.task(":env").outcome == TaskOutcome.FAILED
+        result18.output.contains("Should have failed")
+
+        when:
+        def result19 = build(":version")
+
+        then:
+        result19.task(":version").outcome == TaskOutcome.SUCCESS
+        result19.output.contains("Version: v${DEFAULT_NODE_VERSION}")
     }
 
     def 'try to use custom repositories when the download url is null'() {

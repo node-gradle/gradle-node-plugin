@@ -9,15 +9,6 @@ node {
     workDir = file("build/node")
 }
 
-def changeOptions = isPropertyEnabled("changeOptions")
-
-def changeEnv = isPropertyEnabled("changeEnv")
-def changeWorkingDir = isPropertyEnabled("changeWorkingDir")
-def fail = isPropertyEnabled("fail")
-def ignoreExitValue = isPropertyEnabled("ignoreExitValue")
-def outputFile = isPropertyEnabled("outputFile")
-def enableHooks = isPropertyEnabled("enableHooks")
-
 task env(type: NodeTask) {
     script = file("env.js")
     outputs.upToDateWhen {
@@ -25,40 +16,52 @@ task env(type: NodeTask) {
     }
 }
 
-if (changeOptions) {
+if (isPropertyEnabled("changeOptions")) {
     env.options = ["--print", "1000 * 1000"]
 }
 
-if (changeEnv) {
+if (isPropertyEnabled("changeEnv")) {
     def qualifier = "custom"
     env.environment = [CUSTOM: "${qualifier} value"]
 }
 
-if (changeWorkingDir) {
+if (isPropertyEnabled("changeWorkingDir")) {
     env.workingDir = file("${project.buildDir}/notExisting")
 }
 
-if (fail) {
+if (isPropertyEnabled("fail")) {
     env.args = ['fail']
 }
 
-if (ignoreExitValue) {
+if (isPropertyEnabled("ignoreExitValue")) {
     env.ignoreExitValue = true
 }
 
-if (outputFile) {
+if (isPropertyEnabled("outputFile")) {
     env.execOverrides {
         standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
     }
 }
 
-if (enableHooks) {
+if (isPropertyEnabled("enableHooks")) {
     env.hooks {
         onSuccess {
-            println("Env task success with status ${it.getExitValue()}")
+            println("Env task success with status ${it.exitValue}")
         }
         onFailure {
-            println("Env task failure with status ${it.getExitValue()}")
+            println("Env task failure with status ${it.exitValue}")
+        }
+    }
+}
+
+if (isPropertyEnabled("enableExpectFailureHook")) {
+    env.hooks {
+        onExecFinished {
+            if (it.exitValue == 0) {
+                throw new IllegalStateException("Should have failed")
+            } else {
+                println("Failed as expected")
+            }
         }
     }
 }

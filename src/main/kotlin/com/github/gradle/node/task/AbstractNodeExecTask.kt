@@ -68,6 +68,7 @@ abstract class AbstractNodeExecTask : DefaultTask() {
         val taskHooks = TaskHooksImpl()
         hooks.orNull?.execute(taskHooks)
         val execResult = execInternal()
+        taskHooks.execFinishedHandler?.execute(execResult)
         if (!ignoreExitValue.get()) {
             try {
                 execResult.assertNormalExitValue()
