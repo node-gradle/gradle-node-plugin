@@ -25,6 +25,11 @@ open class NodeExtension(project: Project) {
     val yarnWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("yarn"))
 
     /**
+     * The directory where pnpm is installed (when a Yarn task is used)
+     */
+    val pnpmWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("pnpm"))
+
+    /**
      * The Node.js project directory location
      * This is where the package.json file and node_modules directory are located
      * By default it is at the root of the current project
@@ -52,6 +57,13 @@ open class NodeExtension(project: Project) {
     val yarnVersion = project.objects.property<String>().convention("")
 
     /**
+     * Version of pnpm to use
+     * Any pnpm task first installs pnpm in the pnpmWorkDir
+     * It uses the specified version if defined and the latest version otherwise (by default)
+     */
+    val pnpmVersion = project.objects.property<String>().convention("")
+
+    /**
      * Base URL for fetching node distributions
      * Only used if download is true
      * Change it if you want to use a mirror
@@ -62,6 +74,8 @@ open class NodeExtension(project: Project) {
     val npmCommand = project.objects.property<String>().convention("npm")
     val npxCommand = project.objects.property<String>().convention("npx")
     val yarnCommand = project.objects.property<String>().convention("yarn")
+    val pnpmCommand = project.objects.property<String>().convention("pnpm")
+    val pnpxCommand = project.objects.property<String>().convention("pnpx")
 
     /**
      * The npm command executed by the npmInstall task
