@@ -23,14 +23,17 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         result1.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result1.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result1.task(":yarnSetup").outcome == TaskOutcome.SUCCESS
+        result1.task(":pnpmSetup").outcome == TaskOutcome.SUCCESS
         result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":testNpx").outcome == TaskOutcome.SUCCESS
         result1.task(":testNpm").outcome == TaskOutcome.SUCCESS
         result1.task(":testYarn").outcome == TaskOutcome.SUCCESS
+        result1.task(":testPnpx").outcome == TaskOutcome.SUCCESS
+        result1.task(":testPnpm").outcome == TaskOutcome.SUCCESS
         result1.task(":run").outcome == TaskOutcome.SUCCESS
         result1.output.contains("Hello Bobby!")
-        // Ensure tests were executed 3 times
-        result1.output.split("1 passing").length == 4
+        // Ensure tests were executed 5 times
+        result1.output.split("1 passing").length == 6
 
         when:
         def result2 = build("package")
@@ -42,13 +45,15 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         result2.task(":buildNpx").outcome == TaskOutcome.SUCCESS
         result2.task(":buildNpm").outcome == TaskOutcome.SUCCESS
         result2.task(":buildYarn").outcome == TaskOutcome.SUCCESS
+        result2.task(":buildPnpx").outcome == TaskOutcome.SUCCESS
+        result2.task(":buildPnpm").outcome == TaskOutcome.SUCCESS
         result2.task(":package").outcome == TaskOutcome.SUCCESS
         def outputFile = createFile("build/app.zip")
         outputFile.exists()
         def zipFile = new ZipFile(outputFile)
         def zipFileEntries = Collections.list(zipFile.entries())
-        zipFileEntries.findAll { it.name.endsWith("/index.js") }.size() == 3
-        zipFileEntries.findAll { it.name.endsWith("/main.js") }.size() == 3
-        zipFileEntries.size() == 9
+        zipFileEntries.findAll { it.name.endsWith("/index.js") }.size() == 5
+        zipFileEntries.findAll { it.name.endsWith("/main.js") }.size() == 5
+        zipFileEntries.size() == 15
     }
 }

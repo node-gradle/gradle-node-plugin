@@ -1,3 +1,5 @@
+import org.gradle.util.GradleVersion
+
 plugins {
     id "com.github.node-gradle.node"
 }
@@ -10,7 +12,8 @@ node {
 
 task env(type: PnpxTask) {
     dependsOn pnpmInstall
-    command = "printenv"
+    command = "print-env"
+    args = ["PATH", "CUSTOM"]
     outputs.upToDateWhen {
         true
     }
@@ -19,7 +22,7 @@ task env(type: PnpxTask) {
 task pwd(type: PnpxTask) {
     dependsOn pnpmInstall
     command = "jseval"
-    args = ["console.log(`Working directory is '\${process.cwd()}'`);"]
+    args = ["console.log(`workingDirectory='\${process.cwd()}'`);"]
     outputs.upToDateWhen {
         true
     }
@@ -31,7 +34,8 @@ task version(type: PnpxTask) {
 }
 
 if (isPropertyEnabled("customEnv")) {
-    env.environment = [CUSTOM: "custom value"]
+    def qualifier = "custom"
+    env.environment = [CUSTOM: "${qualifier} value"]
 }
 
 if (isPropertyEnabled("ignoreExitValue")) {
@@ -46,7 +50,15 @@ if (isPropertyEnabled("customWorkingDir")) {
     pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
 }
 
-def isPropertyEnabled(name) {
-    def property = System.properties[name]
-    return property == "true"
+if (isPropertyEnabled("outputFile")) {
+    env.execOverrides {
+        standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+    }
+}
+
+def isPropertyEnabled(String name) {
+    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
+        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    }
+    return System.properties[name] != null
 }

@@ -1,6 +1,5 @@
 package com.github.gradle.node.pnpm.task
 
-import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.zip
 import org.gradle.api.Action
@@ -8,19 +7,23 @@ import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.property
 import java.io.File
+import javax.inject.Inject
 
 /**
  * pnpm install that only gets executed if gradle decides so.
  */
-open class PnpmInstallTask : PnpmTask() {
-    private val nodeExtension by lazy { NodeExtension[project] }
+abstract class PnpmInstallTask : PnpmTask() {
+    @get:Inject
+    abstract val providers: ProviderFactory
 
     @get:Internal
     val nodeModulesOutputFilter =
-            project.objects.property<Action<ConfigurableFileTree>>()
+        objects.property<Action<ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.PNPM_GROUP
@@ -29,7 +32,7 @@ open class PnpmInstallTask : PnpmTask() {
         pnpmCommand.set(nodeExtension.npmInstallCommand.map { listOf(it) })
     }
 
-    @PathSensitive(PathSensitivity.RELATIVE)
+    @PathSensitive(RELATIVE)
     @InputFile
     protected fun getPackageJsonFile(): Provider<File> {
         return projectFileIfExists("package.json")
@@ -43,7 +46,7 @@ open class PnpmInstallTask : PnpmTask() {
 
     private fun projectFileIfExists(name: String): Provider<File> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
-                .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
+            .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
 
     @Optional
@@ -52,7 +55,7 @@ open class PnpmInstallTask : PnpmTask() {
     protected fun getNodeModulesDirectory(): Provider<Directory> {
         val filter = nodeModulesOutputFilter.orNull
         return if (filter == null) nodeExtension.nodeProjectDir.dir("node_modules")
-        else project.providers.provider { null }
+        else providers.provider { null }
     }
 
     @Optional
@@ -61,13 +64,13 @@ open class PnpmInstallTask : PnpmTask() {
     protected fun getNodeModulesFiles(): Provider<FileTree> {
         val nodeModulesDirectoryProvider = nodeExtension.nodeProjectDir.dir("node_modules")
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
-                .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
-                    if (nodeModulesOutputFilter != null) {
-                        val fileTree = project.fileTree(nodeModulesDirectory)
-                        nodeModulesOutputFilter.execute(fileTree)
-                        project.providers.provider { fileTree }
-                    } else project.providers.provider { null }
-                }
+            .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
+                if (nodeModulesOutputFilter != null) {
+                    val fileTree = projectHelper.fileTree(nodeModulesDirectory)
+                    nodeModulesOutputFilter.execute(fileTree)
+                    providers.provider { fileTree }
+                } else providers.provider { null }
+            }
     }
 
     // For DSL

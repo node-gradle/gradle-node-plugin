@@ -1,8 +1,10 @@
+import org.gradle.util.GradleVersion
+
 plugins {
     id 'com.github.node-gradle.node'
 }
 
-def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == 'true' : false
+def changeInputs = isPropertyEnabled("changeInputs")
 
 node {
     pnpmVersion = "4.12.4"
@@ -14,9 +16,8 @@ task test(type: PnpmTask) {
     dependsOn pnpmInstall
     pnpmCommand = changeInputs ? ['run', 'test'] : ['run']
     args = changeInputs ? [] : ['test']
-    inputs.dir('node_modules')
-    inputs.file('package.json')
-    inputs.files('index.js', 'test.js')
+    inputs.dir('src')
+    inputs.dir('test')
     outputs.upToDateWhen {
         true
     }
@@ -25,4 +26,11 @@ task test(type: PnpmTask) {
 task version(type: PnpmTask) {
     dependsOn pnpmInstall
     pnpmCommand = ["--version"]
+}
+
+def isPropertyEnabled(String name) {
+    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
+        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    }
+    return System.properties[name] != null
 }

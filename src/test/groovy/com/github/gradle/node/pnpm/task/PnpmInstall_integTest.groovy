@@ -124,10 +124,10 @@ class PnpmInstall_integTest
 
             task verifyIO {
                 doLast {
-                    if (!tasks.named("pnpmInstall").get().outputs.files.contains(project.file('pnpm-lock.yaml'))) {
+                    if (!tasks.named("pnpmInstall").get().outputs.files.contains(file('pnpm-lock.yaml'))) {
                         throw new RuntimeException("pnpm-lock.yaml is not in INSTALL'S outputs!")
                     }
-                    if (tasks.named("pnpmInstall").get().inputs.files.contains(project.file('pnpm-lock.yaml'))) {
+                    if (tasks.named("pnpmInstall").get().inputs.files.contains(file('pnpm-lock.yaml'))) {
                         throw new RuntimeException("pnpm-lock.yaml is in INSTALL'S inputs!")
                     }
                 }

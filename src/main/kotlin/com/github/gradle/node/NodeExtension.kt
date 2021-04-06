@@ -71,10 +71,29 @@ open class NodeExtension(project: Project) {
      */
     val distBaseUrl = project.objects.property<String>()
 
+    /**
+     * The command used to start npm (default npm)
+     */
     val npmCommand = project.objects.property<String>().convention("npm")
+
+    /**
+     * The command used to start npx (default npx)
+     */
     val npxCommand = project.objects.property<String>().convention("npx")
+
+    /**
+     * The command used to start yarn (default yarn)
+     */
     val yarnCommand = project.objects.property<String>().convention("yarn")
+
+    /**
+     * The command used to start pnpm (default pnpm)
+     */
     val pnpmCommand = project.objects.property<String>().convention("pnpm")
+
+    /**
+     * The command used to start pnpx (default pnpx)
+     */
     val pnpxCommand = project.objects.property<String>().convention("pnpx")
 
     /**

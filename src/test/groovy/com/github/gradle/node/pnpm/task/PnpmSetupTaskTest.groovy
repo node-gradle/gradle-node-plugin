@@ -4,13 +4,11 @@ import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
 class PnpmSetupTaskTest
-    extends AbstractTaskTest
-{
+        extends AbstractTaskTest {
     def "exec pnpmSetup task without any pnpm version specified"() {
         given:
-        execSpec = Mock(ExecSpec)
-
         def task = project.tasks.create('simple', PnpmSetupTask)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()
@@ -29,9 +27,9 @@ class PnpmSetupTaskTest
     def "exec pnpmSetup task with pnpm version specified"() {
         given:
         nodeExtension.pnpmVersion = '4.12.4'
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', PnpmSetupTask)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()

@@ -1,5 +1,6 @@
 package com.github.gradle.node.npm.proxy
 
+import com.github.gradle.node.NodeExtension
 import java.net.URLEncoder
 import java.util.stream.Collectors.toList
 import java.util.stream.Stream
@@ -11,14 +12,27 @@ internal class NpmProxy {
         // These are the environment variables that HTTPing applications checks, proxy is on and off.
         // FTP skipped in hopes of a better future.
         private val proxyVariables = listOf(
-                "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "PROXY"
+            "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "PROXY"
         )
 
         // And since npm also takes settings in the form of environment variables with the
         // NPM_CONFIG_<setting> format, we should check those. Hopefully nobody does this.
         private val npmProxyVariables = listOf(
-                "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_NOPROXY"
+            "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_NOPROXY"
         )
+
+        fun addProxyEnvironmentVariables(
+            nodeExtension: NodeExtension,
+            environment: Map<String, String>
+        ): Map<String, String> {
+            if (shouldConfigureProxy(System.getenv(), nodeExtension.nodeProxySettings.get())) {
+                val npmProxyEnvironmentVariables = computeNpmProxyEnvironmentVariables()
+                if (npmProxyEnvironmentVariables.isNotEmpty()) {
+                    return environment.plus(npmProxyEnvironmentVariables)
+                }
+            }
+            return environment
+        }
 
         fun computeNpmProxyEnvironmentVariables(): Map<String, String> {
             val proxyEnvironmentVariables = computeProxyUrlEnvironmentVariables()
@@ -62,7 +76,7 @@ internal class NpmProxy {
                     val proxyPassword = System.getProperty("$proxyProto.proxyPassword")
                     if (proxyUser != null && proxyPassword != null) {
                         proxyArgs[proxyParam] =
-                                "http://${encode(proxyUser)}:${encode(proxyPassword)}@$proxyHost:$proxyPort"
+                            "http://${encode(proxyUser)}:${encode(proxyPassword)}@$proxyHost:$proxyPort"
                     } else {
                         proxyArgs[proxyParam] = "http://$proxyHost:$proxyPort"
                     }
@@ -84,21 +98,21 @@ internal class NpmProxy {
 
         private fun computeProxyIgnoredHosts(): List<String> {
             return Stream.of("http.nonProxyHosts", "https.nonProxyHosts")
-                    .map { property ->
-                        val propertyValue = System.getProperty(property)
-                        if (propertyValue != null) {
-                            val hosts = propertyValue.split("|")
-                            return@map hosts
-                                    .map { host ->
-                                        if (host.contains(":")) host.split(":")[0]
-                                        else host
-                                    }
-                        }
-                        return@map listOf<String>()
+                .map { property ->
+                    val propertyValue = System.getProperty(property)
+                    if (propertyValue != null) {
+                        val hosts = propertyValue.split("|")
+                        return@map hosts
+                            .map { host ->
+                                if (host.contains(":")) host.split(":")[0]
+                                else host
+                            }
                     }
-                    .flatMap(List<String>::stream)
-                    .distinct()
-                    .collect(toList())
+                    return@map listOf<String>()
+                }
+                .flatMap(List<String>::stream)
+                .distinct()
+                .collect(toList())
         }
     }
 }

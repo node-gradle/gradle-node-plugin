@@ -26,11 +26,6 @@ class PnpxTask_integTest
                 id 'com.github.node-gradle.node'
             }
 
-            node {
-                download = true
-                workDir = file('build/node')
-            }
-            
             task camelCase(type: PnpxTask) {
                 command = '-p'
                 args = ['chcase-cli', 'chcase', '--help']
@@ -41,7 +36,7 @@ class PnpxTask_integTest
         def result = build(":camelCase")
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":pnpmSetup").outcome == TaskOutcome.SUCCESS
         result.task(":camelCase").outcome == TaskOutcome.SUCCESS
         result.output.contains("--case, -C  Which case to convert to")
@@ -49,8 +44,8 @@ class PnpxTask_integTest
 
     def 'execute pnpx command with a package.json file and check inputs up-to-date detection'() {
         given:
-        copyResources('fixtures/pnpx/', '')
-        copyResources('fixtures/javascript-project/', '')
+        copyResources("fixtures/pnpx/")
+        copyResources("fixtures/javascript-project/")
 
         when:
         def result1 = build(":test")
@@ -94,8 +89,8 @@ class PnpxTask_integTest
 
     def 'execute pnpx command with custom execution configuration and check up-to-date-detection'() {
         given:
-        copyResources('fixtures/pnpx-env/', '')
-        copyResources('fixtures/env/', '')
+        copyResources("fixtures/pnpx-env/")
+        copyResources("fixtures/env/")
 
         when:
         def result1 = build(":env")
@@ -126,7 +121,7 @@ class PnpxTask_integTest
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":env").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":env").outcome == (isConfigurationCacheEnabled() ? TaskOutcome.SUCCESS : TaskOutcome.UP_TO_DATE)
 
         when:
         def result4 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
@@ -149,48 +144,61 @@ class PnpxTask_integTest
         result5.output.contains("404 Not Found: notExistingCommand")
 
         when:
-        def result6 = build(":pwd")
+        def result6 = build(":env", "-DoutputFile=true")
 
         then:
         result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result6.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result6.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result6.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result6.output.contains("Working directory is '${projectDir}'")
+        result6.task(":env").outcome == TaskOutcome.SUCCESS
+        !environmentDumpContainsPathVariable(result6.output)
+        def outputFile = file("build/standard-output.txt")
+        outputFile.exists()
+        environmentDumpContainsPathVariable(outputFile.text)
 
         when:
-        def result7 = build(":pwd", "-DcustomWorkingDir=true")
+        def result7 = build(":pwd")
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result7.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result7.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
+        result7.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result7.output.contains("workingDirectory='${projectDir}'")
 
         when:
-        def result8 = build(":pwd", "-DcustomWorkingDir=true", "--rerun-tasks")
+        def result8 = build(":pwd", "-DcustomWorkingDir=true")
 
         then:
-        result8.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result8.task(":pnpmSetup").outcome == TaskOutcome.SUCCESS
-        result8.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
-        result8.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result8.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result8.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result8.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
+        result8.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        def result9 = build(":pwd", "-DcustomWorkingDir=true", "--rerun-tasks")
+
+        then:
+        result9.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result9.task(":pnpmSetup").outcome == TaskOutcome.SUCCESS
+        result9.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
+        result9.task(":pwd").outcome == TaskOutcome.SUCCESS
         def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
-        result8.output.contains("Working directory is '${expectedWorkingDirectory}'")
+        result9.output.contains("workingDirectory='${expectedWorkingDirectory}'")
         new File(expectedWorkingDirectory).isDirectory()
 
         when:
-        def result9 = build(":version")
+        def result10 = build(":version")
 
         then:
-        result9.task(":version").outcome == TaskOutcome.SUCCESS
-        result9.output.contains("> Task :version${System.lineSeparator()}4.12.4")
+        result10.task(":version").outcome == TaskOutcome.SUCCESS
+        result10.output.contains("> Task :version${System.lineSeparator()}4.12.4")
     }
 
     def 'execute pnpx command using the pnpm version specified in the package.json file'() {
         given:
-        copyResources('fixtures/pnpx/', '')
-        copyResources('fixtures/pnpm-present/', '')
+        copyResources("fixtures/pnpx/")
+        copyResources("fixtures/pnpm-present/")
 
         when:
         def result = build(":version")

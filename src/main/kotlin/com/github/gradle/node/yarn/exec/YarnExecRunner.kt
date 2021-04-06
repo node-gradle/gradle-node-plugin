@@ -19,35 +19,35 @@ internal abstract class YarnExecRunner {
 
     private val variantComputer = VariantComputer()
 
-    fun executeYarnCommand(project: ProjectApiHelper, nodeExtension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration) {
+    fun executeYarnCommand(
+        project: ProjectApiHelper,
+        nodeExtension: NodeExtension,
+        nodeExecConfiguration: NodeExecConfiguration
+    ) {
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val yarnDirProvider = variantComputer.computeYarnDir(nodeExtension)
         val yarnBinDirProvider = variantComputer.computeYarnBinDir(yarnDirProvider)
         val yarnExecProvider = variantComputer.computeYarnExec(nodeExtension, yarnBinDirProvider)
         val additionalBinPathProvider =
-                computeAdditionalBinPath(nodeExtension, nodeDirProvider, yarnBinDirProvider)
-        val execConfiguration = ExecConfiguration(yarnExecProvider.get(),
-                nodeExecConfiguration.command, additionalBinPathProvider.get(),
-                addNpmProxyEnvironment(nodeExtension, nodeExecConfiguration), nodeExecConfiguration.workingDir,
-                nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
+            computeAdditionalBinPath(nodeExtension, nodeDirProvider, yarnBinDirProvider)
+        val execConfiguration = ExecConfiguration(
+            yarnExecProvider.get(),
+            nodeExecConfiguration.command,
+            additionalBinPathProvider.get(),
+            NpmProxy.addProxyEnvironmentVariables(nodeExtension, nodeExecConfiguration.environment),
+            nodeExecConfiguration.workingDir,
+            nodeExecConfiguration.ignoreExitValue,
+            nodeExecConfiguration.execOverrides
+        )
         val execRunner = ExecRunner()
         execRunner.execute(project, nodeExtension, execConfiguration)
     }
 
-    private fun addNpmProxyEnvironment(nodeExtension: NodeExtension,
-                                       nodeExecConfiguration: NodeExecConfiguration): Map<String, String> {
-        if (NpmProxy.shouldConfigureProxy(System.getenv(), nodeExtension.nodeProxySettings.get())) {
-            val npmProxyEnvironmentVariables = NpmProxy.computeNpmProxyEnvironmentVariables()
-            if (npmProxyEnvironmentVariables.isNotEmpty()) {
-                return nodeExecConfiguration.environment.plus(npmProxyEnvironmentVariables)
-            }
-        }
-        return nodeExecConfiguration.environment
-    }
-
-    private fun computeAdditionalBinPath(nodeExtension: NodeExtension,
-                                         nodeDirProvider: Provider<Directory>,
-                                         yarnBinDirProvider: Provider<Directory>): Provider<List<String>> {
+    private fun computeAdditionalBinPath(
+        nodeExtension: NodeExtension,
+        nodeDirProvider: Provider<Directory>,
+        yarnBinDirProvider: Provider<Directory>
+    ): Provider<List<String>> {
         return nodeExtension.download.flatMap { download ->
             if (!download) {
                 providers.provider { listOf<String>() }
@@ -56,9 +56,9 @@ internal abstract class YarnExecRunner {
             val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
             val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)
             zip(nodeBinDirProvider, npmBinDirProvider, yarnBinDirProvider)
-                    .map { (nodeBinDir, npmBinDir, yarnBinDir) ->
-                        listOf(yarnBinDir, npmBinDir, nodeBinDir).map { file -> file.asFile.absolutePath }
-                    }
+                .map { (nodeBinDir, npmBinDir, yarnBinDir) ->
+                    listOf(yarnBinDir, npmBinDir, nodeBinDir).map { file -> file.asFile.absolutePath }
+                }
         }
     }
 }

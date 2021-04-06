@@ -1,6 +1,8 @@
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
+import com.github.gradle.node.pnpm.task.PnpmTask
+import com.github.gradle.node.pnpm.task.PnpxTask
 import com.github.gradle.node.task.NodeTask
 import com.github.gradle.node.yarn.task.YarnTask
 
@@ -36,6 +38,12 @@ tasks.npmInstall {
 }
 
 tasks.yarn {
+    nodeModulesOutputFilter {
+        exclude("notExistingFile")
+    }
+}
+
+tasks.pnpmInstall {
     nodeModulesOutputFilter {
         exclude("notExistingFile")
     }
@@ -98,8 +106,46 @@ val testTaskUsingYarn = tasks.register<YarnTask>("testYarn") {
     }
 }
 
+val testTaskUsingPnpx = tasks.register<PnpxTask>("testPnpx") {
+    dependsOn(tasks.npmInstall)
+    command.set("mocha")
+    args.set(listOf("test", "--grep", "should say hello"))
+    ignoreExitValue.set(false)
+    environment.set(mapOf("MY_CUSTOM_VARIABLE" to "hello"))
+    workingDir.set(projectDir)
+    execOverrides {
+        standardOutput = System.out
+    }
+    inputs.dir("node_modules")
+    inputs.file("package.json")
+    inputs.dir("src")
+    inputs.dir("test")
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+val testTaskUsingPnpm = tasks.register<PnpmTask>("testPnpm") {
+    dependsOn(tasks.npmInstall)
+    pnpmCommand.set(listOf("run", "test"))
+    args.set(listOf("test"))
+    ignoreExitValue.set(false)
+    environment.set(mapOf("MY_CUSTOM_VARIABLE" to "hello"))
+    workingDir.set(projectDir)
+    execOverrides {
+        standardOutput = System.out
+    }
+    inputs.dir("node_modules")
+    inputs.file("package.json")
+    inputs.dir("src")
+    inputs.dir("test")
+    outputs.upToDateWhen {
+        true
+    }
+}
+
 tasks.register<NodeTask>("run") {
-    dependsOn(testTaskUsingNpx, testTaskUsingNpm, testTaskUsingYarn)
+    dependsOn(testTaskUsingNpx, testTaskUsingNpm, testTaskUsingYarn, testTaskUsingPnpx, testTaskUsingPnpm)
     script.set(file("src/main.js"))
     args.set(listOf("Bobby"))
     ignoreExitValue.set(false)
@@ -138,6 +184,22 @@ val buildTaskUsingYarn = tasks.register<YarnTask>("buildYarn") {
     outputs.dir("${buildDir}/yarn-output")
 }
 
+val buildTaskUsingPnpx = tasks.register<PnpxTask>("buildPnpx") {
+    dependsOn(tasks.npmInstall)
+    command.set("babel")
+    args.set(listOf("src", "--out-dir", "${buildDir}/pnpx-output"))
+    inputs.dir("src")
+    outputs.dir("${buildDir}/pnpx-output")
+}
+
+val buildTaskUsingPnpm = tasks.register<PnpmTask>("buildPnpm") {
+    dependsOn(tasks.npmInstall)
+    pnpmCommand.set(listOf("run", "build"))
+    args.set(listOf("--", "--out-dir", "${buildDir}/pnpm-output"))
+    inputs.dir("src")
+    outputs.dir("${buildDir}/pnpm-output")
+}
+
 tasks.register<Zip>("package") {
     archiveFileName.set("app.zip")
     destinationDirectory.set(buildDir)
@@ -147,7 +209,13 @@ tasks.register<Zip>("package") {
     from(buildTaskUsingNpm) {
         into("npm")
     }
-    from (buildTaskUsingYarn) {
+    from(buildTaskUsingYarn) {
         into("yarn")
+    }
+    from(buildTaskUsingPnpx) {
+        into("pnpx")
+    }
+    from(buildTaskUsingPnpm) {
+        into("pnpm")
     }
 }

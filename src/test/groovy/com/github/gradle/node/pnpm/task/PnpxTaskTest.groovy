@@ -1,16 +1,14 @@
 package com.github.gradle.node.pnpm.task
 
-
 import com.github.gradle.node.task.AbstractTaskTest
-import org.gradle.process.ExecSpec
 
 class PnpxTaskTest extends AbstractTaskTest {
     def "exec pnpx task"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', PnpxTask)
+        mockProjectApiHelperExec(task)
         task.command.set('command')
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
@@ -34,9 +32,9 @@ class PnpxTaskTest extends AbstractTaskTest {
     def "exec pnpx task (windows)"() {
         given:
         props.setProperty('os.name', 'Windows')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', PnpxTask)
+        mockProjectApiHelperExec(task)
         task.command.set('command')
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
@@ -57,14 +55,13 @@ class PnpxTaskTest extends AbstractTaskTest {
         1 * execSpec.setWorkingDir(projectDir)
     }
 
-    def "exec pnpx task (download)"()
-    {
+    def "exec pnpx task (download)"() {
         given:
         props.setProperty('os.name', 'Linux')
         nodeExtension.download.set(true)
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', PnpxTask)
+        mockProjectApiHelperExec(task)
         task.command.set('command')
 
         when:
