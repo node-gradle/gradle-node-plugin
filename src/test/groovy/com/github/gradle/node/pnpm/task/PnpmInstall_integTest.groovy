@@ -15,7 +15,6 @@ class PnpmInstall_integTest
             }
 
             node {
-                download = true
                 workDir = file('build/node')
                 pnpmWorkDir = file('build/pnpm')
             }
@@ -26,7 +25,7 @@ class PnpmInstall_integTest
         def result = build( 'pnpmInstall' )
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":pnpmSetup").outcome == TaskOutcome.SUCCESS
         result.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
 
@@ -34,7 +33,7 @@ class PnpmInstall_integTest
         result = build( 'pnpmInstall' )
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         // because pnpm-lock.yaml is created only when needed
         result.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
@@ -49,7 +48,6 @@ class PnpmInstall_integTest
                 id 'com.github.node-gradle.node'
             }
             node {
-                download = true
                 workDir = file('build/node')
                 pnpmWorkDir = file('build/pnpm')
             }
@@ -66,7 +64,7 @@ class PnpmInstall_integTest
         def result = build( 'pnpmInstall', '--info' )
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":pnpmSetup").outcome == TaskOutcome.SUCCESS
         result.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
 
@@ -74,7 +72,7 @@ class PnpmInstall_integTest
         result = build( 'pnpmInstall' )
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
 
@@ -89,7 +87,6 @@ class PnpmInstall_integTest
             }
 
             node {
-                download = true
                 workDir = file('build/node')
                 pnpmWorkDir = file('build/pnpm')
                 nodeModulesDir = file('subdirectory')
@@ -117,7 +114,6 @@ class PnpmInstall_integTest
             }
 
             node {
-                download = true
                 workDir = file('build/node')
                 npmInstallCommand = 'install'
             }
@@ -151,7 +147,6 @@ class PnpmInstall_integTest
             }
 
             node {
-                download = true
                 workDir = file('build/node')
                 pnpmWorkDir = file('build/pnpm')
             }
@@ -218,7 +213,6 @@ class PnpmInstall_integTest
             }
 
             node {
-                download = true
                 workDir = file('build/node')
             }
 

@@ -6,32 +6,25 @@ import org.gradle.testkit.runner.TaskOutcome
 import java.util.regex.Pattern
 
 class PnpmRule_integTest extends AbstractIntegTest {
-    def 'execute pnpm_install rule'()
-    {
+    def 'execute pnpm_install rule'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
-
-            node {
-                download = true
-                workDir = file('build/node')
-            }
-        ''' )
+        ''')
         writeEmptyPackageJson()
 
         when:
-        def result = buildTask( 'pnpm_install' )
+        def result = buildTask('pnpm_install')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
     }
 
-    def 'Use downloaded pnpm version'()
-    {
+    def 'Use downloaded pnpm version'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
@@ -39,21 +32,20 @@ class PnpmRule_integTest extends AbstractIntegTest {
                 download = true
                 pnpmVersion = '4.12.4'
             }
-        ''' )
+        ''')
         writeEmptyPackageJson()
 
         when:
-        def result = build( 'pnpm_--version' )
+        def result = build('pnpm_--version')
 
         then:
+        result.task(':pnpm_--version').outcome == TaskOutcome.SUCCESS
         result.output =~ /\n4\.12\.4\n/
-        result.task( ':pnpm_--version' ).outcome == TaskOutcome.SUCCESS
     }
 
-    def 'Use local pnpm installation'()
-    {
+    def 'Use local pnpm installation'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
@@ -64,54 +56,44 @@ class PnpmRule_integTest extends AbstractIntegTest {
         writeEmptyPackageJson()
 
         when:
-        build( 'pnpm_install_pnpm@4.12.1' )
-        def result = build( 'pnpm_--version' )
+        build('pnpm_install_pnpm@4.12.1')
+        def result = build('pnpm_--version')
 
         then:
         result.output =~ /\n4\.12\.1\n/
-        result.task( ':pnpm_--version' ).outcome == TaskOutcome.SUCCESS
+        result.task(':pnpm_--version').outcome == TaskOutcome.SUCCESS
     }
 
-    def 'can execute an pnpm module using pnpm_run_'()
-    {
+    def 'can execute an pnpm module using pnpm_run_'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
+        ''')
 
-            node {
-                download = true
-            }
-        ''' )
-
-        copyResources( 'fixtures/npm-missing/package.json', 'package.json' )
+        copyResources('fixtures/npm-missing/package.json', 'package.json')
 
         when:
-        def result = buildTask( 'pnpm_run_echoTest' )
+        def result = buildTask('pnpm_run_echoTest')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
-        fileExists( 'test.txt' )
+        fileExists('test.txt')
     }
 
-    def 'succeeds to run pnpm module using pnpm_run_ when the package.json file contains local pnpm'()
-    {
+    def 'succeeds to run pnpm module using pnpm_run_ when the package.json file contains local pnpm'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
+        ''')
 
-            node {
-                download = true
-            }
-        ''' )
-
-        copyResources( 'fixtures/pnpm-present/' )
+        copyResources('fixtures/pnpm-present/')
 
         when:
-        def result = build( 'pnpm_run_pnpmVersion' )
+        def result = build('pnpm_run_pnpmVersion')
 
         then:
         result.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
@@ -120,17 +102,13 @@ class PnpmRule_integTest extends AbstractIntegTest {
         versionPattern.matcher(result.output).find()
     }
 
-    def 'can execute subtasks using pnpm'()
-    {
+    def 'can execute subtasks using pnpm'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
-            node {
-                download = true
-            }
-        ''' )
+        ''')
         writePackageJson(""" {
             "name": "example",
             "dependencies": {},
@@ -143,42 +121,40 @@ class PnpmRule_integTest extends AbstractIntegTest {
         """)
 
         when:
-        def result = buildTask( 'pnpm_run_parent' )
+        def result = buildTask('pnpm_run_parent')
 
         then:
         result.outcome == TaskOutcome.SUCCESS
-        fileExists( 'parent1.txt' )
-        fileExists( 'child1.txt' )
-        fileExists( 'child2.txt' )
-        fileExists( 'parent2.txt' )
+        fileExists('parent1.txt')
+        fileExists('child1.txt')
+        fileExists('child2.txt')
+        fileExists('parent2.txt')
     }
 
-    def 'Custom workingDir'()
-    {
+    def 'Custom workingDir'() {
         given:
-        writeBuild( '''
+        writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
             node {
-                download = true
                 pnpmVersion = '4.12.4'
                 nodeModulesDir = file("frontend")
             }
-        ''' )
-        writeFile( 'frontend/package.json', """{
+        ''')
+        writeFile('frontend/package.json', """{
             "name": "example",
             "dependencies": {},
             "scripts": {
                 "whatVersion": "pnpm --version"
             }
-        }""" )
+        }""")
 
         when:
-        def result = build( 'pnpm_run_whatVersion' )
+        def result = build('pnpm_run_whatVersion')
 
         then:
+        result.task(':pnpm_run_whatVersion').outcome == TaskOutcome.SUCCESS
         result.output =~ /\n4\.12\.4\n/
-        result.task( ':pnpm_run_whatVersion' ).outcome == TaskOutcome.SUCCESS
     }
 }
