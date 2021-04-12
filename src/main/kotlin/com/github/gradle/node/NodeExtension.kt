@@ -59,6 +59,14 @@ open class NodeExtension(project: Project) {
      */
     val distBaseUrl = project.objects.property<String>()
 
+    /**
+     * Specifies whether it is acceptable to communicate with the Node.js repository over an insecure HTTP connection.
+     * Only used if download is true
+     * Change it to true if you use a mirror that uses HTTP rather than HTTPS
+     * Or set to null if you want to use Gradle's default behaviour.
+     */
+    val allowInsecureProtocol = project.objects.property<Boolean>().convention(null)
+
     val npmCommand = project.objects.property<String>().convention("npm")
     val npxCommand = project.objects.property<String>().convention("npx")
     val yarnCommand = project.objects.property<String>().convention("yarn")

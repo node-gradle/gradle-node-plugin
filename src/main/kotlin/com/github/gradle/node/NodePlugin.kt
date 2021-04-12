@@ -30,7 +30,7 @@ class NodePlugin : Plugin<Project> {
         addYarnRule()
         project.afterEvaluate {
             if (nodeExtension.download.get()) {
-                nodeExtension.distBaseUrl.orNull?.let { addRepository(it) }
+                nodeExtension.distBaseUrl.orNull?.let { addRepository(it, nodeExtension.allowInsecureProtocol.orNull) }
                 configureNodeSetupTask(nodeExtension)
             }
         }
@@ -86,7 +86,7 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addRepository(distUrl: String) {
+    private fun addRepository(distUrl: String, allowInsecureProtocol: Boolean?) {
         project.repositories.ivy {
             name = "Node.js"
             setUrl(distUrl)
@@ -99,6 +99,7 @@ class NodePlugin : Plugin<Project> {
             content {
                 includeModule("org.nodejs", "node")
             }
+            allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
         }
     }
 
