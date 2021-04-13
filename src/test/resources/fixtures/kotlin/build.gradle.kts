@@ -21,7 +21,6 @@ node {
     yarnVersion.set("")
     npmInstallCommand.set("install")
     distBaseUrl.set("https://nodejs.org/dist")
-    allowInsecureProtocol.set(null as Boolean?)
     download.set(false)
     workDir.set(file("${project.projectDir}/.cache/nodejs"))
     npmWorkDir.set(file("${project.projectDir}/.cache/npm"))
