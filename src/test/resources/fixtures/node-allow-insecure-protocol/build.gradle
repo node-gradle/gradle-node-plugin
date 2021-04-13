@@ -4,7 +4,7 @@ plugins {
 
 node {
     version = "12.13.0"
-    distBaseUrl = null
+    distBaseUrl = "https://nodejs.org/dist/"
     download = true
     allowInsecureProtocol = true
     workDir = file("build/node")

@@ -271,7 +271,7 @@ class NodeTask_integTest extends AbstractIntegTest {
     def 'make sure build works with allowInsecureProtocol false using a custom repository'() {
         given:
         Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
-        copyResources("fixtures/node-allow-insecure-protocol")
+        copyResources("fixtures/node-disallow-insecure-protocol")
 
         when:
         def result = build("hello")
@@ -284,7 +284,7 @@ class NodeTask_integTest extends AbstractIntegTest {
     def 'make sure build works with allowInsecureProtocol true using a custom repository'() {
         given:
         Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
-        copyResources("fixtures/node-disallow-insecure-protocol")
+        copyResources("fixtures/node-allow-insecure-protocol")
 
         when:
         def result = build("hello")
