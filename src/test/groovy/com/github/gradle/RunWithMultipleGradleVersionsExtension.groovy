@@ -14,7 +14,7 @@ class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExt
     private static final GradleVersion MINIMUM_SUPPORTED_GRADLE_VERSION = GradleVersion.version("5.6.4")
     private static final GradleVersion MINIMUM_GRADLE_6_VERSION = GradleVersion.version("6.0")
     private static final GradleVersion CURRENT_GRADLE_VERSION = GradleVersion.current()
-    private static final GradleVersion GRADLE_7_VERSION = GradleVersion.version("7.0-rc-2")
+    private static final GradleVersion GRADLE_7_VERSION = GradleVersion.version("7.0")
     private static final GradleVersion[] GRADLE_VERSIONS =
             [MINIMUM_SUPPORTED_GRADLE_VERSION, MINIMUM_GRADLE_6_VERSION, CURRENT_GRADLE_VERSION, GRADLE_7_VERSION]
     private GradleVersion gradleVersion
