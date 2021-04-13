@@ -16,6 +16,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
+import org.gradle.util.GradleVersion
 import java.io.File
 
 class NodePlugin : Plugin<Project> {
@@ -99,7 +100,9 @@ class NodePlugin : Plugin<Project> {
             content {
                 includeModule("org.nodejs", "node")
             }
-            allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
+            if (GradleVersion.current() >= GradleVersion.version("6.0")) {
+                allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
+            }
         }
     }
 
