@@ -65,7 +65,7 @@ open class NodeExtension(project: Project) {
      * Change it to true if you use a mirror that uses HTTP rather than HTTPS
      * Or set to null if you want to use Gradle's default behaviour.
      */
-    val allowInsecureProtocol = project.objects.property<Boolean>().convention(null)
+    val allowInsecureProtocol = project.objects.property<Boolean>()
 
     val npmCommand = project.objects.property<String>().convention("npm")
     val npxCommand = project.objects.property<String>().convention("npx")
