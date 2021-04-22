@@ -24,15 +24,16 @@ class PlatformHelperTest extends Specification {
         this.helper.isWindows() == isWindows
 
         where:
-        osProp      | archProp | osName   | osArch | isWindows
-        'Windows 8' | 'x86'    | 'win'    | 'x86'  | true
-        'Windows 8' | 'x86_64' | 'win'    | 'x64'  | true
-        'Mac OS X'  | 'x86'    | 'darwin' | 'x86'  | false
-        'Mac OS X'  | 'x86_64' | 'darwin' | 'x64'  | false
-        'Linux'     | 'x86'    | 'linux'  | 'x86'  | false
-        'Linux'     | 'x86_64' | 'linux'  | 'x64'  | false
-        'SunOS'     | 'x86'    | 'sunos'  | 'x86'  | false
-        'SunOS'     | 'x86_64' | 'sunos'  | 'x64'  | false
+        osProp      | archProp  | osName   | osArch    | isWindows
+        'Windows 8' | 'x86'     | 'win'    | 'x86'     | true
+        'Windows 8' | 'x86_64'  | 'win'    | 'x64'     | true
+        'Mac OS X'  | 'x86'     | 'darwin' | 'x86'     | false
+        'Mac OS X'  | 'x86_64'  | 'darwin' | 'x64'     | false
+        'Linux'     | 'x86'     | 'linux'  | 'x86'     | false
+        'Linux'     | 'x86_64'  | 'linux'  | 'x64'     | false
+        'Linux'     | 'ppc64le' | 'linux'  | 'ppc64le' | false
+        'SunOS'     | 'x86'     | 'sunos'  | 'x86'     | false
+        'SunOS'     | 'x86_64'  | 'sunos'  | 'x64'     | false
     }
 
     @Unroll
@@ -53,6 +54,7 @@ class PlatformHelperTest extends Specification {
         'aarch32' | 'arm'     | 'arm'
         'aarch64' | 'arm64'   | 'arm64'
         'aarch64' | 'aarch64' | 'arm64'
+        'ppc64le' | 'ppc64le' | 'ppc64le'
     }
 
     def "throw exception if unsupported os"() {

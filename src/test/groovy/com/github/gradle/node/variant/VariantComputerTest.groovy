@@ -99,15 +99,16 @@ class VariantComputerTest extends Specification {
         computedNpxScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "lib${PS}node_modules${PS}npm${PS}bin${PS}npx-cli.js")
 
         where:
-        osName     | osArch   | nodeDir                   | depName
-        'Linux'    | 'x86'    | 'node-v5.12.0-linux-x86'  | 'org.nodejs:node:5.12.0:linux-x86@tar.gz'
-        'Linux'    | 'x86_64' | 'node-v5.12.0-linux-x64'  | 'org.nodejs:node:5.12.0:linux-x64@tar.gz'
-        'Mac OS X' | 'x86'    | 'node-v5.12.0-darwin-x86' | 'org.nodejs:node:5.12.0:darwin-x86@tar.gz'
-        'Mac OS X' | 'x86_64' | 'node-v5.12.0-darwin-x64' | 'org.nodejs:node:5.12.0:darwin-x64@tar.gz'
-        'FreeBSD'  | 'x86'    | 'node-v5.12.0-linux-x86'  | 'org.nodejs:node:5.12.0:linux-x86@tar.gz'
-        'FreeBSD'  | 'x86_64' | 'node-v5.12.0-linux-x64'  | 'org.nodejs:node:5.12.0:linux-x64@tar.gz'
-        'SunOS'    | 'x86'    | 'node-v5.12.0-sunos-x86'  | 'org.nodejs:node:5.12.0:sunos-x86@tar.gz'
-        'SunOS'    | 'x86_64' | 'node-v5.12.0-sunos-x64'  | 'org.nodejs:node:5.12.0:sunos-x64@tar.gz'
+        osName     | osArch    | nodeDir                      | depName
+        'Linux'    | 'x86'     | 'node-v5.12.0-linux-x86'     | 'org.nodejs:node:5.12.0:linux-x86@tar.gz'
+        'Linux'    | 'x86_64'  | 'node-v5.12.0-linux-x64'     | 'org.nodejs:node:5.12.0:linux-x64@tar.gz'
+        'Linux'    | 'ppc64le' | 'node-v5.12.0-linux-ppc64le' | 'org.nodejs:node:5.12.0:linux-ppc64le@tar.gz'
+        'Mac OS X' | 'x86'     | 'node-v5.12.0-darwin-x86'    | 'org.nodejs:node:5.12.0:darwin-x86@tar.gz'
+        'Mac OS X' | 'x86_64'  | 'node-v5.12.0-darwin-x64'    | 'org.nodejs:node:5.12.0:darwin-x64@tar.gz'
+        'FreeBSD'  | 'x86'     | 'node-v5.12.0-linux-x86'     | 'org.nodejs:node:5.12.0:linux-x86@tar.gz'
+        'FreeBSD'  | 'x86_64'  | 'node-v5.12.0-linux-x64'     | 'org.nodejs:node:5.12.0:linux-x64@tar.gz'
+        'SunOS'    | 'x86'     | 'node-v5.12.0-sunos-x86'     | 'org.nodejs:node:5.12.0:sunos-x86@tar.gz'
+        'SunOS'    | 'x86_64'  | 'node-v5.12.0-sunos-x64'     | 'org.nodejs:node:5.12.0:sunos-x64@tar.gz'
     }
 
     @Unroll
@@ -144,10 +145,11 @@ class VariantComputerTest extends Specification {
         computedNpxScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "lib${PS}node_modules${PS}npm${PS}bin${PS}npx-cli.js")
 
         where:
-        osName  | osArch | sysOsArch | nodeDir                     | depName
-        'Linux' | 'arm'  | 'armv6l'  | 'node-v5.12.0-linux-armv6l' | 'org.nodejs:node:5.12.0:linux-armv6l@tar.gz'
-        'Linux' | 'arm'  | 'armv7l'  | 'node-v5.12.0-linux-armv7l' | 'org.nodejs:node:5.12.0:linux-armv7l@tar.gz'
-        'Linux' | 'arm'  | 'arm64'   | 'node-v5.12.0-linux-arm64'  | 'org.nodejs:node:5.12.0:linux-arm64@tar.gz'
+        osName  | osArch    | sysOsArch | nodeDir                      | depName
+        'Linux' | 'arm'     | 'armv6l'  | 'node-v5.12.0-linux-armv6l'  | 'org.nodejs:node:5.12.0:linux-armv6l@tar.gz'
+        'Linux' | 'arm'     | 'armv7l'  | 'node-v5.12.0-linux-armv7l'  | 'org.nodejs:node:5.12.0:linux-armv7l@tar.gz'
+        'Linux' | 'arm'     | 'arm64'   | 'node-v5.12.0-linux-arm64'   | 'org.nodejs:node:5.12.0:linux-arm64@tar.gz'
+        'Linux' | 'ppc64le' | 'ppc64le' | 'node-v5.12.0-linux-ppc64le' | 'org.nodejs:node:5.12.0:linux-ppc64le@tar.gz'
     }
 
     @Unroll
