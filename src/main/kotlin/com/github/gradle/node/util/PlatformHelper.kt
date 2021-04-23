@@ -24,6 +24,7 @@ open class PlatformHelper constructor(private val props: Properties = System.get
              */
             arch == "arm" || arch.startsWith("aarch") -> property("uname")
                 .mapIf({ it == "armv8l" || it == "aarch64" }) { "arm64" }
+            arch == "ppc64le" -> "ppc64le"
             arch.contains("64") -> "x64"
             else -> "x86"
         }
