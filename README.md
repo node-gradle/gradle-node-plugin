@@ -38,7 +38,8 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 
 Here's the documentation for older releases of the plugin:
 
-* [3.0.1](https://github.com/node-gradle/gradle-node-plugin/blob/3.0.1/README.md) (current)
+* [3.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.1.0/README.md) (current)
+* [3.0.1](https://github.com/node-gradle/gradle-node-plugin/blob/3.0.1/README.md)
 * [3.0.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.0.0/README.md)
 * [2.2.4](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.4/README.md)
 * [2.2.3](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.3/README.md)
@@ -49,15 +50,7 @@ Here's the documentation for older releases of the plugin:
 * [2.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.1.0/README.md)
 * [2.0.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.0.0/README.md)
 * [1.5.3](https://github.com/node-gradle/gradle-node-plugin/blob/1.5.3/README.md)
-* [1.1.1](https://github.com/node-gradle/gradle-node-plugin/blob/v1.1.1/README.md)
-* [1.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/v1.1.0/README.md)
-* [1.0.1](https://github.com/node-gradle/gradle-node-plugin/blob/v1.0.1/README.md)
-* [1.0.0](https://github.com/node-gradle/gradle-node-plugin/blob/v1.0.0/README.md)
-* [0.14](https://github.com/node-gradle/gradle-node-plugin/blob/v0.14/README.md)
-* [0.13](https://github.com/node-gradle/gradle-node-plugin/blob/v0.13/README.md)
-* [0.12](https://github.com/node-gradle/gradle-node-plugin/blob/v0.12/README.md)
-* [0.11](https://github.com/node-gradle/gradle-node-plugin/blob/v0.11/README.md)
-* [0.10](https://github.com/node-gradle/gradle-node-plugin/blob/v0.10/README.md)
+* [1.4.0](https://github.com/node-gradle/gradle-node-plugin/blob/1.4.0/README.md)
 
 
 ## Building the Plugin

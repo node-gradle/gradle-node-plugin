@@ -1,6 +1,10 @@
 # Changelog
 
 ## Version 3.x *(unreleased)*
+
+## Version 3.1.0 *(2021-05-07)*
+* Add support for Linux Power PC [#166](https://github.com/node-gradle/gradle-node-plugin/issues/166) (thanks [akatona84](https://github.com/akatona84) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/issues/167))
+* Internal test suite now running against Gradle 7
 * Adds `yarn.lock` as an input to `NpmInstallTask` [#155](https://github.com/node-gradle/gradle-node-plugin/issues/155) 
 
 ## Version 3.0.1 *(2021-02-09)*
