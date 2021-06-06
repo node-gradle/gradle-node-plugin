@@ -44,3 +44,13 @@ open class PlatformHelper constructor(private val props: Properties = System.get
         var INSTANCE = PlatformHelper()
     }
 }
+
+fun main(args: Array<String>) {
+    println("Your os.name is: '${System.getProperty("os.name")}' and is parsed as: ${PlatformHelper.INSTANCE.osName}")
+    println("Your os.arch is: '${System.getProperty("os.arch")}' and is parsed as: ${PlatformHelper.INSTANCE.osArch}")
+    if (PlatformHelper.INSTANCE.isWindows) {
+        println("You're on windows (isWindows == true)")
+    } else {
+        println("You're not on windows (isWindows == false)")
+    }
+}

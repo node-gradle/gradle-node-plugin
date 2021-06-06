@@ -90,6 +90,11 @@ tasks.test {
     }
 }
 
+tasks.register("runParameterTest", JavaExec::class.java) {
+    classpath = sourceSets["main"].runtimeClasspath
+    main = "com.github.gradle.node.util.PlatformHelperKt"
+}
+
 tasks.jacocoTestReport {
     reports {
         xml.isEnabled = true
