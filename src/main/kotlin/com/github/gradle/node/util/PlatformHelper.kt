@@ -35,7 +35,7 @@ open class PlatformHelper constructor(private val props: Properties = System.get
 
     fun failOnUnsupportedOs() {
         if (!isSupported) {
-            error("Unsupported OS")
+            error("Unsupported OS for `download = true`")
         }
     }
 

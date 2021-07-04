@@ -7,6 +7,7 @@ import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
+import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.variant.VariantComputer
 import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnSetupTask
@@ -30,6 +31,9 @@ class NodePlugin : Plugin<Project> {
         addYarnRule()
         project.afterEvaluate {
             if (nodeExtension.download.get()) {
+                // Ideally we wouldn't have to do this here, but if we don't
+                // then we're going to have some interesting failures down the line
+                PlatformHelper.INSTANCE.failOnUnsupportedOs()
                 nodeExtension.distBaseUrl.orNull?.let { addRepository(it) }
                 configureNodeSetupTask(nodeExtension)
             }
