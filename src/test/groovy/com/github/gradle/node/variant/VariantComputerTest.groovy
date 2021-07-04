@@ -105,8 +105,6 @@ class VariantComputerTest extends Specification {
         'Linux'    | 'ppc64le' | 'node-v5.12.0-linux-ppc64le' | 'org.nodejs:node:5.12.0:linux-ppc64le@tar.gz'
         'Mac OS X' | 'x86'     | 'node-v5.12.0-darwin-x86'    | 'org.nodejs:node:5.12.0:darwin-x86@tar.gz'
         'Mac OS X' | 'x86_64'  | 'node-v5.12.0-darwin-x64'    | 'org.nodejs:node:5.12.0:darwin-x64@tar.gz'
-        'FreeBSD'  | 'x86'     | 'node-v5.12.0-linux-x86'     | 'org.nodejs:node:5.12.0:linux-x86@tar.gz'
-        'FreeBSD'  | 'x86_64'  | 'node-v5.12.0-linux-x64'     | 'org.nodejs:node:5.12.0:linux-x64@tar.gz'
         'SunOS'    | 'x86'     | 'node-v5.12.0-sunos-x86'     | 'org.nodejs:node:5.12.0:sunos-x86@tar.gz'
         'SunOS'    | 'x86_64'  | 'node-v5.12.0-sunos-x64'     | 'org.nodejs:node:5.12.0:sunos-x64@tar.gz'
     }

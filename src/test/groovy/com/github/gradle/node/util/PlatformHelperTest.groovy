@@ -22,18 +22,20 @@ class PlatformHelperTest extends Specification {
         this.helper.getOsName() == osName
         this.helper.getOsArch() == osArch
         this.helper.isWindows() == isWindows
+        this.helper.isSupported() == isSupported
 
         where:
-        osProp      | archProp  | osName   | osArch    | isWindows
-        'Windows 8' | 'x86'     | 'win'    | 'x86'     | true
-        'Windows 8' | 'x86_64'  | 'win'    | 'x64'     | true
-        'Mac OS X'  | 'x86'     | 'darwin' | 'x86'     | false
-        'Mac OS X'  | 'x86_64'  | 'darwin' | 'x64'     | false
-        'Linux'     | 'x86'     | 'linux'  | 'x86'     | false
-        'Linux'     | 'x86_64'  | 'linux'  | 'x64'     | false
-        'Linux'     | 'ppc64le' | 'linux'  | 'ppc64le' | false
-        'SunOS'     | 'x86'     | 'sunos'  | 'x86'     | false
-        'SunOS'     | 'x86_64'  | 'sunos'  | 'x64'     | false
+        osProp      | archProp  | osName        | osArch    | isWindows | isSupported
+        'Windows 8' | 'x86'     | 'win'         | 'x86'     | true      | true
+        'Windows 8' | 'x86_64'  | 'win'         | 'x64'     | true      | true
+        'Mac OS X'  | 'x86'     | 'darwin'      | 'x86'     | false     | true
+        'Mac OS X'  | 'x86_64'  | 'darwin'      | 'x64'     | false     | true
+        'Linux'     | 'x86'     | 'linux'       | 'x86'     | false     | true
+        'Linux'     | 'x86_64'  | 'linux'       | 'x64'     | false     | true
+        'Linux'     | 'ppc64le' | 'linux'       | 'ppc64le' | false     | true
+        'SunOS'     | 'x86'     | 'sunos'       | 'x86'     | false     | true
+        'SunOS'     | 'x86_64'  | 'sunos'       | 'x64'     | false     | true
+        'FreeBSD'   | 'amd64'   | 'unsupported' | 'x64'     | false     | false
     }
 
     @Unroll
@@ -62,7 +64,7 @@ class PlatformHelperTest extends Specification {
         this.props.setProperty("os.name", 'Nonsense')
 
         when:
-        this.helper.getOsName()
+        this.helper.failOnUnsupportedOs()
 
         then:
         thrown(IllegalStateException)

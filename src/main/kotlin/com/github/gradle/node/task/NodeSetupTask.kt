@@ -49,9 +49,14 @@ abstract class NodeSetupTask : DefaultTask() {
 
     @TaskAction
     fun exec() {
+        failIfUnsupportedPlatform()
         deleteExistingNode()
         unpackNodeArchive()
         setExecutableFlag()
+    }
+
+    private fun failIfUnsupportedPlatform() {
+        PlatformHelper.INSTANCE.failOnUnsupportedOs()
     }
 
     private fun deleteExistingNode() {
