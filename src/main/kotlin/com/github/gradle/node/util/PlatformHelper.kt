@@ -9,9 +9,8 @@ open class PlatformHelper constructor(private val props: Properties = System.get
             name.contains("windows") -> "win"
             name.contains("mac") -> "darwin"
             name.contains("linux") -> "linux"
-            name.contains("freebsd") -> "linux"
             name.contains("sunos") -> "sunos"
-            else -> error("Unsupported OS: $name")
+            else -> "unsupported"
         }
     }
 
@@ -32,6 +31,14 @@ open class PlatformHelper constructor(private val props: Properties = System.get
 
     open val isWindows: Boolean by lazy { osName == "win" }
 
+    open val isSupported: Boolean by lazy { osName != "unsupported" }
+
+    fun failOnUnsupportedOs() {
+        if (!isSupported) {
+            error("Unsupported OS")
+        }
+    }
+
     private fun property(name: String): String {
         val value = props.getProperty(name)
         return value ?: System.getProperty(name) ?:
@@ -48,6 +55,11 @@ open class PlatformHelper constructor(private val props: Properties = System.get
 fun main(args: Array<String>) {
     println("Your os.name is: '${System.getProperty("os.name")}' and is parsed as: ${PlatformHelper.INSTANCE.osName}")
     println("Your os.arch is: '${System.getProperty("os.arch")}' and is parsed as: ${PlatformHelper.INSTANCE.osArch}")
+    if (!PlatformHelper.INSTANCE.isSupported) {
+        println("Your platform is \"unsupported\" (isSupported == false)")
+        println("Your platform does not support 'download = true' as there's no official Node.js binaries" +
+                " being published for it. You can still use the plugin, but you need to install Node.js manually")
+    }
     if (PlatformHelper.INSTANCE.isWindows) {
         println("You're on windows (isWindows == true)")
     } else {
