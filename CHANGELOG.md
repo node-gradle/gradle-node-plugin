@@ -2,6 +2,9 @@
 
 ## Version 3.x *(unreleased)*
 
+## Version 3.1.1 *(2021-09-12)*
+* Add support for Linux on Z system (s390x) [#193](https://github.com/node-gradle/gradle-node-plugin/issues/193)
+
 ## Version 3.1.0 *(2021-05-07)*
 * Add support for Linux Power PC [#166](https://github.com/node-gradle/gradle-node-plugin/issues/166) (thanks [akatona84](https://github.com/akatona84) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/issues/167))
 * Internal test suite now running against Gradle 7
