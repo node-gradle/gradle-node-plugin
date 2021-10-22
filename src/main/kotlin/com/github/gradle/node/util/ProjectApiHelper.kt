@@ -43,7 +43,7 @@ interface ProjectApiHelper {
     fun exec(action: Action<ExecSpec>): ExecResult
 }
 
-internal open class DefaultProjectApiHelper @Inject constructor(
+open class DefaultProjectApiHelper @Inject constructor(
         private val factory: ObjectFactory,
         private val execOperations: ExecOperations,
         private val fileSystemOperations: FileSystemOperations,
@@ -74,7 +74,7 @@ internal open class DefaultProjectApiHelper @Inject constructor(
     }
 }
 
-internal open class LegacyProjectApiHelper(private val project: Project) : ProjectApiHelper {
+open class LegacyProjectApiHelper(private val project: Project) : ProjectApiHelper {
 
     override fun fileTree(directory: Directory): ConfigurableFileTree {
         return project.fileTree(directory)

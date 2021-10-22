@@ -4,7 +4,7 @@ import org.gradle.api.Action
 import org.gradle.process.ExecSpec
 import java.io.File
 
-internal data class ExecConfiguration(
+data class ExecConfiguration(
         val executable: String,
         val args: List<String> = listOf(),
         val additionalBinPaths: List<String> = listOf(),
