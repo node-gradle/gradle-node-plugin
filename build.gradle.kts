@@ -74,6 +74,7 @@ tasks.test {
     )
     systemProperty("testMinimumCurrentGradleVersion", project.properties["testMinimumCurrentGradleVersion"] ?: "false")
     systemProperty("testCurrentGradleVersion", project.properties["testCurrentGradleVersion"] ?: "true")
+    systemProperty("testProxyIntegrationTests", project.properties["testProxyIntegrationTests"] ?: "true")
 
     val processorsCount = Runtime.getRuntime().availableProcessors()
     maxParallelForks = if (processorsCount > 2) processorsCount.div(2) else processorsCount

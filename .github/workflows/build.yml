@@ -13,7 +13,7 @@ jobs:
       - name: Gradle Version
         run: ./gradlew --version
       - name: Build
-        run: ./gradlew build -PtestAllSupportedGradleVersions=true
+        run: ./gradlew build -PtestAllSupportedGradleVersions=true -PtestProxyIntegrationTests=false
   windows:
     runs-on: windows-latest
     steps:
@@ -26,7 +26,7 @@ jobs:
       - name: Gradle Version
         run: ./gradlew --version
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build -PtestProxyIntegrationTests=false
   macos:
     runs-on: macos-latest
     steps:
@@ -39,4 +39,4 @@ jobs:
       - name: Gradle Version
         run: ./gradlew --version
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build -PtestProxyIntegrationTests=false
