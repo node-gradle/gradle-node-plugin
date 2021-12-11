@@ -40,7 +40,7 @@ class SystemVersion_integTest extends AbstractIntegTest {
 
         then:
         result4.task(":npxHelp").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("npx --shell-auto-fallback [shell]")
+        result4.output.contains("Run a command from a local or remote npm package")
 
         when:
         def result5 = build(":yarnHelp")
