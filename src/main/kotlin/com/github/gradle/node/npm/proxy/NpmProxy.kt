@@ -5,7 +5,7 @@ import java.util.stream.Collectors.toList
 import java.util.stream.Stream
 import kotlin.text.Charsets.UTF_8
 
-internal class NpmProxy {
+class NpmProxy {
 
     companion object {
         // These are the environment variables that HTTPing applications checks, proxy is on and off.
@@ -28,6 +28,11 @@ internal class NpmProxy {
             return proxyEnvironmentVariables.toMap()
         }
 
+        /**
+         * Helper function for deciding whether to set proxy settings or not.
+         *
+         * If you make use of
+         */
         fun shouldConfigureProxy(env: Map<String, String>, settings: ProxySettings): Boolean {
             if (settings == ProxySettings.FORCED) {
                 return true

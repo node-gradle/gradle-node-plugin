@@ -14,7 +14,7 @@ import org.gradle.api.provider.ProviderFactory
 import java.io.File
 import javax.inject.Inject
 
-internal abstract class NpmExecRunner {
+abstract class NpmExecRunner {
     @get:Inject
     abstract val providers: ProviderFactory
 

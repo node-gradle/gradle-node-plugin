@@ -118,7 +118,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
         def result = buildAndFail('npmInstall')
 
         then:
-        result.output.contains('can only install packages with an existing package-lock.json')
+        result.output.contains('can only install with an existing package-lock.json')
         result.task(':npmInstall').outcome == TaskOutcome.FAILED
 
         when:

@@ -13,7 +13,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import javax.inject.Inject
 
-internal abstract class YarnExecRunner {
+abstract class YarnExecRunner {
     @get:Inject
     abstract val providers: ProviderFactory
 

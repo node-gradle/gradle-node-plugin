@@ -13,9 +13,8 @@ task countRepositories {
     }
 }
 
-task npmHelp(type: NpmTask) {
-    npmCommand = ["--help"]
-    ignoreExitValue = true
+task npmVersion(type: NpmTask) {
+    npmCommand = ["version"]
 }
 
 task npxHelp(type: NpxTask) {

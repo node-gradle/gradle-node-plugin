@@ -7,7 +7,7 @@ import com.github.gradle.node.util.zip
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 
-internal class VariantComputer @JvmOverloads constructor(
+open class VariantComputer @JvmOverloads constructor(
         private val platformHelper: PlatformHelper = PlatformHelper.INSTANCE
 ) {
     fun computeNodeDir(nodeExtension: NodeExtension): Provider<Directory> {

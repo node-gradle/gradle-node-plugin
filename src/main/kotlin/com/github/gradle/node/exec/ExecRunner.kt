@@ -5,7 +5,36 @@ import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.file.DirectoryProperty
 import java.io.File
 
-internal class ExecRunner {
+/**
+ * Helper function that will calculate the environment variables that should be used.
+ *
+ * This is operating-system aware and will check Path and PATH in additionalBinPaths on Windows
+ *
+ * @param execConfiguration configuration to get environment variables from
+ */
+fun computeEnvironment(execConfiguration: ExecConfiguration): Map<String, String> {
+    val execEnvironment = mutableMapOf<String, String>()
+    execEnvironment += System.getenv()
+    execEnvironment += execConfiguration.environment
+    if (execConfiguration.additionalBinPaths.isNotEmpty()) {
+        // Take care of Windows environments that may contain "Path" OR "PATH" - both existing
+        // possibly (but not in parallel as of now)
+        val pathEnvironmentVariableName = if (execEnvironment["Path"] != null) "Path" else "PATH"
+        val actualPath = execEnvironment[pathEnvironmentVariableName]
+        val additionalPathsSerialized = execConfiguration.additionalBinPaths.joinToString(File.pathSeparator)
+        execEnvironment[pathEnvironmentVariableName] =
+            "${additionalPathsSerialized}${File.pathSeparator}${actualPath}"
+    }
+    return execEnvironment
+}
+
+fun computeWorkingDir(nodeProjectDir: DirectoryProperty, execConfiguration: ExecConfiguration): File? {
+    val workingDir = execConfiguration.workingDir ?: nodeProjectDir.get().asFile
+    workingDir.mkdirs()
+    return workingDir
+}
+
+class ExecRunner {
     fun execute(projectHelper: ProjectApiHelper, extension: NodeExtension, execConfiguration: ExecConfiguration) {
         projectHelper.exec {
             executable = execConfiguration.executable
@@ -15,27 +44,5 @@ internal class ExecRunner {
             workingDir = computeWorkingDir(extension.nodeProjectDir, execConfiguration)
             execConfiguration.execOverrides?.execute(this)
         }
-    }
-
-    private fun computeEnvironment(execConfiguration: ExecConfiguration): Map<String, String> {
-        val execEnvironment = mutableMapOf<String, String>()
-        execEnvironment += System.getenv()
-        execEnvironment += execConfiguration.environment
-        if (execConfiguration.additionalBinPaths.isNotEmpty()) {
-            // Take care of Windows environments that may contain "Path" OR "PATH" - both existing
-            // possibly (but not in parallel as of now)
-            val pathEnvironmentVariableName = if (execEnvironment["Path"] != null) "Path" else "PATH"
-            val actualPath = execEnvironment[pathEnvironmentVariableName]
-            val additionalPathsSerialized = execConfiguration.additionalBinPaths.joinToString(File.pathSeparator)
-            execEnvironment[pathEnvironmentVariableName] =
-                    "${additionalPathsSerialized}${File.pathSeparator}${actualPath}"
-        }
-        return execEnvironment
-    }
-
-    private fun computeWorkingDir(nodeProjectDir: DirectoryProperty, execConfiguration: ExecConfiguration): File? {
-        val workingDir = execConfiguration.workingDir ?: nodeProjectDir.get().asFile
-        workingDir.mkdirs()
-        return workingDir
     }
 }
