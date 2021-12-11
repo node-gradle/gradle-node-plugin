@@ -29,11 +29,11 @@ class SystemVersion_integTest extends AbstractIntegTest {
         result2.output.contains("Project repositories: 0")
 
         when:
-        def result3 = build(":npmHelp")
+        def result3 = build(":npmVersion")
 
         then:
-        result3.task(":npmHelp").outcome == TaskOutcome.SUCCESS
-        result3.output.contains("Usage: npm <command>")
+        result3.task(":npmVersion").outcome == TaskOutcome.SUCCESS
+        result3.output.contains("  npm: '")
 
         when:
         def result4 = build(":npxHelp")
