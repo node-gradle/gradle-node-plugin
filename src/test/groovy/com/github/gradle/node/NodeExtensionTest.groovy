@@ -15,6 +15,7 @@ class NodeExtensionTest extends AbstractProjectTest {
         nodeExtension.npmCommand.get() == 'npm'
         nodeExtension.npxCommand.get() == 'npx'
         nodeExtension.distBaseUrl.get() == 'https://nodejs.org/dist'
+        nodeExtension.allowInsecureProtocol.orNull == null
         nodeExtension.workDir.get() != null
         nodeExtension.nodeProjectDir.get() != null
         nodeExtension.version.get() == DEFAULT_NODE_VERSION

@@ -267,4 +267,31 @@ class NodeTask_integTest extends AbstractIntegTest {
         result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":hello").outcome == TaskOutcome.SUCCESS
     }
+
+    def 'make sure build works with allowInsecureProtocol false using a custom repository'() {
+        given:
+        Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
+        copyResources("fixtures/node-disallow-insecure-protocol")
+
+        when:
+        def result = build("hello")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":hello").outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'make sure build works with allowInsecureProtocol true using a custom repository'() {
+        given:
+        Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
+        copyResources("fixtures/node-allow-insecure-protocol")
+
+        when:
+        def result = build("hello")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":hello").outcome == TaskOutcome.SUCCESS
+    }
+
 }

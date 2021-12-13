@@ -1,0 +1,19 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    version = "12.13.0"
+    distBaseUrl = "http://nodejs.org/dist/"
+    download = true
+    allowInsecureProtocol = true
+    workDir = file("build/node")
+}
+
+task hello(type: NodeTask) {
+    script = file("simple.js")
+    args = []
+    outputs.upToDateWhen {
+        true
+    }
+}

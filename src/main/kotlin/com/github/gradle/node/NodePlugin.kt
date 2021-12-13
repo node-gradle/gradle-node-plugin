@@ -16,6 +16,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
+import org.gradle.util.GradleVersion
 import java.io.File
 
 class NodePlugin : Plugin<Project> {
@@ -30,7 +31,7 @@ class NodePlugin : Plugin<Project> {
         addYarnRule()
         project.afterEvaluate {
             if (nodeExtension.download.get()) {
-                nodeExtension.distBaseUrl.orNull?.let { addRepository(it) }
+                nodeExtension.distBaseUrl.orNull?.let { addRepository(it, nodeExtension.allowInsecureProtocol.orNull) }
                 configureNodeSetupTask(nodeExtension)
             }
         }
@@ -86,7 +87,7 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addRepository(distUrl: String) {
+    private fun addRepository(distUrl: String, allowInsecureProtocol: Boolean?) {
         project.repositories.ivy {
             name = "Node.js"
             setUrl(distUrl)
@@ -98,6 +99,9 @@ class NodePlugin : Plugin<Project> {
             }
             content {
                 includeModule("org.nodejs", "node")
+            }
+            if (GradleVersion.current() >= GradleVersion.version("6.0")) {
+                allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
             }
         }
     }

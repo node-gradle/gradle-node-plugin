@@ -222,6 +222,12 @@ node {
     // Or set to null if you want to add the repository on your own.
     distBaseUrl = "https://nodejs.org/dist"
     
+    // Specifies whether it is acceptable to communicate with the Node.js repository over an insecure HTTP connection.
+    // Only used if download is true
+    // Change it to true if you use a mirror that uses HTTP rather than HTTPS
+    // Or set to null if you want to use Gradle's default behaviour.
+    allowInsecureProtocol = null
+    
     // The npm command executed by the npmInstall task
     // By default it is install but it can be changed to ci
     npmInstallCommand = "install"
