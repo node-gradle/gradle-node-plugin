@@ -1,5 +1,7 @@
 package com.github.gradle.node
 
+import org.mockserver.configuration.ConfigurationProperties
+
 import static java.util.stream.Collectors.joining
 
 class ProxyTestHelper {
@@ -51,7 +53,7 @@ cafile \"${projectDirectory}/certificate.pem\""""
 
     private def readMockServerCertificate() {
         def stream = getClass().getClassLoader()
-                .getResourceAsStream("org/mockserver/socket/CertificateAuthorityCertificate.pem")
+                .getResourceAsStream(ConfigurationProperties.certificateAuthorityCertificate())
         return stream.text
     }
 
