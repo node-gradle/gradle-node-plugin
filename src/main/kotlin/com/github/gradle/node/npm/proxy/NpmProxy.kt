@@ -16,8 +16,10 @@ class NpmProxy {
 
         // And since npm also takes settings in the form of environment variables with the
         // NPM_CONFIG_<setting> format, we should check those. Hopefully nobody does this.
+        // Windows will let you set environment variables with hyphens in them, but shells
+        // on Linux will fight you so you'll have to be sneaky, adding both here "just in case".
         private val npmProxyVariables = listOf(
-                "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_NOPROXY"
+                "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_HTTPS_PROXY", "NPM_CONFIG_NOPROXY"
         )
 
         fun computeNpmProxyEnvironmentVariables(): Map<String, String> {
