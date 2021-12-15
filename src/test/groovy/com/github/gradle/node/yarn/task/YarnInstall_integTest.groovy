@@ -46,8 +46,8 @@ class YarnInstall_integTest extends AbstractIntegTest {
             node {
                 download = true
                 yarnWorkDir = file('build/yarn')
-                version = '15.2.1'
-                npmVersion = '7.0.1'
+                version = '17.1.0'
+                npmVersion = '8.1.0'
             }
         ''')
         writeEmptyPackageJson()

@@ -3,7 +3,7 @@ plugins {
 }
 
 node {
-    version = "12.13.0"
+    version = "17.1.0"
     distBaseUrl = "http://nodejs.org/dist/"
     download = true
     allowInsecureProtocol = true

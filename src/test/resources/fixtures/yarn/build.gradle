@@ -7,7 +7,7 @@ plugins {
 def changeInputs = isPropertyEnabled("changeInputs")
 
 node {
-    yarnVersion = "1.18.0"
+    yarnVersion = "1.22.17"
     download = true
     workDir = file("build/node")
 }
