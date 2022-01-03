@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.property
+import org.gradle.util.GradleVersion
 import java.io.File
 
 /**
@@ -25,6 +26,9 @@ abstract class NpmInstallTask : NpmTask() {
         description = "Install node packages from package.json."
         dependsOn(NpmSetupTask.NAME)
         npmCommand.set(nodeExtension.npmInstallCommand.map { listOf(it) })
+        if (nodeExtension.untrackedNpmInstall.get() && GradleVersion.current() >= GradleVersion.version("7.3")) {
+            doNotTrackState("Disabled in NodeExtension")
+        }
     }
 
     @PathSensitive(RELATIVE)

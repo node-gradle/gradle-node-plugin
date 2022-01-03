@@ -78,6 +78,15 @@ open class NodeExtension(project: Project) {
     val npmInstallCommand = project.objects.property<String>().convention("install")
 
     /**
+     * Gradle 7.3 introduced the ability for a task to opt out of up-to-date tracking,
+     * npm install tracks very poorly especially on larger projects.
+     *
+     * If your npm install is large or your disk is slow, setting this to true will make
+     * your builds faster.
+     */
+    val untrackedNpmInstall = project.objects.property<Boolean>().convention(false)
+
+    /**
      * Whether to download and install a specific Node.js version or not
      * If false, it will use the globally installed Node.js
      * If true, it will download node using above parameters
