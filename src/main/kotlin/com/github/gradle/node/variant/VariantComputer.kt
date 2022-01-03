@@ -10,6 +10,11 @@ import org.gradle.api.provider.Provider
 open class VariantComputer @JvmOverloads constructor(
         private val platformHelper: PlatformHelper = PlatformHelper.INSTANCE
 ) {
+    /**
+     * Get the expected directory for a given node version.
+     *
+     * Essentially: workingDir/node-v$version-$osName-$osArch
+     */
     fun computeNodeDir(nodeExtension: NodeExtension): Provider<Directory> {
         return zip(nodeExtension.workDir, nodeExtension.version).map { (workDir, version) ->
             val osName = platformHelper.osName
@@ -19,8 +24,14 @@ open class VariantComputer @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Get the expected node binary directory, taking Windows specifics into account.
+     */
     fun computeNodeBinDir(nodeDirProvider: Provider<Directory>) = computeProductBinDir(nodeDirProvider)
 
+    /**
+     * Get the expected node binary name, node.exe on Windows and node everywhere else.
+     */
     fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.download, nodeBinDirProvider).map {
             val (download, nodeBinDir) = it
@@ -31,6 +42,9 @@ open class VariantComputer @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Get the expected directory for a given npm version.
+     */
     fun computeNpmDir(nodeExtension: NodeExtension, nodeDirProvider: Provider<Directory>): Provider<Directory> {
         return zip(nodeExtension.npmVersion, nodeExtension.npmWorkDir, nodeDirProvider).map {
             val (npmVersion, npmWorkDir, nodeDir) = it
@@ -41,8 +55,16 @@ open class VariantComputer @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Get the expected npm binary directory, taking Windows specifics into account.
+     */
     fun computeNpmBinDir(npmDirProvider: Provider<Directory>) = computeProductBinDir(npmDirProvider)
 
+    /**
+     * Get the expected node binary name, npm.cmd on Windows and npm everywhere else.
+     *
+     * Can be overridden by setting npmCommand.
+     */
     fun computeNpmExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.download, nodeExtension.npmCommand, npmBinDirProvider).map {
             val (download, npmCommand, npmBinDir) = it
@@ -60,6 +82,11 @@ open class VariantComputer @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Get the expected node binary name, npx.cmd on Windows and npx everywhere else.
+     *
+     * Can be overridden by setting npxCommand.
+     */
     fun computeNpxExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.download, nodeExtension.npxCommand, npmBinDirProvider).map {
             val (download, npxCommand, npmBinDir) = it
@@ -96,6 +123,11 @@ open class VariantComputer @JvmOverloads constructor(
     private fun computeProductBinDir(productDirProvider: Provider<Directory>) =
             if (platformHelper.isWindows) productDirProvider else productDirProvider.map { it.dir("bin") }
 
+    /**
+     * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.
+     *
+     * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
+     */
     fun computeNodeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
         val osName = platformHelper.osName
         val osArch = platformHelper.osArch

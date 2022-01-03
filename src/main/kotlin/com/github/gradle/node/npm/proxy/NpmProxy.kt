@@ -22,6 +22,11 @@ class NpmProxy {
                 "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_HTTPS_PROXY", "NPM_CONFIG_NOPROXY"
         )
 
+        /**
+         * Creates a map of environment variables with proxy settings.
+         *
+         * Will return an empty map if none are set.
+         */
         fun computeNpmProxyEnvironmentVariables(): Map<String, String> {
             val proxyEnvironmentVariables = computeProxyUrlEnvironmentVariables()
             if (proxyEnvironmentVariables.isNotEmpty()) {
@@ -31,9 +36,7 @@ class NpmProxy {
         }
 
         /**
-         * Helper function for deciding whether to set proxy settings or not.
-         *
-         * If you make use of
+         * Helper function for deciding whether proxy settings need to be set or not.
          */
         fun shouldConfigureProxy(env: Map<String, String>, settings: ProxySettings): Boolean {
             if (settings == ProxySettings.FORCED) {

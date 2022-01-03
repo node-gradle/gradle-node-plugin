@@ -34,6 +34,12 @@ fun computeWorkingDir(nodeProjectDir: DirectoryProperty, execConfiguration: Exec
     return workingDir
 }
 
+/**
+ * Basic execution runner that runs a given ExecConfiguration.
+ *
+ * Specific implementations likely use the same configuration but may assign
+ * different meaning to its values.
+ */
 class ExecRunner {
     fun execute(projectHelper: ProjectApiHelper, extension: NodeExtension, execConfiguration: ExecConfiguration) {
         projectHelper.exec {

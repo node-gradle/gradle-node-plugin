@@ -110,8 +110,19 @@ open class NodeExtension(project: Project) {
     }
 
     companion object {
+        /**
+         * Extension name in Gradle
+         */
         const val NAME = "node"
+
+        /**
+         * Default version of Node to download if none is set
+         */
         const val DEFAULT_NODE_VERSION = "14.15.4"
+
+        /**
+         * Default version of npm to download if none is set
+         */
         const val DEFAULT_NPM_VERSION = "6.14.10"
 
         @JvmStatic

@@ -43,6 +43,9 @@ interface ProjectApiHelper {
     fun exec(action: Action<ExecSpec>): ExecResult
 }
 
+/**
+ * Used in Gradle 6.6 and newer.
+ */
 open class DefaultProjectApiHelper @Inject constructor(
         private val factory: ObjectFactory,
         private val execOperations: ExecOperations,
@@ -74,6 +77,9 @@ open class DefaultProjectApiHelper @Inject constructor(
     }
 }
 
+/**
+ * Used to support Gradle versions older than 6.6
+ */
 open class LegacyProjectApiHelper(private val project: Project) : ProjectApiHelper {
 
     override fun fileTree(directory: Directory): ConfigurableFileTree {
