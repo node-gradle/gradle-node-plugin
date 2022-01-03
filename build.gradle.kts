@@ -38,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.6.2"))
+    testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
@@ -46,7 +46,9 @@ dependencies {
     testImplementation("cglib:cglib-nodep:3.3.0")
     testImplementation("org.objenesis:objenesis:3.1")
     testImplementation("org.apache.commons:commons-io:1.3.2")
-    testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
+    testImplementation(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
+    testImplementation("org.spockframework:spock-core")
+    testImplementation("org.spockframework:spock-junit4")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
     testImplementation("org.mock-server:mockserver-netty:5.11.1")
 }
