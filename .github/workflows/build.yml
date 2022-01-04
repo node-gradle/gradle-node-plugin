@@ -1,8 +1,14 @@
 name: Build
 on: [push, pull_request, workflow_dispatch]
 jobs:
-  linux:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      matrix:
+        config:
+          - {os: ubuntu-latest, params: "-PtestAllSupportedGradleVersions=true -PtestProxyIntegrationTests=false" }
+          - {os: windows-latest, params: "-PtestProxyIntegrationTests=false" }
+          - {os: macos-latest, params: "-PtestProxyIntegrationTests=false" }
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2
@@ -19,42 +25,4 @@ jobs:
       - name: Gradle Version
         run: ./gradlew --version
       - name: Build
-        run: ./gradlew build -PtestAllSupportedGradleVersions=true -PtestProxyIntegrationTests=false
-  windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v2
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-      - name: Install yarn
-        run: npm install -g yarn@1.22.17
-      - name: Gradle Version
-        run: ./gradlew --version
-      - name: Build
-        run: ./gradlew build -PtestProxyIntegrationTests=false
-  macos:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v2
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-      - name: Install Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-      - name: Install yarn
-        run: npm install -g yarn@1.22.17
-      - name: Gradle Version
-        run: ./gradlew --version
-      - name: Build
-        run: ./gradlew build -PtestProxyIntegrationTests=false
+        run: ./gradlew build ${{ matrix.config.params }}
