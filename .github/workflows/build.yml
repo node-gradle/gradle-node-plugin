@@ -22,7 +22,7 @@ jobs:
           node-version: 16
       - name: Install yarn
         run: npm install -g yarn@1.22.17
-      - name: Gradle Version
-        run: ./gradlew --version
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
       - name: Build
         run: ./gradlew build ${{ matrix.config.params }}
