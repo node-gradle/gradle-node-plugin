@@ -24,5 +24,7 @@ jobs:
         run: npm install -g yarn@1.22.17
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Build
         run: ./gradlew build ${{ matrix.config.params }}
