@@ -58,6 +58,25 @@ class PlatformHelperTest extends Specification {
         'ppc64le' | 'ppc64le' | 'ppc64le'
     }
 
+    @Unroll
+    def "verify ARM handling Mac OS #archProp (#unameProp)"() {
+        given:
+        this.props.setProperty("os.name", "Mac OS X")
+        this.props.setProperty("os.arch", archProp)
+        this.props.setProperty("uname", unameProp)
+
+        expect:
+        this.helper.getOsName() == "darwin"
+        this.helper.getOsArch() == osArch
+
+        where:
+        archProp  | unameProp | osArch
+        'aarch32' | 'arm'     | 'arm'
+        'aarch64' | 'arm64'   | 'arm64'
+        'aarch64' | 'aarch64' | 'arm64'
+        'aarch64' | 'x86_64'  | 'x64' // This shouldn't really happen but according to PR #204 it does
+    }
+
     def "throw exception if unsupported os"() {
         given:
         this.props.setProperty("os.name", 'Nonsense')
