@@ -2,7 +2,6 @@ package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.task.AbstractTaskTest
-import org.gradle.process.ExecSpec
 
 class NpmSetupTaskTest extends AbstractTaskTest {
     def cleanup() {
@@ -14,6 +13,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         props.setProperty('os.name', 'Linux')
 
         def task = project.tasks.create('simple', NpmSetupTask)
+        mockPlatformHelper(task)
 
         when:
         project.evaluate()
@@ -28,6 +28,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         nodeExtension.npmVersion.set('6.4.1')
 
         def task = project.tasks.create('simple', NpmSetupTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
 
         when:
@@ -51,6 +52,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpProxyPort(1234)
 
         def task = project.tasks.create('simple', NpmSetupTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
 
         when:
