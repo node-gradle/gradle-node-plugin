@@ -1,7 +1,7 @@
 package com.github.gradle.node.variant
 
 import com.github.gradle.node.NodeExtension
-import com.github.gradle.node.util.PlatformHelper
+import com.github.gradle.node.util.TestablePlatformHelper
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -19,7 +19,6 @@ class VariantComputerTest extends Specification {
 
     def setup() {
         props = new Properties()
-        PlatformHelper.INSTANCE = new PlatformHelper(props)
     }
 
     @Unroll
@@ -29,6 +28,7 @@ class VariantComputerTest extends Specification {
 
         props.setProperty("os.name", "Windows 8")
         props.setProperty("os.arch", osArch)
+        def platformHelper = new TestablePlatformHelper(props)
 
         def nodeExtension = new NodeExtension(project)
         nodeExtension.download.set(true)
@@ -38,7 +38,7 @@ class VariantComputerTest extends Specification {
         def nodeDir = "node-v${version}-win-${osArch}".toString()
         def depName = "org.nodejs:node:${version}:win-${osArch}@zip".toString()
 
-        def variantComputer = new VariantComputer()
+        def variantComputer = new VariantComputer(platformHelper)
 
         when:
         def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
@@ -72,6 +72,7 @@ class VariantComputerTest extends Specification {
         given:
         props.setProperty("os.name", osName)
         props.setProperty("os.arch", osArch)
+        def platformHelper = new TestablePlatformHelper(props)
 
         def project = ProjectBuilder.builder().build()
         def nodeExtension = new NodeExtension(project)
@@ -79,7 +80,7 @@ class VariantComputerTest extends Specification {
         nodeExtension.version.set('5.12.0')
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
 
-        def variantComputer = new VariantComputer()
+        def variantComputer = new VariantComputer(platformHelper)
 
         when:
         def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
@@ -116,6 +117,8 @@ class VariantComputerTest extends Specification {
         given:
         props.setProperty("os.name", osName)
         props.setProperty("os.arch", osArch)
+        props.setProperty("uname", sysOsArch)
+        def platformHelper = new TestablePlatformHelper(props)
 
         def project = ProjectBuilder.builder().build()
         def nodeExtension = new NodeExtension(project)
@@ -123,9 +126,7 @@ class VariantComputerTest extends Specification {
         nodeExtension.version.set('5.12.0')
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
 
-        PlatformHelper platformHelperSpy = (PlatformHelper) Spy(PlatformHelper, constructorArgs: [props])
-        platformHelperSpy.osArch >> { sysOsArch }
-        def variantComputer = new VariantComputer(platformHelperSpy)
+        def variantComputer = new VariantComputer(platformHelper)
 
         when:
         def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
@@ -157,13 +158,14 @@ class VariantComputerTest extends Specification {
         given:
         props.setProperty("os.name", "Windows 8")
         props.setProperty("os.arch", "x86")
+        def platformHelper = new TestablePlatformHelper(props)
         def project = ProjectBuilder.builder().build()
 
         def nodeExtension = new NodeExtension(project)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
 
-        def variantComputer = new VariantComputer()
+        def variantComputer = new VariantComputer(platformHelper)
 
         when:
         def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
@@ -208,13 +210,14 @@ class VariantComputerTest extends Specification {
         given:
         props.setProperty("os.name", "Linux")
         props.setProperty("os.arch", "x86")
+        def platformHelper = new TestablePlatformHelper(props)
         def project = ProjectBuilder.builder().build()
 
         def nodeExtension = new NodeExtension(project)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
 
-        def variantComputer = new VariantComputer()
+        def variantComputer = new VariantComputer(platformHelper)
 
         when:
         def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)

@@ -10,7 +10,6 @@ import spock.lang.Requires
 import static java.nio.charset.StandardCharsets.UTF_8
 import static org.mockserver.integration.ClientAndServer.startClientAndServer
 import static org.mockserver.model.HttpRequest.request
-import static org.mockserver.model.SocketAddress.Scheme.HTTP
 import static org.mockserver.model.SocketAddress.Scheme.HTTPS
 import static org.mockserver.verify.VerificationTimes.exactly
 
@@ -47,10 +46,7 @@ class YarnProxy_integTest extends AbstractIntegTest {
                     request.removeHeader("host")
                     def targetHost = "registry.npmjs.org"
                     request.withHeader("host", targetHost)
-                    if (secure) {
-                        return request.withSocketAddress(targetHost, 443, HTTPS).withSecure(true)
-                    }
-                    return request.withSocketAddress(targetHost, 80, HTTP).withSecure(false)
+                    return request.withSocketAddress(targetHost, 443, HTTPS).withSecure(true)
                 }, { request, response ->
                     if (response.getBody().contentType == "application/vnd.npm.install-v1+json") {
                         // Let's rewrite download URLs in the JSON to make them target to the proxied registry
@@ -115,7 +111,7 @@ class YarnProxy_integTest extends AbstractIntegTest {
                     request.removeHeader("host")
                     def targetHost = "registry.npmjs.org"
                     request.withHeader("host", targetHost)
-                    return request.withSocketAddress(targetHost, 80, HTTP).withSecure(false)
+                    return request.withSocketAddress(targetHost, 443, HTTPS).withSecure(true)
                 }, { request, response ->
                     if (response.getBody().contentType == "application/vnd.npm.install-v1+json") {
                         // Let's rewrite download URLs in the JSON to make them target to the proxied registry

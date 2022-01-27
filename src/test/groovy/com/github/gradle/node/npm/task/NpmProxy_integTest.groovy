@@ -46,15 +46,8 @@ class NpmProxy_integTest extends AbstractIntegTest {
         } else {
             proxyMockServer.verify(request()
                     .withMethod("GET")
-                    .withSecure(secure)
                     .withPath("/case")
-                    .withHeader("Host", "registry.npmjs.org:${port}"),
-                    exactly(1))
-            proxyMockServer.verify(request()
-                    .withMethod("POST")
-                    .withSecure(secure)
-                    .withPath("/-/npm/v1/security/audits/quick")
-                    .withHeader("Host", "registry.npmjs.org:${port}"),
+                    .withHeader("Host", "registry.npmjs.org.*"),
                     exactly(1))
         }
 
@@ -94,15 +87,8 @@ class NpmProxy_integTest extends AbstractIntegTest {
         createFile("node_modules/case/package.json").exists()
         proxyMockServer.verify(request()
                 .withMethod("GET")
-                .withSecure(false)
                 .withPath("/case")
-                .withHeader("Host", "registry.npmjs.org:${port}"),
-                exactly(1))
-        proxyMockServer.verify(request()
-                .withMethod("POST")
-                .withSecure(false)
-                .withPath("/-/npm/v1/security/audits/quick")
-                .withHeader("Host", "registry.npmjs.org:${port}"),
+                .withHeader("Host", "registry.npmjs.org.*"),
                 exactly(1))
     }
 }

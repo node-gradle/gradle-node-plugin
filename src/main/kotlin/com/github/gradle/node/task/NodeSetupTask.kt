@@ -2,10 +2,8 @@ package com.github.gradle.node.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.variant.VariantComputer
-import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -14,7 +12,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import javax.inject.Inject
 
-abstract class NodeSetupTask : DefaultTask() {
+abstract class NodeSetupTask : BaseTask() {
 
     @get:Inject
     abstract val objects: ObjectFactory
@@ -22,7 +20,6 @@ abstract class NodeSetupTask : DefaultTask() {
     @get:Inject
     abstract val providers: ProviderFactory
 
-    private val variantComputer = VariantComputer()
     private val nodeExtension = NodeExtension[project]
 
     @get:Input
@@ -90,7 +87,7 @@ abstract class NodeSetupTask : DefaultTask() {
     }
 
     private fun setExecutableFlag() {
-        if (!PlatformHelper.INSTANCE.isWindows) {
+        if (!platformHelper.isWindows) {
             val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
             val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
             val nodeExecProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)

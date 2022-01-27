@@ -7,8 +7,8 @@ import com.github.gradle.node.util.zip
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 
-open class VariantComputer @JvmOverloads constructor(
-        private val platformHelper: PlatformHelper = PlatformHelper.INSTANCE
+open class VariantComputer constructor(
+        private val platformHelper: PlatformHelper
 ) {
     /**
      * Get the expected directory for a given node version.

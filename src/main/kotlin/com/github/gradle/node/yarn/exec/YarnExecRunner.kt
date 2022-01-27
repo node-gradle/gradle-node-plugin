@@ -17,15 +17,18 @@ abstract class YarnExecRunner {
     @get:Inject
     abstract val providers: ProviderFactory
 
-    private val variantComputer = VariantComputer()
-
-    fun executeYarnCommand(project: ProjectApiHelper, nodeExtension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration) {
+    fun executeYarnCommand(
+        project: ProjectApiHelper,
+        nodeExtension: NodeExtension,
+        nodeExecConfiguration: NodeExecConfiguration,
+        variantComputer: VariantComputer
+    ) {
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val yarnDirProvider = variantComputer.computeYarnDir(nodeExtension)
         val yarnBinDirProvider = variantComputer.computeYarnBinDir(yarnDirProvider)
         val yarnExecProvider = variantComputer.computeYarnExec(nodeExtension, yarnBinDirProvider)
         val additionalBinPathProvider =
-                computeAdditionalBinPath(nodeExtension, nodeDirProvider, yarnBinDirProvider)
+                computeAdditionalBinPath(nodeExtension, nodeDirProvider, yarnBinDirProvider, variantComputer)
         val execConfiguration = ExecConfiguration(yarnExecProvider.get(),
                 nodeExecConfiguration.command, additionalBinPathProvider.get(),
                 addNpmProxyEnvironment(nodeExtension, nodeExecConfiguration), nodeExecConfiguration.workingDir,
@@ -45,9 +48,12 @@ abstract class YarnExecRunner {
         return nodeExecConfiguration.environment
     }
 
-    private fun computeAdditionalBinPath(nodeExtension: NodeExtension,
-                                         nodeDirProvider: Provider<Directory>,
-                                         yarnBinDirProvider: Provider<Directory>): Provider<List<String>> {
+    private fun computeAdditionalBinPath(
+        nodeExtension: NodeExtension,
+        nodeDirProvider: Provider<Directory>,
+        yarnBinDirProvider: Provider<Directory>,
+        variantComputer: VariantComputer
+    ): Provider<List<String>> {
         return nodeExtension.download.flatMap { download ->
             if (!download) {
                 providers.provider { listOf<String>() }
