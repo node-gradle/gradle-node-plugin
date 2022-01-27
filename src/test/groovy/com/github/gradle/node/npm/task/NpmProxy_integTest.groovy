@@ -5,13 +5,11 @@ import com.github.gradle.node.ProxyTestHelper
 import org.gradle.testkit.runner.TaskOutcome
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.socket.PortFactory
-import spock.lang.Requires
 
 import static org.mockserver.integration.ClientAndServer.startClientAndServer
 import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.verify.VerificationTimes.exactly
 
-@Requires({ System.getProperty("testProxyIntegrationTests").equals("true") })
 class NpmProxy_integTest extends AbstractIntegTest {
     private ClientAndServer proxyMockServer
 

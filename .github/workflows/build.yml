@@ -6,9 +6,9 @@ jobs:
     strategy:
       matrix:
         config:
-          - {os: ubuntu-latest, params: "-PtestAllSupportedGradleVersions=true -PtestProxyIntegrationTests=false" }
-          - {os: windows-latest, params: "-PtestProxyIntegrationTests=false" }
-          - {os: macos-latest, params: "-PtestProxyIntegrationTests=false" }
+          - {os: ubuntu-latest, params: "-PtestAllSupportedGradleVersions=true" }
+          - {os: windows-latest, params: "" }
+          - {os: macos-latest, params: "" }
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2

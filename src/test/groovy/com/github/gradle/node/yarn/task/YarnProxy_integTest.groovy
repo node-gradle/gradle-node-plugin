@@ -5,7 +5,6 @@ import com.github.gradle.node.ProxyTestHelper
 import org.gradle.testkit.runner.TaskOutcome
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.socket.PortFactory
-import spock.lang.Requires
 
 import static java.nio.charset.StandardCharsets.UTF_8
 import static org.mockserver.integration.ClientAndServer.startClientAndServer
@@ -13,7 +12,6 @@ import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.SocketAddress.Scheme.HTTPS
 import static org.mockserver.verify.VerificationTimes.exactly
 
-@Requires({ System.getProperty("testProxyIntegrationTests").equals("true") })
 class YarnProxy_integTest extends AbstractIntegTest {
     private ClientAndServer proxyMockServer
     // We have to configure a second proxy otherwise Yarn does not want to use its own repository using HTTP,
