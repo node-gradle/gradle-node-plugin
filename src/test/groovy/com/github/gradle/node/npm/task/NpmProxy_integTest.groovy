@@ -5,13 +5,11 @@ import com.github.gradle.node.ProxyTestHelper
 import org.gradle.testkit.runner.TaskOutcome
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.socket.PortFactory
-import spock.lang.Requires
 
 import static org.mockserver.integration.ClientAndServer.startClientAndServer
 import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.verify.VerificationTimes.exactly
 
-@Requires({ System.getProperty("testProxyIntegrationTests").equals("true") })
 class NpmProxy_integTest extends AbstractIntegTest {
     private ClientAndServer proxyMockServer
 
@@ -46,15 +44,8 @@ class NpmProxy_integTest extends AbstractIntegTest {
         } else {
             proxyMockServer.verify(request()
                     .withMethod("GET")
-                    .withSecure(secure)
                     .withPath("/case")
-                    .withHeader("Host", "registry.npmjs.org:${port}"),
-                    exactly(1))
-            proxyMockServer.verify(request()
-                    .withMethod("POST")
-                    .withSecure(secure)
-                    .withPath("/-/npm/v1/security/audits/quick")
-                    .withHeader("Host", "registry.npmjs.org:${port}"),
+                    .withHeader("Host", "registry.npmjs.org.*"),
                     exactly(1))
         }
 
@@ -94,15 +85,8 @@ class NpmProxy_integTest extends AbstractIntegTest {
         createFile("node_modules/case/package.json").exists()
         proxyMockServer.verify(request()
                 .withMethod("GET")
-                .withSecure(false)
                 .withPath("/case")
-                .withHeader("Host", "registry.npmjs.org:${port}"),
-                exactly(1))
-        proxyMockServer.verify(request()
-                .withMethod("POST")
-                .withSecure(false)
-                .withPath("/-/npm/v1/security/audits/quick")
-                .withHeader("Host", "registry.npmjs.org:${port}"),
+                .withHeader("Host", "registry.npmjs.org.*"),
                 exactly(1))
     }
 }

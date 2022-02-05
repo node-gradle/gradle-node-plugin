@@ -10,9 +10,8 @@ import org.gradle.api.provider.Provider
 /**
  * This function is responsible for setting up the configuration used when running the tasks.
  */
-fun buildExecConfiguration(nodeExtension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration):
+fun buildExecConfiguration(nodeExtension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variantComputer: VariantComputer):
         Provider<ExecConfiguration> {
-    val variantComputer = VariantComputer()
     val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
     val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
     val executableProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
@@ -34,8 +33,8 @@ fun computeAdditionalBinPath(nodeExtension: NodeExtension, nodeBinDirProvider: P
 }
 
 class NodeExecRunner {
-    fun execute(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration) {
-        val execConfiguration = buildExecConfiguration(extension, nodeExecConfiguration).get()
+    fun execute(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variantComputer: VariantComputer) {
+        val execConfiguration = buildExecConfiguration(extension, nodeExecConfiguration, variantComputer).get()
         val execRunner = ExecRunner()
         execRunner.execute(project, extension, execConfiguration)
     }

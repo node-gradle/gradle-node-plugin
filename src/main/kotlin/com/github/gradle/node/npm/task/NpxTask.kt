@@ -4,9 +4,9 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
+import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
@@ -18,7 +18,7 @@ import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
 import javax.inject.Inject
 
-abstract class NpxTask : DefaultTask() {
+abstract class NpxTask : BaseTask() {
 
     @get:Inject
     abstract val objects: ObjectFactory
@@ -70,6 +70,6 @@ abstract class NpxTask : DefaultTask() {
                 NodeExecConfiguration(fullCommand, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        npmExecRunner.executeNpxCommand(projectHelper, extension, nodeExecConfiguration)
+        npmExecRunner.executeNpxCommand(projectHelper, extension, nodeExecConfiguration, variantComputer)
     }
 }

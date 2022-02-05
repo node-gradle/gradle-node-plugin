@@ -9,6 +9,7 @@ class NpxTaskTest extends AbstractTaskTest {
         props.setProperty('os.name', 'Linux')
 
         def task = project.tasks.create('simple', NpxTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.command.set('command')
         task.args.set(['a', 'b'])
@@ -35,6 +36,7 @@ class NpxTaskTest extends AbstractTaskTest {
         props.setProperty('os.name', 'Windows')
 
         def task = project.tasks.create('simple', NpxTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.command.set('command')
         task.args.set(['a', 'b'])
@@ -60,12 +62,13 @@ class NpxTaskTest extends AbstractTaskTest {
         given:
         props.setProperty('os.name', 'Linux')
         nodeExtension.download.set(true)
-        def variantComputer = new VariantComputer()
+        def variantComputer = new VariantComputer(testPlatformHelper)
         def nodeDir = variantComputer.computeNodeDir(nodeExtension)
         def nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
         def npxScriptFile = variantComputer.computeNpmScriptFile(nodeDir, "npx")
 
         def task = project.tasks.create('simple', NpxTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
 
         when:

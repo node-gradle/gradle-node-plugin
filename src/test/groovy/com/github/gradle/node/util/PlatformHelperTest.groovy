@@ -9,7 +9,7 @@ class PlatformHelperTest extends Specification {
 
     def setup() {
         this.props = new Properties()
-        PlatformHelper.INSTANCE = this.helper = new PlatformHelper(this.props)
+        this.helper = new TestablePlatformHelper(this.props)
     }
 
     @Unroll

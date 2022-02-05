@@ -4,10 +4,9 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
+import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.util.ProjectApiHelper
-import com.github.gradle.node.variant.VariantComputer
-import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -22,7 +21,7 @@ import javax.inject.Inject
 /**
  * npm install that only gets executed if gradle decides so.
  */
-abstract class NpmSetupTask : DefaultTask() {
+abstract class NpmSetupTask : BaseTask() {
 
     @get:Inject
     abstract val objects: ObjectFactory
@@ -44,7 +43,6 @@ abstract class NpmSetupTask : DefaultTask() {
 
     @get:OutputDirectory
     val npmDir by lazy {
-        val variantComputer = VariantComputer()
         val nodeDir = variantComputer.computeNodeDir(nodeExtension)
         variantComputer.computeNpmDir(nodeExtension, nodeDir)
     }
@@ -73,7 +71,7 @@ abstract class NpmSetupTask : DefaultTask() {
         val command = computeCommand()
         val nodeExecConfiguration = NodeExecConfiguration(command)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration)
+        npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 
     protected open fun computeCommand(): List<String> {

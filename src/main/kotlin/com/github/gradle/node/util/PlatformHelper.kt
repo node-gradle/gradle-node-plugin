@@ -2,7 +2,7 @@ package com.github.gradle.node.util
 
 import java.util.*
 
-open class PlatformHelper constructor(private val props: Properties = System.getProperties()) {
+open class PlatformHelper {
     open val osName: String by lazy {
         val name = property("os.name").toLowerCase()
         when {
@@ -34,11 +34,14 @@ open class PlatformHelper constructor(private val props: Properties = System.get
     open val isWindows: Boolean by lazy { osName == "win" }
 
     private fun property(name: String): String {
-        val value = props.getProperty(name)
-        return value ?: System.getProperty(name) ?:
+        return getSystemProperty(name) ?:
             // Added so that we can test osArch on Windows and on non-arm systems
             if (name == "uname") execute("uname", "-m")
             else error("Unable to find a value for property [$name].")
+    }
+
+    open fun getSystemProperty(name: String): String? {
+        return System.getProperty(name);
     }
 
     companion object {

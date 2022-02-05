@@ -6,7 +6,6 @@ import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.exec.NodeExecRunner
 import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -20,7 +19,7 @@ import javax.inject.Inject
 /**
  * Gradle task for running a Node.js script
  */
-abstract class NodeTask : DefaultTask() {
+abstract class NodeTask : BaseTask() {
     @get:Inject
     abstract val objects: ObjectFactory
 
@@ -95,6 +94,6 @@ abstract class NodeTask : DefaultTask() {
                 NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
         val nodeExecRunner = NodeExecRunner()
-        nodeExecRunner.execute(projectHelper, extension, nodeExecConfiguration)
+        nodeExecRunner.execute(projectHelper, extension, nodeExecConfiguration, variantComputer)
     }
 }

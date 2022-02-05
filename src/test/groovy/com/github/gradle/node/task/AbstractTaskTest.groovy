@@ -4,6 +4,7 @@ import com.github.gradle.AbstractProjectTest
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.util.ProjectApiHelper
+import com.github.gradle.node.util.TestablePlatformHelper
 import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.process.ExecResult
@@ -16,12 +17,13 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
     ExecSpec execSpec
     Properties props
     NodeExtension nodeExtension
-    PlatformHelper originalPlatformHelper
+    PlatformHelper testPlatformHelper
 
     def setup() {
         props = new Properties()
-        originalPlatformHelper = PlatformHelper.INSTANCE
-        PlatformHelper.INSTANCE = new PlatformHelper(props)
+        //default arch, can be changed by test
+        props.setProperty("os.arch", "x86_64")
+        testPlatformHelper = new TestablePlatformHelper(props)
 
         execSpec = Mock(ExecSpec)
         execResult = Mock(ExecResult)
@@ -30,8 +32,8 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
         nodeExtension = NodeExtension.get(project)
     }
 
-    def cleanup() {
-        PlatformHelper.INSTANCE = originalPlatformHelper
+    protected mockPlatformHelper(BaseTask task) {
+        task.platformHelper = testPlatformHelper;
     }
 
     protected mockProjectApiHelperExec(Task task, String fieldName = "projectHelper") {

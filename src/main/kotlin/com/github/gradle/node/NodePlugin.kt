@@ -107,13 +107,12 @@ class NodePlugin : Plugin<Project> {
     }
 
     private fun configureNodeSetupTask(nodeExtension: NodeExtension) {
-        val variantComputer = VariantComputer()
-        val nodeArchiveDependencyProvider = variantComputer.computeNodeArchiveDependency(nodeExtension)
-        val archiveFileProvider = nodeArchiveDependencyProvider
-                .map { nodeArchiveDependency ->
-                    resolveNodeArchiveFile(nodeArchiveDependency)
-                }
         project.tasks.named<NodeSetupTask>(NodeSetupTask.NAME) {
+            val nodeArchiveDependencyProvider = variantComputer.computeNodeArchiveDependency(nodeExtension)
+            val archiveFileProvider = nodeArchiveDependencyProvider
+                    .map { nodeArchiveDependency ->
+                        resolveNodeArchiveFile(nodeArchiveDependency)
+                    }
             nodeArchiveFile.set(project.layout.file(archiveFileProvider))
         }
     }

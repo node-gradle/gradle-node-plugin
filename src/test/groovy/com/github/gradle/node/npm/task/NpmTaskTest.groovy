@@ -16,6 +16,7 @@ class NpmTaskTest extends AbstractTaskTest {
         props.setProperty('os.name', 'Linux')
 
         def task = project.tasks.create('simple', NpmTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
@@ -38,6 +39,7 @@ class NpmTaskTest extends AbstractTaskTest {
         props.setProperty('os.name', 'Windows')
 
         def task = project.tasks.create('simple', NpmTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
@@ -63,6 +65,7 @@ class NpmTaskTest extends AbstractTaskTest {
                 .resolve("node-v${DEFAULT_NODE_VERSION}-linux-x64")
 
         def task = project.tasks.create('simple', NpmTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(["run", "command"])
 
@@ -94,6 +97,7 @@ class NpmTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpProxyPort(123)
 
         def task = project.tasks.create('simple', NpmTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(["run", "command"])
 
@@ -123,6 +127,7 @@ class NpmTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpsProxyPort(11235)
 
         def task = project.tasks.create('simple', NpmTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(['a', 'b'])
 
@@ -144,6 +149,7 @@ class NpmTaskTest extends AbstractTaskTest {
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.create('simple', NpmTask)
+        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(['a', 'b'])
 
