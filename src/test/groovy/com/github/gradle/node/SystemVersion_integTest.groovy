@@ -9,8 +9,10 @@ class SystemVersion_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'use system node version and exec node, npm, npx and yarn program'() {
+    def 'use system node version and exec node, npm, npx and yarn program (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/node-system-version")
 
         when:
@@ -48,5 +50,8 @@ class SystemVersion_integTest extends AbstractIntegTest {
         then:
         result5.task(":yarnHelp").outcome == TaskOutcome.SUCCESS
         result5.output.contains("Usage: yarn [command] [flags]")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

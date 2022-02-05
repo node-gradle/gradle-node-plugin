@@ -11,8 +11,10 @@ class KotlinDsl_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'build project using Kotlin DSL'() {
+    def 'build project using Kotlin DSL (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/kotlin/")
         copyResources("fixtures/javascript-project/")
 
@@ -50,5 +52,8 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         zipFileEntries.findAll { it.name.endsWith("/index.js") }.size() == 3
         zipFileEntries.findAll { it.name.endsWith("/main.js") }.size() == 3
         zipFileEntries.size() == 9
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

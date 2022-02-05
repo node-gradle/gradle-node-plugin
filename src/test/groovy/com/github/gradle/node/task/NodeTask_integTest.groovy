@@ -13,8 +13,10 @@ class NodeTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'download specified node version and exec simple node program and check up-to-date detection'() {
+    def 'download specified node version and exec simple node program and check up-to-date detection (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/node")
 
         when:
@@ -88,10 +90,15 @@ class NodeTask_integTest extends AbstractIntegTest {
         then:
         result9.task(":version").outcome == TaskOutcome.SUCCESS
         result9.output.contains("Version: v12.13.0")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'download default node version and exec node program with custom settings and check up-to-date detection'() {
+    def 'download default node version and exec node program with custom settings and check up-to-date detection (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/node-env")
 
         when:
@@ -229,10 +236,15 @@ class NodeTask_integTest extends AbstractIntegTest {
         then:
         result17.task(":version").outcome == TaskOutcome.SUCCESS
         result17.output.contains("Version: v${DEFAULT_NODE_VERSION}")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'try to use custom repositories when the download url is null'() {
+    def 'try to use custom repositories when the download url is null (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/node-no-download-url")
 
         when:
@@ -240,10 +252,15 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result.output.contains("Cannot resolve external dependency org.nodejs:node:${DEFAULT_NODE_VERSION} because no repositories are defined.")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'make sure build works with FAIL_ON_PROJECT_REPOS using a custom repository'() {
+    def 'make sure build works with FAIL_ON_PROJECT_REPOS using a custom repository (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
         copyResources("fixtures/node-fail-on-project-repos-download")
 
@@ -253,10 +270,15 @@ class NodeTask_integTest extends AbstractIntegTest {
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
         result.task(":hello").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'make sure build works with FAIL_ON_PROJECT_REPOS when using the global Node.js (no download)'() {
+    def 'make sure build works with FAIL_ON_PROJECT_REPOS when using the global Node.js (no download) (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
         copyResources("fixtures/node-fail-on-project-repos-no-download")
 
@@ -266,10 +288,15 @@ class NodeTask_integTest extends AbstractIntegTest {
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":hello").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'make sure build works with allowInsecureProtocol false using a custom repository'() {
+    def 'make sure build works with allowInsecureProtocol false using a custom repository (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
         copyResources("fixtures/node-disallow-insecure-protocol")
 
@@ -279,10 +306,15 @@ class NodeTask_integTest extends AbstractIntegTest {
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
         result.task(":hello").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'make sure build works with allowInsecureProtocol true using a custom repository'() {
+    def 'make sure build works with allowInsecureProtocol true using a custom repository (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
         copyResources("fixtures/node-allow-insecure-protocol")
 
@@ -292,6 +324,9 @@ class NodeTask_integTest extends AbstractIntegTest {
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
         result.task(":hello").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
 }

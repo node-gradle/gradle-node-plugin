@@ -19,7 +19,7 @@ class YarnProxy_integTest extends AbstractIntegTest {
     // This proxy is the configured yarn registry
     private ClientAndServer registryMockServer
 
-    void setup() {
+    def setup() {
         proxyMockServer = startClientAndServer(PortFactory.findFreePort())
         registryMockServer = startClientAndServer(PortFactory.findFreePort())
     }
@@ -29,8 +29,13 @@ class YarnProxy_integTest extends AbstractIntegTest {
         registryMockServer.stop()
     }
 
-    def 'install packages using proxy'(boolean secure, boolean ignoreHost) {
+    def 'install packages using proxy (#gv.version)'() {
         given:
+        gradleVersion = gv
+        boolean ignoreHost = false
+        // Does not work with HTTPS for now, certificate issue
+        boolean secure = false
+
         copyResources("fixtures/yarn-proxy/")
         copyResources("fixtures/proxy/")
         // Install yarn before setting the proxy (npm does not work with HTTPS proxy)
@@ -84,16 +89,76 @@ class YarnProxy_integTest extends AbstractIntegTest {
         }
 
         where:
-        secure | ignoreHost
-        false  | false
-        false  | true
-        // Does not work with HTTPS for now, certificate issue
-        // true   | false
-        // true   | true
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'install packages using pre-configured proxy'() {
+    def 'install packages using proxy ignoring host (#gv.version)'() {
         given:
+        gradleVersion = gv
+        boolean ignoreHost = true
+        // Does not work with HTTPS for now, certificate issue
+        boolean secure = false
+
+        copyResources("fixtures/yarn-proxy/")
+        copyResources("fixtures/proxy/")
+        // Install yarn before setting the proxy (npm does not work with HTTPS proxy)
+        build("yarnSetup")
+        def proxyTestHelper = new ProxyTestHelper(projectDir)
+        proxyTestHelper.writeGradleProperties(secure, ignoreHost, proxyMockServer.localPort,
+                "localhost:${registryMockServer.localPort}")
+        proxyTestHelper.writeYarnConfiguration(secure, registryMockServer.localPort)
+        registryMockServer.when(request())
+                .forward({ request ->
+                    request.removeHeader("host")
+                    def targetHost = "registry.npmjs.org"
+                    request.withHeader("host", targetHost)
+                    return request.withSocketAddress(targetHost, 443, HTTPS).withSecure(true)
+                }, { request, response ->
+                    if (response.getBody().contentType == "application/vnd.npm.install-v1+json") {
+                        // Let's rewrite download URLs in the JSON to make them target to the proxied registry
+                        def body = response.getBodyAsString()
+                        def updatedBody = body.replaceAll("https://registry.npmjs.org/",
+                                "http://localhost:${registryMockServer.localPort}/")
+                        response.withBody(updatedBody)
+                                .removeHeader("Content-Length")
+                                .withHeader("Content-Length",
+                                        updatedBody.getBytes(UTF_8).length.toString())
+                    }
+                    return response
+                })
+
+        when:
+        def result = build("yarn")
+
+        then:
+        result.task(":cleanCaseCache").outcome == TaskOutcome.SUCCESS
+        result.task(":yarn").outcome == TaskOutcome.SUCCESS
+        createFile("node_modules/case/package.json").exists()
+        if (ignoreHost) {
+            proxyMockServer.verifyZeroInteractions()
+        } else {
+            proxyMockServer.verify(request()
+                    .withMethod("GET")
+                    .withSecure(secure)
+                    .withPath("/case")
+                    .withHeader("Host", "localhost:${registryMockServer.localPort}"),
+                    exactly(1))
+            proxyMockServer.verify(request()
+                    .withMethod("GET")
+                    .withSecure(secure)
+                    .withPath("/case/-/case-1.6.3.tgz")
+                    .withHeader("Host", "localhost:${registryMockServer.localPort}"),
+                    exactly(1))
+        }
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
+    def 'install packages using pre-configured proxy (#gv.version)'() {
+        given:
+        gradleVersion = gv
+
         copyResources("fixtures/yarn-proxy/")
         copyResources("fixtures/proxy/")
         // Install yarn before setting the proxy (npm does not work with HTTPS proxy)
@@ -144,5 +209,8 @@ class YarnProxy_integTest extends AbstractIntegTest {
                 .withPath("/case/-/case-1.6.3.tgz")
                 .withHeader("Host", "localhost:${registryMockServer.localPort}"),
                 exactly(1))
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

@@ -4,8 +4,10 @@ import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
 class NpmInstall_integTest extends AbstractIntegTest {
-    def 'install packages with npm'() {
+    def 'install packages with npm (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -37,15 +39,20 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'install packages with npm >= 7'() {
+    def 'install packages with npm >= 7 (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
-            
+
             node {
                 download = true
                 version = '15.2.1'
@@ -59,10 +66,15 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
         then:
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'install packages with npm and postinstall task requiring npm and node'() {
+    def 'install packages with npm and postinstall task requiring npm and node (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -99,10 +111,15 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'configure npm install to use the ci command through extension'() {
+    def 'configure npm install to use the ci command through extension (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -127,10 +144,15 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
         then:
         result.outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verify npm install inputs/outputs'() {
+    def 'verify npm install inputs/outputs (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -159,10 +181,15 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
         then:
         result.outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verify npm ci inputs/outputs'() {
+    def 'verify npm ci inputs/outputs (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -191,10 +218,15 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
         then:
         result.outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verify output configuration'() {
+    def 'verify output configuration (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -250,17 +282,22 @@ class NpmInstall_integTest extends AbstractIntegTest {
         // This time the build should not be up-to-date and the file should be reset
         result5.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         createFile("node_modules/mocha/package.json").exists()
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verify output configuration when filtering node_modules output'() {
+    def 'verify output configuration when filtering node_modules output (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
             npmInstall {
-                nodeModulesOutputFilter { 
+                nodeModulesOutputFilter {
                     exclude("mocha/package.json")
                 }
             }
@@ -316,6 +353,9 @@ class NpmInstall_integTest extends AbstractIntegTest {
         then:
         // This time the build should not be up-to-date since not the whole node_modules directory is excluded
         result5.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
     protected final void writeEmptyLockFile() {

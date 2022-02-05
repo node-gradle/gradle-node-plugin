@@ -4,8 +4,10 @@ import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
 class Yarn_integTest extends AbstractIntegTest {
-    def 'install packages with yarn and Node.js project in sub directory'() {
+    def 'install packages with yarn and Node.js project in sub directory (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/yarn-in-subdirectory/")
         copyResources("fixtures/javascript-project/", "javascript-project")
 
@@ -38,5 +40,8 @@ class Yarn_integTest extends AbstractIntegTest {
         result3.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":build").outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

@@ -4,8 +4,10 @@ import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
 class YarnInstall_integTest extends AbstractIntegTest {
-    def 'install packages with yarn'() {
+    def 'install packages with yarn (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -34,10 +36,15 @@ class YarnInstall_integTest extends AbstractIntegTest {
 
         then:
         result.outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'install packages with yarn on npm >= 7'() {
+    def 'install packages with yarn on npm >= 7 (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -69,10 +76,15 @@ class YarnInstall_integTest extends AbstractIntegTest {
 
         then:
         result.outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'install packages with yarn and and postinstall task requiring node and yarn'() {
+    def 'install packages with yarn and and postinstall task requiring node and yarn (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -106,10 +118,15 @@ class YarnInstall_integTest extends AbstractIntegTest {
 
         then:
         result.outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verity output configuration'() {
+    def 'verity output configuration (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -173,10 +190,15 @@ class YarnInstall_integTest extends AbstractIntegTest {
         then:
         // This time the build should be up-to-date
         result5.task(":yarn").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verity output configuration when filtering node_modules output'() {
+    def 'verity output configuration when filtering node_modules output (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -246,5 +268,8 @@ class YarnInstall_integTest extends AbstractIntegTest {
         then:
         // This time the build should not be up-to-date since not the whole node_modules directory is excluded
         result6.task(":yarn").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

@@ -11,16 +11,16 @@ import spock.lang.Specification
 
 import java.util.regex.Pattern
 
-@RunWithMultipleGradleVersions
 abstract class AbstractIntegTest extends Specification {
+    static final List<GradleVersion> GRADLE_VERSIONS_UNDER_TEST = gradleVersionsUnderTest()
+
     @Rule
     final TemporaryFolder temporaryFolder = new TemporaryFolder()
     File projectDir
     File buildFile
     GradleVersion gradleVersion = null
 
-    def setup(GradleVersion gradleVersion) {
-        this.gradleVersion = gradleVersion
+    def setup() {
         projectDir = temporaryFolder.root.toPath().toRealPath().toFile()
         buildFile = createFile('build.gradle')
     }
@@ -125,5 +125,15 @@ abstract class AbstractIntegTest extends Specification {
 
     protected isConfigurationCacheEnabled() {
         return gradleVersion >= GradleVersion.version("6.6")
+    }
+
+    static private List<GradleVersion> gradleVersionsUnderTest() {
+        def explicitGradleVersions = System.getProperty('org.gradle.test.gradleVersions')
+        if (explicitGradleVersions) {
+            return explicitGradleVersions.split("\\|")
+                    .collect { GradleVersion.version(it)}
+        } else {
+            [GradleVersion.current()]
+        }
     }
 }

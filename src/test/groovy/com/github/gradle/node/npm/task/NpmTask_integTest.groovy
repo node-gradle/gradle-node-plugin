@@ -12,8 +12,10 @@ class NpmTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'execute npm command with a package.json file and check inputs up-to-date detection'() {
+    def 'execute npm command with a package.json file and check inputs up-to-date detection (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/npm/")
         copyResources("fixtures/javascript-project/")
 
@@ -51,10 +53,15 @@ class NpmTask_integTest extends AbstractIntegTest {
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
         result4.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'execute npm command with custom execution configuration and check up-to-date-detection'() {
+    def 'execute npm command with custom execution configuration and check up-to-date-detection (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/npm-env/")
         copyResources("fixtures/env/")
 
@@ -158,10 +165,15 @@ class NpmTask_integTest extends AbstractIntegTest {
         then:
         result10.task(":version").outcome == TaskOutcome.SUCCESS
         result10.output.contains("> Task :version${System.lineSeparator()}${DEFAULT_NPM_VERSION}")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'execute npm command using the npm version specified in the package.json file'() {
+    def 'execute npm command using the npm version specified in the package.json file (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/npm/")
         copyResources("fixtures/npm-present/")
 
@@ -171,5 +183,8 @@ class NpmTask_integTest extends AbstractIntegTest {
         then:
         result.task(":version").outcome == TaskOutcome.SUCCESS
         result.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

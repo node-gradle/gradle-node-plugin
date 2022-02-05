@@ -6,9 +6,10 @@ import org.gradle.testkit.runner.TaskOutcome
 class PnpmInstall_integTest
     extends AbstractIntegTest
 {
-    def 'install packages with pnpm'()
+    def 'install packages with pnpm (#gv.version)'()
     {
         given:
+        gradleVersion = gv
         writeBuild( '''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -39,11 +40,14 @@ class PnpmInstall_integTest
         // because pnpm-lock.yaml is created only when needed
         result.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
 
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'install packages with pnpm and postinstall task requiring pnpm and node'()
+    def 'install packages with pnpm and postinstall task requiring pnpm and node (#gv.version)'()
     {
         given:
+        gradleVersion = gv
         writeBuild( '''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -78,11 +82,14 @@ class PnpmInstall_integTest
         result.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
 
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'install packages with pnpm in different directory'()
+    def 'install packages with pnpm in different directory (#gv.version)'()
     {
         given:
+        gradleVersion = gv
         writeBuild( '''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -106,11 +113,15 @@ class PnpmInstall_integTest
 
         then:
         result.task( ':pnpmInstall' ).outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verify pnpm install inputs/outputs'()
+    def 'verify pnpm install inputs/outputs (#gv.version)'()
     {
         given:
+        gradleVersion = gv
         writeBuild( '''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -141,10 +152,14 @@ class PnpmInstall_integTest
 
         then:
         result.outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verity output configuration'() {
+    def 'verity output configuration (#gv.version)'() {
         given:
+        gradleVersion = gv
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -207,11 +222,15 @@ class PnpmInstall_integTest
         // This time the build should not be up-to-date and the file should be reset
         result5.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
         createFile("node_modules/mocha/package.json").exists()
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verity output configuration when filtering node_modules output'()
+    def 'verity output configuration when filtering node_modules output (#gv.version)'()
     {
         given:
+        gradleVersion = gv
         writeBuild( '''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -271,5 +290,7 @@ class PnpmInstall_integTest
         // The build should still be up-to-date
         result4.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
 
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

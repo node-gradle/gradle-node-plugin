@@ -1,15 +1,13 @@
 package com.github.gradle.node
 
 import com.github.gradle.AbstractIntegTest
-import com.github.gradle.RunWithMultipleGradleVersions
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Assume
 
-@RunWithMultipleGradleVersions
 class PackageJsonExtension_integTest extends AbstractIntegTest {
-
-    def 'check standard attribute'() {
+    def 'check standard attribute (#gv.version)'() {
         given:
+        gradleVersion = gv
         Assume.assumeTrue(isConfigurationCacheEnabled())
         copyResources("fixtures/npm-env/")
         copyResources("fixtures/env/")
@@ -30,5 +28,8 @@ tasks.register('printPackageJsonName') {
         then:
         result1.task(":printPackageJsonName").outcome == TaskOutcome.SUCCESS
         result2.task(":printPackageJsonName").outcome == TaskOutcome.SUCCESS
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

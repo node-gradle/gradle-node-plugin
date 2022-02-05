@@ -9,8 +9,9 @@ class PnpmTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'execute pnpm command with a package.json file and check inputs up-to-date detection'() {
+    def 'execute pnpm command with a package.json file and check inputs up-to-date detection (#gv.version)'() {
         given:
+        gradleVersion = gv
         copyResources('fixtures/pnpm/', '')
         copyResources('fixtures/javascript-project/', '')
 
@@ -48,10 +49,14 @@ class PnpmTask_integTest extends AbstractIntegTest {
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
         result4.output.contains("> Task :version${System.lineSeparator()}4.12.4")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'execute pnpm command with custom execution configuration and check up-to-date-detection'() {
+    def 'execute pnpm command with custom execution configuration and check up-to-date-detection (#gv.version)'() {
         given:
+        gradleVersion = gv
         copyResources('fixtures/pnpm-env/', '')
         copyResources('fixtures/env/', '')
 
@@ -142,10 +147,14 @@ class PnpmTask_integTest extends AbstractIntegTest {
         then:
         result9.task(":version").outcome == TaskOutcome.SUCCESS
         result9.output.contains("> Task :version${System.lineSeparator()}4.12.4")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'execute pnpm command using the pnpm version specified in the package.json file'() {
+    def 'execute pnpm command using the pnpm version specified in the package.json file (#gv.version)'() {
         given:
+        gradleVersion = gv
         copyResources('fixtures/pnpm/', '')
         copyResources('fixtures/pnpm-present/', '')
 
@@ -155,5 +164,8 @@ class PnpmTask_integTest extends AbstractIntegTest {
         then:
         result.task(":version").outcome == TaskOutcome.SUCCESS
         result.output.contains("> Task :version${System.lineSeparator()}4.12.1")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

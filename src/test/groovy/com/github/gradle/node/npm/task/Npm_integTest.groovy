@@ -4,8 +4,10 @@ import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 
 class Npm_integTest extends AbstractIntegTest {
-    def 'install packages with npm and Node.js project in sub directory'() {
+    def 'install packages with npm and Node.js project in sub directory (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/npm-in-subdirectory/")
         copyResources("fixtures/javascript-project/", "javascript-project")
 
@@ -39,5 +41,8 @@ class Npm_integTest extends AbstractIntegTest {
         result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":buildNpx").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":buildNpm").outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

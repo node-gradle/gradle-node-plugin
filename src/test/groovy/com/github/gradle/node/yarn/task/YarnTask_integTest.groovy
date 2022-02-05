@@ -12,8 +12,10 @@ class YarnTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'execute yarn command with a package.json file and check inputs up-to-date detection'() {
+    def 'execute yarn command with a package.json file and check inputs up-to-date detection (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/yarn")
         copyResources("fixtures/javascript-project")
 
@@ -51,10 +53,15 @@ class YarnTask_integTest extends AbstractIntegTest {
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
         result4.output.contains("> Task :version${System.lineSeparator()}1.18.0")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'execute yarn command with custom execution configuration and check up-to-date-detection'() {
+    def 'execute yarn command with custom execution configuration and check up-to-date-detection (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/yarn-env")
         copyResources("fixtures/env")
 
@@ -162,5 +169,8 @@ class YarnTask_integTest extends AbstractIntegTest {
         def versionMatch = versionPattern.matcher(result10.output)
         versionMatch.find()
         GradleVersion.version(versionMatch.group(1)) > GradleVersion.version("1.19.0")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }

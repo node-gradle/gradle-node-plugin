@@ -15,8 +15,10 @@ class NpxTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    def 'execute npx command with no package.json file'() {
+    def 'execute npx command with no package.json file (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         writeBuild('''
             plugins {
                 id 'com.github.node-gradle.node'
@@ -36,10 +38,15 @@ class NpxTask_integTest extends AbstractIntegTest {
         result.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result.task(":camelCase").outcome == TaskOutcome.SUCCESS
         result.output.contains("--case, -C  Which case to convert to")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'execute npx command with a package.json file and check inputs up-to-date detection'() {
+    def 'execute npx command with a package.json file and check inputs up-to-date detection (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/npx/")
         copyResources("fixtures/javascript-project/")
 
@@ -81,12 +88,17 @@ class NpxTask_integTest extends AbstractIntegTest {
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
         result4.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
     // This is cursed, see npx-env/build.gradle for details
     @IgnoreIf({ System.getProperty("os.name").toLowerCase().contains("windows") })
     def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/npx-env/")
         copyResources("fixtures/env/")
 
@@ -191,10 +203,15 @@ class NpxTask_integTest extends AbstractIntegTest {
         then:
         result10.task(":version").outcome == TaskOutcome.SUCCESS
         result10.output.contains("> Task :version${System.lineSeparator()}${DEFAULT_NPM_VERSION}")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'execute npx command using the npm version specified in the package.json file'() {
+    def 'execute npx command using the npm version specified in the package.json file (#gv.version)'() {
         given:
+        gradleVersion = gv
+
         copyResources("fixtures/npx/")
         copyResources("fixtures/npm-present/")
 
@@ -204,5 +221,8 @@ class NpxTask_integTest extends AbstractIntegTest {
         then:
         result.task(":version").outcome == TaskOutcome.SUCCESS
         result.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
     }
 }
