@@ -2,6 +2,10 @@
 
 ## Version 3.x *(unreleased)*
 
+## Version 3.2.0 *(2022-02-07)*
+* Support Gradle 7.4 configuration-cache [#209](https://github.com/node-gradle/gradle-node-plugin/issues/209) (thanks [nhoughto](https://github.com/nhoughto) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/211))
+* Add option for allowing HTTP access [#163](https://github.com/node-gradle/gradle-node-plugin/issues/163) (thanks [markslater](https://github.com/markslater) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/164))
+
 ## Version 3.1.1 *(2021-09-12)*
 * Add support for Linux on Z system (s390x) [#193](https://github.com/node-gradle/gradle-node-plugin/issues/193)
 
