@@ -17,17 +17,30 @@ open class PlatformHelper {
 
     open val osArch: String by lazy {
         val arch = property("os.arch").toLowerCase()
-        when {
-            /*
-             * As Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch. Unfortunately some JVMs say aarch32/64, so we need an additional
-             * conditional. Additionally, the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here.
-             */
-            arch == "arm" || arch.startsWith("aarch") -> property("uname")
-                .mapIf({ it == "armv8l" || it == "aarch64" }) { "arm64" }
-            arch == "ppc64le" -> "ppc64le"
-            arch == "s390x" -> "s390x"
-            arch.contains("64") -> "x64"
-            else -> "x86"
+        when (osName) {
+            "darwin" -> {
+                /**
+                 * As "uname" in M1 Mac always returns "x86_64" value it's not possible to determine in general way
+                 * (as below) correct architecture. The good way first to check for osName and then decide the arch.
+                 */
+                if (arch == "aarch64") {
+                    return@lazy "arm64"
+                } else {
+                    return@lazy "x86"
+                }
+            }
+            else -> when {
+                /*
+                 * As Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch. Unfortunately some JVMs say aarch32/64, so we need an additional
+                 * conditional. Additionally, the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here.
+                 */
+                arch == "arm" || arch.startsWith("aarch") -> property("uname")
+                    .mapIf({ it == "armv8l" || it == "aarch64" }) { "arm64" }
+                arch == "ppc64le" -> "ppc64le"
+                arch == "s390x" -> "s390x"
+                arch.contains("64") -> "x64"
+                else -> "x86"
+            }
         }
     }
 

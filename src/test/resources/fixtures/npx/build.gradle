@@ -5,7 +5,7 @@ plugins {
 }
 
 node {
-    npmVersion = "6.12.0"
+    npmVersion = "8.1.0"
     download = true
     workDir = file("build/node")
 }
