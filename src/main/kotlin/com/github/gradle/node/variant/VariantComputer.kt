@@ -10,6 +10,8 @@ import org.gradle.api.provider.Provider
 open class VariantComputer constructor(
         private val platformHelper: PlatformHelper
 ) {
+    constructor() : this(PlatformHelper.INSTANCE)
+
     /**
      * Get the expected directory for a given node version.
      *
