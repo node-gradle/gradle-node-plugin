@@ -2,6 +2,10 @@
 
 ## Version 3.x *(unreleased)*
 
+## Version 3.2.1 *(2022-02-14)*
+* Backwards compatibility fix for those using VariantComputer [#213](https://github.com/node-gradle/gradle-node-plugin/issues/213)
+* Prevent M1 Macs from attempting to download a non-existent distribution [#214](https://github.com/node-gradle/gradle-node-plugin/issues/214)
+
 ## Version 3.2.0 *(2022-02-07)*
 * Support Gradle 7.4 configuration-cache [#209](https://github.com/node-gradle/gradle-node-plugin/issues/209) (thanks [nhoughto](https://github.com/nhoughto) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/211))
 * Add option for allowing HTTP access [#163](https://github.com/node-gradle/gradle-node-plugin/issues/163) (thanks [markslater](https://github.com/markslater) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/164))
