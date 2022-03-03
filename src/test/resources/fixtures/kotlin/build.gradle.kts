@@ -16,7 +16,7 @@ plugins {
 }
 
 node {
-    version.set("12.18.3")
+    version.set("16.14.0")
     npmVersion.set("")
     yarnVersion.set("")
     npmInstallCommand.set("install")
