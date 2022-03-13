@@ -1,6 +1,7 @@
 package com.github.gradle
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.initialization.GradlePropertiesController
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -17,5 +18,6 @@ class AbstractProjectTest extends Specification {
         this.project = (ProjectInternal) ProjectBuilder.builder()
                 .withProjectDir(this.projectDir)
                 .build()
+        (project as ProjectInternal).services.get(GradlePropertiesController.class).loadGradlePropertiesFrom(projectDir)
     }
 }
