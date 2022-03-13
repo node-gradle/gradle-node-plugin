@@ -18,7 +18,11 @@ open class VariantComputer constructor(
      * Essentially: workingDir/node-v$version-$osName-$osArch
      */
     fun computeNodeDir(nodeExtension: NodeExtension): Provider<Directory> {
-        return zip(nodeExtension.workDir, nodeExtension.version).map { (workDir, version) ->
+        return computeNodeDir(zip(nodeExtension.workDir, nodeExtension.version))
+    }
+
+    internal fun computeNodeDir(zip: Provider<Pair<Directory, String>>): Provider<Directory> {
+        return zip.map { (workDir, version) ->
             val osName = platformHelper.osName
             val osArch = platformHelper.osArch
             val dirName = "node-v$version-$osName-$osArch"
