@@ -4,10 +4,12 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
+import com.github.gradle.node.services.NodeRuntime
 import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
@@ -15,6 +17,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.property
 import java.io.File
 import javax.inject.Inject
 
@@ -40,6 +43,12 @@ abstract class NpmSetupTask : BaseTask() {
 
     @get:Input
     val download = nodeExtension.download
+
+    @get:Internal
+    abstract val nodeRuntime: Property<NodeRuntime>
+
+    @get:Internal
+    val experimental = objects.property<Boolean>().convention(false)
 
     @get:OutputDirectory
     val npmDir by lazy {
@@ -71,7 +80,11 @@ abstract class NpmSetupTask : BaseTask() {
         val command = computeCommand()
         val nodeExecConfiguration = NodeExecConfiguration(command)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        if (experimental.get()) {
+            npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer, nodeRuntime)
+        } else {
+            npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        }
     }
 
     protected open fun computeCommand(): List<String> {

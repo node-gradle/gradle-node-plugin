@@ -43,6 +43,7 @@ repositories {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
     testImplementation(platform("org.junit:junit-bom:5.6.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
