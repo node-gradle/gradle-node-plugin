@@ -6,6 +6,7 @@ import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy
 import com.github.gradle.node.npm.proxy.NpmProxy.Companion.computeNpmProxyEnvironmentVariables
+import com.github.gradle.node.services.NodeRuntime
 import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
@@ -25,6 +26,14 @@ abstract class NpmExecRunner {
         return executeCommand(project, extension, addProxyEnvironmentVariables(extension, nodeExecConfiguration),
                 npmExecConfiguration,
             variants)
+    }
+
+    fun executeNpmCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer, nodeRuntime: Provider<NodeRuntime>): ExecResult {
+        val npmExecConfiguration = NpmExecConfiguration("npm"
+        ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpmExec(nodeExtension, npmBinDir) }
+        return executeCommand(project, extension, addProxyEnvironmentVariables(extension, nodeExecConfiguration),
+                npmExecConfiguration,
+            variants, nodeRuntime)
     }
 
     private fun addProxyEnvironmentVariables(nodeExtension: NodeExtension,
@@ -57,6 +66,15 @@ abstract class NpmExecRunner {
         return execRunner.execute(project, extension, execConfiguration)
     }
 
+    private fun executeCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration,
+                               npmExecConfiguration: NpmExecConfiguration,
+                               variantComputer: VariantComputer, nodeRuntime: Provider<NodeRuntime>): ExecResult {
+        val execConfiguration =
+            computeExecConfiguration(extension, npmExecConfiguration, nodeExecConfiguration, variantComputer, nodeRuntime).get()
+        val execRunner = ExecRunner()
+        return execRunner.execute(project, extension, execConfiguration)
+    }
+
     private fun computeExecConfiguration(extension: NodeExtension, npmExecConfiguration: NpmExecConfiguration,
                                          nodeExecConfiguration: NodeExecConfiguration,
                                          variantComputer: VariantComputer): Provider<ExecConfiguration> {
@@ -68,6 +86,23 @@ abstract class NpmExecRunner {
                             if (executableAndScript.script != null) listOf(executableAndScript.script) else listOf()
                     val args = argsPrefix.plus(nodeExecConfiguration.command)
                     ExecConfiguration(executableAndScript.executable, args, additionalBinPath,
+                            nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
+                            nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
+                }
+    }
+
+    private fun computeExecConfiguration(extension: NodeExtension, npmExecConfiguration: NpmExecConfiguration,
+                                         nodeExecConfiguration: NodeExecConfiguration,
+                                         variantComputer: VariantComputer,
+                                         nodeRuntime: Provider<NodeRuntime> ): Provider<ExecConfiguration> {
+        val additionalBinPathProvider = computeAdditionalBinPath(extension, variantComputer)
+        val executableAndScriptProvider = computeExecutable(extension, npmExecConfiguration, variantComputer)
+        return zip(additionalBinPathProvider, executableAndScriptProvider)
+                .map { (additionalBinPath, executableAndScript) ->
+                    val argsPrefix = listOf(File(nodeRuntime.get().getNpm(extension).parent, "node_modules/npm/bin/npm-cli.js").absolutePath)
+//                            if (executableAndScript.script != null) listOf(executableAndScript.script) else listOf()
+                    val args = argsPrefix.plus(nodeExecConfiguration.command)
+                    ExecConfiguration(nodeRuntime.get().getNode(extension).absolutePath, args, additionalBinPath,
                             nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
                             nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
                 }
