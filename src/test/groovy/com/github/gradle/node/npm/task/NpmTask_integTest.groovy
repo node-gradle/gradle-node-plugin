@@ -58,6 +58,52 @@ class NpmTask_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    def 'execute experimental npm command with a package.json file and check inputs up-to-date detection (#gv.version)'() {
+        given:
+        gradleVersion = gv
+        copyResources("fixtures/npm/")
+        copyResources("fixtures/javascript-project/")
+
+        when:
+        def result1 = build(":test", "-Pcom.github.gradle.node.experimental=true")
+
+        then:
+        result1.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+        result1.task(":npmSetup").outcome == TaskOutcome.SUCCESS
+        result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result1.task(":test").outcome == TaskOutcome.SUCCESS
+        result1.output.contains("1 passing")
+
+        when:
+        def result2 = build(":test", "-Pcom.github.gradle.node.experimental=true")
+
+        then:
+        result2.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+        result2.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result2.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result2.task(":test").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        def result3 = build(":test", "-DchangeInputs=true", "-Pcom.github.gradle.node.experimental=true")
+
+        then:
+        result3.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+        result3.task(":npmSetup").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":test").outcome == TaskOutcome.SUCCESS
+
+        when:
+        def result4 = build(":version")
+
+        then:
+        result4.task(":version").outcome == TaskOutcome.SUCCESS
+        result4.output.contains("> Task :version${System.lineSeparator()}6.12.0")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
+
     def 'execute npm command with custom execution configuration and check up-to-date-detection (#gv.version)'() {
         given:
         gradleVersion = gv
