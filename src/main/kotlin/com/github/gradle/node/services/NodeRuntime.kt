@@ -47,7 +47,7 @@ abstract class NodeRuntime : BuildService<NodeRuntime.Params> {
             }
             val dir = getNodeDir(extension)
             installNode(dir, extension.distBaseUrl.get(), extension.version.get())
-            return File(dir, if (PlatformHelper.INSTANCE.isWindows) "node" else "node.exe")
+            return File(dir, if (PlatformHelper.INSTANCE.isWindows) "node.exe" else "node")
         }
     }
 
@@ -71,7 +71,11 @@ abstract class NodeRuntime : BuildService<NodeRuntime.Params> {
         }
 
         fileSystemOperations.copy {
-            from(archiveOperations.zipTree(tmp))
+            if (PlatformHelper.INSTANCE.isWindows) {
+                from(archiveOperations.zipTree(tmp))
+            } else {
+                from(archiveOperations.tarTree(tmp))
+            }
             into(dir.parentFile)
         }
 
