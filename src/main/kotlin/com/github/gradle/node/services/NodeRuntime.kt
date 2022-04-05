@@ -47,7 +47,7 @@ abstract class NodeRuntime : BuildService<NodeRuntime.Params> {
             }
             val dir = getNodeDir(extension)
             installNode(dir, extension.distBaseUrl.get(), extension.version.get())
-            return dir
+            return File(dir, if (PlatformHelper.INSTANCE.isWindows) "node" else "node.exe")
         }
     }
 
