@@ -1,8 +1,8 @@
 package com.github.gradle.node
 
-import com.github.gradle.AbstractProjectTest
+import com.github.gradle.AbstractSimpleProjectTest
 
-class NodePluginTest extends AbstractProjectTest {
+class NodePluginTest extends AbstractSimpleProjectTest {
     def 'check default tasks'() {
         when:
         project.apply plugin: 'com.github.node-gradle.node'

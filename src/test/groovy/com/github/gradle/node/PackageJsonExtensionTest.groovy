@@ -1,10 +1,10 @@
 //file:noinspection GroovyPointlessBoolean
 package com.github.gradle.node
 
-import com.github.gradle.AbstractProjectTest
+import com.github.gradle.AbstractSimpleProjectTest
 import org.gradle.api.internal.provider.MissingValueException
 
-class PackageJsonExtensionTest extends AbstractProjectTest {
+class PackageJsonExtensionTest extends AbstractSimpleProjectTest {
     def 'check standard attributes'() {
         when:
         temporaryFolder.newFile("package.json") << """

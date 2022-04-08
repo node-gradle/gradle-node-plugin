@@ -1,10 +1,10 @@
 package com.github.gradle.node
 
-import com.github.gradle.AbstractProjectTest
+import com.github.gradle.AbstractSimpleProjectTest
 
 import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
 
-class NodeExtensionTest extends AbstractProjectTest {
+class NodeExtensionTest extends AbstractSimpleProjectTest {
     def "check default values for extension"() {
         when:
         project.apply plugin: 'com.github.node-gradle.node'
