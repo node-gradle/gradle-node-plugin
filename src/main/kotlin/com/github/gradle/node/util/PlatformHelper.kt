@@ -34,6 +34,10 @@ open class PlatformHelper {
 
     open val isWindows: Boolean by lazy { osName == "win" }
 
+    open fun getNodeUrlExtension(): String {
+        return if (isWindows) "zip" else "tar.gz"
+    }
+
     private fun property(name: String): String {
         return getSystemProperty(name) ?:
             // Added so that we can test osArch on Windows and on non-arm systems

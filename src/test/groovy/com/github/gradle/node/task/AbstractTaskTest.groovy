@@ -1,6 +1,6 @@
 package com.github.gradle.node.task
 
-import com.github.gradle.AbstractProjectTest
+import com.github.gradle.AbstractSimpleProjectTest
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.util.ProjectApiHelper
@@ -12,7 +12,7 @@ import org.gradle.process.ExecSpec
 
 import java.lang.reflect.Field
 
-abstract class AbstractTaskTest extends AbstractProjectTest {
+abstract class AbstractTaskTest extends AbstractSimpleProjectTest {
     ExecResult execResult
     ExecSpec execSpec
     Properties props

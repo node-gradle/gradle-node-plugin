@@ -1,39 +1,47 @@
 package com.github.gradle.node.services
 
 import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.NodePlugin
+import com.github.gradle.node.services.NodeProvider.Companion.findInstalledNode
+import com.github.gradle.node.services.VersionManager.Companion.checkNodeVersion
 import com.github.gradle.node.util.PlatformHelper
-import com.github.gradle.node.util.execute
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okio.buffer
-import okio.sink
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import java.io.File
-import java.io.IOException
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-abstract class NodeRuntime : BuildService<NodeRuntime.Params> {
+abstract class NodeRuntime
+    @Inject
+    constructor(providerFactory: ProviderFactory,
+                archiveOperations: ArchiveOperations,
+                fileSystemOperations: FileSystemOperations) : BuildService<NodeRuntime.Params> {
+
     interface Params : BuildServiceParameters {
         val gradleUserHome: DirectoryProperty
     }
 
     private val client = OkHttpClient()
 
-    @get:Inject
-    abstract val archiveOperations: ArchiveOperations
+    private val nodeProvider = NodeProvider(archiveOperations, fileSystemOperations)
 
-    @get:Inject
-    abstract val fileSystemOperations: FileSystemOperations
+    private val download = providerFactory.gradleProperty(NodePlugin.DOWNLOAD_PROP)
+        .forUseAtConfigurationTime()
+        .orElse("true")
+        .map { it.toBoolean() }
+
+    private val baseUrl = providerFactory.gradleProperty(NodePlugin.URL_PROP)
+        .forUseAtConfigurationTime()
+        .orElse(NodePlugin.URL_DEFAULT)
 
     fun getNode(extension: NodeExtension): File {
         val version = extension.version.get()
@@ -41,12 +49,13 @@ abstract class NodeRuntime : BuildService<NodeRuntime.Params> {
         if (installed.isPresent) {
             return installed.get()
         } else {
-            if (!extension.download.get()) {
+            if (!download.get()) {
                 throw NodeNotFoundException("No node installation matching requested version: $version found " +
                         "and download is set to false.")
             }
             val dir = getNodeDir(extension)
-            installNode(dir, extension.distBaseUrl.get(), extension.version.get())
+            nodeProvider.install(client, dir, baseUrl.get(),
+                "${dir.name}.${PlatformHelper.INSTANCE.getNodeUrlExtension()}", extension.version.get())
             return if (PlatformHelper.INSTANCE.isWindows)
                 File(dir, "node.exe")
             else
@@ -54,38 +63,7 @@ abstract class NodeRuntime : BuildService<NodeRuntime.Params> {
         }
     }
 
-    @Synchronized
-    private fun installNode(dir: File, url: String, version: String) {
-        val ext = if (PlatformHelper.INSTANCE.isWindows) "zip" else "tar.gz"
-        val name = "${dir.name}.$ext"
-        val tmp = Paths.get(dir.parentFile.path, ".node-tmp", name).toFile()
-        tmp.parentFile.mkdirs()
-
-        val request = Request.Builder()
-            .url("$url/v$version/$name")
-            .build()
-
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) throw IOException("Unexpected code $response")
-            val rsp = response.body ?: throw IOException("No response body")
-            val sink = tmp.sink().buffer()
-            sink.writeAll(rsp.source())
-            sink.close()
-        }
-
-        fileSystemOperations.copy {
-            if (PlatformHelper.INSTANCE.isWindows) {
-                from(archiveOperations.zipTree(tmp))
-            } else {
-                from(archiveOperations.tarTree(tmp))
-            }
-            into(dir.parentFile)
-        }
-
-        tmp.deleteOnExit()
-    }
-
-    private fun getNodeDir(extension: NodeExtension): File {
+    internal fun getNodeDir(extension: NodeExtension): File {
         val variant = VariantComputer()
         return variant.computeNodeDir(zip(parameters.gradleUserHome.dir("nodejs"), extension.version))
             .get().asFile
@@ -97,28 +75,14 @@ abstract class NodeRuntime : BuildService<NodeRuntime.Params> {
         if (installed.isPresent) {
             return installed.get()
         } else {
-            if (!extension.download.get()) {
+            if (!download.get()) {
                 throw NodeNotFoundException("No npm installation matching requested version: $version found " +
                         "and download is set to false.")
             }
             val variant = VariantComputer()
-            val nodeDir = variant.computeNodeDir(zip(parameters.gradleUserHome.dir("node"), extension.version))
+            val nodeDir = variant.computeNodeDir(zip(parameters.gradleUserHome.dir("nodejs"), extension.version))
             return nodeDir.get().asFile
         }
-    }
-
-    private fun checkNodeVersion(nodePath: File): String? {
-        val result = execute(nodePath.absolutePath, "--version")
-        if (result.startsWith("v")) {
-            return result
-        }
-
-        return null
-    }
-
-    private fun getNodes(): MutableList<File> {
-        val node = if (PlatformHelper.INSTANCE.isWindows) "node.exe" else "node"
-        return PathDetector.findOnPath(node)
     }
 
     private fun getNpms(): MutableList<File> {
@@ -134,21 +98,6 @@ abstract class NodeRuntime : BuildService<NodeRuntime.Params> {
                 .findAny()
         } else {
             getNpms().stream()
-                .map { file -> Pair(file, checkNodeVersion(file)) }
-                .filter { t -> t.second == "v$version" }
-                .map { pair -> pair.first }
-                .findAny()
-        }
-    }
-
-    private fun findInstalledNode(version: String): Optional<File> {
-        return if (version.isBlank()) {
-            getNodes().stream()
-                .map { file -> Pair(file, checkNodeVersion(file)) }
-                .map { pair -> pair.first }
-                .findAny()
-        } else {
-            getNodes().stream()
                 .map { file -> Pair(file, checkNodeVersion(file)) }
                 .filter { t -> t.second == "v$version" }
                 .map { pair -> pair.first }

@@ -97,10 +97,8 @@ abstract class NpmExecRunner {
         val executableAndScriptProvider = computeExecutable(extension, npmExecConfiguration, variantComputer)
         return zip(additionalBinPathProvider, executableAndScriptProvider)
                 .map { (additionalBinPath, executableAndScript) ->
-                    val argsPrefix = listOf(nodeRuntime.get().getNpm(extension).absolutePath)
-//                            if (executableAndScript.script != null) listOf(executableAndScript.script) else listOf()
-                    val args = argsPrefix.plus(nodeExecConfiguration.command)
-                    ExecConfiguration(nodeRuntime.get().getNode(extension).absolutePath, args, additionalBinPath,
+                    val args = nodeExecConfiguration.command
+                    ExecConfiguration(nodeRuntime.get().getNpm(extension).absolutePath, args, additionalBinPath,
                             nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
                             nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
                 }

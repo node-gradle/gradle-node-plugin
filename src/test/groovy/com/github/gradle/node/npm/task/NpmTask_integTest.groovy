@@ -97,7 +97,7 @@ class NpmTask_integTest extends AbstractIntegTest {
 
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("> Task :version${System.lineSeparator()}6.12.0")
+        result4.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST
