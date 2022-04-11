@@ -3,7 +3,6 @@ package com.github.gradle.node.task
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.ProjectApiHelper
-import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -24,6 +23,9 @@ abstract class NodeSetupTask : BaseTask() {
 
     @get:Input
     val download = nodeExtension.download
+
+    @get:Input
+    val downloadOnce = nodeExtension.downloadOnce
 
     @get:InputFile
     val nodeArchiveFile = objects.fileProperty()
@@ -46,9 +48,24 @@ abstract class NodeSetupTask : BaseTask() {
 
     @TaskAction
     fun exec() {
+        if (downloadOnce.get()) {
+            onlyIf {
+                checkIfNodeNotDownloaded()
+            }
+        }
         deleteExistingNode()
         unpackNodeArchive()
         setExecutableFlag()
+    }
+
+    private fun checkIfNodeNotDownloaded(): Boolean {
+        val version = nodeExtension.version
+        val osName = platformHelper.osName
+        val osArch = platformHelper.osArch
+        val directoryToCheck = "node-v$version-$osName-$osArch"
+        return !projectHelper.fileTree(nodeDir.get().dir("../")).filter {
+            it.name.contains(directoryToCheck)
+        }.any()
     }
 
     private fun deleteExistingNode() {

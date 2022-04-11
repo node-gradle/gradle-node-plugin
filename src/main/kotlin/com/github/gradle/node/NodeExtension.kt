@@ -86,6 +86,16 @@ open class NodeExtension(project: Project) {
     val download = project.objects.property<Boolean>().convention(false)
 
     /**
+     * Specify if you need to download and install a specific Node.js version
+     * or not if you already download it once
+     * If true, plugin will check if there is already one of Node.js
+     * of proper version downloaded and if [download] is true it will skip download task
+     * If false then it will have no effect and plugin will act as configured
+     * true by default
+     */
+    val downloadOnce = project.objects.property<Boolean>().convention(true)
+
+    /**
      * Whether the plugin automatically should add the proxy configuration to npm and yarn commands
      * according the proxy configuration defined for Gradle
      *
