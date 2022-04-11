@@ -202,6 +202,12 @@ node {
     // Note that npm is bundled with Node.js
     download = false
     
+    // Whether to download and install a specific Node.js version only once or not
+    // If false, the plugin will act as configured, with no additional behaviour
+    // If true, the plugin will check if a specific Node.js version is installed (directory check)
+    // and if yes it will not download it again if *download* property s set to true 
+    downloadOnce = true
+    
     // Version of node to download and install (only used if download is true)
     // It will be unpacked in the workDir
     version = "16.14.0"
