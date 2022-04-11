@@ -15,6 +15,6 @@ abstract class NodePathTestTask : DefaultTask() {
 
     @TaskAction
     fun run() {
-        println("node is at: ${nodeRuntime.get().getNode(extension)}")
+        logger.lifecycle("node is at: ${nodeRuntime.get().getNode(extension)}")
     }
 }

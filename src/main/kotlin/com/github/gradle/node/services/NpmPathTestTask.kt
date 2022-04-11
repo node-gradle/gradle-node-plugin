@@ -15,6 +15,6 @@ abstract class NpmPathTestTask : DefaultTask() {
 
     @TaskAction
     fun run() {
-        println("npm is at: ${nodeRuntime.get().getNpm(extension)}")
+        logger.lifecycle("npm is at: ${nodeRuntime.get().getNpm(extension)}")
     }
 }
