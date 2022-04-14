@@ -18,7 +18,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.github.node-gradle:gradle-node-plugin:3.1.1"
+    classpath "com.github.node-gradle:gradle-node-plugin:3.2.1"
   }
 }
 
