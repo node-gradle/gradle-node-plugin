@@ -1,6 +1,7 @@
 package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.NodeExtension
 import org.gradle.testkit.runner.TaskOutcome
 
 import java.util.regex.Pattern
@@ -76,7 +77,7 @@ class NpmRule_integTest extends AbstractIntegTest {
         then:
         result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
         result.task(":npm_run_npmVersion").outcome == TaskOutcome.SUCCESS
-        def versionPattern = Pattern.compile(".*Version\\s+6.12.0.*", Pattern.DOTALL)
+        def versionPattern = Pattern.compile(".*Version\\s+${NodeExtension.DEFAULT_NPM_VERSION}.*", Pattern.DOTALL)
         versionPattern.matcher(result.output).find()
     }
 }

@@ -1,6 +1,7 @@
 package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.NodeExtension
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
@@ -78,7 +79,7 @@ class NpxTask_integTest extends AbstractIntegTest {
 
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("> Task :version${System.lineSeparator()}6.12.0")
+        result4.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
     }
 
     def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
@@ -199,6 +200,6 @@ class NpxTask_integTest extends AbstractIntegTest {
 
         then:
         result.task(":version").outcome == TaskOutcome.SUCCESS
-        result.output.contains("> Task :version${System.lineSeparator()}6.12.0")
+        result.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
     }
 }

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version 3.x *(unreleased)*
+* Upgrade default Node to 16.14.2 and npm to 8.5.0 [#226](https://github.com/node-gradle/gradle-node-plugin/issues/226) 
 
 ## Version 3.2.1 *(2022-02-14)*
 * Backwards compatibility fix for those using VariantComputer [#213](https://github.com/node-gradle/gradle-node-plugin/issues/213)

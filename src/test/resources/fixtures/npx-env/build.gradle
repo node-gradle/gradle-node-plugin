@@ -21,7 +21,7 @@ task env(type: NpxTask) {
 task pwd(type: NpxTask) {
     dependsOn npmInstall
     command = "jseval"
-    args = ["console.log(`workingDirectory='\${process.cwd()}'`);"]
+    args = ["""console.log(["workingDirectory='", process.cwd(), "'"].join(''));"""]
     outputs.upToDateWhen {
         true
     }

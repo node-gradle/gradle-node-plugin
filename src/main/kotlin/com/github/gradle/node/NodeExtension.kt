@@ -118,12 +118,12 @@ open class NodeExtension(project: Project) {
         /**
          * Default version of Node to download if none is set
          */
-        const val DEFAULT_NODE_VERSION = "14.15.4"
+        const val DEFAULT_NODE_VERSION = "16.14.2"
 
         /**
          * Default version of npm to download if none is set
          */
-        const val DEFAULT_NPM_VERSION = "6.14.10"
+        const val DEFAULT_NPM_VERSION = "8.5.0"
 
         @JvmStatic
         operator fun get(project: Project): NodeExtension {
