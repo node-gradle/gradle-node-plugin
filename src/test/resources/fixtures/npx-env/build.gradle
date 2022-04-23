@@ -21,6 +21,19 @@ task env(type: NpxTask) {
 task pwd(type: NpxTask) {
     dependsOn npmInstall
     command = "jseval"
+    /* This is cursed.
+    This used to work before we upgraded node+npm but now the backticks break, I tried to work around it and...
+    ["work..='", process.cwd(), "'"].join('') works, except on windows where it prints:
+    , process.cwd,
+    "work..='" + process.cwd() + "'" works, except on windows where it prints:
+     + process.cwd +
+     And surprising nobody at this point:
+     process.stdout.write("workingDirectory='"); process.stdout.write(process.cwd()); process.stdout.write("'\\n");
+     Does work, except on windows, where it's parsed as:
+     process.stdout.write(workingDirectory='); process.stdout.write(process.cwd()); process.stdout.write('\\n);
+
+     If someone manages to fix this, remove the @IgnoreIf from the NpxTask_integTest
+     */
     args = ["""console.log(["workingDirectory='", process.cwd(), "'"].join(''));"""]
     outputs.upToDateWhen {
         true

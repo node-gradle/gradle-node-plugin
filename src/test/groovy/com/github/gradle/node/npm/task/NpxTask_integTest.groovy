@@ -5,6 +5,7 @@ import com.github.gradle.node.NodeExtension
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
+import spock.lang.IgnoreIf
 
 import java.util.regex.Pattern
 
@@ -82,6 +83,8 @@ class NpxTask_integTest extends AbstractIntegTest {
         result4.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
     }
 
+    // This is cursed, see npx-env/build.gradle for details
+    @IgnoreIf({ System.getProperty("os.name").toLowerCase().contains("windows") })
     def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
         given:
         copyResources("fixtures/npx-env/")
