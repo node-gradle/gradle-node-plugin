@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.property
+import org.gradle.util.GradleVersion
 
 
 open class PackageJsonExtension(project: Project) {
     val node = project.objects.property<JsonNode>()
 
     init {
-        node.finalizeValueOnRead()
+        if (GradleVersion.current() >= GradleVersion.version("6.1")) {
+            node.finalizeValueOnRead()
+        }
         node.set(project.provider { project.file("package.json").let(ObjectMapper()::readTree) })
     }
 
