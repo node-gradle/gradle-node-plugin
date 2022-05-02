@@ -25,6 +25,7 @@ class NodePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         this.project = project
         val nodeExtension = NodeExtension.create(project)
+        project.extensions.create<PackageJsonExtension>(PackageJsonExtension.NAME, project)
         addGlobalTypes()
         addTasks()
         addNpmRule()
