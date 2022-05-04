@@ -6,8 +6,14 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.property
 import org.gradle.util.GradleVersion
 
-
+/**
+ * Provides a parsed view of package.json
+ */
 open class PackageJsonExtension(project: Project) {
+
+    /**
+     * Raw JsonNode returned by Jackson, this may be removed in a future release
+     */
     val node = project.objects.property<JsonNode>()
 
     init {
@@ -29,14 +35,25 @@ open class PackageJsonExtension(project: Project) {
 
     val private = project.provider { node.get().get("private").asBoolean() }
 
+    /**
+     * Get the text value of a given field
+     */
     fun get(name: String): String {
         return node.get().get(name).asText()
     }
 
+    /**
+     * Get the boolean value of a given field
+     */
     fun getBoolean(name: String): Boolean {
         return node.get().get(name).asBoolean()
     }
 
+    /**
+     * Get the text value of a field containing nested objects
+     *
+     * e.g. <pre>{ "outer": { "inner": "nested } }</pre>
+     */
     fun get(vararg name: String): String {
         return name.fold(node.get()) { acc, next -> acc.get(next) }.asText()
     }
