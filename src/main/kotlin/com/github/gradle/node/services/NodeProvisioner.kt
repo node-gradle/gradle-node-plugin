@@ -15,8 +15,8 @@ import java.util.*
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-class NodeProvider(private val archiveOperations: ArchiveOperations,
-                   private val fileSystemOperations: FileSystemOperations
+class NodeProvisioner(private val archiveOperations: ArchiveOperations,
+                      private val fileSystemOperations: FileSystemOperations
 ) {
 
     open class Data @Inject constructor(val archiveOperations: ArchiveOperations,

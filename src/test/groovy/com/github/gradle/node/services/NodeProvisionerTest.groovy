@@ -5,14 +5,14 @@ import com.github.gradle.node.NodePlugin
 import okhttp3.OkHttpClient
 import org.gradle.api.provider.Provider
 
-class NodeProviderTest extends AbstractProjectTest {
+class NodeProvisionerTest extends AbstractProjectTest {
     def "download node"() {
         when:
         initializeProject()
         def version = "16.13.1"
         def fileName = "node-v$version-win-x64"
         def out = new File(projectDir, fileName)
-        NodeProvider provider = new NodeProvider(project.objects.newInstance(NodeProvider.Data))
+        NodeProvisioner provider = new NodeProvisioner(project.objects.newInstance(NodeProvisioner.Data))
         def download = provider.download$gradle_node_plugin(out,
                 NodePlugin.URL_DEFAULT, fileName+".zip", version, new OkHttpClient())
 
@@ -27,7 +27,7 @@ class NodeProviderTest extends AbstractProjectTest {
         def version = "16.13.1"
         def fileName = "node-v$version-win-x64"
         def out = new File(projectDir, fileName)
-        NodeProvider provider = new NodeProvider(project.objects.newInstance(NodeProvider.Data))
+        NodeProvisioner provider = new NodeProvisioner(project.objects.newInstance(NodeProvisioner.Data))
         provider.install$gradle_node_plugin(new OkHttpClient(), out, NodePlugin.URL_DEFAULT, fileName+".zip", version)
 
         then:
