@@ -10,7 +10,9 @@ import com.github.gradle.node.pnpm.task.PnpmSetupTask
 import com.github.gradle.node.pnpm.task.PnpmTask
 import com.github.gradle.node.services.NodePathTestTask
 import com.github.gradle.node.services.NodeRuntime
+import com.github.gradle.node.services.NodeToolchainServiceImpl
 import com.github.gradle.node.services.NpmPathTestTask
+import com.github.gradle.node.services.api.NodeToolchainService
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
 import com.github.gradle.node.yarn.task.YarnInstallTask
@@ -51,6 +53,9 @@ class NodePlugin : Plugin<Project> {
             runtime = project.gradle.sharedServices.registerIfAbsent("nodeRuntime", NodeRuntime::class) {
                 parameters.gradleUserHome.set(project.gradle.gradleUserHomeDir)
             }
+
+            val service = NodeToolchainServiceImpl(runtime, project.providers, nodeExtension)
+            project.extensions.add(NodeToolchainService::class, "nodeToolchainService", service)
 
             project.tasks.register<NodePathTestTask>("nodePathTest").configure {
                 usesService(runtime)

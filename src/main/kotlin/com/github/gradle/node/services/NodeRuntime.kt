@@ -2,7 +2,7 @@ package com.github.gradle.node.services
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.services.NodeProvider.Companion.findInstalledNode
+import com.github.gradle.node.services.NodeProvisioner.Companion.findInstalledNode
 import com.github.gradle.node.services.VersionManager.Companion.checkNodeVersion
 import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.util.zip
@@ -32,7 +32,7 @@ abstract class NodeRuntime
 
     private val client = OkHttpClient()
 
-    private val nodeProvider = NodeProvider(archiveOperations, fileSystemOperations)
+    private val nodeProvider = NodeProvisioner(archiveOperations, fileSystemOperations)
 
     private val download = providerFactory.gradleProperty(NodePlugin.DOWNLOAD_PROP)
         .forUseAtConfigurationTime()
@@ -55,7 +55,7 @@ abstract class NodeRuntime
             }
             val dir = getNodeDir(extension)
             nodeProvider.install(client, dir, baseUrl.get(),
-                "${dir.name}.${PlatformHelper.INSTANCE.getNodeUrlExtension()}", extension.version.get())
+                "${dir.name}.${PlatformHelper.INSTANCE.getNodeUrlExtension()}", version)
             return if (PlatformHelper.INSTANCE.isWindows)
                 File(dir, "node.exe")
             else
