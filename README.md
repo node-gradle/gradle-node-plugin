@@ -4,7 +4,7 @@
 
 ![Build Status](https://github.com/node-gradle/gradle-node-plugin/workflows/Build/badge.svg?branch=master)
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-![Version](https://img.shields.io/badge/Version-3.2.1-orange.svg)
+![Version](https://img.shields.io/badge/Version-3.3.0-orange.svg)
 
 This plugin enables you to use a lot of [Node.js](https://nodejs.org)-based technologies as part of your 
 build without having Node.js installed locally on your system. It integrates the following Node.js-based system
@@ -38,7 +38,8 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 
 Here's the documentation for older releases of the plugin:
 
-* [3.2.1](https://github.com/node-gradle/gradle-node-plugin/blob/3.2.1/README.md) (current)
+* [3.3.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.3.0/README.md) (current)
+* [3.2.1](https://github.com/node-gradle/gradle-node-plugin/blob/3.2.1/README.md)
 * [3.2.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.2.0/README.md)
 * [3.1.1](https://github.com/node-gradle/gradle-node-plugin/blob/3.1.1/README.md)
 * [3.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.1.0/README.md)

@@ -1,6 +1,8 @@
 # Changelog
 
 ## Version 3.x *(unreleased)*
+
+## Version 3.3.0 *(2022-05-14)*
 * Upgrade default Node to 16.14.2 and npm to 8.5.0 [#226](https://github.com/node-gradle/gradle-node-plugin/issues/226)
 * Parse `package.json` into extension [#232](https://github.com/node-gradle/gradle-node-plugin/issues/232)
 
