@@ -2,6 +2,7 @@
 package com.github.gradle.node
 
 import com.github.gradle.AbstractProjectTest
+import org.gradle.api.internal.provider.MissingValueException
 
 class PackageJsonExtensionTest extends AbstractProjectTest {
     def 'check standard attributes'() {
@@ -17,6 +18,20 @@ class PackageJsonExtensionTest extends AbstractProjectTest {
         ext.name.get() == "test"
         ext.version.get() == "1.10.2"
         ext.private.get() == false
+    }
+
+    def 'get missing attribute'() {
+        when:
+        temporaryFolder.newFile("package.json") << """
+            { "name": "test", "version": "1.10.2", "private": false }
+        """
+        project.apply plugin: 'com.github.node-gradle.node'
+        project.evaluate()
+        def ext = project.extensions.getByName('package.json') as PackageJsonExtension
+        ext.homepage.get() == null
+
+        then:
+        thrown(MissingValueException)
     }
 
     def 'get raw attributes'() {
