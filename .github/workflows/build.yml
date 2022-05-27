@@ -27,4 +27,4 @@ jobs:
         with:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Build
-        run: ./gradlew build ${{ matrix.config.params }}
+        run: ./gradlew --scan build ${{ matrix.config.params }}
