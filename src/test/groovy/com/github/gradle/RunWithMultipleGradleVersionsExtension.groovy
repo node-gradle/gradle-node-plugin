@@ -11,15 +11,6 @@ import org.spockframework.runtime.model.SpecInfo
 import java.lang.reflect.Parameter
 
 class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExtension<RunWithMultipleGradleVersions> {
-    private static final GradleVersion MINIMUM_SUPPORTED_GRADLE_VERSION = GradleVersion.version("5.6.4")
-    private static final GradleVersion MINIMUM_GRADLE_6_VERSION = GradleVersion.version("6.0")
-    private static final GradleVersion CURRENT_GRADLE_VERSION = GradleVersion.current()
-    private static final GradleVersion GRADLE_7_VERSION = GradleVersion.version("7.0")
-    // Contains changes to configuration cache
-    private static final GradleVersion GRADLE_74_VERSION = GradleVersion.version("7.4")
-    private static final GradleVersion[] GRADLE_VERSIONS =
-            [MINIMUM_SUPPORTED_GRADLE_VERSION, MINIMUM_GRADLE_6_VERSION, CURRENT_GRADLE_VERSION, GRADLE_7_VERSION,
-             GRADLE_74_VERSION]
     private GradleVersion gradleVersion
 
     @Override
@@ -30,7 +21,7 @@ class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExt
 
     protected void executeFeaturesWithAllGradleVersions(SpecInfo spec) {
         def bottomSpec = spec.getBottomSpec()
-        def gradleVersions = computeCandidateGradleVersions()
+        def gradleVersions = GradleVersionsForTest.computeCandidateGradleVersions()
         for (FeatureInfo feature : bottomSpec.getFeatures()) {
             feature.setReportIterations(true)
             feature.setIterationNameProvider({ "${gradleVersion}" })
@@ -51,24 +42,6 @@ class RunWithMultipleGradleVersionsExtension extends AbstractAnnotationDrivenExt
                 invocation.proceed()
             })
         }
-    }
-
-    private static GradleVersion[] computeCandidateGradleVersions() {
-        def versions = [CURRENT_GRADLE_VERSION]
-        if (System.getProperty("testAllSupportedGradleVersions").equals("true")) {
-            return GRADLE_VERSIONS
-        }
-        if (System.getProperty("testMinimumSupportedGradleVersion").equals("true")) {
-            versions.add(MINIMUM_SUPPORTED_GRADLE_VERSION)
-        }
-        if (System.getProperty("testMinimumCurrentGradleVersion").equals("true")) {
-            versions.add(MINIMUM_GRADLE_6_VERSION)
-        }
-        if (System.getProperty("testCurrentGradleVersion").equals("false")) {
-            versions.remove(CURRENT_GRADLE_VERSION)
-        }
-
-        return versions
     }
 
     private static void enrichParameters(IMethodInvocation invocation, GradleVersion gradleVersion) {
