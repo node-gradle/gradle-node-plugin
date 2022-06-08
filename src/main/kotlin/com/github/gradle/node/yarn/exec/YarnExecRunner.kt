@@ -5,47 +5,58 @@ import com.github.gradle.node.exec.ExecConfiguration
 import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy
+import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
-import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
+import javax.inject.Inject
 
-internal class YarnExecRunner {
-    private val variantComputer = VariantComputer()
-    fun executeYarnCommand(project: Project, nodeExecConfiguration: NodeExecConfiguration) {
-        val nodeExtension = NodeExtension[project]
+abstract class YarnExecRunner {
+    @get:Inject
+    abstract val providers: ProviderFactory
+
+    fun executeYarnCommand(
+        project: ProjectApiHelper,
+        nodeExtension: NodeExtension,
+        nodeExecConfiguration: NodeExecConfiguration,
+        variantComputer: VariantComputer
+    ) {
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val yarnDirProvider = variantComputer.computeYarnDir(nodeExtension)
         val yarnBinDirProvider = variantComputer.computeYarnBinDir(yarnDirProvider)
         val yarnExecProvider = variantComputer.computeYarnExec(nodeExtension, yarnBinDirProvider)
         val additionalBinPathProvider =
-                computeAdditionalBinPath(project, nodeExtension, nodeDirProvider, yarnBinDirProvider)
+                computeAdditionalBinPath(nodeExtension, nodeDirProvider, yarnBinDirProvider, variantComputer)
         val execConfiguration = ExecConfiguration(yarnExecProvider.get(),
-                computeYarnCommand(nodeExtension, nodeExecConfiguration), additionalBinPathProvider.get(),
-                nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
+                nodeExecConfiguration.command, additionalBinPathProvider.get(),
+                addNpmProxyEnvironment(nodeExtension, nodeExecConfiguration), nodeExecConfiguration.workingDir,
                 nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
         val execRunner = ExecRunner()
-        execRunner.execute(project, execConfiguration)
+        execRunner.execute(project, nodeExtension, execConfiguration)
     }
 
-    private fun computeYarnCommand(nodeExtension: NodeExtension,
-                                   nodeExecConfiguration: NodeExecConfiguration): List<String> {
-        if (nodeExtension.useGradleProxySettings.get()) {
-            val npmProxyCliArgs = NpmProxy.computeNpmProxyCliArgs()
-            if (npmProxyCliArgs.isNotEmpty()) {
-                return npmProxyCliArgs.plus(nodeExecConfiguration.command)
+    private fun addNpmProxyEnvironment(nodeExtension: NodeExtension,
+                                       nodeExecConfiguration: NodeExecConfiguration): Map<String, String> {
+        if (NpmProxy.shouldConfigureProxy(System.getenv(), nodeExtension.nodeProxySettings.get())) {
+            val npmProxyEnvironmentVariables = NpmProxy.computeNpmProxyEnvironmentVariables()
+            if (npmProxyEnvironmentVariables.isNotEmpty()) {
+                return nodeExecConfiguration.environment.plus(npmProxyEnvironmentVariables)
             }
         }
-        return nodeExecConfiguration.command
+        return nodeExecConfiguration.environment
     }
 
-    private fun computeAdditionalBinPath(project: Project, nodeExtension: NodeExtension,
-                                         nodeDirProvider: Provider<Directory>,
-                                         yarnBinDirProvider: Provider<Directory>): Provider<List<String>> {
+    private fun computeAdditionalBinPath(
+        nodeExtension: NodeExtension,
+        nodeDirProvider: Provider<Directory>,
+        yarnBinDirProvider: Provider<Directory>,
+        variantComputer: VariantComputer
+    ): Provider<List<String>> {
         return nodeExtension.download.flatMap { download ->
             if (!download) {
-                project.providers.provider { listOf<String>() }
+                providers.provider { listOf<String>() }
             }
             val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
             val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)

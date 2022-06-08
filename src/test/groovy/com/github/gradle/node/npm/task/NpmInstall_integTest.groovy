@@ -39,6 +39,28 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
     }
 
+    def 'install packages with npm >= 7'() {
+        given:
+        writeBuild('''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                download = true
+                version = '15.2.1'
+                npmVersion = '7.0.1'
+            }
+        ''')
+        writeEmptyPackageJson()
+
+        when:
+        def result = build('npmInstall')
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+    }
+
     def 'install packages with npm and postinstall task requiring npm and node'() {
         given:
         writeBuild('''
@@ -96,7 +118,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
         def result = buildAndFail('npmInstall')
 
         then:
-        result.output.contains('can only install packages with an existing package-lock.json')
+        result.output.contains('can only install with an existing package-lock.json')
         result.task(':npmInstall').outcome == TaskOutcome.FAILED
 
         when:
@@ -120,10 +142,10 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
             task verifyIO {
                 doLast {
-                    if (!tasks.named("npmInstall").get().outputs.files.contains(project.file('package-lock.json'))) {
+                    if (!tasks.named("npmInstall").get().outputs.files.contains(file('package-lock.json'))) {
                         throw new RuntimeException("package-lock.json is not in INSTALL'S outputs!")
                     }
-                    if (tasks.named("npmInstall").get().inputs.files.contains(project.file('package-lock.json'))) {
+                    if (tasks.named("npmInstall").get().inputs.files.contains(file('package-lock.json'))) {
                         throw new RuntimeException("package-lock.json is in INSTALL'S inputs!")
                     }
                 }
@@ -152,10 +174,10 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
             task verifyIO {
                 doLast {
-                    if (tasks.named("npmInstall").get().outputs.files.contains(project.file('package-lock.json'))) {
+                    if (tasks.named("npmInstall").get().outputs.files.contains(file('package-lock.json'))) {
                         throw new RuntimeException("package-lock.json is in CI'S outputs!")
                     }
-                    if (!tasks.named("npmInstall").get().inputs.files.contains(project.file('package-lock.json'))) {
+                    if (!tasks.named("npmInstall").get().inputs.files.contains(file('package-lock.json'))) {
                         throw new RuntimeException("package-lock.json is not in CI'S inputs!")
                     }
                 }
@@ -171,7 +193,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.outcome == TaskOutcome.SUCCESS
     }
 
-    def 'verity output configuration'() {
+    def 'verify output configuration'() {
         given:
         writeBuild('''
             plugins {
@@ -230,7 +252,7 @@ class NpmInstall_integTest extends AbstractIntegTest {
         createFile("node_modules/mocha/package.json").exists()
     }
 
-    def 'verity output configuration when filtering node_modules output'() {
+    def 'verify output configuration when filtering node_modules output'() {
         given:
         writeBuild('''
             plugins {

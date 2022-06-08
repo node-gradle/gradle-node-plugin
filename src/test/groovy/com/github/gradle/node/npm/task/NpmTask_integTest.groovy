@@ -1,9 +1,12 @@
 package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.NodeExtension
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
+
+import static com.github.gradle.node.NodeExtension.DEFAULT_NPM_VERSION
 
 class NpmTask_integTest extends AbstractIntegTest {
     @Rule
@@ -47,7 +50,7 @@ class NpmTask_integTest extends AbstractIntegTest {
 
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("> Task :version${System.lineSeparator()}6.12.0")
+        result4.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
     }
 
     def 'execute npm command with custom execution configuration and check up-to-date-detection'() {
@@ -83,7 +86,7 @@ class NpmTask_integTest extends AbstractIntegTest {
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":env").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":env").outcome == (isConfigurationCacheEnabled() ? TaskOutcome.SUCCESS : TaskOutcome.UP_TO_DATE)
 
         when:
         def result4 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
@@ -93,7 +96,7 @@ class NpmTask_integTest extends AbstractIntegTest {
         result4.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result4.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":env").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("Usage: npm <command>")
+        result4.output.contains("Unknown command: \"notExistingCommand\"")
 
         when:
         def result5 = buildAndFail(":env", "-DnotExistingCommand=true")
@@ -103,7 +106,7 @@ class NpmTask_integTest extends AbstractIntegTest {
         result5.task(":npmSetup").outcome == TaskOutcome.SKIPPED
         result5.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.FAILED
-        result5.output.contains("Usage: npm <command>")
+        result5.output.contains("Unknown command: \"notExistingCommand\"")
 
         when:
         def result6 = build(":env", "-DoutputFile=true")
@@ -154,7 +157,7 @@ class NpmTask_integTest extends AbstractIntegTest {
 
         then:
         result10.task(":version").outcome == TaskOutcome.SUCCESS
-        result10.output.contains("> Task :version${System.lineSeparator()}6.14.4")
+        result10.output.contains("> Task :version${System.lineSeparator()}${DEFAULT_NPM_VERSION}")
     }
 
     def 'execute npm command using the npm version specified in the package.json file'() {
@@ -167,6 +170,6 @@ class NpmTask_integTest extends AbstractIntegTest {
 
         then:
         result.task(":version").outcome == TaskOutcome.SUCCESS
-        result.output.contains("> Task :version${System.lineSeparator()}6.12.0")
+        result.output.contains("> Task :version${System.lineSeparator()}${NodeExtension.DEFAULT_NPM_VERSION}")
     }
 }

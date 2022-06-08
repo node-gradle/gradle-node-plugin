@@ -47,8 +47,8 @@ class KotlinDsl_integTest extends AbstractIntegTest {
         outputFile.exists()
         def zipFile = new ZipFile(outputFile)
         def zipFileEntries = Collections.list(zipFile.entries())
-        zipFileEntries.findAll { it.name.equals("index.js") }.size() == 3
-        zipFileEntries.findAll { it.name.equals("main.js") }.size() == 3
-        zipFileEntries.size() == 6
+        zipFileEntries.findAll { it.name.endsWith("/index.js") }.size() == 3
+        zipFileEntries.findAll { it.name.endsWith("/main.js") }.size() == 3
+        zipFileEntries.size() == 9
     }
 }

@@ -1,3 +1,4 @@
+import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeTask
@@ -15,7 +16,7 @@ plugins {
 }
 
 node {
-    version.set("12.16.3")
+    version.set("16.14.0")
     npmVersion.set("")
     yarnVersion.set("")
     npmInstallCommand.set("install")
@@ -25,7 +26,7 @@ node {
     npmWorkDir.set(file("${project.projectDir}/.cache/npm"))
     yarnWorkDir.set(file("${project.projectDir}/.cache/yarn"))
     nodeProjectDir.set(file("${project.projectDir}"))
-    useGradleProxySettings.set(true)
+    nodeProxySettings.set(ProxySettings.SMART)
 }
 
 tasks.npmInstall {
@@ -140,5 +141,13 @@ val buildTaskUsingYarn = tasks.register<YarnTask>("buildYarn") {
 tasks.register<Zip>("package") {
     archiveFileName.set("app.zip")
     destinationDirectory.set(buildDir)
-    from(buildTaskUsingNpx, buildTaskUsingNpm, buildTaskUsingYarn)
+    from(buildTaskUsingNpx) {
+        into("npx")
+    }
+    from(buildTaskUsingNpm) {
+        into("npm")
+    }
+    from (buildTaskUsingYarn) {
+        into("yarn")
+    }
 }

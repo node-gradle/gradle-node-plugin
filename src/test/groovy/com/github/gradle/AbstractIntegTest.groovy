@@ -26,9 +26,13 @@ abstract class AbstractIntegTest extends Specification {
     }
 
     protected final GradleRunner newRunner(final String... args) {
+        List<String> additionalArgs = ["--warning-mode=fail"]
+        if (isConfigurationCacheEnabled()) {
+            additionalArgs.add("--configuration-cache")
+        }
         return GradleRunner.create()
                 .withProjectDir(projectDir)
-                .withArguments(args)
+                .withArguments([*args, *additionalArgs])
                 .withPluginClasspath()
                 .forwardOutput()
                 .withGradleVersion(gradleVersion.version)
@@ -36,6 +40,12 @@ abstract class AbstractIntegTest extends Specification {
 
     protected final BuildResult build(final String... args) {
         return newRunner(args).build()
+    }
+
+    protected final BuildResult buildWithEnvironment(Map<String, String> env, final String... args) {
+        return newRunner(args)
+                .withEnvironment(env)
+                .build()
     }
 
     protected final BuildResult buildAndFail(final String... args) {
@@ -111,5 +121,9 @@ abstract class AbstractIntegTest extends Specification {
     protected boolean environmentDumpContainsPathVariable(environmentDump) {
         // Sometimes the PATH variable is not defined in Windows Powershell, but the PATHEXT is
         return Pattern.compile("^PATH(?:EXT)?=.+\$", Pattern.MULTILINE).matcher(environmentDump).find()
+    }
+
+    protected isConfigurationCacheEnabled() {
+        return gradleVersion >= GradleVersion.version("6.6")
     }
 }

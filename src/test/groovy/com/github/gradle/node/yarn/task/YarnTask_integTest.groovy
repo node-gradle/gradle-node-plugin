@@ -87,7 +87,7 @@ class YarnTask_integTest extends AbstractIntegTest {
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":yarnSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":yarn").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":env").outcome == TaskOutcome.UP_TO_DATE
+        result3.task(":env").outcome == (isConfigurationCacheEnabled() ? TaskOutcome.SUCCESS : TaskOutcome.UP_TO_DATE)
 
         when:
         def result4 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")

@@ -50,7 +50,7 @@ This can be done by adding to the arguments for the already defined `npmSetup` t
 ```gradle
 tasks.npmSetup {
     doFirst {
-        args = args + ['--registry', 'http://myregistry.npm.com']
+        args.addAll(['--registry', 'http://myregistry.npm.com'])
     }
 }
 ```
@@ -166,19 +166,7 @@ task myScript(type: NpmTask) {
 
 # How to use an HTTP or HTTPS proxy?
 
-If your network requires using a proxy to access to the internet, you probably already 
-[configured Gradle to use the proxy](https://docs.gradle.org/current/userguide/build_environment.html#sec:accessing_the_web_via_a_proxy).
-In this case, the plugin will automatically apply the proxy configuration to all `npm` and `yarn` commands.
-
-Note that:
-* This does not work with `npx` since it does not support proxy usage
-* This does work either for all `node` commands. It's the `node` script's responsibility to use the proxy or not
-* For `npm` and `yarn`, it will only work for network requests done directly by the tool (for instance downloading a 
-dependency). This will not work if you run a Node.js script for instance via `npm run`.
-
-To disable this behavior, set `useGradleProxySettings` to `false` in the `node` extension. In this case, the plugin will
-do nothing regarding proxy and you may want to configure it manually, for instance using the `.npmrc` file as 
-explained [here](https://www.devtech101.com/2016/07/21/how-to-set-npm-proxy-settings-in-npmrc/) for `npm`.
+If Gradle is configured to use a proxy, the plugin will automatically configure `yarn` and `npm` to use it, unless it is already configured thanks to the dedicated environment variables. This behavior can be configured. Read more in the [proxy manual](./usage.md#using-a-proxy).
 
 # How do I ignore some files of the `node_modules` directory that are modified by the build and prevent tasks from being up-to-date ?
 
@@ -214,3 +202,48 @@ yarn {
 ```
 
 Note: the Gradle's up-to-date checking is much slower when using this option. See issue #63.
+
+# Is this plugin compatible with centralized repositories declaration?
+
+Gradle 6.8 improves the dependency resolution management by adding a way to [centralize repositories declaration](https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:centralized-repository-declaration). The `repositoryMode` option controls where the repositories can be declared (in the projects or in the settings).
+
+By default, and when using the `PREFER_PROJECT` mode, the plugin works as expected. When using the `PREFER_SETTINGS` or `FAIL_ON_PROJECT_REPOS` modes, it will not work if it needs to download and install Node.js (i.e. if `download` is `true`). That's because it uses a repository to download the Node.js bundle and this configuration mode prevents it from adding a repository.
+
+To get it work in this mode, you have to declare the repository yourself in the build settings and tell the plugin you declared the repository yourself.
+
+In the `build.gradle` file:
+
+```gradle
+node {
+    download = true
+    // Do not declare the repository
+    distBaseUrl = null
+}
+```
+
+In the `settings.gradle/settings.gradle.kts` file:
+
+```gradle
+dependencyResolutionManagement {
+    repositories {
+        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
+        // Declare the Node.js download repository
+        ivy {
+            name = "Node.js"
+            setUrl("https://nodejs.org/dist/")
+            patternLayout {
+                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+            }
+            metadataSources {
+                artifact()
+            }
+            content {
+                includeModule("org.nodejs", "node")
+            }
+        }
+    }
+}
+```
+
+See issue [#134](https://github.com/node-gradle/gradle-node-plugin/issues/134).

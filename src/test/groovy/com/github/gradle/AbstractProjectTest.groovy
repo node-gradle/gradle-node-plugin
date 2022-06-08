@@ -14,8 +14,8 @@ class AbstractProjectTest extends Specification {
 
     def setup() {
         this.projectDir = this.temporaryFolder.root
-        this.project = (ProjectInternal) ProjectBuilder.builder().
-                withProjectDir(this.projectDir).
-                build()
+        this.project = (ProjectInternal) ProjectBuilder.builder()
+                .withProjectDir(this.projectDir)
+                .build()
     }
 }

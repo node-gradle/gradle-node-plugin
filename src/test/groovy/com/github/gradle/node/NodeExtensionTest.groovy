@@ -2,6 +2,8 @@ package com.github.gradle.node
 
 import com.github.gradle.AbstractProjectTest
 
+import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
+
 class NodeExtensionTest extends AbstractProjectTest {
     def "check default values for extension"() {
         when:
@@ -13,9 +15,10 @@ class NodeExtensionTest extends AbstractProjectTest {
         nodeExtension.npmCommand.get() == 'npm'
         nodeExtension.npxCommand.get() == 'npx'
         nodeExtension.distBaseUrl.get() == 'https://nodejs.org/dist'
+        nodeExtension.allowInsecureProtocol.orNull == null
         nodeExtension.workDir.get() != null
         nodeExtension.nodeProjectDir.get() != null
-        nodeExtension.version.get() == '12.16.3'
+        nodeExtension.version.get() == DEFAULT_NODE_VERSION
         !nodeExtension.download.get()
         nodeExtension.npmVersion.get() == ''
     }

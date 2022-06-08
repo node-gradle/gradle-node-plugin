@@ -2,15 +2,15 @@ package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.task.AbstractTaskTest
 import com.github.gradle.node.variant.VariantComputer
-import org.gradle.process.ExecSpec
 
 class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NpxTask)
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
         task.command.set('command')
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
@@ -34,9 +34,10 @@ class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task (windows)"() {
         given:
         props.setProperty('os.name', 'Windows')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NpxTask)
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
         task.command.set('command')
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
@@ -61,13 +62,14 @@ class NpxTaskTest extends AbstractTaskTest {
         given:
         props.setProperty('os.name', 'Linux')
         nodeExtension.download.set(true)
-        execSpec = Mock(ExecSpec)
-        def variantComputer = new VariantComputer()
+        def variantComputer = new VariantComputer(testPlatformHelper)
         def nodeDir = variantComputer.computeNodeDir(nodeExtension)
         def nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
         def npxScriptFile = variantComputer.computeNpmScriptFile(nodeDir, "npx")
 
         def task = project.tasks.create('simple', NpxTask)
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()

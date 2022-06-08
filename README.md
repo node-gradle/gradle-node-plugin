@@ -4,7 +4,7 @@
 
 ![Build Status](https://github.com/node-gradle/gradle-node-plugin/workflows/Build/badge.svg?branch=master)
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-![Version](https://img.shields.io/badge/Version-2.2.4-orange.svg)
+![Version](https://img.shields.io/badge/Version-3.3.0-orange.svg)
 
 This plugin enables you to use a lot of [Node.js](https://nodejs.org)-based technologies as part of your 
 build without having Node.js installed locally on your system. It integrates the following Node.js-based system
@@ -34,11 +34,18 @@ issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issue
 * [Example Projects](examples)
 
 
-## Releases history
+## Releases History
 
 Here's the documentation for older releases of the plugin:
 
-* [2.2.4](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.4/README.md) (current)
+* [3.3.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.3.0/README.md) (current)
+* [3.2.1](https://github.com/node-gradle/gradle-node-plugin/blob/3.2.1/README.md)
+* [3.2.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.2.0/README.md)
+* [3.1.1](https://github.com/node-gradle/gradle-node-plugin/blob/3.1.1/README.md)
+* [3.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.1.0/README.md)
+* [3.0.1](https://github.com/node-gradle/gradle-node-plugin/blob/3.0.1/README.md)
+* [3.0.0](https://github.com/node-gradle/gradle-node-plugin/blob/3.0.0/README.md)
+* [2.2.4](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.4/README.md)
 * [2.2.3](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.3/README.md)
 * [2.2.2](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.2/README.md)
 * [2.2.1](https://github.com/node-gradle/gradle-node-plugin/blob/2.2.1/README.md)
@@ -47,15 +54,7 @@ Here's the documentation for older releases of the plugin:
 * [2.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.1.0/README.md)
 * [2.0.0](https://github.com/node-gradle/gradle-node-plugin/blob/2.0.0/README.md)
 * [1.5.3](https://github.com/node-gradle/gradle-node-plugin/blob/1.5.3/README.md)
-* [1.1.1](https://github.com/node-gradle/gradle-node-plugin/blob/v1.1.1/README.md)
-* [1.1.0](https://github.com/node-gradle/gradle-node-plugin/blob/v1.1.0/README.md)
-* [1.0.1](https://github.com/node-gradle/gradle-node-plugin/blob/v1.0.1/README.md)
-* [1.0.0](https://github.com/node-gradle/gradle-node-plugin/blob/v1.0.0/README.md)
-* [0.14](https://github.com/node-gradle/gradle-node-plugin/blob/v0.14/README.md)
-* [0.13](https://github.com/node-gradle/gradle-node-plugin/blob/v0.13/README.md)
-* [0.12](https://github.com/node-gradle/gradle-node-plugin/blob/v0.12/README.md)
-* [0.11](https://github.com/node-gradle/gradle-node-plugin/blob/v0.11/README.md)
-* [0.10](https://github.com/node-gradle/gradle-node-plugin/blob/v0.10/README.md)
+* [1.4.0](https://github.com/node-gradle/gradle-node-plugin/blob/1.4.0/README.md)
 
 
 ## Building the Plugin

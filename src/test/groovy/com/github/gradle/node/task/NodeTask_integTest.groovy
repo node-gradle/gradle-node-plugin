@@ -2,8 +2,12 @@ package com.github.gradle.node.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
+import org.gradle.util.GradleVersion
+import org.junit.Assume
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
+
+import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
 
 class NodeTask_integTest extends AbstractIntegTest {
     @Rule
@@ -75,7 +79,8 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result8.task(":executeDirectoryScript").outcome == TaskOutcome.FAILED
-        result8.output.contains("specified for property 'script' is not a file")
+        // Gradle < 7 || Gradle >= 7
+        result8.output.contains("specified for property 'script' is not a file") || result8.output.contains("Reason: Expected an input to be a file but it was a directory.")
 
         when:
         def result9 = build(":version")
@@ -141,7 +146,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":env").outcome == TaskOutcome.UP_TO_DATE
+        result7.task(":env").outcome == (isConfigurationCacheEnabled() ? TaskOutcome.SUCCESS : TaskOutcome.UP_TO_DATE)
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date
@@ -223,7 +228,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result17.task(":version").outcome == TaskOutcome.SUCCESS
-        result17.output.contains("Version: v12.16.3")
+        result17.output.contains("Version: v${DEFAULT_NODE_VERSION}")
     }
 
     def 'try to use custom repositories when the download url is null'() {
@@ -234,7 +239,59 @@ class NodeTask_integTest extends AbstractIntegTest {
         def result = buildAndFail("nodeSetup")
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.FAILED
-        result.output.contains("Cannot resolve external dependency org.nodejs:node:12.16.3 because no repositories are defined.")
+        result.output.contains("Cannot resolve external dependency org.nodejs:node:${DEFAULT_NODE_VERSION} because no repositories are defined.")
     }
+
+    def 'make sure build works with FAIL_ON_PROJECT_REPOS using a custom repository'() {
+        given:
+        Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
+        copyResources("fixtures/node-fail-on-project-repos-download")
+
+        when:
+        def result = build("hello")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":hello").outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'make sure build works with FAIL_ON_PROJECT_REPOS when using the global Node.js (no download)'() {
+        given:
+        Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
+        copyResources("fixtures/node-fail-on-project-repos-no-download")
+
+        when:
+        def result = build("hello")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+        result.task(":hello").outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'make sure build works with allowInsecureProtocol false using a custom repository'() {
+        given:
+        Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
+        copyResources("fixtures/node-disallow-insecure-protocol")
+
+        when:
+        def result = build("hello")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":hello").outcome == TaskOutcome.SUCCESS
+    }
+
+    def 'make sure build works with allowInsecureProtocol true using a custom repository'() {
+        given:
+        Assume.assumeFalse(gradleVersion < GradleVersion.version("6.8"))
+        copyResources("fixtures/node-allow-insecure-protocol")
+
+        when:
+        def result = build("hello")
+
+        then:
+        result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result.task(":hello").outcome == TaskOutcome.SUCCESS
+    }
+
 }

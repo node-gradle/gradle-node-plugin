@@ -1,8 +1,8 @@
 package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
+import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.task.AbstractTaskTest
-import org.gradle.process.ExecSpec
 
 class NpmInstallTaskTest extends AbstractTaskTest {
     def cleanup() {
@@ -12,11 +12,12 @@ class NpmInstallTaskTest extends AbstractTaskTest {
     def "exec npm install task with configured proxy"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
 
         def task = project.tasks.getByName("npmInstall")
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()
@@ -24,18 +25,20 @@ class NpmInstallTaskTest extends AbstractTaskTest {
 
         then:
         1 * execSpec.setExecutable("npm")
-        1 * execSpec.setArgs(["--https-proxy", "https://my-super-proxy.net:11235", "install"])
+        1 * execSpec.setArgs(["install"])
+        1 * execSpec.setEnvironment({ environment -> environment["HTTPS_PROXY"] == "http://my-super-proxy.net:11235" })
     }
 
     def "exec npm install task with configured proxy but disabled"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
-        nodeExtension.useGradleProxySettings.set(false)
+        nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.getByName("npmInstall")
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()

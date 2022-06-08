@@ -36,6 +36,41 @@ class YarnInstall_integTest extends AbstractIntegTest {
         result.outcome == TaskOutcome.UP_TO_DATE
     }
 
+    def 'install packages with yarn on npm >= 7'() {
+        given:
+        writeBuild('''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+
+            node {
+                download = true
+                yarnWorkDir = file('build/yarn')
+                version = '15.2.1'
+                npmVersion = '7.0.1'
+            }
+        ''')
+        writeEmptyPackageJson()
+
+        when:
+        def result = buildTask('yarn')
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+
+        when:
+        result = buildTask('yarn')
+
+        then:
+        result.outcome == TaskOutcome.SUCCESS
+
+        when:
+        result = buildTask('yarn')
+
+        then:
+        result.outcome == TaskOutcome.UP_TO_DATE
+    }
+
     def 'install packages with yarn and and postinstall task requiring node and yarn'() {
         given:
         writeBuild('''

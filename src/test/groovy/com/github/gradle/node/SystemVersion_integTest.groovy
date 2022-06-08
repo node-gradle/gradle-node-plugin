@@ -29,18 +29,18 @@ class SystemVersion_integTest extends AbstractIntegTest {
         result2.output.contains("Project repositories: 0")
 
         when:
-        def result3 = build(":npmHelp")
+        def result3 = build(":npmVersion")
 
         then:
-        result3.task(":npmHelp").outcome == TaskOutcome.SUCCESS
-        result3.output.contains("Usage: npm <command>")
+        result3.task(":npmVersion").outcome == TaskOutcome.SUCCESS
+        result3.output.contains("  npm: '")
 
         when:
         def result4 = build(":npxHelp")
 
         then:
         result4.task(":npxHelp").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("npx --shell-auto-fallback [shell]")
+        result4.output.contains("Run a command from a local or remote npm package")
 
         when:
         def result5 = build(":yarnHelp")

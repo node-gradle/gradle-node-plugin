@@ -2,7 +2,6 @@ package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.task.AbstractTaskTest
-import org.gradle.process.ExecSpec
 
 class NpmSetupTaskTest extends AbstractTaskTest {
     def cleanup() {
@@ -12,9 +11,9 @@ class NpmSetupTaskTest extends AbstractTaskTest {
     def "disable npmSetup task when no npm version is specified"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NpmSetupTask)
+        mockPlatformHelper(task)
 
         when:
         project.evaluate()
@@ -27,9 +26,10 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         given:
         props.setProperty('os.name', 'Linux')
         nodeExtension.npmVersion.set('6.4.1')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', NpmSetupTask)
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()
@@ -48,11 +48,12 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         given:
         props.setProperty('os.name', 'Linux')
         nodeExtension.npmVersion.set('6.4.1')
-        execSpec = Mock(ExecSpec)
         GradleProxyHelper.setHttpProxyHost("my-proxy.net")
         GradleProxyHelper.setHttpProxyPort(1234)
 
         def task = project.tasks.create('simple', NpmSetupTask)
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()

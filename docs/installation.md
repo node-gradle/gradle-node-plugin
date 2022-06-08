@@ -5,7 +5,7 @@ in your `build.gradle` file:
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "2.2.4"
+  id "com.github.node-gradle.node" version "3.3.0"
 }
 ```
 
@@ -14,35 +14,11 @@ You can also install the plugins by using the traditional Gradle way:
 ```gradle
 buildscript {
   repositories {
-    maven {
-      gradlePluginPortal()
-    } 
+    gradlePluginPortal()
   }
 
   dependencies {
-    classpath "com.github.node-gradle:gradle-node-plugin:2.2.4"
-  }
-}
-
-apply plugin: 'com.github.node-gradle.node'
-```
-
-
-## Installing snapshots
-
-If you want to install snapshot versions of this plugin, you can add the [OJO repository](http://oss.jfrog.org)
-to your build:
-
-```gradle
-buildscript {
-  repositories {
-    maven {
-      url "http://oss.jfrog.org"
-    } 
-  }
-
-  dependencies {
-    classpath "com.github.node-gradle:gradle-node-plugin:2.0.0-SNAPSHOT"
+    classpath "com.github.node-gradle:gradle-node-plugin:3.3.0"
   }
 }
 

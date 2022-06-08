@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         gradlePluginPortal()
     }
     extra["nextVersion"] = "major"
@@ -17,6 +17,8 @@ plugins {
     jacoco
     id("com.gradle.plugin-publish") version "0.11.0"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
+    id("org.jetbrains.dokka") version "0.10.0"
+    id("org.gradle.test-retry") version "1.2.0"
 }
 
 group = "com.github.node-gradle"
@@ -29,26 +31,31 @@ java {
 }
 
 repositories {
+    mavenCentral()
+    // Necessary for dokka (will have to be removed when dokka no longer
+    // depends on artifacts only present in jcenter)
     jcenter()
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.6.1"))
+    api("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
+    testImplementation(platform("org.junit:junit-bom:5.6.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
-    testImplementation("org.assertj:assertj-core:3.15.0")
-    testImplementation("cglib:cglib-nodep:3.2.9")
+    testImplementation("org.assertj:assertj-core:3.17.2")
+    testImplementation("cglib:cglib-nodep:3.3.0")
     testImplementation("org.objenesis:objenesis:3.1")
     testImplementation("org.apache.commons:commons-io:1.3.2")
     testImplementation("org.spockframework:spock-core:1.3-groovy-2.5")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
+    testImplementation("org.mock-server:mockserver-netty:5.11.1")
 }
 
 tasks.compileTestGroovy {
     // Should be
     // classpath += files(sourceSets.test.get().kotlin.classesDirectory)
-    // but enable to get it compile in the Kotlin DSL - works in the Groovy DSL as this
+    // but unable to get it compile in the Kotlin DSL - works in the Groovy DSL as this
     // classpath += files(sourceSets.test.kotlin.classesDirectory)
     // This workaround works
     classpath += files("${buildDir}/classes/kotlin/test")
@@ -58,16 +65,36 @@ tasks.test {
     useJUnitPlatform()
     if (project.hasProperty("skipIT")) {
         exclude("**/*_integTest*")
+    } else if (project.hasProperty("onlyIT")) {
+        include("**/*_integTest*")
     }
-    if (project.hasProperty("testAllSupportedGradleVersions")) {
-        systemProperty("testAllSupportedGradleVersions", "true")
-    }
+    systemProperty("testAllSupportedGradleVersions", project.properties["testAllSupportedGradleVersions"] ?: "false")
+    systemProperty(
+        "testMinimumSupportedGradleVersion", project.properties["testMinimumSupportedGradleVersion"]
+            ?: "false"
+    )
+    systemProperty("testMinimumCurrentGradleVersion", project.properties["testMinimumCurrentGradleVersion"] ?: "false")
+    systemProperty("testCurrentGradleVersion", project.properties["testCurrentGradleVersion"] ?: "true")
+    systemProperty("testSpecificGradleVersion", project.properties["testSpecificGradleVersion"] ?: "false")
+
     val processorsCount = Runtime.getRuntime().availableProcessors()
     maxParallelForks = if (processorsCount > 2) processorsCount.div(2) else processorsCount
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         exceptionFormat = TestExceptionFormat.FULL
     }
+
+    retry {
+        maxRetries.set(3)
+        filter {
+            includeClasses.add("*_integTest")
+        }
+    }
+}
+
+tasks.register("runParameterTest", JavaExec::class.java) {
+    classpath = sourceSets["main"].runtimeClasspath
+    main = "com.github.gradle.node.util.PlatformHelperKt"
 }
 
 tasks.jacocoTestReport {
@@ -75,6 +102,11 @@ tasks.jacocoTestReport {
         xml.isEnabled = true
         html.isEnabled = true
     }
+}
+
+tasks.dokka {
+    outputFormat = "javadoc"
+    configuration { jdkVersion = 8 }
 }
 
 gradlePlugin {
@@ -98,4 +130,14 @@ pluginBundle {
             tags = listOf("java", "gradle", "node", "node.js", "npm", "yarn")
         }
     }
+
+    mavenCoordinates {
+        groupId = "com.github.node-gradle"
+        artifactId = "gradle-node-plugin"
+    }
+}
+
+tasks.wrapper {
+    gradleVersion = "6.8.3"
+    distributionType = Wrapper.DistributionType.ALL
 }

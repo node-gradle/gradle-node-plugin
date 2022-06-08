@@ -1,11 +1,13 @@
+import org.gradle.util.GradleVersion
+
 plugins {
     id 'com.github.node-gradle.node'
 }
 
-def changeInputs = System.properties["changeInputs"] ? System.properties["changeInputs"] == 'true' : false
+def changeInputs = isPropertyEnabled("changeInputs")
 
 node {
-    npmVersion = "6.12.0"
+    npmVersion = "8.5.0"
     download = true
     workDir = file('build/node')
 }
@@ -25,4 +27,11 @@ task test(type: NpmTask) {
 task version(type: NpmTask) {
     dependsOn npmInstall
     npmCommand = ["--version"]
+}
+
+def isPropertyEnabled(String name) {
+    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
+        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    }
+    return System.properties[name] != null
 }

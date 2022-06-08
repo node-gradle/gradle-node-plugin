@@ -13,3 +13,5 @@ node_modules
 .project
 .settings
 bin
+examples/**/*.lock
+*.hprof

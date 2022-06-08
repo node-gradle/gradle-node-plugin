@@ -9,7 +9,7 @@ class PlatformHelperTest extends Specification {
 
     def setup() {
         this.props = new Properties()
-        PlatformHelper.INSTANCE = this.helper = new PlatformHelper(this.props)
+        this.helper = new TestablePlatformHelper(this.props)
     }
 
     @Unroll
@@ -24,33 +24,57 @@ class PlatformHelperTest extends Specification {
         this.helper.isWindows() == isWindows
 
         where:
-        osProp      | archProp | osName   | osArch | isWindows
-        'Windows 8' | 'x86'    | 'win'    | 'x86'  | true
-        'Windows 8' | 'x86_64' | 'win'    | 'x64'  | true
-        'Mac OS X'  | 'x86'    | 'darwin' | 'x86'  | false
-        'Mac OS X'  | 'x86_64' | 'darwin' | 'x64'  | false
-        'Linux'     | 'x86'    | 'linux'  | 'x86'  | false
-        'Linux'     | 'x86_64' | 'linux'  | 'x64'  | false
-        'SunOS'     | 'x86'    | 'sunos'  | 'x86'  | false
-        'SunOS'     | 'x86_64' | 'sunos'  | 'x64'  | false
+        osProp      | archProp  | osName   | osArch    | isWindows
+        'Windows 8' | 'x86'     | 'win'    | 'x86'     | true
+        'Windows 8' | 'x86_64'  | 'win'    | 'x64'     | true
+        'Mac OS X'  | 'x86'     | 'darwin' | 'x86'     | false
+        'Mac OS X'  | 'x86_64'  | 'darwin' | 'x64'     | false
+        'Linux'     | 'x86'     | 'linux'  | 'x86'     | false
+        'Linux'     | 'x86_64'  | 'linux'  | 'x64'     | false
+        'Linux'     | 'ppc64le' | 'linux'  | 'ppc64le' | false
+        'Linux'     | 's390x'   | 'linux'  | 's390x'   | false
+        'SunOS'     | 'x86'     | 'sunos'  | 'x86'     | false
+        'SunOS'     | 'x86_64'  | 'sunos'  | 'x64'     | false
     }
 
-    def "check that aarch32/64 is handled as arm"() {
-        when:
+    @Unroll
+    def "verify ARM handling #archProp (#unameProp)"() {
+        given:
         this.props.setProperty("os.name", "Linux")
-        this.props.setProperty("os.arch", "aarch64")
+        this.props.setProperty("os.arch", archProp)
+        this.props.setProperty("uname", unameProp)
 
-        then:
+        expect:
         this.helper.getOsName() == "linux"
-        this.helper.getOsArch() != "x64"
+        this.helper.getOsArch() == osArch
 
-        when:
-        this.props.setProperty("os.name", "Linux")
-        this.props.setProperty("os.arch", "aarch32")
+        where:
+        archProp  | unameProp | osArch
+        'arm'     | 'armv7l'  | 'armv7l' // Raspberry Pi 3
+        'arm'     | 'armv8l'  | 'arm64'
+        'aarch32' | 'arm'     | 'arm'
+        'aarch64' | 'arm64'   | 'arm64'
+        'aarch64' | 'aarch64' | 'arm64'
+        'ppc64le' | 'ppc64le' | 'ppc64le'
+    }
 
-        then:
-        this.helper.getOsName() == "linux"
-        this.helper.getOsArch() != "x86"
+    @Unroll
+    def "verify ARM handling Mac OS #archProp (#unameProp)"() {
+        given:
+        this.props.setProperty("os.name", "Mac OS X")
+        this.props.setProperty("os.arch", archProp)
+        this.props.setProperty("uname", unameProp)
+
+        expect:
+        this.helper.getOsName() == "darwin"
+        this.helper.getOsArch() == osArch
+
+        where:
+        archProp  | unameProp | osArch
+        'aarch32' | 'arm'     | 'arm'
+        'aarch64' | 'arm64'   | 'arm64'
+        'aarch64' | 'aarch64' | 'arm64'
+        'aarch64' | 'x86_64'  | 'x64' // This shouldn't really happen but according to PR #204 it does
     }
 
     def "throw exception if unsupported os"() {

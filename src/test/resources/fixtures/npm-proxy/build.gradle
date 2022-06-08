@@ -1,0 +1,8 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+// --force disables cache to ensure the packages are downloaded
+npmInstall {
+    args = ["--force"]
+}

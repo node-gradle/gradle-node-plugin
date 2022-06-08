@@ -1,6 +1,5 @@
 package com.github.gradle.node.yarn.task
 
-import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.zip
 import org.gradle.api.Action
@@ -16,12 +15,10 @@ import java.io.File
 /**
  * yarn install that only gets executed if gradle decides so.
  */
-open class YarnInstallTask : YarnTask() {
-    private val nodeExtension by lazy { NodeExtension[project] }
+abstract class YarnInstallTask : YarnTask() {
 
     @get:Internal
-    val nodeModulesOutputFilter =
-            project.objects.property<Action<ConfigurableFileTree>>()
+    val nodeModulesOutputFilter = objects.property<Action<ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.YARN_GROUP
@@ -51,7 +48,7 @@ open class YarnInstallTask : YarnTask() {
 
     private fun projectFileIfExists(name: String): Provider<File> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
-                .flatMap { if (it.exists()) project.providers.provider { it } else project.providers.provider { null } }
+                .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
 
     @Optional
@@ -60,7 +57,7 @@ open class YarnInstallTask : YarnTask() {
     protected fun getNodeModulesDirectory(): Provider<Directory> {
         val filter = nodeModulesOutputFilter.orNull
         return if (filter == null) nodeExtension.nodeProjectDir.dir("node_modules")
-        else project.providers.provider { null }
+        else providers.provider { null }
     }
 
     @Optional
@@ -71,10 +68,10 @@ open class YarnInstallTask : YarnTask() {
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
                 .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
                     if (nodeModulesOutputFilter != null) {
-                        val fileTree = project.fileTree(nodeModulesDirectory)
+                        val fileTree = projectHelper.fileTree(nodeModulesDirectory)
                         nodeModulesOutputFilter.execute(fileTree)
-                        project.providers.provider { fileTree }
-                    } else project.providers.provider { null }
+                        providers.provider { fileTree }
+                    } else providers.provider { null }
                 }
     }
 

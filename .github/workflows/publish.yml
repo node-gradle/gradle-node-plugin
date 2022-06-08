@@ -15,6 +15,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - name: Install yarn
+        run: npm install -g yarn@1.22.17
       - name: Build
         run: ./gradlew build
       - name: Publish
