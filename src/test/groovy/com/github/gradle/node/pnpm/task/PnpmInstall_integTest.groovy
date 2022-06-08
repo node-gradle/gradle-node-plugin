@@ -124,10 +124,10 @@ class PnpmInstall_integTest
 
             task verifyIO {
                 doLast {
-                    if (!tasks.named("pnpmInstall").get().outputs.files.contains(project.file('pnpm-lock.yaml'))) {
+                    if (!tasks.named("pnpmInstall").get().outputs.files.contains(file('pnpm-lock.yaml'))) {
                         throw new RuntimeException("pnpm-lock.yaml is not in INSTALL'S outputs!")
                     }
-                    if (tasks.named("pnpmInstall").get().inputs.files.contains(project.file('pnpm-lock.yaml'))) {
+                    if (tasks.named("pnpmInstall").get().inputs.files.contains(file('pnpm-lock.yaml'))) {
                         throw new RuntimeException("pnpm-lock.yaml is in INSTALL'S inputs!")
                     }
                 }
@@ -271,17 +271,5 @@ class PnpmInstall_integTest
         // The build should still be up-to-date
         result4.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
 
-    }
-
-    protected final void writeEmptyLockFile()
-    {
-        writeFile('package-lock.json', '''
-            {
-              "name": "example",
-              "lockfileVersion": 1,
-              "requires": true,
-              "dependencies": {}
-            }
-        ''')
     }
 }

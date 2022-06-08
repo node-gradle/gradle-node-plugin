@@ -1,3 +1,5 @@
+import org.gradle.util.GradleVersion
+
 plugins {
     id "com.github.node-gradle.node"
 }
@@ -56,7 +58,9 @@ if (isPropertyEnabled("outputFile")) {
     }
 }
 
-def isPropertyEnabled(name) {
-    def property = System.properties[name]
-    return property == "true"
+def isPropertyEnabled(String name) {
+    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
+        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    }
+    return System.properties[name] != null
 }

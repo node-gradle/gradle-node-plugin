@@ -8,9 +8,8 @@ class PnpmSetupTaskTest
 {
     def "exec pnpmSetup task without any pnpm version specified"() {
         given:
-        execSpec = Mock(ExecSpec)
-
         def task = project.tasks.create('simple', PnpmSetupTask)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()
@@ -28,10 +27,9 @@ class PnpmSetupTaskTest
 
     def "exec pnpmSetup task with pnpm version specified"() {
         given:
-        nodeExtension.pnpmVersion = '4.12.4'
-        execSpec = Mock(ExecSpec)
-
+        nodeExtension.pnpmVersion.set('4.12.4')
         def task = project.tasks.create('simple', PnpmSetupTask)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()

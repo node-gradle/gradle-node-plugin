@@ -11,7 +11,7 @@ import org.gradle.api.tasks.OutputDirectory
 /**
  * pnpm install that only gets executed if gradle decides so.
  */
-open class PnpmSetupTask : NpmSetupTask() {
+abstract class PnpmSetupTask : NpmSetupTask() {
 
     init {
         group = NodePlugin.PNPM_GROUP
@@ -33,8 +33,14 @@ open class PnpmSetupTask : NpmSetupTask() {
         val version = nodeExtension.pnpmVersion.get()
         val pnpmDir = pnpmDir.get()
         val pnpmPackage = if (version.isNotBlank()) "pnpm@$version" else "pnpm"
-        return listOf("install", "--global", "--no-save", *NpmProxy.computeNpmProxyCliArgs().toTypedArray(),
-                "--prefix", pnpmDir.asFile.absolutePath, pnpmPackage) + args.get()
+        return listOf(
+            "install",
+            "--global",
+            "--no-save",
+            "--prefix",
+            pnpmDir.asFile.absolutePath,
+            pnpmPackage
+        ) + args.get()
     }
 
     override fun isTaskEnabled(): Boolean {

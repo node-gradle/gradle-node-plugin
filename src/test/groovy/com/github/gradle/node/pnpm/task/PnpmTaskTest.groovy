@@ -7,9 +7,10 @@ class PnpmTaskTest extends AbstractTaskTest {
     def "exec pnpm task"() {
         given:
         props.setProperty('os.name', 'Linux')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', PnpmTask)
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
         task.ignoreExitValue.set(true)
@@ -30,9 +31,10 @@ class PnpmTaskTest extends AbstractTaskTest {
     def "exec pnpm task (windows)"() {
         given:
         props.setProperty('os.name', 'Windows')
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', PnpmTask)
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
         task.ignoreExitValue.set(true)
@@ -54,9 +56,10 @@ class PnpmTaskTest extends AbstractTaskTest {
         given:
         props.setProperty('os.name', 'Linux')
         nodeExtension.download.set(true)
-        execSpec = Mock(ExecSpec)
 
         def task = project.tasks.create('simple', PnpmTask)
+        mockPlatformHelper(task)
+        mockProjectApiHelperExec(task)
 
         when:
         project.evaluate()

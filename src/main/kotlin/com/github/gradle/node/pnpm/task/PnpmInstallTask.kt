@@ -15,8 +15,7 @@ import java.io.File
 /**
  * pnpm install that only gets executed if gradle decides so.
  */
-open class PnpmInstallTask : PnpmTask() {
-    private val nodeExtension by lazy { NodeExtension[project] }
+abstract class PnpmInstallTask : PnpmTask() {
 
     @get:Internal
     val nodeModulesOutputFilter =
