@@ -122,16 +122,6 @@ open class VariantComputer constructor(
         }
     }
 
-    fun computePnpxExec(nodeExtension: NodeExtension, pnpmBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.download, nodeExtension.pnpxCommand, pnpmBinDirProvider).map {
-            val (download, pnpxCommand, pnpmBinDir) = it
-            val command = if (platformHelper.isWindows) {
-                pnpxCommand.mapIf({ it == "pnpx" }) { "pnpx.cmd" }
-            } else pnpxCommand
-            if (download) pnpmBinDir.dir(command).asFile.absolutePath else command
-        }
-    }
-
     fun computeYarnDir(nodeExtension: NodeExtension): Provider<Directory> {
         return zip(nodeExtension.yarnVersion, nodeExtension.yarnWorkDir).map {
             val (yarnVersion, yarnWorkDir) = it

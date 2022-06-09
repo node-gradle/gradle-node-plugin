@@ -82,7 +82,6 @@ open class NodeExtension(project: Project) {
     val npmCommand = project.objects.property<String>().convention("npm")
     val npxCommand = project.objects.property<String>().convention("npx")
     val pnpmCommand = project.objects.property<String>().convention("pnpm")
-    val pnpxCommand = project.objects.property<String>().convention("pnpx")
     val yarnCommand = project.objects.property<String>().convention("yarn")
 
     /**

@@ -4,6 +4,6 @@
     "pnpm": "4.12.1"
   },
   "scripts": {
-    "pnpmVersion": "echo Version && pnpx pnpm --version"
+    "pnpmVersion": "echo Version && pnpm --version"
   }
 }

@@ -8,10 +8,8 @@ import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.pnpm.task.PnpmInstallTask
 import com.github.gradle.node.pnpm.task.PnpmSetupTask
 import com.github.gradle.node.pnpm.task.PnpmTask
-import com.github.gradle.node.pnpm.task.PnpxTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
-import com.github.gradle.node.variant.VariantComputer
 import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnSetupTask
 import com.github.gradle.node.yarn.task.YarnTask
@@ -48,7 +46,6 @@ class NodePlugin : Plugin<Project> {
         addGlobalType<NpmTask>()
         addGlobalType<NpxTask>()
         addGlobalType<PnpmTask>()
-        addGlobalType<PnpxTask>()
         addGlobalType<YarnTask>()
         addGlobalType<ProxySettings>()
     }
