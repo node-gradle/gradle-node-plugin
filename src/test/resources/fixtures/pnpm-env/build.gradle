@@ -1,0 +1,66 @@
+import org.gradle.util.GradleVersion
+
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    download = true
+    workDir = file("build/node")
+    pnpmVersion = '4.12.4'
+}
+
+task env(type: PnpmTask) {
+    dependsOn pnpmInstall
+    pnpmCommand = ["run", "print-env"]
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+// This should be documented in the package.json file but it cannot be done because JSON does not accept comments.
+// pnpm run forces the current directory but we can read the INIT_CWD environment variable to get the original working
+// directory. This is the reason why we read the INIT_CWD variable and not the process.cwd() one in the script
+// definition.
+task pwd(type: PnpmTask) {
+    dependsOn pnpmInstall
+    pnpmCommand = ["run", "printcwd"]
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task version(type: PnpmTask) {
+    dependsOn pnpmInstall
+    pnpmCommand = ["--version"]
+}
+
+if (isPropertyEnabled("customEnv")) {
+    def qualifier = "custom"
+    env.environment = [CUSTOM: "${qualifier} value"]
+}
+
+if (isPropertyEnabled("ignoreExitValue")) {
+    env.ignoreExitValue = true
+}
+
+if (isPropertyEnabled("notExistingCommand")) {
+    env.pnpmCommand = ["notExistingCommand"]
+}
+
+if (isPropertyEnabled("customWorkingDir")) {
+    pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
+}
+
+if (isPropertyEnabled("outputFile")) {
+    env.execOverrides {
+        standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+    }
+}
+
+def isPropertyEnabled(String name) {
+    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
+        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    }
+    return System.properties[name] != null
+}

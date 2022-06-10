@@ -99,6 +99,29 @@ open class VariantComputer constructor(
         }
     }
 
+    fun computePnpmDir(nodeExtension: NodeExtension): Provider<Directory> {
+        return zip(nodeExtension.pnpmVersion, nodeExtension.pnpmWorkDir).map {
+            val (pnpmVersion, pnpmWorkDir) = it
+            val dirnameSuffix = if (pnpmVersion.isNotBlank()) {
+                "-v${pnpmVersion}"
+            } else "-latest"
+            val dirname = "pnpm$dirnameSuffix"
+            pnpmWorkDir.dir(dirname)
+        }
+    }
+
+    fun computePnpmBinDir(pnpmDirProvider: Provider<Directory>) = computeProductBinDir(pnpmDirProvider)
+
+    fun computePnpmExec(nodeExtension: NodeExtension, pnpmBinDirProvider: Provider<Directory>): Provider<String> {
+        return zip(nodeExtension.pnpmCommand, nodeExtension.download, pnpmBinDirProvider).map {
+            val (pnpmCommand, download, pnpmBinDir) = it
+            val command = if (platformHelper.isWindows) {
+                pnpmCommand.mapIf({ it == "pnpm" }) { "pnpm.cmd" }
+            } else pnpmCommand
+            if (download) pnpmBinDir.dir(command).asFile.absolutePath else command
+        }
+    }
+
     fun computeYarnDir(nodeExtension: NodeExtension): Provider<Directory> {
         return zip(nodeExtension.yarnVersion, nodeExtension.yarnWorkDir).map {
             val (yarnVersion, yarnWorkDir) = it

@@ -20,6 +20,11 @@ open class NodeExtension(project: Project) {
     val npmWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("npm"))
 
     /**
+     * The directory where pnpm is installed (when a pnpm task is used)
+     */
+    val pnpmWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("pnpm"))
+
+    /**
      * The directory where yarn is installed (when a Yarn task is used)
      */
     val yarnWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("yarn"))
@@ -43,6 +48,13 @@ open class NodeExtension(project: Project) {
      * If empty, the plugin will use the npm command bundled with Node.js
      */
     val npmVersion = project.objects.property<String>().convention("")
+
+    /**
+     * Version of pnpm to use
+     * Any pnpm task first installs pnpm in the pnpmWorkDir
+     * It uses the specified version if defined and the latest version otherwise (by default)
+     */
+    val pnpmVersion = project.objects.property<String>().convention("")
 
     /**
      * Version of Yarn to use
@@ -69,6 +81,7 @@ open class NodeExtension(project: Project) {
 
     val npmCommand = project.objects.property<String>().convention("npm")
     val npxCommand = project.objects.property<String>().convention("npx")
+    val pnpmCommand = project.objects.property<String>().convention("pnpm")
     val yarnCommand = project.objects.property<String>().convention("yarn")
 
     /**
