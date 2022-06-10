@@ -3,6 +3,8 @@ com.github.gradle.node.exec
 com.github.gradle.node.npm.exec
 com.github.gradle.node.npm.proxy
 com.github.gradle.node.npm.task
+com.github.gradle.node.pnpm.exec
+com.github.gradle.node.pnpm.task
 com.github.gradle.node.task
 com.github.gradle.node.util
 com.github.gradle.node.variant
