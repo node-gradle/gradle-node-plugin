@@ -6,9 +6,10 @@ jobs:
     strategy:
       matrix:
         config:
-          - {os: ubuntu-latest, params: "-PtestAllSupportedGradleVersions=true" }
-          - {os: windows-latest, params: "" }
-          - {os: macos-latest, params: "" }
+          - {os: ubuntu-latest, params: "-PtestAllSupportedGradleVersions=true build" }
+          - {os: ubuntu-latest, params: "-PtestAllSupportedGradleVersions=true pnpmTests" }
+          - {os: windows-latest, params: "build pnpmTests" }
+          - {os: macos-latest, params: "build pnpmTests" }
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v2
@@ -27,4 +28,4 @@ jobs:
         with:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Build
-        run: ./gradlew --scan build ${{ matrix.config.params }}
+        run: ./gradlew --scan ${{ matrix.config.params }}

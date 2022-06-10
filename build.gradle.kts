@@ -61,13 +61,8 @@ tasks.compileTestGroovy {
     classpath += files("${buildDir}/classes/kotlin/test")
 }
 
-tasks.test {
+tasks.withType(Test::class) {
     useJUnitPlatform()
-    if (project.hasProperty("skipIT")) {
-        exclude("**/*_integTest*")
-    } else if (project.hasProperty("onlyIT")) {
-        include("**/*_integTest*")
-    }
     systemProperty("testAllSupportedGradleVersions", project.properties["testAllSupportedGradleVersions"] ?: "false")
     systemProperty(
         "testMinimumSupportedGradleVersion", project.properties["testMinimumSupportedGradleVersion"]
@@ -90,6 +85,19 @@ tasks.test {
             includeClasses.add("*_integTest")
         }
     }
+}
+
+tasks.test {
+    exclude("**/Pnpm*Test*")
+    if (project.hasProperty("skipIT")) {
+        exclude("**/*_integTest*")
+    } else if (project.hasProperty("onlyIT")) {
+        include("**/*_integTest*")
+    }
+}
+
+tasks.register<Test>("pnpmTests") {
+    include("**/Pnpm*Test*")
 }
 
 tasks.register("runParameterTest", JavaExec::class.java) {
