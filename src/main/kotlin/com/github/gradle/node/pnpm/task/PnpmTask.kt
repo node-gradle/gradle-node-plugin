@@ -28,23 +28,23 @@ abstract class PnpmTask : BaseTask() {
 
     @get:Optional
     @get:Input
-    val pnpmCommand = project.objects.listProperty<String>()
+    val pnpmCommand = objects.listProperty<String>()
 
     @get:Optional
     @get:Input
-    val args = project.objects.listProperty<String>()
+    val args = objects.listProperty<String>()
 
     @get:Input
-    val ignoreExitValue = project.objects.property<Boolean>().convention(false)
+    val ignoreExitValue = objects.property<Boolean>().convention(false)
 
     @get:Internal
-    val workingDir = project.objects.directoryProperty()
+    val workingDir = objects.directoryProperty()
 
     @get:Input
-    val environment = project.objects.mapProperty<String, String>()
+    val environment = objects.mapProperty<String, String>()
 
     @get:Internal
-    val execOverrides = project.objects.property<Action<ExecSpec>>()
+    val execOverrides = objects.property<Action<ExecSpec>>()
 
     @get:Internal
     val projectHelper = ProjectApiHelper.newInstance(project)
