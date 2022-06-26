@@ -15,7 +15,7 @@ plugins {
     `kotlin-dsl`
     idea
     jacoco
-    id("com.gradle.plugin-publish") version "0.11.0"
+    id("com.gradle.plugin-publish") version "1.0.0-rc-3"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
     id("org.jetbrains.dokka") version "0.10.0"
     id("org.gradle.test-retry") version "1.2.0"
@@ -122,6 +122,8 @@ gradlePlugin {
         register("nodePlugin") {
             id = "com.github.node-gradle.node"
             implementationClass = "com.github.gradle.node.NodePlugin"
+            displayName = "Gradle Node.js Plugin"
+            description = "Gradle plugin for executing Node.js scripts. Supports npm, pnpm and Yarn."
         }
     }
 }
@@ -130,19 +132,7 @@ pluginBundle {
     website = "https://github.com/node-gradle/gradle-node-plugin"
     vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
 
-    (plugins) {
-        "nodePlugin" {
-            id = "com.github.node-gradle.node"
-            displayName = "Gradle Node.js Plugin"
-            description = "Gradle plugin for executing Node.js scripts. Supports npm and Yarn."
-            tags = listOf("java", "gradle", "node", "node.js", "npm", "yarn")
-        }
-    }
-
-    mavenCoordinates {
-        groupId = "com.github.node-gradle"
-        artifactId = "gradle-node-plugin"
-    }
+    tags = listOf("java", "gradle", "node", "node.js", "npm", "yarn", "pnpm")
 }
 
 tasks.wrapper {
