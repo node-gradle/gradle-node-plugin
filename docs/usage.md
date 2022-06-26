@@ -18,7 +18,7 @@ file (see [Installing](installation.md) for details):
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "3.3.0"
+  id "com.github.node-gradle.node" version "3.4.0"
 }
 ```
 

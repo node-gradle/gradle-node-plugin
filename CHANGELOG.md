@@ -2,6 +2,9 @@
 
 ## Version 3.x *(unreleased)*
 
+## Version 3.4.0 *(2022-06-26)*
+* Add pnpm support [#67](https://github.com/node-gradle/gradle-node-plugin/issues/67) (thanks [langrp](https://github.com/langrp) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/89), and [DreierF](https://github.com/DreierF) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/240) that merged it)
+
 ## Version 3.3.0 *(2022-05-14)*
 * Upgrade default Node to 16.14.2 and npm to 8.5.0 [#226](https://github.com/node-gradle/gradle-node-plugin/issues/226)
 * Parse `package.json` into extension [#232](https://github.com/node-gradle/gradle-node-plugin/issues/232)
