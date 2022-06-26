@@ -132,7 +132,7 @@ pluginBundle {
     website = "https://github.com/node-gradle/gradle-node-plugin"
     vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
 
-    tags = listOf("java", "gradle", "node", "node.js", "npm", "yarn", "pnpm")
+    tags = listOf("java", "node", "node.js", "npm", "yarn", "pnpm")
 }
 
 tasks.wrapper {
