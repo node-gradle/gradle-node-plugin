@@ -87,7 +87,7 @@ tasks.withType(Test::class) {
     }
 
     distribution {
-        enabled.set(true)
+        enabled.set(project.properties["com.github.gradle.node.testdistribution"].toString().toBoolean())
     }
 }
 
