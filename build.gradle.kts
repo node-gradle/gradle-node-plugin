@@ -85,6 +85,10 @@ tasks.withType(Test::class) {
             includeClasses.add("*_integTest")
         }
     }
+
+    distribution {
+        enabled.set(true)
+    }
 }
 
 tasks.test {

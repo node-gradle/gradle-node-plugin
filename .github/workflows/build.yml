@@ -29,3 +29,5 @@ jobs:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Build
         run: ./gradlew --scan ${{ matrix.config.params }}
+        env:
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
