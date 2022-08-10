@@ -132,6 +132,7 @@ abstract class AbstractIntegTest extends Specification {
         if (explicitGradleVersions) {
             return explicitGradleVersions.split("\\|")
                     .collect { GradleVersion.version(it)}
+                    .unique()
         } else {
             [GradleVersion.current()]
         }

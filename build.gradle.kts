@@ -65,14 +65,6 @@ tasks.compileTestGroovy {
 
 tasks.withType(Test::class) {
     useJUnitPlatform()
-    systemProperty("testAllSupportedGradleVersions", project.properties["testAllSupportedGradleVersions"] ?: "false")
-    systemProperty(
-        "testMinimumSupportedGradleVersion", project.properties["testMinimumSupportedGradleVersion"]
-            ?: "false"
-    )
-    systemProperty("testMinimumCurrentGradleVersion", project.properties["testMinimumCurrentGradleVersion"] ?: "false")
-    systemProperty("testCurrentGradleVersion", project.properties["testCurrentGradleVersion"] ?: "true")
-    systemProperty("testSpecificGradleVersion", project.properties["testSpecificGradleVersion"] ?: "false")
     systemProperty(
         com.github.gradle.buildlogic.GradleVersionsCommandLineArgumentProvider.PROPERTY_NAME,
         project.findProperty("testedGradleVersion") ?: gradle.gradleVersion
@@ -94,6 +86,10 @@ tasks.withType(Test::class) {
 
     distribution {
         enabled.set(project.properties["com.github.gradle.node.testdistribution"].toString().toBoolean())
+        remoteExecutionPreferred.set(project.properties["com.github.gradle.node.preferremote"].toString().toBoolean())
+        if (project.properties["com.github.gradle.node.remoteonly"].toString().toBoolean()) {
+            maxLocalExecutors.set(0)
+        }
     }
 }
 
@@ -116,6 +112,12 @@ tasks.register<Test>("testGradleReleases") {
             com.github.gradle.buildlogic.GradleVersionData::getReleasedVersions
         )
     )
+}
+
+tasks.register("printVersions") {
+    doLast {
+        println(com.github.gradle.buildlogic.GradleVersionData::getReleasedVersions.invoke())
+    }
 }
 
 tasks.register<Test>("testGradleNightlies") {
