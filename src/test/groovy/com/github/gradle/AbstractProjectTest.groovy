@@ -8,13 +8,17 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import java.nio.file.Paths
+
 class AbstractProjectTest extends Specification {
     @Rule
     final TemporaryFolder temporaryFolder = new TemporaryFolder()
     Project project
     File projectDir
+    Map<String, String> internalProperties
 
     def setup() {
+        internalProperties = new HashMap<>()
         this.projectDir = this.temporaryFolder.root
     }
 
@@ -25,13 +29,14 @@ class AbstractProjectTest extends Specification {
     def initializeProject() {
         this.project = ProjectBuilder.builder()
                 .withProjectDir(this.projectDir)
+                .withGradleUserHomeDir(new File(this.projectDir, "userHome"))
                 .build()
         (project as ProjectInternal).services.get(GradlePropertiesController.class).loadGradlePropertiesFrom(projectDir)
     }
 
     def addProperty(String property, String value) {
-        projectDir.mkdirs()
-        new File(projectDir.path, "gradle.properties") << "$property=$value"
+        internalProperties.put(property, value)
+        new File(projectDir, "gradle.properties") << "$property=$value"
     }
 
     def applyPlugin() {

@@ -52,6 +52,8 @@ class NodePlugin : Plugin<Project> {
         if (experimentalEnabled.get()) {
             runtime = project.gradle.sharedServices.registerIfAbsent("nodeRuntime", NodeRuntime::class) {
                 parameters.gradleUserHome.set(project.gradle.gradleUserHomeDir)
+                parameters.download.set(project.providers.gradleProperty(DOWNLOAD_PROP).map { it.toBoolean() }.orElse(true))
+                parameters.baseUrl.set(project.providers.gradleProperty(URL_PROP).orElse(URL_DEFAULT))
             }
 
             val service = NodeToolchainServiceImpl(runtime, project.providers, nodeExtension)

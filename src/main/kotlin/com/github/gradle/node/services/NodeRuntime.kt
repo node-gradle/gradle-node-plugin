@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -22,26 +23,18 @@ import javax.inject.Inject
 @Suppress("UnstableApiUsage")
 abstract class NodeRuntime
     @Inject
-    constructor(providerFactory: ProviderFactory,
-                archiveOperations: ArchiveOperations,
+    constructor(archiveOperations: ArchiveOperations,
                 fileSystemOperations: FileSystemOperations) : BuildService<NodeRuntime.Params> {
 
     interface Params : BuildServiceParameters {
         val gradleUserHome: DirectoryProperty
+        val download: Property<Boolean>
+        val baseUrl: Property<String>
     }
 
     private val client = OkHttpClient()
 
     private val nodeProvider = NodeProvisioner(archiveOperations, fileSystemOperations)
-
-    private val download = providerFactory.gradleProperty(NodePlugin.DOWNLOAD_PROP)
-        .forUseAtConfigurationTime()
-        .orElse("true")
-        .map { it.toBoolean() }
-
-    private val baseUrl = providerFactory.gradleProperty(NodePlugin.URL_PROP)
-        .forUseAtConfigurationTime()
-        .orElse(NodePlugin.URL_DEFAULT)
 
     fun getNode(extension: NodeExtension): File {
         val version = extension.version.get()
@@ -49,12 +42,12 @@ abstract class NodeRuntime
         if (installed.isPresent) {
             return installed.get()
         } else {
-            if (!download.get()) {
+            if (!parameters.download.get()) {
                 throw NodeNotFoundException("No node installation matching requested version: $version found " +
                         "and download is set to false.")
             }
             val dir = getNodeDir(extension)
-            nodeProvider.install(client, dir, baseUrl.get(),
+            nodeProvider.install(client, dir, parameters.baseUrl.get(),
                 "${dir.name}.${PlatformHelper.INSTANCE.getNodeUrlExtension()}", version)
             return if (PlatformHelper.INSTANCE.isWindows)
                 File(dir, "node.exe")
@@ -75,7 +68,7 @@ abstract class NodeRuntime
         if (installed.isPresent) {
             return installed.get()
         } else {
-            if (!download.get()) {
+            if (!parameters.download.get()) {
                 throw NodeNotFoundException("No npm installation matching requested version: $version found " +
                         "and download is set to false.")
             }

@@ -37,6 +37,14 @@ class NodeRuntimeTest extends AbstractProjectTest {
         return project.gradle.sharedServices
                 .registerIfAbsent("nodeRuntime", NodeRuntime.class) {
                     it.parameters.gradleUserHome.set(home)
+                    it.parameters.download.set(true)
+                    it.parameters.baseUrl.set(NodePlugin.URL_DEFAULT)
+                    if (internalProperties[NodePlugin.DOWNLOAD_PROP]) {
+                        it.parameters.download.set(internalProperties[NodePlugin.DOWNLOAD_PROP].toBoolean())
+                    }
+                    if (internalProperties[NodePlugin.URL_PROP]) {
+                        it.parameters.baseUrl.set(internalProperties[NodePlugin.URL_PROP])
+                    }
                 }
     }
 }
