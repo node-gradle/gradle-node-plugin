@@ -30,6 +30,13 @@ java {
     targetCompatibility = compatibilityVersion
 }
 
+tasks.compileKotlin {
+    kotlinOptions {
+        apiVersion = "1.3"
+        freeCompilerArgs = listOf("-Xno-optimized-callable-references")
+    }
+}
+
 repositories {
     mavenCentral()
     // Necessary for dokka (will have to be removed when dokka no longer
