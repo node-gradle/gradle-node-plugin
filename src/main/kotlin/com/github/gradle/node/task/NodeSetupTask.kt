@@ -3,12 +3,14 @@ package com.github.gradle.node.task
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.ProjectApiHelper
-import com.github.gradle.node.variant.VariantComputer
+import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import javax.inject.Inject
 
@@ -61,28 +63,29 @@ abstract class NodeSetupTask : BaseTask() {
         val archiveFile = nodeArchiveFile.get().asFile
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+        val archivePath = nodeDirProvider.map { it.dir("../") }
         if (archiveFile.name.endsWith("zip")) {
             projectHelper.copy {
                 from(projectHelper.zipTree(archiveFile))
-                into(nodeDirProvider.map { it.dir("../") })
+                into(archivePath)
             }
         } else {
             projectHelper.copy {
                 from(projectHelper.tarTree(archiveFile))
-                into(nodeDirProvider.map { it.dir("../") })
+                into(archivePath)
             }
             // Fix broken symlink
             val nodeBinDirPath = nodeBinDirProvider.get().asFile.toPath()
-            val npm = nodeBinDirPath.resolve("npm")
-            val npmScriptFile = variantComputer.computeNpmScriptFile(nodeDirProvider, "npm").get()
-            if (Files.deleteIfExists(npm)) {
-                Files.createSymbolicLink(npm, nodeBinDirPath.relativize(Paths.get(npmScriptFile)))
-            }
-            val npx = nodeBinDirPath.resolve("npx")
-            val npxScriptFile = variantComputer.computeNpmScriptFile(nodeDirProvider, "npx").get()
-            if (Files.deleteIfExists(npx)) {
-                Files.createSymbolicLink(npx, nodeBinDirPath.relativize(Paths.get(npxScriptFile)))
-            }
+            fixBrokenSymlink("npm", nodeBinDirPath, nodeDirProvider)
+            fixBrokenSymlink("npx", nodeBinDirPath, nodeDirProvider)
+        }
+    }
+
+    private fun fixBrokenSymlink(name: String, nodeBinDirPath: Path, nodeDirProvider: Provider<Directory>) {
+        val script = nodeBinDirPath.resolve(name)
+        val scriptFile = variantComputer.computeNpmScriptFile(nodeDirProvider, name).get()
+        if (Files.deleteIfExists(script)) {
+            Files.createSymbolicLink(script, nodeBinDirPath.relativize(Paths.get(scriptFile)))
         }
     }
 
