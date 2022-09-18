@@ -17,7 +17,7 @@ plugins {
     jacoco
     id("com.gradle.plugin-publish") version "1.0.0-rc-3"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
-    id("org.jetbrains.dokka") version "0.10.0"
+    id("org.jetbrains.dokka") version "1.7.10"
     id("org.gradle.test-retry") version "1.2.0"
 }
 
@@ -147,9 +147,12 @@ tasks.jacocoTestReport {
     }
 }
 
-tasks.dokka {
-    outputFormat = "javadoc"
-    configuration { jdkVersion = 8 }
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    dokkaSourceSets {
+        named("main") {
+            jdkVersion.set(8)
+        }
+    }
 }
 
 gradlePlugin {

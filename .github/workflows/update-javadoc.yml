@@ -14,9 +14,9 @@ jobs:
         with:
           java-version: 8
       - name: Build Javadoc
-        run: ./gradlew dokka
+        run: ./gradlew --no-configuration-cache dokkaJavadoc
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/dokka
+          publish_dir: ./build/dokka/javadoc
