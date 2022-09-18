@@ -39,9 +39,6 @@ tasks.compileKotlin {
 
 repositories {
     mavenCentral()
-    // Necessary for dokka (will have to be removed when dokka no longer
-    // depends on artifacts only present in jcenter)
-    jcenter()
 }
 
 dependencies {
@@ -174,6 +171,5 @@ pluginBundle {
 }
 
 tasks.wrapper {
-    gradleVersion = "6.8.3"
     distributionType = Wrapper.DistributionType.ALL
 }

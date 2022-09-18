@@ -153,7 +153,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":env").outcome == (isConfigurationCacheEnabled() ? TaskOutcome.SUCCESS : TaskOutcome.UP_TO_DATE)
+        result7.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date

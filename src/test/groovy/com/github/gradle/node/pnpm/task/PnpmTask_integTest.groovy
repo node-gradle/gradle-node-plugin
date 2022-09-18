@@ -88,7 +88,7 @@ class PnpmTask_integTest extends AbstractIntegTest {
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":pnpmSetup").outcome == TaskOutcome.UP_TO_DATE
         result3.task(":pnpmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result3.task(":env").outcome == (isConfigurationCacheEnabled() ? TaskOutcome.SUCCESS : TaskOutcome.UP_TO_DATE)
+        result3.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
         def result4 = build(":env", "-DignoreExitValue=true", "-DnotExistingCommand=true")
