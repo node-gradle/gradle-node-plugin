@@ -13,6 +13,7 @@ with Gradle:
 * [Node.js](https://nodejs.org)
 * [npm](https://www.npmjs.com/)
 * [Yarn](https://yarnpkg.com/)
+* [pnpm](https://pnpm.io/)
 
 The plugin is published in the [Gradle plugins portal](https://plugins.gradle.org/plugin/com.github.node-gradle.node)
 with the `com.github.node-gradle.node` identifier.
