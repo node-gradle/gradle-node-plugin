@@ -124,7 +124,7 @@ abstract class AbstractIntegTest extends Specification {
     }
 
     protected isConfigurationCacheEnabled() {
-        return gradleVersion >= GradleVersion.version("6.6")
+        return gradleVersion >= GradleVersion.version("7.5")
     }
 
     static private List<GradleVersion> gradleVersionsUnderTest() {
