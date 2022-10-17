@@ -29,6 +29,7 @@ abstract class NpmInstallTask : NpmTask() {
 
     @PathSensitive(RELATIVE)
     @InputFile
+    @SkipWhenEmpty
     protected fun getPackageJsonFile(): Provider<File> {
         return projectFileIfExists("package.json")
     }
