@@ -71,7 +71,7 @@ abstract class NpmSetupTask : BaseTask() {
         val command = computeCommand()
         val nodeExecConfiguration = NodeExecConfiguration(command)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 
     protected open fun computeCommand(): List<String> {

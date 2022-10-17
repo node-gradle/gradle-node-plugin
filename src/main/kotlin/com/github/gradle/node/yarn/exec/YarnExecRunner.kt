@@ -11,6 +11,7 @@ import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.process.ExecResult
 import javax.inject.Inject
 
 abstract class YarnExecRunner {
@@ -22,7 +23,7 @@ abstract class YarnExecRunner {
         nodeExtension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
         variantComputer: VariantComputer
-    ) {
+    ): ExecResult {
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val yarnDirProvider = variantComputer.computeYarnDir(nodeExtension)
         val yarnBinDirProvider = variantComputer.computeYarnBinDir(yarnDirProvider)
@@ -34,7 +35,8 @@ abstract class YarnExecRunner {
                 addNpmProxyEnvironment(nodeExtension, nodeExecConfiguration), nodeExecConfiguration.workingDir,
                 nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
         val execRunner = ExecRunner()
-        execRunner.execute(project, nodeExtension, execConfiguration)
+
+        return execRunner.execute(project, nodeExtension, execConfiguration)
     }
 
     private fun addNpmProxyEnvironment(nodeExtension: NodeExtension,

@@ -70,6 +70,6 @@ abstract class NpxTask : BaseTask() {
                 NodeExecConfiguration(fullCommand, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        npmExecRunner.executeNpxCommand(projectHelper, extension, nodeExecConfiguration, variantComputer)
+        result = npmExecRunner.executeNpxCommand(projectHelper, extension, nodeExecConfiguration, variantComputer)
     }
 }

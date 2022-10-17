@@ -71,6 +71,6 @@ abstract class YarnTask : BaseTask() {
                 NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
         val yarnExecRunner = objects.newInstance(YarnExecRunner::class.java)
-        yarnExecRunner.executeYarnCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = yarnExecRunner.executeYarnCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }

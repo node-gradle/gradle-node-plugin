@@ -12,16 +12,18 @@ import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.process.ExecResult
 import javax.inject.Inject
 
 abstract class PnpmExecRunner {
     @get:Inject
     abstract val providers: ProviderFactory
 
-    fun executePnpmCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer) {
+    fun executePnpmCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
         val npmExecConfiguration = NpmExecConfiguration("pnpm"
         ) { variantComputer, nodeExtension, pnpmBinDir -> variantComputer.computePnpmExec(nodeExtension, pnpmBinDir) }
-        executeCommand(project, extension, addProxyEnvironmentVariables(extension, nodeExecConfiguration),
+
+        return executeCommand(project, extension, addProxyEnvironmentVariables(extension, nodeExecConfiguration),
             npmExecConfiguration,
             variants)
     }
@@ -41,11 +43,12 @@ abstract class PnpmExecRunner {
 
     private fun executeCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration,
                                pnpmExecConfiguration: NpmExecConfiguration,
-                               variantComputer: VariantComputer) {
+                               variantComputer: VariantComputer): ExecResult {
         val execConfiguration =
             computeExecConfiguration(extension, pnpmExecConfiguration, nodeExecConfiguration, variantComputer).get()
         val execRunner = ExecRunner()
-        execRunner.execute(project, extension, execConfiguration)
+
+        return execRunner.execute(project, extension, execConfiguration)
     }
 
     private fun computeExecConfiguration(extension: NodeExtension, pnpmExecConfiguration: NpmExecConfiguration,

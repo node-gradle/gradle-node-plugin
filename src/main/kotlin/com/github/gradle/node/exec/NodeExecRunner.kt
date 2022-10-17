@@ -6,6 +6,7 @@ import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.gradle.process.ExecResult
 
 /**
  * This function is responsible for setting up the configuration used when running the tasks.
@@ -33,9 +34,10 @@ fun computeAdditionalBinPath(nodeExtension: NodeExtension, nodeBinDirProvider: P
 }
 
 class NodeExecRunner {
-    fun execute(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variantComputer: VariantComputer) {
+    fun execute(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variantComputer: VariantComputer): ExecResult {
         val execConfiguration = buildExecConfiguration(extension, nodeExecConfiguration, variantComputer).get()
         val execRunner = ExecRunner()
-        execRunner.execute(project, extension, execConfiguration)
+
+        return execRunner.execute(project, extension, execConfiguration)
     }
 }

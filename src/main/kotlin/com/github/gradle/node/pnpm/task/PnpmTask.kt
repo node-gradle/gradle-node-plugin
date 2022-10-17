@@ -72,6 +72,6 @@ abstract class PnpmTask : BaseTask() {
                 ignoreExitValue.get(), execOverrides.orNull
             )
         val pnpmExecRunner = objects.newInstance(PnpmExecRunner::class.java)
-        pnpmExecRunner.executePnpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = pnpmExecRunner.executePnpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }

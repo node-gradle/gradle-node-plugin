@@ -11,6 +11,7 @@ import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.process.ExecResult
 import java.io.File
 import javax.inject.Inject
 
@@ -18,10 +19,10 @@ abstract class NpmExecRunner {
     @get:Inject
     abstract val providers: ProviderFactory
 
-    fun executeNpmCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer) {
+    fun executeNpmCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
         val npmExecConfiguration = NpmExecConfiguration("npm"
         ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpmExec(nodeExtension, npmBinDir) }
-        executeCommand(project, extension, addProxyEnvironmentVariables(extension, nodeExecConfiguration),
+        return executeCommand(project, extension, addProxyEnvironmentVariables(extension, nodeExecConfiguration),
                 npmExecConfiguration,
             variants)
     }
@@ -39,20 +40,21 @@ abstract class NpmExecRunner {
         return nodeExecConfiguration
     }
 
-    fun executeNpxCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer) {
+    fun executeNpxCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
         val npxExecConfiguration = NpmExecConfiguration("npx") { variantComputer, nodeExtension, npmBinDir ->
             variantComputer.computeNpxExec(nodeExtension, npmBinDir)
         }
-        executeCommand(project, extension, nodeExecConfiguration, npxExecConfiguration, variants)
+
+        return executeCommand(project, extension, nodeExecConfiguration, npxExecConfiguration, variants)
     }
 
     private fun executeCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration,
                                npmExecConfiguration: NpmExecConfiguration,
-                               variantComputer: VariantComputer) {
+                               variantComputer: VariantComputer): ExecResult {
         val execConfiguration =
                 computeExecConfiguration(extension, npmExecConfiguration, nodeExecConfiguration, variantComputer).get()
         val execRunner = ExecRunner()
-        execRunner.execute(project, extension, execConfiguration)
+        return execRunner.execute(project, extension, execConfiguration)
     }
 
     private fun computeExecConfiguration(extension: NodeExtension, npmExecConfiguration: NpmExecConfiguration,
