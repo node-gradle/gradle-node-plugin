@@ -2,6 +2,10 @@
 
 ## Version 3.x *(unreleased)*
 
+## Version 3.5.0 *(2022-10-18)*
+* Add ExecResult to tasks [#237](https://github.com/node-gradle/gradle-node-plugin/issues/237)
+* Don't run `npmInstall` if package.json is missing [#174](https://github.com/node-gradle/gradle-node-plugin/issues/174)
+
 ## Version 3.4.0 *(2022-06-26)*
 * Add pnpm support [#67](https://github.com/node-gradle/gradle-node-plugin/issues/67) (thanks [langrp](https://github.com/langrp) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/89), and [DreierF](https://github.com/DreierF) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/pull/240) that merged it)
 
