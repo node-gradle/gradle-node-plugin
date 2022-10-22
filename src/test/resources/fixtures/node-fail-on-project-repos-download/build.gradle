@@ -3,7 +3,7 @@ plugins {
 }
 
 node {
-    version = "12.13.0"
+    version = "16.14.2"
     distBaseUrl = null
     download = true
     workDir = file("build/node")

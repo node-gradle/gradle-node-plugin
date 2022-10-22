@@ -89,7 +89,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result9.task(":version").outcome == TaskOutcome.SUCCESS
-        result9.output.contains("Version: v12.13.0")
+        result9.output.contains("Version: v16.14.2")
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST

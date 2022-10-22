@@ -1,7 +1,10 @@
 package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.NodeExtension
 import org.gradle.testkit.runner.TaskOutcome
+
+import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
 
 class NpmInstall_integTest extends AbstractIntegTest {
     def 'install packages with npm (#gv.version)'() {
@@ -48,17 +51,17 @@ class NpmInstall_integTest extends AbstractIntegTest {
         given:
         gradleVersion = gv
 
-        writeBuild('''
+        writeBuild("""
             plugins {
                 id 'com.github.node-gradle.node'
             }
 
             node {
                 download = true
-                version = '15.2.1'
+                version = '$DEFAULT_NODE_VERSION'
                 npmVersion = '7.0.1'
             }
-        ''')
+        """)
         writeEmptyPackageJson()
 
         when:

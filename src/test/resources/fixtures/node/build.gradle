@@ -5,7 +5,7 @@ plugins {
 }
 
 node {
-    version = "12.13.0"
+    version = "16.14.2"
     download = true
     workDir = file("build/node")
 }
