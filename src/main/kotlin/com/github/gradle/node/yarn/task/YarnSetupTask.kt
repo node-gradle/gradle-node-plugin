@@ -16,6 +16,9 @@ abstract class YarnSetupTask : NpmSetupTask() {
         group = NodePlugin.YARN_GROUP
         description = "Setup a specific version of Yarn to be used by the build."
     }
+    
+    @get:Input
+    override val args = objects.listProperty<String>()
 
     @Input
     override fun getVersion(): Provider<String> {
