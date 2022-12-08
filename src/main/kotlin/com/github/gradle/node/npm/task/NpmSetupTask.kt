@@ -36,7 +36,7 @@ abstract class NpmSetupTask : BaseTask() {
     val projectHelper = ProjectApiHelper.newInstance(project)
 
     @get:Input
-    val args = objects.listProperty<String>()
+    protected open val args = objects.listProperty<String>()
 
     @get:Input
     val download = nodeExtension.download
