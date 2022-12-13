@@ -43,15 +43,13 @@ This can be done adding some arguments to the already defined `npmInstall`-task.
 npmInstall.args = ['--loglevel', 'silly']
 ```
 
-# How do I specify a registry for the NPM setup task?
+# How do I specify a registry for the NPM/yarn/Pnpm setup task?
 
-This can be done by adding to the arguments for the already defined `npmSetup` task.
+This can be done by adding to the arguments for the already defined `npmSetup`/`yarnSetup`/`pnpmSetup` tasks.
 
 ```gradle
-tasks.npmSetup {
-    doFirst {
-        args.addAll(['--registry', 'http://myregistry.npm.com'])
-    }
+tasks.<npm|yarn|pnpm>Setup {
+    args.addAll(['--registry', 'http://myregistry.npm.com'])
 }
 ```
 
