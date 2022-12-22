@@ -23,5 +23,5 @@ jobs:
         run: ./gradlew -p examples/simple-node helloWorld
 #      - name: Build Spring Boot Angular Project
 #        run: ./gradlew -p examples/spring-boot-angular build
-      - name: Build Vert.x React Project
-        run: ./gradlew -p examples/vertx-react build
+#      - name: Build Vert.x React Project
+#        run: ./gradlew -p examples/vertx-react build
