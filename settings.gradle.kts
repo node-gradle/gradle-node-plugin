@@ -4,12 +4,13 @@ plugins {
 }
 
 val isCI = System.getenv().containsKey("CI")
+val isPR = isCI && System.getenv().containsKey("GRADLE_ENTERPRISE_ACCESS_KEY")
 
 val publishAlwaysIf = System.getProperties()["user.name"] == "deepy"
 
 gradleEnterprise {
     buildScan {
-        if (!isCI) {
+        if (publishAlwaysIf || isPR) {
             server = "https://alexandernordlund.gradle-enterprise.cloud/"
         }
         termsOfServiceUrl = "https://gradle.com/terms-of-service"
@@ -19,7 +20,7 @@ gradleEnterprise {
         publishAlwaysIf(publishAlwaysIf)
 
         capture {
-            isTaskInputFiles = publishAlwaysIf
+            isTaskInputFiles = publishAlwaysIf || isPR
         }
         isUploadInBackground = !isCI
         obfuscation {

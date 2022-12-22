@@ -16,7 +16,7 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: 8
+          java-version: 11
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
