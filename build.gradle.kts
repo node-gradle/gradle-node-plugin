@@ -18,7 +18,7 @@ plugins {
     id("com.gradle.plugin-publish") version "1.0.0-rc-3"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
     id("org.jetbrains.dokka") version "1.7.10"
-    id("org.gradle.test-retry") version "1.2.0"
+    id("org.gradle.test-retry") version "1.5.0"
 }
 
 group = "com.github.node-gradle"
