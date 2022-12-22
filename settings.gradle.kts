@@ -5,6 +5,8 @@ plugins {
 
 val isCI = System.getenv().containsKey("CI")
 
+val publishAlwaysIf = System.getProperties()["user.name"] == "deepy"
+
 gradleEnterprise {
     buildScan {
         if (!isCI) {
@@ -14,8 +16,11 @@ gradleEnterprise {
         if (isCI) {
             termsOfServiceAgree = "yes"
         }
-        publishAlwaysIf(System.getProperties()["user.name"] == "deepy")
+        publishAlwaysIf(publishAlwaysIf)
 
+        capture {
+            isTaskInputFiles = publishAlwaysIf
+        }
         isUploadInBackground = !isCI
         obfuscation {
             ipAddresses { addresses -> addresses.map { _ -> "0.0.0.0"} }

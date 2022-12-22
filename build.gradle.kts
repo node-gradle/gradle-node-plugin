@@ -95,6 +95,10 @@ tasks.withType(Test::class) {
             maxLocalExecutors.set(0)
         }
     }
+
+    predictiveSelection {
+        enabled.set(project.properties["com.github.gradle.node.predictivetestselection"].toString().toBoolean())
+    }
 }
 
 tasks.test {
