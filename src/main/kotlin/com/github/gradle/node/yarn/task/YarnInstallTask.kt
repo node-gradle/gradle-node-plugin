@@ -16,9 +16,9 @@ import java.io.File
  * yarn install that only gets executed if gradle decides so.
  */
 abstract class YarnInstallTask : YarnTask() {
-
     @get:Internal
-    val nodeModulesOutputFilter = objects.property<Action<ConfigurableFileTree>>()
+    val nodeModulesOutputFilter =
+            objects.property<Action<ConfigurableFileTree>>()
 
     init {
         group = NodePlugin.YARN_GROUP

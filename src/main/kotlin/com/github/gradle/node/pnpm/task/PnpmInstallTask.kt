@@ -9,6 +9,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.property
 import java.io.File
 
@@ -29,7 +30,7 @@ abstract class PnpmInstallTask : PnpmTask() {
         pnpmCommand.set(nodeExtension.npmInstallCommand.map { listOf(it) })
     }
 
-    @PathSensitive(PathSensitivity.RELATIVE)
+    @PathSensitive(RELATIVE)
     @InputFile
     protected fun getPackageJsonFile(): Provider<File> {
         return projectFileIfExists("package.json")
