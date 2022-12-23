@@ -2,6 +2,9 @@
 
 ## Version 3.x *(unreleased)*
 
+## Version 3.5.1 *(unreleased)*
+* Fix configuration cache support in pnpm
+
 ## Version 3.5.0 *(2022-10-18)*
 * Add ExecResult to tasks [#237](https://github.com/node-gradle/gradle-node-plugin/issues/237)
 * Don't run `npmInstall` if package.json is missing [#174](https://github.com/node-gradle/gradle-node-plugin/issues/174)
