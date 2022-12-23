@@ -29,6 +29,6 @@ jobs:
         with:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Build
-        run: ./gradlew --scan ${{ matrix.config.params }}
+        run: ./gradlew --scan "-Pcom.github.gradle.node.predictivetestselection=true" ${{ matrix.config.params }}
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
