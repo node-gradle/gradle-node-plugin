@@ -123,7 +123,7 @@ class YarnInstall_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verity output configuration (#gv.version)'() {
+    def 'verify output configuration (#gv.version)'() {
         given:
         gradleVersion = gv
 
@@ -195,7 +195,7 @@ class YarnInstall_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'verity output configuration when filtering node_modules output (#gv.version)'() {
+    def 'verify output configuration when filtering node_modules output (#gv.version)'() {
         given:
         gradleVersion = gv
 
