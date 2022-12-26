@@ -165,12 +165,15 @@ class NpmInstall_integTest extends AbstractIntegTest {
                 npmInstallCommand = 'install'
             }
 
+            def lock = file('package-lock.json')
             task verifyIO {
+                def outputs = tasks.named("npmInstall").get().outputs.files
+                def inputs = tasks.named("npmInstall").get().inputs.files
                 doLast {
-                    if (!tasks.named("npmInstall").get().outputs.files.contains(file('package-lock.json'))) {
+                    if (!outputs.contains(lock)) {
                         throw new RuntimeException("package-lock.json is not in INSTALL'S outputs!")
                     }
-                    if (tasks.named("npmInstall").get().inputs.files.contains(file('package-lock.json'))) {
+                    if (inputs.contains(lock)) {
                         throw new RuntimeException("package-lock.json is in INSTALL'S inputs!")
                     }
                 }
@@ -202,12 +205,15 @@ class NpmInstall_integTest extends AbstractIntegTest {
                 npmInstallCommand = 'ci'
             }
 
+            def lock = file('package-lock.json')
             task verifyIO {
+                def outputs = tasks.named("npmInstall").get().outputs.files
+                def inputs = tasks.named("npmInstall").get().inputs.files
                 doLast {
-                    if (tasks.named("npmInstall").get().outputs.files.contains(file('package-lock.json'))) {
+                    if (outputs.contains(lock)) {
                         throw new RuntimeException("package-lock.json is in CI'S outputs!")
                     }
-                    if (!tasks.named("npmInstall").get().inputs.files.contains(file('package-lock.json'))) {
+                    if (!inputs.contains(lock)) {
                         throw new RuntimeException("package-lock.json is not in CI'S inputs!")
                     }
                 }

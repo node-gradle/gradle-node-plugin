@@ -7,9 +7,10 @@ task hello(type: NodeTask) {
 }
 
 task countRepositories {
+    def size = repositories.size()
     dependsOn nodeSetup
     doLast {
-        println "Project repositories: ${repositories.size()}"
+        println "Project repositories: ${size}"
     }
 }
 

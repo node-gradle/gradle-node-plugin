@@ -81,8 +81,13 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result8.task(":executeDirectoryScript").outcome == TaskOutcome.FAILED
-        // Gradle < 7 || Gradle >= 7
-        result8.output.contains("specified for property 'script' is not a file") || result8.output.contains("Reason: Expected an input to be a file but it was a directory.")
+        if (gv < GradleVersion.version("7.0")) {
+            assert result8.output.contains("specified for property 'script' is not a file")
+        } else if (gv < GradleVersion.version("8.0-milestone-1")) {
+            assert result8.output.contains("Reason: Expected an input to be a file but it was a directory.")
+        } else {
+            assert result8.output.contains("Accessing unreadable inputs or outputs is not supported.")
+        }
 
         when:
         def result9 = build(":version")

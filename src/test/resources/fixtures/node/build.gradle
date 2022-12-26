@@ -29,8 +29,10 @@ if (changeArgs) {
     hello.args = ["Bob", "Alice"]
 }
 
+def scriptFile = file(".")
+
 task executeDirectoryScript(type: NodeTask) {
-    script = file(".")
+    script = scriptFile
     outputs.upToDateWhen {
         true
     }
