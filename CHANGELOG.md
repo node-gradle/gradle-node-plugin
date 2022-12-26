@@ -2,7 +2,7 @@
 
 ## Version 3.x *(unreleased)*
 
-## Version 3.5.1 *(unreleased)*
+## Version 3.5.1 *(2022-12-26)*
 * Fix configuration cache support in pnpm
 
 ## Version 3.5.0 *(2022-10-18)*
