@@ -133,12 +133,16 @@ class PnpmInstall_integTest
                 npmInstallCommand = 'install'
             }
 
+            def lock = file('pnpm-lock.yaml')
             task verifyIO {
+                def outputs = tasks.named("pnpmInstall").get().outputs.files
+                def inputs = tasks.named("pnpmInstall").get().inputs.files
+
                 doLast {
-                    if (!tasks.named("pnpmInstall").get().outputs.files.contains(file('pnpm-lock.yaml'))) {
+                    if (!outputs.contains(lock)) {
                         throw new RuntimeException("pnpm-lock.yaml is not in INSTALL'S outputs!")
                     }
-                    if (tasks.named("pnpmInstall").get().inputs.files.contains(file('pnpm-lock.yaml'))) {
+                    if (inputs.contains(lock)) {
                         throw new RuntimeException("pnpm-lock.yaml is in INSTALL'S inputs!")
                     }
                 }
