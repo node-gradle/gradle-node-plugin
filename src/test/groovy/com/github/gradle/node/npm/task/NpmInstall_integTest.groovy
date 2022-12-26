@@ -3,6 +3,8 @@ package com.github.gradle.node.npm.task
 import com.github.gradle.AbstractIntegTest
 import com.github.gradle.node.NodeExtension
 import org.gradle.testkit.runner.TaskOutcome
+import org.gradle.util.GradleVersion
+import spock.lang.IgnoreIf
 
 import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
 
@@ -152,6 +154,8 @@ class NpmInstall_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    // FIXME: https://github.com/node-gradle/gradle-node-plugin/issues/259
+    @IgnoreIf({ gv >= GradleVersion.version("8.0-milestone-1") })
     def 'verify npm install inputs/outputs (#gv.version)'() {
         given:
         gradleVersion = gv
@@ -192,6 +196,8 @@ class NpmInstall_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    // FIXME: https://github.com/node-gradle/gradle-node-plugin/issues/259
+    @IgnoreIf({ gv >= GradleVersion.version("8.0-milestone-1") })
     def 'verify npm ci inputs/outputs (#gv.version)'() {
         given:
         gradleVersion = gv
