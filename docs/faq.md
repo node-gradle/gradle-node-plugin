@@ -4,7 +4,7 @@ This page contains a collection of frequently asked questions.
 
 # How to use this plugin using the Kotlin DSL?
 
-See this [Kotlin DSL example](../src/test/resources/fixtures/kotlin/build.gradle.kts). It shows how to use all the 
+See this [Kotlin DSL example](../src/test/resources/fixtures/kotlin/build.gradle.kts). It shows how to use all the
 configuration properties.
 
 # How to avoid node/npm/yarn task execution if no changes in web files?
@@ -17,9 +17,9 @@ task bundle(type: YarnTask) {
     inputs.files(fileTree('src'))
     inputs.file('package.json')
     inputs.file('webpack.config.js')
-    
+
     outputs.dir('build/resources/static')
- 
+
     dependsOn yarn_install
     args = ['run', 'build']
 }
@@ -125,7 +125,7 @@ task myScript(type: NodeTask) {
 }
 ````
 
-The `workingDirectory` option enables to change the working directory of the process. Note that some commands such as `npm` 
+The `workingDirectory` option enables to change the working directory of the process. Note that some commands such as `npm`
 force the working directory to be the one in which the `package.json` file is located.
 This option is most of the time useless.
 
@@ -145,8 +145,8 @@ task command(type: NpxTask) {
 }
 ````
 
-The `execOverrides` option enables to customize all the other thinks that can be configured in an `ExecSpec` thanks to
-a closure that takes the `ExecSpec` as parameter. Note that it is executed last, possibly overriding already set 
+The `execOverrides` option enables to customize all the other things that can be configured in an `ExecSpec` through
+an Action that takes the `ExecSpec` as parameter. Note that it is executed last, possibly overriding already set
 parameters such as the working directory.
 
 ```gradle
@@ -171,7 +171,7 @@ If Gradle is configured to use a proxy, the plugin will automatically configure 
 `NpmInstallTask` and `YarnInstallTask` have an option that enables to exclude some files from the task's output.
 Its type is a closure that contains a [`FileTree`](https://docs.gradle.org/current/javadoc/org/gradle/api/file/FileTree.html)
 whose root directory is `node_modules`.
-   
+
 With npm:
 ```gradle
 npmInstall {
@@ -180,7 +180,7 @@ npmInstall {
   }
 }
 ```
-    
+
 Note that the `exclude` method comes from a [`FileTree`](https://docs.gradle.org/current/javadoc/org/gradle/api/file/FileTree.html).
 It can be also written this way:
 ```gradle
@@ -188,7 +188,7 @@ nodeModulesOutputFilter {
   fileTree -> fileTree.exclude("package/package.json")
 }
 ```
-    
+
 With yarn:
 ```gradle
 yarn {

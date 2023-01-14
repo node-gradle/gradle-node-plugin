@@ -12,6 +12,10 @@ node {
     download = false
 }
 
+tasks.yarnSetup {
+		args.addAll(['--registry', 'http://myregistry.npm.com'])
+}
+
 task helloWorld(type: NodeTask) {
     script = file("hello.js")
 }
