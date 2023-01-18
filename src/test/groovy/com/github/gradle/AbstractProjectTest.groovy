@@ -26,12 +26,6 @@ class AbstractProjectTest extends Specification {
         this.project = ProjectBuilder.builder()
                 .withProjectDir(this.projectDir)
                 .build()
-        (project as ProjectInternal).services.get(GradlePropertiesController.class).loadGradlePropertiesFrom(projectDir)
-    }
-
-    def addProperty(String property, String value) {
-        projectDir.mkdirs()
-        new File(projectDir.path, "gradle.properties") << "$property=$value"
     }
 
     def applyPlugin() {

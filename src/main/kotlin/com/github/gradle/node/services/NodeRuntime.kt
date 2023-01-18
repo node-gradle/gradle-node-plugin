@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -44,17 +45,20 @@ abstract class NodeRuntime
         .orElse(NodePlugin.URL_DEFAULT)
 
     fun getNode(extension: NodeExtension): File {
+        return getNode(extension, download.get(), baseUrl.get())
+    }
+    fun getNode(extension: NodeExtension, download: Boolean, baseUrl: String): File {
         val version = extension.version.get()
         val installed = findInstalledNode(version)
         if (installed.isPresent) {
             return installed.get()
         } else {
-            if (!download.get()) {
+            if (!download) {
                 throw NodeNotFoundException("No node installation matching requested version: $version found " +
                         "and download is set to false.")
             }
             val dir = getNodeDir(extension)
-            nodeProvider.install(client, dir, baseUrl.get(),
+            nodeProvider.install(client, dir, baseUrl,
                 "${dir.name}.${PlatformHelper.INSTANCE.getNodeUrlExtension()}", version)
             return if (PlatformHelper.INSTANCE.isWindows)
                 File(dir, "node.exe")

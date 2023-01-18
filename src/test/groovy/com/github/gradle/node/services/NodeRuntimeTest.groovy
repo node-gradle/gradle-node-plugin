@@ -21,12 +21,11 @@ class NodeRuntimeTest extends AbstractProjectTest {
 
     def "non-installed version with download disabled"() {
         when:
-        addProperty(NodePlugin.DOWNLOAD_PROP, "false")
         initializeProject()
         Provider<NodeRuntime> runtime = runtimeProvider()
         def ext = new NodeExtension(project)
         ext.version.set("100000")
-        runtime.get().getNode(ext)
+        runtime.get().getNode(ext, false, NodePlugin.URL_DEFAULT)
 
         then:
         thrown NodeNotFoundException

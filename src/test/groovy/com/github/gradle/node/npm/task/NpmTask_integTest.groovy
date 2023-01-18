@@ -64,8 +64,6 @@ class NpmTask_integTest extends AbstractIntegTest {
         given:
         gradleVersion = gv
 
-        given:
-        Assume.assumeTrue(gradleVersion >= GradleVersion.version("6.2"))
         copyResources("fixtures/npm/")
         copyResources("fixtures/javascript-project/")
 
