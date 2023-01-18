@@ -280,6 +280,18 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         </tr>
                                         
                                         <tr class="altColor">
+                                            <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#fastNpmInstall>fastNpmInstall</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#oldNpm>oldNpm</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
                                             <td class="colFirst"><code>private final DirectoryProperty</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#nodeModulesDir>nodeModulesDir</a></code></th>
                                             <td class="colLast"></td>
@@ -509,6 +521,22 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         </tr>
                                         
                                         <tr id="i18" class="altColor">
+                                            <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getFastNpmInstall()>getFastNpmInstall</a>() </code>
+                                            </th>
+                                            <td class="colLast">Use fast NpmInstall logic, excluding node_modules for output tracking resulting in a significantly faster npm install/ci configuration at the cost of slightly decreased correctness in certain circumstances.</td>
+                                        </tr>
+                                        
+                                        <tr id="i19" class="rowColor">
+                                            <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getOldNpm()>getOldNpm</a>() </code>
+                                            </th>
+                                            <td class="colLast">Disable functionality that requires newer versions of npmIf you're not downloading Node.js and using old version of Node or npm set this to true to disable functionality that makes use of newer functionality.</td>
+                                        </tr>
+                                        
+                                        <tr id="i20" class="altColor">
                                             <td class="colFirst"><code>final DirectoryProperty</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getNodeModulesDir()>getNodeModulesDir</a>() </code>
@@ -516,7 +544,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i19" class="rowColor">
+                                        <tr id="i21" class="rowColor">
                                             <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#setUseGradleProxySettings(Boolean)>setUseGradleProxySettings</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> value) </code>
@@ -843,6 +871,36 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         <h4>getNodeProxySettings</h4>
                                         <pre class="methodSignature"> final Property&lt;<a href=npm/proxy/ProxySettings.html>ProxySettings</a>&gt; <a href=NodeExtension.html#getNodeProxySettings()>getNodeProxySettings</a>()</pre>
                                         <div class="block"><p>Whether the plugin automatically should add the proxy configuration to npm and yarn commands according the proxy configuration defined for Gradle</p><p>Disable this option if you want to configure the proxy for npm or yarn on your own (in the .npmrc file for instance)</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getFastNpmInstall()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getFastNpmInstall</h4>
+                                        <pre class="methodSignature"> final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt; <a href=NodeExtension.html#getFastNpmInstall()>getFastNpmInstall</a>()</pre>
+                                        <div class="block"><p>Use fast NpmInstall logic, excluding node_modules for output tracking resulting in a significantly faster npm install/ci configuration at the cost of slightly decreased correctness in certain circumstances.</p><p>In practice this means that if you change node_modules through other means than npm install/ci NpmInstall tasks will continue being up-to-date, but if you're modifying node_modules through other tools you may have other correctness problems and surfacing them here may be preferred.</p><p>https://docs.npmjs.com/cli/v8/configuring-npm/package-lock-json#hidden-lockfiles</p><p>Requires npm 7 or later This will become the default in 4.x</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getOldNpm()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getOldNpm</h4>
+                                        <pre class="methodSignature"> final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt; <a href=NodeExtension.html#getOldNpm()>getOldNpm</a>()</pre>
+                                        <div class="block"><p>Disable functionality that requires newer versions of npm</p><p>If you're not downloading Node.js and using old version of Node or npm set this to true to disable functionality that makes use of newer functionality.</p><p>This will be removed in 4.x</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
