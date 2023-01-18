@@ -14,6 +14,7 @@ import org.gradle.util.GradleVersion
 import java.io.File
 import javax.inject.Inject
 
+@Deprecated(message = "Only 6.6 and newer is supported")
 interface ProjectApiHelper {
     companion object {
         @JvmStatic
@@ -26,7 +27,7 @@ interface ProjectApiHelper {
         }
 
         private fun enableConfigurationCache(): Boolean {
-            return GradleVersion.current() >= GradleVersion.version("6.6")
+            return true
         }
     }
 

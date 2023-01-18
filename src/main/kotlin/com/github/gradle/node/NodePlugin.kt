@@ -122,9 +122,7 @@ class NodePlugin : Plugin<Project> {
             content {
                 includeModule("org.nodejs", "node")
             }
-            if (GradleVersion.current() >= GradleVersion.version("6.0")) {
-                allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
-            }
+            allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
         }
     }
 

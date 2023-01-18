@@ -30,8 +30,5 @@ task version(type: NpmTask) {
 }
 
 def isPropertyEnabled(String name) {
-    if (GradleVersion.current() >= GradleVersion.version("6.6")) {
-        return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
-    }
-    return System.properties[name] != null
+    return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
 }

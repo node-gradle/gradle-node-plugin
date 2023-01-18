@@ -17,9 +17,7 @@ open class PackageJsonExtension(project: Project) {
     val node = project.objects.property<JsonNode>()
 
     init {
-        if (GradleVersion.current() >= GradleVersion.version("6.1")) {
-            node.finalizeValueOnRead()
-        }
+        node.finalizeValueOnRead()
         node.set(project.provider { project.file("package.json").let(ObjectMapper()::readTree) })
     }
 
