@@ -20,11 +20,15 @@ abstract class NpmInstallTask : NpmTask() {
     val nodeModulesOutputFilter =
             objects.property<Action<ConfigurableFileTree>>()
 
+    @get:Internal
+    val fastInstall = objects.property<Boolean>()
+
     init {
         group = NodePlugin.NPM_GROUP
         description = "Install node packages from package.json."
         dependsOn(NpmSetupTask.NAME)
         npmCommand.set(nodeExtension.npmInstallCommand.map { listOf(it) })
+        fastInstall.set(nodeExtension.fastNpmInstall)
     }
 
     @PathSensitive(RELATIVE)
@@ -75,7 +79,7 @@ abstract class NpmInstallTask : NpmTask() {
     @Suppress("unused")
     protected fun getNodeModulesDirectory(): Provider<Directory> {
         val filter = nodeModulesOutputFilter.orNull
-        return if (filter == null) nodeExtension.nodeProjectDir.dir("node_modules")
+        return if (filter == null && !fastInstall.get()) nodeExtension.nodeProjectDir.dir("node_modules")
         else providers.provider { null }
     }
 
@@ -83,15 +87,48 @@ abstract class NpmInstallTask : NpmTask() {
     @OutputFiles
     @Suppress("unused")
     protected fun getNodeModulesFiles(): Provider<FileTree> {
-        val nodeModulesDirectoryProvider = nodeExtension.nodeProjectDir.dir("node_modules")
-        return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
-                .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
-                    if (nodeModulesOutputFilter != null) {
-                        val fileTree = projectHelper.fileTree(nodeModulesDirectory)
-                        nodeModulesOutputFilter.execute(fileTree)
-                        providers.provider { fileTree }
-                    } else providers.provider { null }
-                }
+        return if (fastInstall.get()) {
+            providers.provider { null }
+        } else {
+            val nodeModulesDirectoryProvider = nodeExtension.nodeProjectDir.dir("node_modules")
+            zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
+                    .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
+                        if (nodeModulesOutputFilter != null) {
+                            val fileTree = projectHelper.fileTree(nodeModulesDirectory)
+                            nodeModulesOutputFilter.execute(fileTree)
+                            providers.provider { fileTree }
+                        } else providers.provider { null }
+                    }
+        }
+    }
+
+    @Optional
+    @OutputFile
+    protected fun getNodeModulesPackageLock(): Provider<File> {
+        if (isLegacyNpm()) {
+            return providers.provider { null }
+        }
+
+        return projectFileIfExists("node_modules/.package-lock.json")
+    }
+
+    /**
+     * Is our npm likely to be lower than 7?
+     */
+    private fun isLegacyNpm(): Boolean {
+        if (nodeExtension.oldNpm.get()) {
+            return true
+        }
+
+        val npmVersion = nodeExtension.npmVersion.get()
+        if (npmVersion.isBlank()) {
+            if (nodeExtension.version.get().split('.').first().toInt() <= 14)
+                return true
+        } else if (npmVersion.split('.').first().toInt() < 7 ) {
+            return true
+        }
+
+        return false
     }
 
     // For DSL

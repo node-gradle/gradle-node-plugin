@@ -108,6 +108,31 @@ open class NodeExtension(project: Project) {
      */
     val nodeProxySettings = project.objects.property<ProxySettings>().convention(ProxySettings.SMART)
 
+    /**
+     * Use fast NpmInstall logic, excluding node_modules for output tracking resulting in a significantly faster
+     * npm install/ci configuration at the cost of slightly decreased correctness in certain circumstances.
+     *
+     * In practice this means that if you change node_modules through other means than npm install/ci
+     * NpmInstall tasks will continue being up-to-date, but if you're modifying node_modules through
+     * other tools you may have other correctness problems and surfacing them here may be preferred.
+     *
+     * https://docs.npmjs.com/cli/v8/configuring-npm/package-lock-json#hidden-lockfiles
+     *
+     * Requires npm 7 or later
+     * This will become the default in 4.x
+     */
+    val fastNpmInstall = project.objects.property<Boolean>().convention(false)
+
+    /**
+     * Disable functionality that requires newer versions of npm
+     *
+     * If you're not downloading Node.js and using old version of Node or npm
+     * set this to true to disable functionality that makes use of newer functionality.
+     *
+     * This will be removed in 4.x
+     */
+    val oldNpm = project.objects.property<Boolean>().convention(false)
+
     @Suppress("unused")
     @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")
     val nodeModulesDir = nodeProjectDir

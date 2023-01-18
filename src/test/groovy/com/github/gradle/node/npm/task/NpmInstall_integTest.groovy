@@ -49,6 +49,51 @@ class NpmInstall_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    def 'install packages with fast npm install (#gv.version)'() {
+        given:
+        gradleVersion = gv
+
+        writeBuild('''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                fastNpmInstall = true
+            }
+        ''')
+        writePackageJson '''
+{
+  "name": "fastinstall",
+  "dependencies": {
+    "@isaacs/string-locale-compare": "1.1.0"
+  }
+}
+'''
+
+        when:
+        def result = build('npmInstall')
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        when:
+        result = build('npmInstall')
+
+        then:
+        // because of package-lock.json that was generated during the previous npm install execution
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        when:
+        result = build('npmInstall')
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
     def 'install packages with npm >= 7 (#gv.version)'() {
         given:
         gradleVersion = gv
