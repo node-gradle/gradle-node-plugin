@@ -6,8 +6,8 @@ jobs:
     strategy:
       matrix:
         config:
-          - {os: ubuntu-latest, params: "'-PtestedGradleVersion=5.6.4|6.0|7.0|7.5.1' pnpmTests" }
-          - {os: ubuntu-latest, params: "'-PtestedGradleVersion=5.6.4|6.0|7.0|7.5.1' build" }
+          - {os: ubuntu-latest, params: "'-PtestedGradleVersion=6.6|7.0|7.5.1' pnpmTests" }
+          - {os: ubuntu-latest, params: "'-PtestedGradleVersion=6.6|7.0|7.5.1' build" }
           - {os: windows-latest, params: "build pnpmTests" }
           - {os: macos-latest, params: "build pnpmTests" }
     steps:
