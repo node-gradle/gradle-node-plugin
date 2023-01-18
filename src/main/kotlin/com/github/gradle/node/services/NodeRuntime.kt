@@ -3,7 +3,7 @@ package com.github.gradle.node.services
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.services.NodeProvisioner.Companion.findInstalledNode
-import com.github.gradle.node.services.VersionManager.Companion.checkNodeVersion
+import com.github.gradle.node.services.VersionManager.Companion.checkNpmVersion
 import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
@@ -11,7 +11,6 @@ import okhttp3.OkHttpClient
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -73,19 +72,21 @@ abstract class NodeRuntime
             .get().asFile
     }
 
+    //TODO: this is broken, returns the wrong path
     fun getNpm(extension: NodeExtension): File {
-        val version = "" //extension.npmVersion.get()
+        val version = extension.npmVersion.get()
         val installed = findInstalledNpm(version)
         if (installed.isPresent) {
             return installed.get()
         } else {
             if (!download.get()) {
-                throw NodeNotFoundException("No npm installation matching requested version: $version found " +
+                throw NpmNotFoundException("No npm installation matching requested version: $version found " +
                         "and download is set to false.")
             }
             val variant = VariantComputer()
-            val nodeDir = variant.computeNodeDir(zip(parameters.gradleUserHome.dir("nodejs"), extension.version))
-            return nodeDir.get().asFile
+            val npmDir = variant.computeNpmDir(zip(extension.npmVersion, parameters.gradleUserHome.dir("nodejs"),
+                parameters.gradleUserHome.dir("nodejs"))) // TODO: temporary fix to allow compilation
+            return npmDir.get().asFile
         }
     }
 
@@ -97,13 +98,13 @@ abstract class NodeRuntime
     private fun findInstalledNpm(version: String): Optional<File> {
         return if (version.isBlank()) {
             getNpms().stream()
-                .map { file -> Pair(file, checkNodeVersion(file)) }
+                .map { file -> Pair(file, checkNpmVersion(file)) }
                 .map { pair -> pair.first }
                 .findAny()
         } else {
             getNpms().stream()
-                .map { file -> Pair(file, checkNodeVersion(file)) }
-                .filter { t -> t.second == "v$version" }
+                .map { file -> Pair(file, checkNpmVersion(file)) }
+                .filter { t -> t.second.startsWith(version) }
                 .map { pair -> pair.first }
                 .findAny()
         }

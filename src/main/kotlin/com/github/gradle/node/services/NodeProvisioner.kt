@@ -81,7 +81,7 @@ class NodeProvisioner(private val archiveOperations: ArchiveOperations,
             } else {
                 getNodes().stream()
                     .map { file -> Pair(file, checkNodeVersion(file)) }
-                    .filter { t -> t.second == "v$version" }
+                    .filter { t -> t.second?.startsWith("v$version") ?: false }
                     .map { pair -> pair.first }
                     .findAny()
             }

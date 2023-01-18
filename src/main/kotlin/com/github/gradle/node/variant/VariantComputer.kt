@@ -52,7 +52,11 @@ open class VariantComputer constructor(
      * Get the expected directory for a given npm version.
      */
     fun computeNpmDir(nodeExtension: NodeExtension, nodeDirProvider: Provider<Directory>): Provider<Directory> {
-        return zip(nodeExtension.npmVersion, nodeExtension.npmWorkDir, nodeDirProvider).map {
+        return computeNpmDir(zip(nodeExtension.npmVersion, nodeExtension.npmWorkDir, nodeDirProvider))
+    }
+
+    internal fun computeNpmDir(zip: Provider<Triple<String, Directory, Directory>>): Provider<Directory> {
+        return zip.map {
             val (npmVersion, npmWorkDir, nodeDir) = it
             if (npmVersion.isNotBlank()) {
                 val directoryName = "npm-v${npmVersion}"

@@ -39,7 +39,7 @@ abstract class AbstractIntegTest extends Specification {
     }
 
     protected final BuildResult build(final String... args) {
-        return newRunner(args).build()
+        return newRunner(args).withDebug(true).build()
     }
 
     protected final BuildResult buildWithEnvironment(Map<String, String> env, final String... args) {

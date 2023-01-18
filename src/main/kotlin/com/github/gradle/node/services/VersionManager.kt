@@ -13,5 +13,9 @@ class VersionManager {
 
             return null
         }
+
+        fun checkNpmVersion(npmPath: File): String {
+            return execute(npmPath.absolutePath, "--version")
+        }
     }
 }

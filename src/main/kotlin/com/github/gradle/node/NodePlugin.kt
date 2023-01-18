@@ -8,10 +8,7 @@ import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.pnpm.task.PnpmInstallTask
 import com.github.gradle.node.pnpm.task.PnpmSetupTask
 import com.github.gradle.node.pnpm.task.PnpmTask
-import com.github.gradle.node.services.NodePathTestTask
-import com.github.gradle.node.services.NodeRuntime
-import com.github.gradle.node.services.NodeToolchainServiceImpl
-import com.github.gradle.node.services.NpmPathTestTask
+import com.github.gradle.node.services.*
 import com.github.gradle.node.services.api.NodeToolchainService
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
@@ -35,20 +32,18 @@ class NodePlugin : Plugin<Project> {
     private lateinit var experimentalEnabled: Property<Boolean>
 
     override fun apply(project: Project) {
-        if (GradleVersion.current() < GradleVersion.version("6.1")) {
-            throw RuntimeException("This plugin version requires Gradle 6.1 or newer.")
+        if (GradleVersion.current() < GradleVersion.version("6.6")) {
+            throw RuntimeException("This plugin version requires Gradle 6.6 or newer.")
         }
 
         this.project = project
         val nodeExtension = NodeExtension.create(project)
         project.extensions.create<PackageJsonExtension>(PackageJsonExtension.NAME, project)
         experimentalEnabled = project.objects.property<Boolean>().convention(false)
-        if (GradleVersion.current() >= GradleVersion.version("6.2")) {
-            experimentalEnabled.set(
-            project.providers.gradleProperty(EXPERIMENTAL_PROP)
-                .forUseAtConfigurationTime()
-                .getOrElse("false").toBoolean())
-        }
+        experimentalEnabled.set(
+        project.providers.gradleProperty(EXPERIMENTAL_PROP)
+            .forUseAtConfigurationTime()
+            .getOrElse("false").toBoolean())
         if (experimentalEnabled.get()) {
             runtime = project.gradle.sharedServices.registerIfAbsent("nodeRuntime", NodeRuntime::class) {
                 parameters.gradleUserHome.set(project.gradle.gradleUserHomeDir)
@@ -66,7 +61,6 @@ class NodePlugin : Plugin<Project> {
                 usesService(runtime)
                 nodeRuntime.set(runtime)
             }
-
         }
         addGlobalTypes()
         addTasks()
@@ -104,7 +98,7 @@ class NodePlugin : Plugin<Project> {
         val yarnSetup   = project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME)
 
         if (experimentalEnabled.get()) {
-            nodeSetup.configure { onlyIf { false } }
+            nodeSetup.configure { enabled = false }
             npmSetup.configure {
                 if (experimentalEnabled.get()) {
                     usesService(runtime)

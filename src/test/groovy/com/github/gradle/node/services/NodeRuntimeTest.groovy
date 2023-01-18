@@ -31,6 +31,18 @@ class NodeRuntimeTest extends AbstractProjectTest {
         thrown NodeNotFoundException
     }
 
+    def "installed version with download disabled"() {
+        when:
+        initializeProject()
+        Provider<NodeRuntime> runtime = runtimeProvider()
+        def ext = new NodeExtension(project)
+        ext.version.set(NodeExtension.DEFAULT_NODE_VERSION.split("\\.").first())
+        def node = runtime.get().getNode(ext, false, NodePlugin.URL_DEFAULT)
+
+        then:
+        node.exists()
+    }
+
     @SuppressWarnings('GroovyAssignabilityCheck')
     Provider<NodeRuntime> runtimeProvider(Object home=project.gradle.gradleUserHomeDir) {
         return project.gradle.sharedServices
