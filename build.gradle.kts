@@ -1,5 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
@@ -15,7 +16,7 @@ plugins {
     `kotlin-dsl`
     idea
     jacoco
-    id("com.gradle.plugin-publish") version "1.0.0-rc-3"
+    id("com.gradle.plugin-publish") version "1.1.0"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
     id("org.jetbrains.dokka") version "1.7.10"
     id("org.gradle.test-retry") version "1.5.0"
@@ -34,6 +35,12 @@ tasks.compileKotlin {
     kotlinOptions {
         apiVersion = "1.3"
         freeCompilerArgs = listOf("-Xno-optimized-callable-references")
+    }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = compatibilityVersion.toString()
     }
 }
 
@@ -138,13 +145,13 @@ tasks.register<Test>("testGradleNightlies") {
 
 tasks.register("runParameterTest", JavaExec::class.java) {
     classpath = sourceSets["main"].runtimeClasspath
-    main = "com.github.gradle.node.util.PlatformHelperKt"
+    mainClass.set("com.github.gradle.node.util.PlatformHelperKt")
 }
 
 tasks.jacocoTestReport {
     reports {
-        xml.isEnabled = true
-        html.isEnabled = true
+        xml.required.set(true)
+        html.required.set(true)
     }
 }
 
@@ -163,15 +170,14 @@ gradlePlugin {
             implementationClass = "com.github.gradle.node.NodePlugin"
             displayName = "Gradle Node.js Plugin"
             description = "Gradle plugin for executing Node.js scripts. Supports npm, pnpm and Yarn."
+
+            tags.set(listOf("java", "node", "node.js", "npm", "yarn", "pnpm"))
         }
     }
-}
 
-pluginBundle {
-    website = "https://github.com/node-gradle/gradle-node-plugin"
-    vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
+    website.set("https://github.com/node-gradle/gradle-node-plugin")
+    vcsUrl.set("https://github.com/node-gradle/gradle-node-plugin")
 
-    tags = listOf("java", "node", "node.js", "npm", "yarn", "pnpm")
 }
 
 tasks.wrapper {

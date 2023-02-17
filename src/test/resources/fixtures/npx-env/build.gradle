@@ -63,8 +63,10 @@ if (isPropertyEnabled("customWorkingDir")) {
 }
 
 if (isPropertyEnabled("outputFile")) {
+    def out = project.objects.fileProperty()
+    out.set(project.file("${buildDir}/standard-output.txt"))
     env.execOverrides {
-        standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+        standardOutput = new FileOutputStream(out.get().asFile)
     }
 }
 
