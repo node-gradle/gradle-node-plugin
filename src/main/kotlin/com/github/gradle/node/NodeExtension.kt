@@ -137,6 +137,16 @@ open class NodeExtension(project: Project) {
     @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")
     val nodeModulesDir = nodeProjectDir
 
+    /**
+     * Create rules for automatic task creation
+     *
+     * Disabling this will prevent the npm_ npx_ yarn_ pnpm_ tasks from being
+     * automatically created.
+     * It's recommended to turn this off after you've gotten comfortable
+     * with the plugin and register your own tasks instead of relying on the rule.
+     */
+    val enableTaskRules = project.objects.property<Boolean>().convention(true)
+
     init {
         distBaseUrl.set("https://nodejs.org/dist")
     }
