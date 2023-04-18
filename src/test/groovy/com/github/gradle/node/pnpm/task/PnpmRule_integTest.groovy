@@ -1,6 +1,7 @@
 package com.github.gradle.node.pnpm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.Versions
 import org.gradle.testkit.runner.TaskOutcome
 
 import java.util.regex.Pattern
@@ -32,19 +33,19 @@ class PnpmRule_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    def 'Use downloaded pnpm version (#gv.version)'()
+    def 'DEUse downloaded pnpm version (#gv.version)'()
     {
         given:
         gradleVersion = gv
-        writeBuild( '''
+        writeBuild( """
             plugins {
                 id 'com.github.node-gradle.node'
             }
             node {
                 download = true
-                pnpmVersion = '4.12.4'
+                pnpmVersion = '${Versions.TEST_PNPM_DOWNLOAD_VERSION}'
             }
-        ''' )
+        """ )
         writeEmptyPackageJson()
 
         when:
@@ -62,18 +63,18 @@ class PnpmRule_integTest extends AbstractIntegTest {
     {
         given:
         gradleVersion = gv
-        writeBuild( '''
+        writeBuild( """
             plugins {
                 id 'com.github.node-gradle.node'
             }
             node {
                 download = true
             }
-        ''' )
+        """ )
         writeEmptyPackageJson()
 
         when:
-        build( 'pnpm_install_pnpm@4.12.1' )
+        build( "pnpm_install_pnpm@${Versions.TEST_PNPM_LOCAL_VERSION}" )
         def result = build( 'pnpm_--version' )
 
         then:
@@ -133,7 +134,7 @@ class PnpmRule_integTest extends AbstractIntegTest {
         then:
         result.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
         result.task(":pnpm_run_pnpmVersion").outcome == TaskOutcome.SUCCESS
-        def versionPattern = Pattern.compile(".*Version\\s+4.12.1.*", Pattern.DOTALL)
+        def versionPattern = Pattern.compile(".*Version\\s+${Versions.TEST_PNPM_LOCAL_VERSION}.*", Pattern.DOTALL)
         versionPattern.matcher(result.output).find()
 
         where:
@@ -181,16 +182,16 @@ class PnpmRule_integTest extends AbstractIntegTest {
     {
         given:
         gradleVersion = gv
-        writeBuild( '''
+        writeBuild( """
             plugins {
                 id 'com.github.node-gradle.node'
             }
             node {
                 download = true
-                pnpmVersion = '4.12.4'
+                pnpmVersion = '${Versions.TEST_PNPM_DOWNLOAD_VERSION}'
                 nodeModulesDir = file("frontend")
             }
-        ''' )
+        """ )
         writeFile( 'frontend/package.json', """{
             "name": "example",
             "dependencies": {},

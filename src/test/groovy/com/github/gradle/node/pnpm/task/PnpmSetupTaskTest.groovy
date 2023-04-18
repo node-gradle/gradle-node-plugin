@@ -1,5 +1,6 @@
 package com.github.gradle.node.pnpm.task
 
+import com.github.gradle.node.Versions
 import com.github.gradle.node.task.AbstractTaskTest
 import org.gradle.process.ExecSpec
 
@@ -27,7 +28,7 @@ class PnpmSetupTaskTest
 
     def "exec pnpmSetup task with pnpm version specified"() {
         given:
-        nodeExtension.pnpmVersion.set('4.12.4')
+        nodeExtension.pnpmVersion.set(Versions.TEST_PNPM_DOWNLOAD_VERSION)
         def task = project.tasks.create('simple', PnpmSetupTask)
         mockProjectApiHelperExec(task)
 
@@ -38,8 +39,8 @@ class PnpmSetupTaskTest
         then:
         1 * execSpec.setArgs({ args ->
             def expectedPnpmInstallPath = projectDir.toPath().resolve('.gradle').resolve('pnpm')
-                    .resolve('pnpm-v4.12.4').toAbsolutePath().toString()
-            def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedPnpmInstallPath, 'pnpm@4.12.4']
+                    .resolve("pnpm-v${Versions.TEST_PNPM_DOWNLOAD_VERSION}").toAbsolutePath().toString()
+            def expectedArgs = ['install', '--global', '--no-save', '--prefix', expectedPnpmInstallPath, "pnpm@${Versions.TEST_PNPM_DOWNLOAD_VERSION}"]
             // Workaround a strange issue on Github actions macOS hosts
             return args.collect { it.replace("^/private/", "/") } == expectedArgs
         })
