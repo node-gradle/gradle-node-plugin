@@ -29,6 +29,9 @@ abstract class NpmInstallTask : NpmTask() {
         dependsOn(NpmSetupTask.NAME)
         npmCommand.set(nodeExtension.npmInstallCommand.map { listOf(it) })
         fastInstall.set(nodeExtension.fastNpmInstall)
+        outputs.doNotCacheIf("With fastNpmInstall there's no output to cache") {
+            fastInstall.get()
+        }
     }
 
     @PathSensitive(RELATIVE)
