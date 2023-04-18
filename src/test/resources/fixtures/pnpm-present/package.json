@@ -1,7 +1,7 @@
 {
   "name": "example",
   "devDependencies": {
-    "pnpm": "4.12.1"
+    "pnpm": "8.2.0"
   },
   "scripts": {
     "pnpmVersion": "echo Version && pnpm --version"
