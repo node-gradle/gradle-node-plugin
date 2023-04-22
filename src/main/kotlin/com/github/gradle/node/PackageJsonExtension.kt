@@ -60,6 +60,6 @@ open class PackageJsonExtension(project: Project) {
         /**
          * Extension name in Gradle
          */
-        const val NAME = "package.json"
+        const val NAME = "packageJson"
     }
 }
