@@ -2,7 +2,16 @@ package com.github.gradle.node.util
 
 import java.util.*
 
-open class PlatformHelper {
+
+internal class DefaultHelperExecution : HelperExecution {
+    override fun exec(command: String, vararg args: String, timeout: Long): String {
+        return execute(command, *args, timeout = timeout)
+    }
+}
+interface HelperExecution {
+    fun exec(command: String, vararg args: String, timeout: Long = 60): String
+}
+open class PlatformHelper(private val execution: HelperExecution = DefaultHelperExecution()) {
     open val osName: String by lazy {
         val name = property("os.name").toLowerCase()
         when {
@@ -37,12 +46,12 @@ open class PlatformHelper {
     private fun property(name: String): String {
         return getSystemProperty(name) ?:
             // Added so that we can test osArch on Windows and on non-arm systems
-            if (name == "uname") execute("uname", "-m")
+            if (name == "uname") execution.exec("uname", "-m")
             else error("Unable to find a value for property [$name].")
     }
 
     open fun getSystemProperty(name: String): String? {
-        return System.getProperty(name);
+        return System.getProperty(name)
     }
 
     companion object {

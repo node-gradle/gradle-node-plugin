@@ -1,11 +1,14 @@
 package com.github.gradle.node.task
 
+import com.github.gradle.node.util.GradleHelperExecution
 import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
+import javax.inject.Inject
 
 abstract class BaseTask : DefaultTask() {
 
@@ -13,11 +16,15 @@ abstract class BaseTask : DefaultTask() {
     var result: ExecResult? = null
 
     @get:Internal
-    var platformHelper = PlatformHelper.INSTANCE
+    var platformHelper = PlatformHelper(GradleHelperExecution(execOperations))
+
+    @get:Inject
+    abstract val execOperations: ExecOperations
 
     @get:Internal
     internal val variantComputer by lazy {
         VariantComputer(platformHelper)
     }
+
 
 }

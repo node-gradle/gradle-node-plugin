@@ -4,7 +4,7 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.exec.NodeExecRunner
-import com.github.gradle.node.util.ProjectApiHelper
+import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
@@ -12,6 +12,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.mapProperty
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
 import javax.inject.Inject
@@ -67,7 +68,7 @@ abstract class NodeTask : BaseTask() {
     val execOverrides = objects.property<Action<ExecSpec>>()
 
     @get:Internal
-    val projectHelper = ProjectApiHelper.newInstance(project)
+    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
 
     /**
      * Overrides for [ExecSpec]
