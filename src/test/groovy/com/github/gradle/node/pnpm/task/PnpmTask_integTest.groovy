@@ -1,9 +1,11 @@
 package com.github.gradle.node.pnpm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.Versions
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
+import spock.lang.Ignore
 
 class PnpmTask_integTest extends AbstractIntegTest {
     @Rule
@@ -48,12 +50,13 @@ class PnpmTask_integTest extends AbstractIntegTest {
 
         then:
         result4.task(":version").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("> Task :version${System.lineSeparator()}4.12.4")
+        result4.output.contains("> Task :version${System.lineSeparator()}${Versions.TEST_PNPM_DOWNLOAD_VERSION}")
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    @Ignore("https://github.com/node-gradle/gradle-node-plugin/issues/270")
     def 'execute pnpm command with custom execution configuration and check up-to-date-detection (#gv.version)'() {
         given:
         gradleVersion = gv
@@ -146,12 +149,13 @@ class PnpmTask_integTest extends AbstractIntegTest {
 
         then:
         result9.task(":version").outcome == TaskOutcome.SUCCESS
-        result9.output.contains("> Task :version${System.lineSeparator()}4.12.4")
+        result9.output.contains("> Task :version${System.lineSeparator()}${Versions.TEST_PNPM_DOWNLOAD_VERSION}")
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    @Ignore("https://github.com/node-gradle/gradle-node-plugin/issues/270")
     def 'execute pnpm command using the pnpm version specified in the package.json file (#gv.version)'() {
         given:
         gradleVersion = gv
@@ -163,7 +167,7 @@ class PnpmTask_integTest extends AbstractIntegTest {
 
         then:
         result.task(":version").outcome == TaskOutcome.SUCCESS
-        result.output.contains("> Task :version${System.lineSeparator()}4.12.1")
+        result.output.contains("> Task :version${System.lineSeparator()}${Versions.TEST_PNPM_LOCAL_VERSION}")
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST

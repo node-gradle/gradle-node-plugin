@@ -2,6 +2,10 @@
 
 ## Version 3.x *(unreleased)*
 
+## Version 3.6.0 *(2023-04-20)*
+* Allow task rules to be disabled [#116](https://github.com/node-gradle/gradle-node-plugin/issues/116)
+* Add `fastNpmInstall` option to only track lock-files #[157](https://github.com/node-gradle/gradle-node-plugin/issues/157)
+
 ## Version 3.5.1 *(2022-12-26)*
 * Fix configuration cache support in pnpm
 

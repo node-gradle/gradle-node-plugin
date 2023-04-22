@@ -15,6 +15,7 @@ import com.github.gradle.node.yarn.task.YarnSetupTask
 import com.github.gradle.node.yarn.task.YarnTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
@@ -30,9 +31,9 @@ class NodePlugin : Plugin<Project> {
         project.extensions.create<PackageJsonExtension>(PackageJsonExtension.NAME, project)
         addGlobalTypes()
         addTasks()
-        addNpmRule()
-        addPnpmRule()
-        addYarnRule()
+        addNpmRule(nodeExtension.enableTaskRules)
+        addPnpmRule(nodeExtension.enableTaskRules)
+        addYarnRule(nodeExtension.enableTaskRules)
         project.afterEvaluate {
             if (nodeExtension.download.get()) {
                 nodeExtension.distBaseUrl.orNull?.let { addRepository(it, nodeExtension.allowInsecureProtocol.orNull) }
@@ -64,10 +65,10 @@ class NodePlugin : Plugin<Project> {
         project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME)
     }
 
-    private fun addNpmRule() { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
+    private fun addNpmRule(enableTaskRules: Property<Boolean>) { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
         project.tasks.addRule("Pattern: \"npm_<command>\": Executes an NPM command.") {
             val taskName = this
-            if (taskName.startsWith("npm_")) {
+            if (taskName.startsWith("npm_") && enableTaskRules.get()) {
                 project.tasks.create<NpmTask>(taskName) {
                     val tokens = taskName.split("_").drop(1) // all except first
                     npmCommand.set(tokens)
@@ -79,10 +80,10 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addPnpmRule() { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
+    private fun addPnpmRule(enableTaskRules: Property<Boolean>) { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
         project.tasks.addRule("Pattern: \"pnpm_<command>\": Executes an PNPM command.") {
             val taskName = this
-            if (taskName.startsWith("pnpm_")) {
+            if (taskName.startsWith("pnpm_") && enableTaskRules.get()) {
                 project.tasks.register<PnpmTask>(taskName) {
                     val tokens = taskName.split("_").drop(1) // all except first
                     pnpmCommand.set(tokens)
@@ -94,10 +95,10 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addYarnRule() { // note this rule also makes it possible to specify e.g. "dependsOn yarn_install"
+    private fun addYarnRule(enableTaskRules: Property<Boolean>) { // note this rule also makes it possible to specify e.g. "dependsOn yarn_install"
         project.tasks.addRule("Pattern: \"yarn_<command>\": Executes an Yarn command.") {
             val taskName = this
-            if (taskName.startsWith("yarn_")) {
+            if (taskName.startsWith("yarn_") && enableTaskRules.get()) {
                 project.tasks.create<YarnTask>(taskName) {
                     val tokens = taskName.split("_").drop(1) // all except first
                     yarnCommand.set(tokens)

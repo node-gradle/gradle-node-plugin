@@ -1,7 +1,9 @@
 package com.github.gradle.node.pnpm.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.Versions
 import org.gradle.testkit.runner.TaskOutcome
+import spock.lang.Ignore
 
 import java.util.regex.Pattern
 
@@ -36,48 +38,50 @@ class PnpmRule_integTest extends AbstractIntegTest {
     {
         given:
         gradleVersion = gv
-        writeBuild( '''
+        writeBuild( """
             plugins {
                 id 'com.github.node-gradle.node'
             }
             node {
                 download = true
-                pnpmVersion = '4.12.4'
+                pnpmVersion = '${Versions.TEST_PNPM_DOWNLOAD_VERSION}'
             }
-        ''' )
+        """ )
         writeEmptyPackageJson()
 
         when:
         def result = build( 'pnpm_--version' )
 
         then:
-        result.output =~ /\n4\.12\.4\n/
+        result.output =~ Versions.TEST_PNPM_DOWNLOAD_REGEX
         result.task( ':pnpm_--version' ).outcome == TaskOutcome.SUCCESS
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    @Ignore("https://github.com/node-gradle/gradle-node-plugin/issues/270")
     def 'Use local pnpm installation (#gv.version)'()
     {
         given:
         gradleVersion = gv
-        writeBuild( '''
+        writeBuild( """
             plugins {
                 id 'com.github.node-gradle.node'
             }
             node {
                 download = true
+                pnpmVersion = '${Versions.TEST_PNPM_DOWNLOAD_VERSION}'
             }
-        ''' )
+        """ )
         writeEmptyPackageJson()
 
         when:
-        build( 'pnpm_install_pnpm@4.12.1' )
+        build( "pnpm_install_pnpm@${Versions.TEST_PNPM_LOCAL_VERSION}" )
         def result = build( 'pnpm_--version' )
 
         then:
-        result.output =~ /\n4\.12\.1\n/
+        result.output =~ Versions.TEST_PNPM_LOCAL_REGEX
         result.task( ':pnpm_--version' ).outcome == TaskOutcome.SUCCESS
 
         where:
@@ -133,7 +137,7 @@ class PnpmRule_integTest extends AbstractIntegTest {
         then:
         result.task(":pnpmInstall").outcome == TaskOutcome.SUCCESS
         result.task(":pnpm_run_pnpmVersion").outcome == TaskOutcome.SUCCESS
-        def versionPattern = Pattern.compile(".*Version\\s+4.12.1.*", Pattern.DOTALL)
+        def versionPattern = Pattern.compile(".*Version\\s+${Versions.TEST_PNPM_LOCAL_VERSION}.*", Pattern.DOTALL)
         versionPattern.matcher(result.output).find()
 
         where:
@@ -181,16 +185,16 @@ class PnpmRule_integTest extends AbstractIntegTest {
     {
         given:
         gradleVersion = gv
-        writeBuild( '''
+        writeBuild( """
             plugins {
                 id 'com.github.node-gradle.node'
             }
             node {
                 download = true
-                pnpmVersion = '4.12.4'
+                pnpmVersion = '${Versions.TEST_PNPM_DOWNLOAD_VERSION}'
                 nodeModulesDir = file("frontend")
             }
-        ''' )
+        """ )
         writeFile( 'frontend/package.json', """{
             "name": "example",
             "dependencies": {},
@@ -203,7 +207,7 @@ class PnpmRule_integTest extends AbstractIntegTest {
         def result = build( 'pnpm_run_whatVersion' )
 
         then:
-        result.output =~ /\n4\.12\.4\n/
+        result.output =~ Versions.TEST_PNPM_DOWNLOAD_REGEX
         result.task( ':pnpm_run_whatVersion' ).outcome == TaskOutcome.SUCCESS
 
         where:

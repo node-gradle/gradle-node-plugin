@@ -27,6 +27,30 @@ class NpmRule_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    def 'rules can be disabled (#gv.version)'() {
+        given:
+        gradleVersion = gv
+        writeBuild('''
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                enableTaskRules = false
+            }
+        ''')
+        writeEmptyPackageJson()
+
+        when:
+        def result = buildAndFail('npm_install')
+
+        then:
+        result.output.contains("Task 'npm_install' not found")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
    def 'can configure npm_ rule task (#gv.version)'() {
        given:
        gradleVersion = gv

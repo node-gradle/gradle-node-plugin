@@ -22,6 +22,7 @@ class PnpmInstall_integTest
             }
         ''' )
         writeEmptyPackageJson()
+        writeFile("pnpm-lock.yaml", "lockfileVersion: '6.0'")
 
         when:
         def result = build( 'pnpmInstall' )
@@ -65,6 +66,7 @@ class PnpmInstall_integTest
             "postinstall" : "pnpm run versionOutput"
         }
         """)
+        writeFile("pnpm-lock.yaml", "lockfileVersion: '6.0'")
 
         when:
         def result = build( 'pnpmInstall', '--info' )
