@@ -11,23 +11,16 @@ import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 import org.gradle.util.GradleVersion
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
-@Deprecated(message = "Only 6.6 and newer is supported")
+@Deprecated(message = "Only 7.5.1 and newer is supported")
 interface ProjectApiHelper {
     companion object {
         @JvmStatic
         fun newInstance(project: Project): ProjectApiHelper {
-            return if (enableConfigurationCache()) {
-                project.objects.newInstance(DefaultProjectApiHelper::class.java)
-            } else {
-                LegacyProjectApiHelper(project)
-            }
-        }
-
-        private fun enableConfigurationCache(): Boolean {
-            return true
+            return project.objects.newInstance(DefaultProjectApiHelper::class.java, )
         }
     }
 
@@ -43,6 +36,21 @@ interface ProjectApiHelper {
 
     fun exec(action: Action<ExecSpec>): ExecResult
 }
+
+internal class GradleHelperExecution(private val eo: ExecOperations) : HelperExecution {
+    override fun exec(command: String, vararg args: String, timeout: Long): String {
+        val out = ByteArrayOutputStream()
+        val cmd = eo.exec {
+            this.executable = command
+            this.args = args.toList()
+            this.standardOutput = out
+        }
+
+        cmd.assertNormalExitValue()
+        return out.toString().trim()
+    }
+}
+
 
 /**
  * Used in Gradle 6.6 and newer.

@@ -14,7 +14,7 @@ class PackageJsonExtensionTest extends AbstractProjectTest {
         project.evaluate()
 
         then:
-        def ext = project.extensions.getByName('package.json') as PackageJsonExtension
+        def ext = project.extensions.getByName(PackageJsonExtension.NAME) as PackageJsonExtension
         ext.name.get() == "test"
         ext.version.get() == "1.10.2"
         ext.private.get() == false
@@ -27,7 +27,7 @@ class PackageJsonExtensionTest extends AbstractProjectTest {
         """
         project.apply plugin: 'com.github.node-gradle.node'
         project.evaluate()
-        def ext = project.extensions.getByName('package.json') as PackageJsonExtension
+        def ext = project.extensions.getByName(PackageJsonExtension.NAME) as PackageJsonExtension
         ext.homepage.get() == null
 
         then:
@@ -43,7 +43,7 @@ class PackageJsonExtensionTest extends AbstractProjectTest {
         project.evaluate()
 
         then:
-        def ext = project.extensions.getByName('package.json') as PackageJsonExtension
+        def ext = project.extensions.getByName(PackageJsonExtension.NAME) as PackageJsonExtension
         ext.get("name") == "test"
         ext.getBoolean("private") == false
     }
@@ -59,7 +59,7 @@ class PackageJsonExtensionTest extends AbstractProjectTest {
         project.evaluate()
 
         then:
-        def ext = project.extensions.getByName('package.json') as PackageJsonExtension
+        def ext = project.extensions.getByName(PackageJsonExtension.NAME) as PackageJsonExtension
         ext.get("upper", "lower", "end") == "done"
     }
 }

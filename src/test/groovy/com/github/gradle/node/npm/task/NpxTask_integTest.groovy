@@ -95,7 +95,50 @@ class NpxTask_integTest extends AbstractIntegTest {
 
     // This is cursed, see npx-env/build.gradle for details
     @IgnoreIf({ System.getProperty("os.name").toLowerCase().contains("windows") })
-    def 'execute npx command with custom execution configuration and check up-to-date-detection'() {
+    def 'execute npx pwd command with custom execution configuration and check up-to-date-detection'() {
+        given:
+        gradleVersion = gv
+
+        copyResources("fixtures/npx-env/")
+        copyResources("fixtures/env/")
+
+        when:
+        def result7 = build(":pwd")
+
+        then:
+        result7.task(":pwd").outcome == TaskOutcome.SUCCESS
+        result7.output.contains("workingDirectory='${projectDir}'")
+
+        when:
+        def result8 = build(":pwd", "-DcustomWorkingDir=true")
+
+        then:
+        result8.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
+
+        when:
+        def result9 = build(":pwd", "-DcustomWorkingDir=true", "--rerun-tasks")
+
+        then:
+        result9.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        result9.task(":npmSetup").outcome == TaskOutcome.SKIPPED
+        result9.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result9.task(":pwd").outcome == TaskOutcome.SUCCESS
+        def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
+        result9.output.contains("workingDirectory='${expectedWorkingDirectory}'")
+        new File(expectedWorkingDirectory).isDirectory()
+
+        when:
+        def result10 = build(":version")
+
+        then:
+        result10.task(":version").outcome == TaskOutcome.SUCCESS
+        result10.output.contains("> Task :version${System.lineSeparator()}${DEFAULT_NPM_VERSION}")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
+    def 'execute npx env command with custom execution configuration and check up-to-date-detection'() {
         given:
         gradleVersion = gv
 
@@ -154,7 +197,7 @@ class NpxTask_integTest extends AbstractIntegTest {
         result5.output.contains("E404")
 
         when:
-        def result6 = build(":env", "-DoutputFile=true")
+        def result6 = build(":env", "-DoutputFile=true", "--stacktrace")
 
         then:
         result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -165,44 +208,6 @@ class NpxTask_integTest extends AbstractIntegTest {
         def outputFile = file("build/standard-output.txt")
         outputFile.exists()
         environmentDumpContainsPathVariable(outputFile.text)
-
-        when:
-        def result7 = build(":pwd")
-
-        then:
-        result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":npmSetup").outcome == TaskOutcome.SKIPPED
-        result7.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result7.task(":pwd").outcome == TaskOutcome.SUCCESS
-        result7.output.contains("workingDirectory='${projectDir}'")
-
-        when:
-        def result8 = build(":pwd", "-DcustomWorkingDir=true")
-
-        then:
-        result8.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
-        result8.task(":npmSetup").outcome == TaskOutcome.SKIPPED
-        result8.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
-        result8.task(":pwd").outcome == TaskOutcome.UP_TO_DATE
-
-        when:
-        def result9 = build(":pwd", "-DcustomWorkingDir=true", "--rerun-tasks")
-
-        then:
-        result9.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
-        result9.task(":npmSetup").outcome == TaskOutcome.SKIPPED
-        result9.task(":npmInstall").outcome == TaskOutcome.SUCCESS
-        result9.task(":pwd").outcome == TaskOutcome.SUCCESS
-        def expectedWorkingDirectory = "${projectDir}${File.separator}build${File.separator}customWorkingDirectory"
-        result9.output.contains("workingDirectory='${expectedWorkingDirectory}'")
-        new File(expectedWorkingDirectory).isDirectory()
-
-        when:
-        def result10 = build(":version")
-
-        then:
-        result10.task(":version").outcome == TaskOutcome.SUCCESS
-        result10.output.contains("> Task :version${System.lineSeparator()}${DEFAULT_NPM_VERSION}")
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST

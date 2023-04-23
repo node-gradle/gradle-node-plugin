@@ -1,8 +1,15 @@
 package com.github.gradle.node.util
 
-import java.util.*
 
-open class PlatformHelper {
+internal class DefaultHelperExecution : HelperExecution {
+    override fun exec(command: String, vararg args: String, timeout: Long): String {
+        return execute(command, *args, timeout = timeout)
+    }
+}
+interface HelperExecution {
+    fun exec(command: String, vararg args: String, timeout: Long = 60): String
+}
+open class PlatformHelper(private val execution: HelperExecution = DefaultHelperExecution()) {
     open val osName: String by lazy {
         val name = property("os.name").toLowerCase()
         when {
@@ -37,12 +44,12 @@ open class PlatformHelper {
     private fun property(name: String): String {
         return getSystemProperty(name) ?:
             // Added so that we can test osArch on Windows and on non-arm systems
-            if (name == "uname") execute("uname", "-m")
+            if (name == "uname") execution.exec("uname", "-m")
             else error("Unable to find a value for property [$name].")
     }
 
     open fun getSystemProperty(name: String): String? {
-        return System.getProperty(name);
+        return System.getProperty(name)
     }
 
     companion object {
@@ -51,8 +58,8 @@ open class PlatformHelper {
 }
 
 fun main(args: Array<String>) {
-    println("Your os.name is: '${System.getProperty("os.name")}' and is parsed as: ${PlatformHelper.INSTANCE.osName}")
-    println("Your os.arch is: '${System.getProperty("os.arch")}' and is parsed as: ${PlatformHelper.INSTANCE.osArch}")
+    println("Your os.name is: '${System.getProperty("os.name")}' and is parsed as: '${PlatformHelper.INSTANCE.osName}'")
+    println("Your os.arch is: '${System.getProperty("os.arch")}' and is parsed as: '${PlatformHelper.INSTANCE.osArch}'")
     if (PlatformHelper.INSTANCE.isWindows) {
         println("You're on windows (isWindows == true)")
     } else {

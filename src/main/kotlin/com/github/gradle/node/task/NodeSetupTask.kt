@@ -2,7 +2,7 @@ package com.github.gradle.node.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.util.ProjectApiHelper
+import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -36,7 +36,7 @@ abstract class NodeSetupTask : BaseTask() {
     }
 
     @get:Internal
-    val projectHelper = ProjectApiHelper.newInstance(project)
+    val projectHelper = project.objects.newInstance(DefaultProjectApiHelper::class.java)
 
     init {
         group = NodePlugin.NODE_GROUP

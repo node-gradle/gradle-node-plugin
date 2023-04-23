@@ -34,6 +34,7 @@ tasks.compileKotlin {
     kotlinOptions {
         apiVersion = "1.3"
         freeCompilerArgs = listOf("-Xno-optimized-callable-references")
+        jvmTarget = compatibilityVersion.toString()
     }
 }
 
@@ -138,13 +139,13 @@ tasks.register<Test>("testGradleNightlies") {
 
 tasks.register("runParameterTest", JavaExec::class.java) {
     classpath = sourceSets["main"].runtimeClasspath
-    main = "com.github.gradle.node.util.PlatformHelperKt"
+    mainClass.set("com.github.gradle.node.util.PlatformHelperKt")
 }
 
 tasks.jacocoTestReport {
     reports {
-        xml.isEnabled = true
-        html.isEnabled = true
+        xml.required.set(true)
+        html.required.set(true)
     }
 }
 
