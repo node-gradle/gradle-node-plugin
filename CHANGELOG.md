@@ -2,9 +2,10 @@
 
 ## Version 4.x *(unreleased)*
 
-## Version 4.0.0 *(unreleased)*
+## Version 4.0.0 *(2023-04-23)*
 * Drop support for versions lower than Gradle 7.5.1
 * Rename `package.json` extension to `packageJson` [#232](https://github.com/node-gradle/gradle-node-plugin/issues/232)
+* Support configuration-cache on Gradle 8.1 [#271](https://github.com/node-gradle/gradle-node-plugin/issues/271)
 
 ## Version 3.6.0 *(2023-04-20)*
 * Allow task rules to be disabled [#116](https://github.com/node-gradle/gradle-node-plugin/issues/116)

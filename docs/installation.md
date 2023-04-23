@@ -5,7 +5,7 @@ in your `build.gradle` file:
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "3.6.0"
+  id "com.github.node-gradle.node" version "4.0.0"
 }
 ```
 
@@ -18,7 +18,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.github.node-gradle:gradle-node-plugin:3.6.0"
+    classpath "com.github.node-gradle:gradle-node-plugin:4.0.0"
   }
 }
 
