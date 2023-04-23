@@ -47,7 +47,7 @@ internal class GradleHelperExecution(private val eo: ExecOperations) : HelperExe
         }
 
         cmd.assertNormalExitValue()
-        return out.toString()
+        return out.toString().trim()
     }
 }
 

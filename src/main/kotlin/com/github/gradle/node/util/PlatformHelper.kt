@@ -1,7 +1,5 @@
 package com.github.gradle.node.util
 
-import java.util.*
-
 
 internal class DefaultHelperExecution : HelperExecution {
     override fun exec(command: String, vararg args: String, timeout: Long): String {
@@ -60,8 +58,8 @@ open class PlatformHelper(private val execution: HelperExecution = DefaultHelper
 }
 
 fun main(args: Array<String>) {
-    println("Your os.name is: '${System.getProperty("os.name")}' and is parsed as: ${PlatformHelper.INSTANCE.osName}")
-    println("Your os.arch is: '${System.getProperty("os.arch")}' and is parsed as: ${PlatformHelper.INSTANCE.osArch}")
+    println("Your os.name is: '${System.getProperty("os.name")}' and is parsed as: '${PlatformHelper.INSTANCE.osName}'")
+    println("Your os.arch is: '${System.getProperty("os.arch")}' and is parsed as: '${PlatformHelper.INSTANCE.osArch}'")
     if (PlatformHelper.INSTANCE.isWindows) {
         println("You're on windows (isWindows == true)")
     } else {

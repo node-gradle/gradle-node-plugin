@@ -10,6 +10,7 @@ import com.github.gradle.node.pnpm.task.PnpmSetupTask
 import com.github.gradle.node.pnpm.task.PnpmTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
+import com.github.gradle.node.util.NodeVersionSource
 import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnSetupTask
 import com.github.gradle.node.yarn.task.YarnTask
@@ -18,8 +19,8 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.of
 import org.gradle.kotlin.dsl.register
-import org.gradle.util.GradleVersion
 import java.io.File
 
 class NodePlugin : Plugin<Project> {
@@ -128,8 +129,11 @@ class NodePlugin : Plugin<Project> {
     }
 
     private fun configureNodeSetupTask(nodeExtension: NodeExtension) {
+        val versionSource = project.providers.of(NodeVersionSource::class) {
+            parameters.nodeVersion.set(nodeExtension.version)
+        }
         project.tasks.named<NodeSetupTask>(NodeSetupTask.NAME) {
-            val nodeArchiveDependencyProvider = variantComputer.computeNodeArchiveDependency(nodeExtension)
+            val nodeArchiveDependencyProvider = versionSource.get()
             val archiveFileProvider = nodeArchiveDependencyProvider
                     .map { nodeArchiveDependency ->
                         resolveNodeArchiveFile(nodeArchiveDependency)

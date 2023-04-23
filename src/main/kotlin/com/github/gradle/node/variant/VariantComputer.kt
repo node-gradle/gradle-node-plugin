@@ -5,6 +5,7 @@ import com.github.gradle.node.util.PlatformHelper
 import com.github.gradle.node.util.mapIf
 import com.github.gradle.node.util.zip
 import org.gradle.api.file.Directory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
 open class VariantComputer constructor(
@@ -154,9 +155,18 @@ open class VariantComputer constructor(
      * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
      */
     fun computeNodeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
+        return computeNodeArchiveDependency(nodeExtension.version)
+    }
+
+    /**
+     * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.
+     *
+     * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
+     */
+    fun computeNodeArchiveDependency(nodeVersion: Property<String>): Provider<String> {
         val osName = platformHelper.osName
         val osArch = platformHelper.osArch
         val type = if (platformHelper.isWindows) "zip" else "tar.gz"
-        return nodeExtension.version.map { version -> "org.nodejs:node:$version:$osName-$osArch@$type" }
+        return nodeVersion.map { version -> "org.nodejs:node:$version:$osName-$osArch@$type" }
     }
 }
