@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
-@Deprecated(message = "Only 6.6 and newer is supported")
+@Deprecated(message = "Only 7.5.1 and newer is supported")
 interface ProjectApiHelper {
     companion object {
         @JvmStatic

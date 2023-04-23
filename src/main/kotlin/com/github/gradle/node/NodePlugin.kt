@@ -21,12 +21,16 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.of
 import org.gradle.kotlin.dsl.register
+import org.gradle.util.GradleVersion
 import java.io.File
 
 class NodePlugin : Plugin<Project> {
     private lateinit var project: Project
 
     override fun apply(project: Project) {
+        if (GradleVersion.current() < MINIMAL_SUPPORTED_GRADLE_VERSION) {
+            project.logger.error("This version of the plugin requires $MINIMAL_SUPPORTED_GRADLE_VERSION or newer.")
+        }
         this.project = project
         val nodeExtension = NodeExtension.create(project)
         project.extensions.create<PackageJsonExtension>(PackageJsonExtension.NAME, project)
@@ -150,6 +154,7 @@ class NodePlugin : Plugin<Project> {
     }
 
     companion object {
+        val MINIMAL_SUPPORTED_GRADLE_VERSION: GradleVersion = GradleVersion.version("7.5.1")
         const val NODE_GROUP = "Node"
         const val NPM_GROUP = "npm"
         const val PNPM_GROUP = "pnpm"

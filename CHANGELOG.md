@@ -3,7 +3,7 @@
 ## Version 4.x *(unreleased)*
 
 ## Version 4.0.0 *(unreleased)*
-* Drop support for versions lower than Gradle 6.6
+* Drop support for versions lower than Gradle 7.5.1
 * Rename `package.json` extension to `packageJson` [#232](https://github.com/node-gradle/gradle-node-plugin/issues/232)
 
 ## Version 3.6.0 *(2023-04-20)*
