@@ -57,4 +57,36 @@ tasks.register('getVersionFromSource') {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    @IgnoreIf({ System.getProperty("os.name").toLowerCase().contains("windows") })
+    def 'ensure configuration-cache works with nodeSetup (#gv.version)'() {
+        given:
+        gradleVersion = gv
+
+        copyResources("fixtures/node")
+        createFile("gradle.properties") << """
+systemProp.os.arch=aarch64
+systemProp.os.name="Mac OS X"
+"""
+        createFile("build.gradle") << '''
+node {
+    download = false
+}
+'''
+
+        when:
+        def result1 = build("nodeSetup")
+
+        then:
+        result1.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+
+        when:
+        def result2 = build("nodeSetup")
+
+        then:
+        result2.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
 }
