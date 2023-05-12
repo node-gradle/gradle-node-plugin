@@ -1,6 +1,7 @@
 package com.github.gradle.node
 
 import com.github.gradle.node.npm.proxy.ProxySettings
+import com.github.gradle.node.util.Platform
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
@@ -147,6 +148,17 @@ open class NodeExtension(project: Project) {
      */
     val enableTaskRules = project.objects.property<Boolean>().convention(true)
 
+
+    /**
+     * Computed path to nodejs directory
+     */
+    val computedNodeDir = project.objects.directoryProperty()
+
+    /**
+     * Operating system and architecture
+     */
+    val computedPlatform = project.objects.property<Platform>()
+
     init {
         distBaseUrl.set("https://nodejs.org/dist")
     }
@@ -180,7 +192,7 @@ open class NodeExtension(project: Project) {
 
         @JvmStatic
         fun create(project: Project): NodeExtension {
-            return project.extensions.create(NAME, project)
+            return project.extensions.create<NodeExtension>(NAME, project, )
         }
     }
 }

@@ -9,6 +9,8 @@ import com.github.gradle.node.npm.proxy.NpmProxy.Companion.computeNpmProxyEnviro
 import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
+import com.github.gradle.node.variant.computeNodeExec
+import com.github.gradle.node.variant.computeNpmScriptFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecResult
@@ -73,24 +75,31 @@ abstract class NpmExecRunner {
                 }
     }
 
-    private fun computeExecutable(nodeExtension: NodeExtension, npmExecConfiguration: NpmExecConfiguration, variantComputer: VariantComputer):
-            Provider<ExecutableAndScript> {
-        val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+    private fun computeExecutable(
+        nodeExtension: NodeExtension,
+        npmExecConfiguration: NpmExecConfiguration,
+        variantComputer: VariantComputer
+    ):
+        Provider<ExecutableAndScript> {
+        val nodeDirProvider = nodeExtension.computedNodeDir
         val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)
-        val nodeExecProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
+        val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
         val executableProvider =
-                npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDirProvider)
+            npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDirProvider)
+        val isWindows = nodeExtension.computedPlatform.get().isWindows()
         val npmScriptFileProvider =
-                variantComputer.computeNpmScriptFile(nodeDirProvider, npmExecConfiguration.command)
-        return zip(nodeExtension.download, nodeExtension.nodeProjectDir, executableProvider, nodeExecProvider,
-                npmScriptFileProvider).map {
+            computeNpmScriptFile(nodeDirProvider, npmExecConfiguration.command, isWindows)
+        return zip(
+            nodeExtension.download, nodeExtension.nodeProjectDir, executableProvider, nodeExecProvider,
+            npmScriptFileProvider
+        ).map {
             val (download, nodeProjectDir, executable, nodeExec,
-                    npmScriptFile) = it
+                npmScriptFile) = it
             if (download) {
                 val localCommandScript = nodeProjectDir.dir("node_modules/npm/bin")
-                        .file("${npmExecConfiguration.command}-cli.js").asFile
+                    .file("${npmExecConfiguration.command}-cli.js").asFile
                 if (localCommandScript.exists()) {
                     return@map ExecutableAndScript(nodeExec, localCommandScript.absolutePath)
                 } else if (!File(executable).exists()) {

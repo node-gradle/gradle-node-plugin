@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     testImplementation(platform("org.junit:junit-bom:5.6.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
@@ -76,7 +76,8 @@ tasks.withType(Test::class) {
     )
 
     val processorsCount = Runtime.getRuntime().availableProcessors()
-    maxParallelForks = if (processorsCount > 2) processorsCount.div(2) else processorsCount
+    val safeMaxForks = if (processorsCount > 2) processorsCount.div(2) else processorsCount
+    maxParallelForks = safeMaxForks
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         exceptionFormat = TestExceptionFormat.FULL
@@ -152,7 +153,7 @@ tasks.jacocoTestReport {
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
     dokkaSourceSets {
         named("main") {
-            jdkVersion.set(8)
+            jdkVersion.set(compatibilityVersion.majorVersion.toInt())
         }
     }
 }

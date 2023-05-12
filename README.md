@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 ![Version](https://img.shields.io/badge/Version-4.0.0-orange.svg)
 
-This plugin enables you to use a lot of [Node.js](https://nodejs.org)-based technologies as part of your 
+This plugin enables you to use a lot of [Node.js](https://nodejs.org)-based technologies as part of your
 build without having Node.js installed locally on your system. It integrates the following Node.js-based system
 with Gradle:
 
@@ -18,14 +18,14 @@ with Gradle:
 The plugin is published in the [Gradle plugins portal](https://plugins.gradle.org/plugin/com.github.node-gradle.node)
 with the `com.github.node-gradle.node` identifier.
 
-It supports Gradle 7.5.1+ and Node.js 10+, for Gradle 5.6.4 support use version 3.x
+It supports Gradle 6.6+ and Node.js 10+, for Gradle 5.6.4 support use version 3.x
 
 ## Documentation
 
-⚠️ This is the documentation of the development version. See below in the releases history to read the 
+⚠️ This is the documentation of the development version. See below in the releases history to read the
 documentation of the version you're using.
 
-Here's how you get started using this plugin. If you do not find what you are looking for, please add an 
+Here's how you get started using this plugin. If you do not find what you are looking for, please add an
 issue to [GitHub Issues](https://github.com/node-gradle/gradle-node-plugin/issues).
 
 * [Installation](docs/installation.md)
@@ -88,7 +88,7 @@ To run the tests against all Gradle versions, use the following option (it is do
 
 ## Contributing
 
-Contributions are always welcome! If you'd like to contribute (and we hope you do) please send 
+Contributions are always welcome! If you'd like to contribute (and we hope you do) please send
 one of the existing contributors a nudge.
 
 ## <a name="support"></a> Support this project :heart:

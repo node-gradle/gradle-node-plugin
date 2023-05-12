@@ -1,7 +1,9 @@
 package com.github.gradle.node.variant
 
 import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.util.Platform
 import com.github.gradle.node.util.TestablePlatformHelper
+import com.github.gradle.node.util.PlatformHelperKt
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -28,9 +30,11 @@ class VariantComputerTest extends Specification {
 
         props.setProperty("os.name", "Windows 8")
         props.setProperty("os.arch", osArch)
+        def platform = getPlatform("Windows 8", osArch)
         def platformHelper = new TestablePlatformHelper(props)
 
         def nodeExtension = new NodeExtension(project)
+        nodeExtension.computedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set(version)
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
@@ -41,8 +45,8 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer(platformHelper)
 
         when:
-        def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
-        def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
+        def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
+        def computedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
         def computedNpmScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npm")
@@ -72,10 +76,12 @@ class VariantComputerTest extends Specification {
         given:
         props.setProperty("os.name", osName)
         props.setProperty("os.arch", osArch)
+        def platform = getPlatform(osName, osArch)
         def platformHelper = new TestablePlatformHelper(props)
 
         def project = ProjectBuilder.builder().build()
         def nodeExtension = new NodeExtension(project)
+        nodeExtension.computedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set('5.12.0')
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
@@ -83,8 +89,8 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer(platformHelper)
 
         when:
-        def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
-        def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
+        def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
+        def computedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
         def computedNpmScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npm")
@@ -118,10 +124,12 @@ class VariantComputerTest extends Specification {
         props.setProperty("os.name", osName)
         props.setProperty("os.arch", osArch)
         props.setProperty("uname", sysOsArch)
+        def platform = getPlatform(osName, osArch, sysOsArch)
         def platformHelper = new TestablePlatformHelper(props)
 
         def project = ProjectBuilder.builder().build()
         def nodeExtension = new NodeExtension(project)
+        nodeExtension.computedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set('5.12.0')
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
@@ -129,8 +137,8 @@ class VariantComputerTest extends Specification {
         def variantComputer = new VariantComputer(platformHelper)
 
         when:
-        def computedArchiveDependency = variantComputer.computeNodeArchiveDependency(nodeExtension)
-        def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
+        def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
+        def computedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
         def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
         def computedNpmScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npm")
@@ -158,10 +166,12 @@ class VariantComputerTest extends Specification {
         given:
         props.setProperty("os.name", "Windows 8")
         props.setProperty("os.arch", "x86")
+        def platform = getPlatform("Windows 8", "x86")
         def platformHelper = new TestablePlatformHelper(props)
         def project = ProjectBuilder.builder().build()
 
         def nodeExtension = new NodeExtension(project)
+        nodeExtension.computedPlatform.set(platform)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
 
@@ -211,9 +221,11 @@ class VariantComputerTest extends Specification {
         props.setProperty("os.name", "Linux")
         props.setProperty("os.arch", "x86")
         def platformHelper = new TestablePlatformHelper(props)
+        def platform = getPlatform("Linux", "x86")
         def project = ProjectBuilder.builder().build()
 
         def nodeExtension = new NodeExtension(project)
+        nodeExtension.computedPlatform.set(platform)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
 
@@ -257,5 +269,9 @@ class VariantComputerTest extends Specification {
         true     | ""
         false    | "4.0.2"
         false    | ""
+    }
+
+    private Platform getPlatform(String osName, String osArch, uname = null) {
+        return PlatformHelperKt.parsePlatform(osName, osArch, { uname })
     }
 }

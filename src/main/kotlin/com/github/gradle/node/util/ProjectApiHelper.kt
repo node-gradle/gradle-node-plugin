@@ -10,17 +10,16 @@ import org.gradle.api.tasks.WorkResult
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
-import org.gradle.util.GradleVersion
 import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
-@Deprecated(message = "Only 7.5.1 and newer is supported")
+@Deprecated(message = "Only 6.6 and newer is supported")
 interface ProjectApiHelper {
     companion object {
         @JvmStatic
         fun newInstance(project: Project): ProjectApiHelper {
-            return project.objects.newInstance(DefaultProjectApiHelper::class.java, )
+            return project.objects.newInstance(DefaultProjectApiHelper::class.java)
         }
     }
 
@@ -37,7 +36,8 @@ interface ProjectApiHelper {
     fun exec(action: Action<ExecSpec>): ExecResult
 }
 
-internal class GradleHelperExecution(private val eo: ExecOperations) : HelperExecution {
+@Deprecated(message = "This class is no longer needed, the computed output is stored in the NodeExtension")
+class GradleHelperExecution(private val eo: ExecOperations) : HelperExecution {
     override fun exec(command: String, vararg args: String, timeout: Long): String {
         val out = ByteArrayOutputStream()
         val cmd = eo.exec {

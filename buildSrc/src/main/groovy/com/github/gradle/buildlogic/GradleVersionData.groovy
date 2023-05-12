@@ -25,8 +25,8 @@ class GradleVersionData {
             .findAll { !it.rcFor || it.activeRc } // filter out inactive rcs
             .findAll { !it.milestoneFor } // filter out milestones
             .<String, VersionNumber, String>collectEntries { [(it.version): VersionNumber.parse(it.version as String)] }
-            .findAll { it.value.major >= 5 } // only 5.6 and above
-            .findAll { !(it.value.major == 5 && it.value.minor < 6) } // only 5.6 and above
+            .findAll { it.value.major >= 6 } // only 6.9 and above
+            .findAll { !(it.value.major == 6 && it.value.minor < 6.9) } // only 6.9 and above
             .inject([] as List<Map.Entry<String, VersionNumber>>) { releasesToTest, version -> // only test against latest patch versions
                 if (!releasesToTest.any { it.value.major == version.value.major && it.value.minor == version.value.minor }) {
                     releasesToTest + version

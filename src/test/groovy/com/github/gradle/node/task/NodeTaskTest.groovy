@@ -1,5 +1,7 @@
 package com.github.gradle.node.task
 
+import com.github.gradle.node.util.PlatformHelperKt
+
 class NodeTaskTest extends AbstractTaskTest {
     def "script not set"() {
         given:
@@ -16,6 +18,7 @@ class NodeTaskTest extends AbstractTaskTest {
     def "exec node task"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
@@ -46,6 +49,7 @@ class NodeTaskTest extends AbstractTaskTest {
     def "execOverrides test"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
@@ -72,6 +76,7 @@ class NodeTaskTest extends AbstractTaskTest {
     def "exec node task (download)"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', NodeTask)
@@ -93,6 +98,7 @@ class NodeTaskTest extends AbstractTaskTest {
     def "exec node task (windows)"() {
         given:
         props.setProperty('os.name', 'Windows')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
@@ -118,6 +124,7 @@ class NodeTaskTest extends AbstractTaskTest {
     def "exec node task (windows download)"() {
         given:
         props.setProperty('os.name', 'Windows')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', NodeTask)

@@ -4,6 +4,7 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
+import com.github.gradle.node.variant.computeNodeExec
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.process.ExecResult
@@ -11,17 +12,23 @@ import org.gradle.process.ExecResult
 /**
  * This function is responsible for setting up the configuration used when running the tasks.
  */
-fun buildExecConfiguration(nodeExtension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variantComputer: VariantComputer):
-        Provider<ExecConfiguration> {
-    val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+fun buildExecConfiguration(
+    nodeExtension: NodeExtension,
+    nodeExecConfiguration: NodeExecConfiguration,
+    variantComputer: VariantComputer
+):
+    Provider<ExecConfiguration> {
+    val nodeDirProvider = nodeExtension.computedNodeDir
     val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
-    val executableProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
+    val executableProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
     val additionalBinPathProvider = computeAdditionalBinPath(nodeExtension, nodeBinDirProvider)
     return zip(executableProvider, additionalBinPathProvider)
         .map { (executable, additionalBinPath) ->
-            ExecConfiguration(executable, nodeExecConfiguration.command, additionalBinPath,
+            ExecConfiguration(
+                executable, nodeExecConfiguration.command, additionalBinPath,
                 nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
-                nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
+                nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides
+            )
         }
 }
 

@@ -8,6 +8,50 @@ import org.gradle.api.file.Directory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
+/**
+ * Get the expected node binary name, node.exe on Windows and node everywhere else.
+ */
+fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<Directory>): Provider<String> {
+    return zip(nodeExtension.download, nodeBinDirProvider).map {
+        val (download, nodeBinDir) = it
+        if (download) {
+            val nodeCommand = if (nodeExtension.computedPlatform.get().isWindows()) "node.exe" else "node"
+            nodeBinDir.dir(nodeCommand).asFile.absolutePath
+        } else "node"
+    }
+}
+fun computeNpmScriptFile(nodeDirProvider: Provider<Directory>, command: String, isWindows: Boolean): Provider<String> {
+    return nodeDirProvider.map { nodeDir ->
+        if (isWindows) nodeDir.dir("node_modules/npm/bin/$command-cli.js").asFile.path
+        else nodeDir.dir("lib/node_modules/npm/bin/$command-cli.js").asFile.path
+    }
+}
+
+fun computeNodeDir(nodeExtension: NodeExtension): Provider<Directory> {
+    val osName = nodeExtension.computedPlatform.get().name
+    val osArch = nodeExtension.computedPlatform.get().arch
+    return computeNodeDir(nodeExtension, osName, osArch)
+}
+
+fun computeNodeDir(nodeExtension: NodeExtension, osName: String, osArch: String): Provider<Directory> {
+    return zip(nodeExtension.workDir, nodeExtension.version).map { (workDir, version) ->
+        val dirName = "node-v$version-$osName-$osArch"
+        workDir.dir(dirName)
+    }
+}
+
+/**
+ * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.
+ *
+ * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
+ */
+fun computeNodeArchiveDependency(extension: NodeExtension): Provider<String> {
+    val osName = extension.computedPlatform.get().name
+    val osArch = extension.computedPlatform.get().arch
+    val type = if (extension.computedPlatform.get().isWindows()) "zip" else "tar.gz"
+    return extension.version.map { version -> "org.nodejs:node:$version:$osName-$osArch@$type" }
+}
+
 open class VariantComputer constructor(
         private val platformHelper: PlatformHelper
 ) {
@@ -18,14 +62,14 @@ open class VariantComputer constructor(
      *
      * Essentially: workingDir/node-v$version-$osName-$osArch
      */
+    @Deprecated(message = "moved to NodeExtension", replaceWith = ReplaceWith("nodeExtension.resolvedNodeDir"))
     fun computeNodeDir(nodeExtension: NodeExtension): Provider<Directory> {
-        return zip(nodeExtension.workDir, nodeExtension.version).map { (workDir, version) ->
-            val osName = platformHelper.osName
-            val osArch = platformHelper.osArch
-            val dirName = "node-v$version-$osName-$osArch"
-            workDir.dir(dirName)
-        }
+        val osName = platformHelper.osName
+        val osArch = platformHelper.osArch
+        return computeNodeDir(nodeExtension, osName, osArch)
     }
+
+
 
     /**
      * Get the expected node binary directory, taking Windows specifics into account.
@@ -35,14 +79,11 @@ open class VariantComputer constructor(
     /**
      * Get the expected node binary name, node.exe on Windows and node everywhere else.
      */
+    @Deprecated(message = "replaced by package-level function",
+        replaceWith =
+        ReplaceWith("com.github.gradle.node.variant.computeNodeExec(nodeExtension, nodeBinDirProvider)"))
     fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.download, nodeBinDirProvider).map {
-            val (download, nodeBinDir) = it
-            if (download) {
-                val nodeCommand = if (platformHelper.isWindows) "node.exe" else "node"
-                nodeBinDir.dir(nodeCommand).asFile.absolutePath
-            } else "node"
-        }
+        return com.github.gradle.node.variant.computeNodeExec(nodeExtension, nodeBinDirProvider)
     }
 
     /**
@@ -71,18 +112,16 @@ open class VariantComputer constructor(
     fun computeNpmExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.download, nodeExtension.npmCommand, npmBinDirProvider).map {
             val (download, npmCommand, npmBinDir) = it
-            val command = if (platformHelper.isWindows) {
+            val command = if (nodeExtension.computedPlatform.get().isWindows()) {
                 npmCommand.mapIf({ it == "npm" }) { "npm.cmd" }
             } else npmCommand
             if (download) npmBinDir.dir(command).asFile.absolutePath else command
         }
     }
 
+    @Deprecated(message = "replaced by package-level function")
     fun computeNpmScriptFile(nodeDirProvider: Provider<Directory>, command: String): Provider<String> {
-        return nodeDirProvider.map { nodeDir ->
-            if (platformHelper.isWindows) nodeDir.dir("node_modules/npm/bin/$command-cli.js").asFile.path
-            else nodeDir.dir("lib/node_modules/npm/bin/$command-cli.js").asFile.path
-        }
+        return computeNpmScriptFile(nodeDirProvider, command, platformHelper.isWindows)
     }
 
     /**
@@ -93,7 +132,7 @@ open class VariantComputer constructor(
     fun computeNpxExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.download, nodeExtension.npxCommand, npmBinDirProvider).map {
             val (download, npxCommand, npmBinDir) = it
-            val command = if (platformHelper.isWindows) {
+            val command = if (nodeExtension.computedPlatform.get().isWindows()) {
                 npxCommand.mapIf({ it == "npx" }) { "npx.cmd" }
             } else npxCommand
             if (download) npmBinDir.dir(command).asFile.absolutePath else command
@@ -116,7 +155,7 @@ open class VariantComputer constructor(
     fun computePnpmExec(nodeExtension: NodeExtension, pnpmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.pnpmCommand, nodeExtension.download, pnpmBinDirProvider).map {
             val (pnpmCommand, download, pnpmBinDir) = it
-            val command = if (platformHelper.isWindows) {
+            val command = if (nodeExtension.computedPlatform.get().isWindows()) {
                 pnpmCommand.mapIf({ it == "pnpm" }) { "pnpm.cmd" }
             } else pnpmCommand
             if (download) pnpmBinDir.dir(command).asFile.absolutePath else command
@@ -139,7 +178,7 @@ open class VariantComputer constructor(
     fun computeYarnExec(nodeExtension: NodeExtension, yarnBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.yarnCommand, nodeExtension.download, yarnBinDirProvider).map {
             val (yarnCommand, download, yarnBinDir) = it
-            val command = if (platformHelper.isWindows) {
+            val command = if (nodeExtension.computedPlatform.get().isWindows()) {
                 yarnCommand.mapIf({ it == "yarn" }) { "yarn.cmd" }
             } else yarnCommand
             if (download) yarnBinDir.dir(command).asFile.absolutePath else command
@@ -154,8 +193,10 @@ open class VariantComputer constructor(
      *
      * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
      */
+    @Deprecated(message = "replaced by package-level function",
+        replaceWith = ReplaceWith("com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)"))
     fun computeNodeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
-        return computeNodeArchiveDependency(nodeExtension.version)
+        return com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)
     }
 
     /**
@@ -163,6 +204,8 @@ open class VariantComputer constructor(
      *
      * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
      */
+    @Deprecated(message = "replaced by package-level function",
+        replaceWith = ReplaceWith("com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)"))
     fun computeNodeArchiveDependency(nodeVersion: Property<String>): Provider<String> {
         val osName = platformHelper.osName
         val osArch = platformHelper.osArch

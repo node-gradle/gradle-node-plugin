@@ -15,48 +15,6 @@ class NodeSetupTask_integTest extends AbstractIntegTest {
     @Rule
     EnvironmentVariables environmentVariables = new EnvironmentVariables()
 
-    // Windows lacks uname
-    @IgnoreIf({ System.getProperty("os.name").toLowerCase().contains("windows") })
-    def 'ensure configuration-cache works with uname (#gv.version)'() {
-        given:
-        gradleVersion = gv
-
-        copyResources("fixtures/node")
-        createFile("gradle.properties") << """
-systemProp.os.arch=aarch64
-systemProp.os.name=Mac OS X
-"""
-        createFile("build.gradle") << '''
-def nodeExtension = com.github.gradle.node.NodeExtension.get(project)
-def versionSource = project.providers.of(com.github.gradle.node.util.NodeVersionSource) {
-            parameters.nodeVersion.set(nodeExtension.version)
-        }
-tasks.register('getVersionFromSource') {
-    def version = versionSource.get()
-    doLast {
-        println "Got version: '${version.get()}'"
-    }
-}
-'''
-
-        when:
-        def result1 = build("getVersionFromSource")
-
-        then:
-        result1.task(":getVersionFromSource").outcome == TaskOutcome.SUCCESS
-        result1.output.contains("Got version: 'org.nodejs:node:16.14.2:")
-
-        when:
-        def result2 = build("getVersionFromSource")
-
-        then:
-        result2.task(":getVersionFromSource").outcome == TaskOutcome.SUCCESS
-        result2.output.contains("Got version: 'org.nodejs:node:16.14.2:")
-
-        where:
-        gv << GRADLE_VERSIONS_UNDER_TEST
-    }
-
     @IgnoreIf({ System.getProperty("os.name").toLowerCase().contains("windows") })
     def 'ensure configuration-cache works with nodeSetup (#gv.version)'() {
         given:

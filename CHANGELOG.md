@@ -1,8 +1,15 @@
 # Changelog
 
-## Version 4.x *(unreleased)*
+## Version 5.x *(unreleased)*
+
+## Version 5.0.0 *(unreleased)*
+* Support configuration-cache on Gradle 8.1 [#271](https://github.com/node-gradle/gradle-node-plugin/issues/271)
+* Store node directories on NodeExtension
+* Deprecate parts of PlatformHelper that require executing commands during configuration
+* Re-introduce support for Gradle 6.6 and newer
 
 ## Version 4.0.0 *(2023-04-23)*
+* **This version is unfortunately broken, please upgrade directly to 5.0.0**
 * Drop support for versions lower than Gradle 7.5.1
 * Rename `package.json` extension to `packageJson` [#232](https://github.com/node-gradle/gradle-node-plugin/issues/232)
 * Support configuration-cache on Gradle 8.1 [#271](https://github.com/node-gradle/gradle-node-plugin/issues/271)
@@ -39,7 +46,7 @@
 ## Version 3.1.0 *(2021-05-07)*
 * Add support for Linux Power PC [#166](https://github.com/node-gradle/gradle-node-plugin/issues/166) (thanks [akatona84](https://github.com/akatona84) for the [pull request](https://github.com/node-gradle/gradle-node-plugin/issues/167))
 * Internal test suite now running against Gradle 7
-* Adds `yarn.lock` as an input to `NpmInstallTask` [#155](https://github.com/node-gradle/gradle-node-plugin/issues/155) 
+* Adds `yarn.lock` as an input to `NpmInstallTask` [#155](https://github.com/node-gradle/gradle-node-plugin/issues/155)
 
 ## Version 3.0.1 *(2021-02-09)*
 * Fixes a bug with the task rule preventing it from being configured [#145](https://github.com/node-gradle/gradle-node-plugin/issues/145)
@@ -74,15 +81,15 @@ Here is what changed:
   * `com.moowork.gradle.node` (and all children) renamed to `com.github.gradle.node`
   * `com.moowork.gradle.node.npm` renamed to `com.github.gradle.node.npm.task`
   * `com.moowork.gradle.node.yarn` renamed to `com.github.gradle.node.yarn.task`
-* All the configuration properties (the `node` extension and all tasks) are now some 
-[lazy properties](https://docs.gradle.org/current/userguide/lazy_configuration.html#lazy_properties) as recommended by 
-Gradle. This makes this plugin fully compatible with lazy configuration (tasks will be configured only if they need to 
+* All the configuration properties (the `node` extension and all tasks) are now some
+[lazy properties](https://docs.gradle.org/current/userguide/lazy_configuration.html#lazy_properties) as recommended by
+Gradle. This makes this plugin fully compatible with lazy configuration (tasks will be configured only if they need to
 run and configuration properties are read only at runtime if needed and not at configuration time).
 * Thanks to the Kotlin rewrite, some properties now have a stronger typing.
 * `nodeModulesDir` option was renamed to `nodeProjectDir` (name more explicit and less confusing)
- (issue [#99](https://github.com/node-gradle/gradle-node-plugin/issues/99)). The former name still works but is 
+ (issue [#99](https://github.com/node-gradle/gradle-node-plugin/issues/99)). The former name still works but is
  deprecated.
-* Change the syntax to configure `nodeModulesOutputFilter` on `npmInstall` and `yarn` tasks. It also affects Groovy DSL 
+* Change the syntax to configure `nodeModulesOutputFilter` on `npmInstall` and `yarn` tasks. It also affects Groovy DSL
 users. Use now `nodeModulesOutputFilter { ... }` instead of `nodeModulesOutputFilter = { ... }`.
 
 ## Version 2.2.4 *(2020-05-18)*
@@ -91,7 +98,7 @@ users. Use now `nodeModulesOutputFilter { ... }` instead of `nodeModulesOutputFi
 
 ## Version 2.2.3 *(2020-02-28)*
 
-The previous release (2.2.2) was released by error from the development branch which contains an entire Kotlin rewrite 
+The previous release (2.2.2) was released by error from the development branch which contains an entire Kotlin rewrite
 of the plugin code and many backward compatibility breaks. This new version replaces the previous one and adds one fix.
 * Make npm and npx symlinks relative. PR #68
 * NpmSetupTask does not work when using separate http and https proxy settings #69
@@ -110,10 +117,10 @@ of the plugin code and many backward compatibility breaks. This new version repl
   * `NodeTask`'s `script` now has relative path sensitivity (issue [#41](https://github.com/node-gradle/gradle-node-plugin/issues/41))
   * No longer consider the working dir as an input for all tasks (issue [#40](https://github.com/node-gradle/gradle-node-plugin/issues/40))
   * Explicitly exclude the `execOverrides` option of tasks from the inputs (issue [#40](https://github.com/node-gradle/gradle-node-plugin/issues/40))
-  * Add the ability to remove some files of the `node_modules` directory from the `NpmInstallTask` and `YarnInstallTask` 
+  * Add the ability to remove some files of the `node_modules` directory from the `NpmInstallTask` and `YarnInstallTask`
   outputs from the task output ; this is necessary when some tasks change some files of the `node_modules` directory ;
   the `NpmInstallTask` and `YarnInstallTask` are never up-to-date in this case
-  (issue [#38](https://github.com/node-gradle/gradle-node-plugin/issues/38))  
+  (issue [#38](https://github.com/node-gradle/gradle-node-plugin/issues/38))
 * Deprecate the usage of `NodeTask` with a `script` which is a directory ; Node.js supports that and looks for an
   `index.js` file in the directory but this is not compliant with a correct input/output declaration (issue [#41](https://github.com/node-gradle/gradle-node-plugin/issues/41))
 * No longer use `Project.afterEvaluate` as a first step to support lazy tasks configuration (issue [#39](https://github.com/node-gradle/gradle-node-plugin/issues/39))
@@ -126,17 +133,17 @@ of the plugin code and many backward compatibility breaks. This new version repl
 * Improve the inputs declarations of the `YarnTask`
 
 ## Version 2.1.0 *(2019-09-19)*
-* Adds NpxTask for making use of https://www.npmjs.com/package/npx PR #32 
-* Improved up-to-date checks PR #32 
+* Adds NpxTask for making use of https://www.npmjs.com/package/npx PR #32
+* Improved up-to-date checks PR #32
 * Support ARM even if the JDK reports aarch64 #33
-* Setting distBaseUrl to null disables repository adding PR #25 
+* Setting distBaseUrl to null disables repository adding PR #25
 
 ## Version 2.0.0 *(2019-07-29)*
 * Only support Gradle 5.x officially.
 * Drop support for grunt/gulp plugins.
 
 ## Version 1.5.1 *(2019-06-19)*
-* Fix inputs/outputs for NpmInstallTask/YarnInstallTask. 
+* Fix inputs/outputs for NpmInstallTask/YarnInstallTask.
 
 ## Version 1.5.0 *(2019-06-19)*
 * Backport from srs: Added gradle build cache support for npm install (bjornmagnusson)
@@ -195,7 +202,7 @@ Version 0.14 *(2016-11-29)*
 Version 0.13 *(2016-06-27)*
 ---------------------------
 
-* Bumped gradle wrapper version to 2.14 
+* Bumped gradle wrapper version to 2.14
 * Implement ARM compatibility _(madmas)_
 * Allow node modules to be used when calling npm_run _(jmcampanini)_
 * Updated plugin versions and test versions

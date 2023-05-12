@@ -3,6 +3,7 @@ package com.github.gradle.node.yarn.task
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.task.AbstractTaskTest
+import com.github.gradle.node.util.PlatformHelperKt
 
 class YarnTaskTest extends AbstractTaskTest {
     def cleanup() {
@@ -32,6 +33,7 @@ class YarnTaskTest extends AbstractTaskTest {
     def "exec yarn task (download)"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', YarnTask)
@@ -55,6 +57,7 @@ class YarnTaskTest extends AbstractTaskTest {
     def "exec yarn task (download) with configured proxy"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
         GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
         GradleProxyHelper.setHttpsProxyPort(443)
@@ -83,6 +86,7 @@ class YarnTaskTest extends AbstractTaskTest {
     def "exec yarn task (download) with configured proxy but disabled"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
         GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
         GradleProxyHelper.setHttpsProxyPort(443)

@@ -17,11 +17,15 @@ class PlatformHelperTest extends Specification {
         given:
         this.props.setProperty("os.name", osProp)
         this.props.setProperty("os.arch", archProp)
+        def platform = PlatformHelperKt.parsePlatform(osProp, archProp, {})
 
         expect:
         this.helper.getOsName() == osName
         this.helper.getOsArch() == osArch
         this.helper.isWindows() == isWindows
+        platform.name == osName
+        platform.arch == osArch
+        platform.windows == isWindows
 
         where:
         osProp      | archProp  | osName   | osArch    | isWindows
@@ -43,10 +47,13 @@ class PlatformHelperTest extends Specification {
         this.props.setProperty("os.name", "Linux")
         this.props.setProperty("os.arch", archProp)
         this.props.setProperty("uname", unameProp)
+        def platform = PlatformHelperKt.parsePlatform("Linux", archProp, { unameProp })
 
         expect:
         this.helper.getOsName() == "linux"
         this.helper.getOsArch() == osArch
+        platform.name == "linux"
+        platform.arch == osArch
 
         where:
         archProp  | unameProp | osArch
@@ -64,10 +71,13 @@ class PlatformHelperTest extends Specification {
         this.props.setProperty("os.name", "Mac OS X")
         this.props.setProperty("os.arch", archProp)
         this.props.setProperty("uname", unameProp)
+        def platform = PlatformHelperKt.parsePlatform("Mac OS X", archProp, { unameProp })
 
         expect:
         this.helper.getOsName() == "darwin"
         this.helper.getOsArch() == osArch
+        platform.name == "darwin"
+        platform.arch == osArch
 
         where:
         archProp  | unameProp | osArch
@@ -78,11 +88,8 @@ class PlatformHelperTest extends Specification {
     }
 
     def "throw exception if unsupported os"() {
-        given:
-        this.props.setProperty("os.name", 'Nonsense')
-
         when:
-        this.helper.getOsName()
+        PlatformHelperKt.parsePlatform('Nonsense', "", {})
 
         then:
         thrown(IllegalStateException)

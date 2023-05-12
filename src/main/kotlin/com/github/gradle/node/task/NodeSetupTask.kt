@@ -3,7 +3,10 @@ package com.github.gradle.node.task
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.DefaultProjectApiHelper
+import com.github.gradle.node.variant.computeNodeExec
+import com.github.gradle.node.variant.computeNpmScriptFile
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -31,9 +34,7 @@ abstract class NodeSetupTask : BaseTask() {
     val nodeArchiveFile = objects.fileProperty()
 
     @get:OutputDirectory
-    val nodeDir by lazy {
-        variantComputer.computeNodeDir(nodeExtension)
-    }
+    abstract val nodeDir: DirectoryProperty
 
     @get:Internal
     val projectHelper = project.objects.newInstance(DefaultProjectApiHelper::class.java)
@@ -61,7 +62,7 @@ abstract class NodeSetupTask : BaseTask() {
 
     private fun unpackNodeArchive() {
         val archiveFile = nodeArchiveFile.get().asFile
-        val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+        val nodeDirProvider = nodeExtension.computedNodeDir
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         val archivePath = nodeDirProvider.map { it.dir("../") }
         if (archiveFile.name.endsWith("zip")) {
@@ -83,17 +84,16 @@ abstract class NodeSetupTask : BaseTask() {
 
     private fun fixBrokenSymlink(name: String, nodeBinDirPath: Path, nodeDirProvider: Provider<Directory>) {
         val script = nodeBinDirPath.resolve(name)
-        val scriptFile = variantComputer.computeNpmScriptFile(nodeDirProvider, name).get()
+        val scriptFile = computeNpmScriptFile(nodeDirProvider, name, nodeExtension.computedPlatform.get().isWindows())
         if (Files.deleteIfExists(script)) {
-            Files.createSymbolicLink(script, nodeBinDirPath.relativize(Paths.get(scriptFile)))
+            Files.createSymbolicLink(script, nodeBinDirPath.relativize(Paths.get(scriptFile.get())))
         }
     }
 
     private fun setExecutableFlag() {
-        if (!platformHelper.isWindows) {
-            val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
-            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
-            val nodeExecProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
+        if (!nodeExtension.computedPlatform.get().isWindows()) {
+            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeExtension.computedNodeDir)
+            val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
             File(nodeExecProvider.get()).setExecutable(true)
         }
     }

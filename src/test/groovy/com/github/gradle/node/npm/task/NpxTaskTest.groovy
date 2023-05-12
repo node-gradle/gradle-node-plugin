@@ -1,12 +1,15 @@
 package com.github.gradle.node.npm.task
 
+
 import com.github.gradle.node.task.AbstractTaskTest
+import com.github.gradle.node.util.PlatformHelperKt
 import com.github.gradle.node.variant.VariantComputer
 
 class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpxTask)
         mockPlatformHelper(task)
@@ -34,6 +37,7 @@ class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task (windows)"() {
         given:
         props.setProperty('os.name', 'Windows')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpxTask)
         mockPlatformHelper(task)
@@ -61,9 +65,10 @@ class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task (download)"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
         def variantComputer = new VariantComputer(testPlatformHelper)
-        def nodeDir = variantComputer.computeNodeDir(nodeExtension)
+        def nodeDir = nodeExtension.computedNodeDir
         def nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
         def npxScriptFile = variantComputer.computeNpmScriptFile(nodeDir, "npx")
 

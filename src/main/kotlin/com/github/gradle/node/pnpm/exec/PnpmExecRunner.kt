@@ -10,6 +10,7 @@ import com.github.gradle.node.npm.proxy.NpmProxy.Companion.computeNpmProxyEnviro
 import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
+import com.github.gradle.node.variant.computeNodeExec
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecResult
@@ -67,13 +68,17 @@ abstract class PnpmExecRunner {
             }
     }
 
-    private fun computeExecutable(nodeExtension: NodeExtension, pnpmExecConfiguration: NpmExecConfiguration, variantComputer: VariantComputer):
+    private fun computeExecutable(
+        nodeExtension: NodeExtension,
+        pnpmExecConfiguration: NpmExecConfiguration,
+        variantComputer: VariantComputer
+    ):
             Provider<ExecutableAndScript> {
         val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
         val pnpmDirProvider = variantComputer.computePnpmDir(nodeExtension)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         val pnpmBinDirProvider = variantComputer.computePnpmBinDir(pnpmDirProvider)
-        val nodeExecProvider = variantComputer.computeNodeExec(nodeExtension, nodeBinDirProvider)
+        val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
         val executableProvider =
             pnpmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, pnpmBinDirProvider)
 

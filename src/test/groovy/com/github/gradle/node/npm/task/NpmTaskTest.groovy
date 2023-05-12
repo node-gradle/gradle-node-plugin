@@ -1,8 +1,10 @@
 package com.github.gradle.node.npm.task
 
+
 import com.github.gradle.node.npm.proxy.GradleProxyHelper
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.task.AbstractTaskTest
+import com.github.gradle.node.util.PlatformHelperKt
 
 import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
 
@@ -14,6 +16,7 @@ class NpmTaskTest extends AbstractTaskTest {
     def "exec npm task"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpmTask)
         mockPlatformHelper(task)
@@ -37,6 +40,7 @@ class NpmTaskTest extends AbstractTaskTest {
     def "exec npm task (windows)"() {
         given:
         props.setProperty('os.name', 'Windows')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpmTask)
         mockPlatformHelper(task)
@@ -60,6 +64,7 @@ class NpmTaskTest extends AbstractTaskTest {
     def "exec npm task (download)"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
         def nodeDir = projectDir.toPath().resolve(".gradle").resolve("nodejs")
                 .resolve("node-v${DEFAULT_NODE_VERSION}-linux-x64")
@@ -90,6 +95,7 @@ class NpmTaskTest extends AbstractTaskTest {
     def "exec npm task (download) with configured proxy"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
         def nodeDir = projectDir.toPath().resolve(".gradle").resolve("nodejs")
                 .resolve("node-v${DEFAULT_NODE_VERSION}-linux-x64")
@@ -123,6 +129,7 @@ class NpmTaskTest extends AbstractTaskTest {
     def "exec npm task with configured proxy"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
 
@@ -144,6 +151,7 @@ class NpmTaskTest extends AbstractTaskTest {
     def "exec npm task with configured proxy but disabled"() {
         given:
         props.setProperty('os.name', 'Linux')
+        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)

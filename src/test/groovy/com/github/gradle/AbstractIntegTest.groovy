@@ -36,6 +36,7 @@ abstract class AbstractIntegTest extends Specification {
                 .withPluginClasspath()
                 .forwardOutput()
                 .withGradleVersion(gradleVersion.version)
+                .withDebug(false)
     }
 
     protected final BuildResult build(final String... args) {
