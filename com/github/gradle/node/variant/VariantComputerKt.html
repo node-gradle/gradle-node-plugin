@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!-- NewPage -->
 <html lang="en"><head>
-    <title>NodeVersionSource 1.0.0-SNAPSHOT API </title>
+    <title>VariantComputerKt 1.0.0-SNAPSHOT API </title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="dc.created" content="2020-03-25">
     <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -89,7 +89,7 @@ var pathtoroot = "../../../../../";
 <main role="main">
     <div class="header">
         <div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html"></a></div>
-        <h2 title="Class NodeVersionSource" class="title">Class NodeVersionSource</h2>
+        <h2 title="Class VariantComputerKt" class="title">Class VariantComputerKt</h2>
     </div>
     <div class="contentContainer">
         <!-- <ul class="inheritance">
@@ -108,17 +108,14 @@ var pathtoroot = "../../../../../";
                         <dt>All Implemented Interfaces:</dt>
                         <dd>
                             
-                            <code>org.gradle.api.provider.ValueSource</code>
-                            
-                            
                         </dd>
                     </dl>
                     
                     <hr>
                     <pre class="wrap-overflow">
 
-public abstract class <span class="typeNameLabel"><a href=NodeVersionSource.html>NodeVersionSource</a></span>
- implements ValueSource&lt;Provider&lt;<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html>String</a>&gt;, <a href=NodeVersionSource.NodeVersionSourceParameters.html>NodeVersionSource.NodeVersionSourceParameters</a>&gt;
+public final class <span class="typeNameLabel"><a href=VariantComputerKt.html>VariantComputerKt</a></span>
+
                     </pre>
                     <div class="block"></div>
                 </li>
@@ -144,13 +141,6 @@ public abstract class <span class="typeNameLabel"><a href=NodeVersionSource.html
                                             <th class="colLast" scope="col">Description</th>
                                         </tr>
                                         
-                                        <tr class="altColor">
-                                            <td class="colFirst"><code>public interface</code></td>
-                                            <th class="colSecond" scope="row"><code><a href="NodeVersionSource.NodeVersionSourceParameters.html">NodeVersionSource.NodeVersionSourceParameters</a></span></code>
-                                            </th>
-                                            <td class="colLast"></td>
-                                        </tr>
-                                        
                                     </table>
                                 </div>
                             </li>
@@ -172,12 +162,6 @@ public abstract class <span class="typeNameLabel"><a href=NodeVersionSource.html
                                             <th class="colFirst" scope="col">Modifier and Type</th>
                                             <th class="colSecond" scope="col">Field</th>
                                             <th class="colLast" scope="col">Description</th>
-                                        </tr>
-                                        
-                                        <tr class="altColor">
-                                            <td class="colFirst"><code>private final ExecOperations</code></td>
-                                            <th class="colSecond" scope="row"><code><a href=NodeVersionSource.html#execOperations>execOperations</a></code></th>
-                                            <td class="colLast"></td>
                                         </tr>
                                         
                                     </table>
@@ -203,12 +187,6 @@ public abstract class <span class="typeNameLabel"><a href=NodeVersionSource.html
                                             <th class="colLast" scope="col">Description</th>
                                         </tr>
 
-                                        
-                                            <tr class="altColor">
-                                                <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a
-                                                        href="#NodeVersionSource()">NodeVersionSource</a></span>()</code></th>
-                                                <td class="colLast"></td>
-                                            </tr>
                                         
 
                                         </tbody>
@@ -260,19 +238,43 @@ public abstract class <span class="typeNameLabel"><a href=NodeVersionSource.html
                                         </tr>
                                         
                                         <tr id="i0" class="altColor">
-                                            <td class="colFirst"><code>abstract ExecOperations</code>
+                                            <td class="colFirst"><code>final static Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=NodeVersionSource.html#getExecOperations()>getExecOperations</a>() </code>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputerKt.html#computeNodeExec(NodeExtension,Provider)>computeNodeExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; nodeBinDirProvider) </code>
+                                            </th>
+                                            <td class="colLast">Get the expected node binary name, node.exe on Windows and node everywhere else.</td>
+                                        </tr>
+                                        
+                                        <tr id="i1" class="rowColor">
+                                            <td class="colFirst"><code>final static Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputerKt.html#computeNpmScriptFile(Provider,String,Boolean)>computeNpmScriptFile</a>(Provider&lt;Directory&gt; nodeDirProvider, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> command, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> isWindows) </code>
                                             </th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i1" class="rowColor">
-                                            <td class="colFirst"><code>Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
+                                        <tr id="i2" class="altColor">
+                                            <td class="colFirst"><code>final static Provider&lt;Directory&gt;</code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=NodeVersionSource.html#obtain()>obtain</a>() </code>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputerKt.html#computeNodeDir(NodeExtension)>computeNodeDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension) </code>
                                             </th>
                                             <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i3" class="rowColor">
+                                            <td class="colFirst"><code>final static Provider&lt;Directory&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputerKt.html#computeNodeDir(NodeExtension,String,String)>computeNodeDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> osName, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> osArch) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i4" class="altColor">
+                                            <td class="colFirst"><code>final static Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputerKt.html#computeNodeArchiveDependency(NodeExtension)>computeNodeArchiveDependency</a>(<a href=../NodeExtension.html>NodeExtension</a> extension) </code>
+                                            </th>
+                                            <td class="colLast">Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.</td>
                                         </tr>
                                         
                                         </tbody>
@@ -280,12 +282,6 @@ public abstract class <span class="typeNameLabel"><a href=NodeVersionSource.html
                                 </div>
                                 <ul class="blockList">
                                 
-                                    <li class="blockList"><a id="methods.inherited.from.class.org.gradle.api.provider.ValueSource">
-                                            <!--   -->
-                                        </a>
-                                            <h3>Methods inherited from class&nbsp;org.gradle.api.provider.ValueSource</h3>
-                                            <code>getParameters</code></li>
-                                 
                                     <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
                                         <!--   -->
                                     </a>
@@ -312,16 +308,6 @@ public abstract class <span class="typeNameLabel"><a href=NodeVersionSource.html
                             </a>
                                 <h3>Constructor Detail</h3>
                                 
-                                <a name="NodeVersionSource()"></a>
-                                <ul class="blockList">
-                                    <li class="blockList">
-                                        <h4>NodeVersionSource</h4>
-                                        <pre>NodeVersionSource()</pre>
-                                        <div class="block"></div>
-                                        
-                                    </li>
-                                </ul>
-                                
                             </li>
                         </ul>
                     </section>
@@ -335,31 +321,76 @@ public abstract class <span class="typeNameLabel"><a href=NodeVersionSource.html
                             </a>
                                 <h3>Method Detail</h3>
                                 
-                                <a id="getExecOperations()">
+                                <a id="computeNodeExec(NodeExtension,Provider)">
                                     <!--   -->
                                 </a>
                                 <ul class=
                                               "blockList"
                                           >
                                     <li class="blockList">
-                                        <h4>getExecOperations</h4>
-                                        <pre class="methodSignature">@Inject() abstract ExecOperations <a href=NodeVersionSource.html#getExecOperations()>getExecOperations</a>()</pre>
+                                        <h4>computeNodeExec</h4>
+                                        <pre class="methodSignature"> final static Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputerKt.html#computeNodeExec(NodeExtension,Provider)>computeNodeExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; nodeBinDirProvider)</pre>
+                                        <div class="block"><p>Get the expected node binary name, node.exe on Windows and node everywhere else.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="computeNpmScriptFile(Provider,String,Boolean)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>computeNpmScriptFile</h4>
+                                        <pre class="methodSignature"> final static Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputerKt.html#computeNpmScriptFile(Provider,String,Boolean)>computeNpmScriptFile</a>(Provider&lt;Directory&gt; nodeDirProvider, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> command, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> isWindows)</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
                                 </ul>
                                 
-                                <a id="obtain()">
+                                <a id="computeNodeDir(NodeExtension)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>computeNodeDir</h4>
+                                        <pre class="methodSignature"> final static Provider&lt;Directory&gt; <a href=VariantComputerKt.html#computeNodeDir(NodeExtension)>computeNodeDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension)</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="computeNodeDir(NodeExtension,String,String)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>computeNodeDir</h4>
+                                        <pre class="methodSignature"> final static Provider&lt;Directory&gt; <a href=VariantComputerKt.html#computeNodeDir(NodeExtension,String,String)>computeNodeDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> osName, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> osArch)</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="computeNodeArchiveDependency(NodeExtension)">
                                     <!--   -->
                                 </a>
                                 <ul class=
                                               "blockListLast"
                                           >
                                     <li class="blockList">
-                                        <h4>obtain</h4>
-                                        <pre class="methodSignature"> Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=NodeVersionSource.html#obtain()>obtain</a>()</pre>
-                                        <div class="block"></div>
+                                        <h4>computeNodeArchiveDependency</h4>
+                                        <pre class="methodSignature"> final static Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputerKt.html#computeNodeArchiveDependency(NodeExtension)>computeNodeArchiveDependency</a>(<a href=../NodeExtension.html>NodeExtension</a> extension)</pre>
+                                        <div class="block"><p>Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.</p><p>Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>

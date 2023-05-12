@@ -6,7 +6,6 @@ $dokka.location:com.github.gradle.node.npm.task/NpmSetupTask.Companion///Pointin
 $dokka.location:com.github.gradle.node.pnpm.task/PnpmInstallTask.Companion///PointingToDeclaration/com/github/gradle/node/pnpm/task/PnpmInstallTask.Companion.html
 $dokka.location:com.github.gradle.node.pnpm.task/PnpmSetupTask.Companion///PointingToDeclaration/com/github/gradle/node/pnpm/task/PnpmSetupTask.Companion.html
 $dokka.location:com.github.gradle.node.task/NodeSetupTask.Companion///PointingToDeclaration/com/github/gradle/node/task/NodeSetupTask.Companion.html
-$dokka.location:com.github.gradle.node.util/NodeVersionSource.NodeVersionSourceParameters///PointingToDeclaration/com/github/gradle/node/util/NodeVersionSource.NodeVersionSourceParameters.html
 $dokka.location:com.github.gradle.node.util/PlatformHelper.Companion///PointingToDeclaration/com/github/gradle/node/util/PlatformHelper.Companion.html
 $dokka.location:com.github.gradle.node.util/ProjectApiHelper.Companion///PointingToDeclaration/com/github/gradle/node/util/ProjectApiHelper.Companion.html
 $dokka.location:com.github.gradle.node.yarn.task/YarnInstallTask.Companion///PointingToDeclaration/com/github/gradle/node/yarn/task/YarnInstallTask.Companion.html

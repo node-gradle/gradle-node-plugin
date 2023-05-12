@@ -303,6 +303,18 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast"></td>
                                         </tr>
                                         
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>private final DirectoryProperty</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#computedNodeDir>computedNodeDir</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>private final Property&lt;<a href=util/Platform.html>Platform</a>&gt;</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#computedPlatform>computedPlatform</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
                                     </table>
                                 </div>
                             </li>
@@ -559,6 +571,22 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         </tr>
                                         
                                         <tr id="i22" class="altColor">
+                                            <td class="colFirst"><code>final DirectoryProperty</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getComputedNodeDir()>getComputedNodeDir</a>() </code>
+                                            </th>
+                                            <td class="colLast">Computed path to nodejs directory</td>
+                                        </tr>
+                                        
+                                        <tr id="i23" class="rowColor">
+                                            <td class="colFirst"><code>final Property&lt;<a href=util/Platform.html>Platform</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getComputedPlatform()>getComputedPlatform</a>() </code>
+                                            </th>
+                                            <td class="colLast">Operating system and architecture</td>
+                                        </tr>
+                                        
+                                        <tr id="i24" class="altColor">
                                             <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#setUseGradleProxySettings(Boolean)>setUseGradleProxySettings</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> value) </code>
@@ -945,6 +973,36 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         <h4>getEnableTaskRules</h4>
                                         <pre class="methodSignature"> final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt; <a href=NodeExtension.html#getEnableTaskRules()>getEnableTaskRules</a>()</pre>
                                         <div class="block"><p>Create rules for automatic task creation</p><p>Disabling this will prevent the npm_ npx_ yarn_ pnpm_ tasks from being automatically created. It's recommended to turn this off after you've gotten comfortable with the plugin and register your own tasks instead of relying on the rule.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getComputedNodeDir()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getComputedNodeDir</h4>
+                                        <pre class="methodSignature"> final DirectoryProperty <a href=NodeExtension.html#getComputedNodeDir()>getComputedNodeDir</a>()</pre>
+                                        <div class="block"><p>Computed path to nodejs directory</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getComputedPlatform()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getComputedPlatform</h4>
+                                        <pre class="methodSignature"> final Property&lt;<a href=util/Platform.html>Platform</a>&gt; <a href=NodeExtension.html#getComputedPlatform()>getComputedPlatform</a>()</pre>
+                                        <div class="block"><p>Operating system and architecture</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>

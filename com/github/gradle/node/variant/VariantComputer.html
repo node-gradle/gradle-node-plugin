@@ -449,7 +449,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computeNodeDir</h4>
-                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeNodeDir(NodeExtension)>computeNodeDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension)</pre>
+                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;moved to NodeExtension&quot;, replaceWith = @<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-replace-with/index.html>ReplaceWith</a>(imports = {}, expression = &quot;nodeExtension.resolvedNodeDir&quot;)) final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeNodeDir(NodeExtension)>computeNodeDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension)</pre>
                                         <div class="block"><p>Get the expected directory for a given node version.</p><p>Essentially: workingDir/node-v$version-$osName-$osArch</p></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -479,7 +479,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computeNodeExec</h4>
-                                        <pre class="methodSignature"> final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeExec(NodeExtension,Provider)>computeNodeExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; nodeBinDirProvider)</pre>
+                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;replaced by package-level function&quot;, replaceWith = @<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-replace-with/index.html>ReplaceWith</a>(imports = {}, expression = &quot;com.github.gradle.node.variant.computeNodeExec(nodeExtension, nodeBinDirProvider)&quot;)) final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeExec(NodeExtension,Provider)>computeNodeExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; nodeBinDirProvider)</pre>
                                         <div class="block"><p>Get the expected node binary name, node.exe on Windows and node everywhere else.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -539,7 +539,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computeNpmScriptFile</h4>
-                                        <pre class="methodSignature"> final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNpmScriptFile(Provider,String)>computeNpmScriptFile</a>(Provider&lt;Directory&gt; nodeDirProvider, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> command)</pre>
+                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;replaced by package-level function&quot;) final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNpmScriptFile(Provider,String)>computeNpmScriptFile</a>(Provider&lt;Directory&gt; nodeDirProvider, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> command)</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -659,7 +659,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computeNodeArchiveDependency</h4>
-                                        <pre class="methodSignature"> final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeArchiveDependency(NodeExtension)>computeNodeArchiveDependency</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension)</pre>
+                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;replaced by package-level function&quot;, replaceWith = @<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-replace-with/index.html>ReplaceWith</a>(imports = {}, expression = &quot;com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)&quot;)) final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeArchiveDependency(NodeExtension)>computeNodeArchiveDependency</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension)</pre>
                                         <div class="block"><p>Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.</p><p>Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz</p></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -674,7 +674,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computeNodeArchiveDependency</h4>
-                                        <pre class="methodSignature"> final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeArchiveDependency(Property)>computeNodeArchiveDependency</a>(Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; nodeVersion)</pre>
+                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;replaced by package-level function&quot;, replaceWith = @<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-replace-with/index.html>ReplaceWith</a>(imports = {}, expression = &quot;com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)&quot;)) final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeArchiveDependency(Property)>computeNodeArchiveDependency</a>(Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; nodeVersion)</pre>
                                         <div class="block"><p>Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.</p><p>Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz</p></div>
                                         
                                         <!-- TODO missing return annotation -->
