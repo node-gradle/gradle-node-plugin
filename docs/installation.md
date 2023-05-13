@@ -1,11 +1,11 @@
 # Installation
 
-Installing the node-related plugins can be done in multiple ways. The easiest is to use the `plugins`-closure 
+Installing the node-related plugins can be done in multiple ways. The easiest is to use the `plugins`-closure
 in your `build.gradle` file:
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "4.0.0"
+  id "com.github.node-gradle.node" version "5.0.0"
 }
 ```
 
@@ -18,7 +18,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.github.node-gradle:gradle-node-plugin:4.0.0"
+    classpath "com.github.node-gradle:gradle-node-plugin:5.0.0"
   }
 }
 

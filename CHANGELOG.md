@@ -2,7 +2,7 @@
 
 ## Version 5.x *(unreleased)*
 
-## Version 5.0.0 *(unreleased)*
+## Version 5.0.0 *(2023-05-13)*
 * Support configuration-cache on Gradle 8.1 [#271](https://github.com/node-gradle/gradle-node-plugin/issues/271)
 * Store node directories on NodeExtension
 * Deprecate parts of PlatformHelper that require executing commands during configuration

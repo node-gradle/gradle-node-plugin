@@ -12,19 +12,19 @@ It is also able to install [Yarn](https://yarnpkg.com/) by downloading it from a
 
 The version of each tool to use can be specified in the configuration.
 
-To start using the plugin, add this into your `build.gradle` 
+To start using the plugin, add this into your `build.gradle`
 file (see [Installing](installation.md) for details):
 
 
 ```gradle
 plugins {
-  id "com.github.node-gradle.node" version "4.0.0"
+  id "com.github.node-gradle.node" version "5.0.0"
 }
 ```
 
 ## Running a Node.js Script
 
-To use this plugin you have to define some tasks in your `build.gradle` file. If you have a Node.js 
+To use this plugin you have to define some tasks in your `build.gradle` file. If you have a Node.js
 script in `src/scripts/my.js`, then you can execute this by defining the following Gradle task:
 
 ```gradle
@@ -51,14 +51,14 @@ task myScript(type: NodeTask) {
 }
 ```
 
-When executing this task for the first time, it will run a `nodeSetup` task that downloads Node.js 
-(for your platform) and NPM (Node Package Manager) if on Windows (other platforms include 
+When executing this task for the first time, it will run a `nodeSetup` task that downloads Node.js
+(for your platform) and NPM (Node Package Manager) if on Windows (other platforms include
 it into the distribution).
 
 ## Executing `npm` Tasks
 
-When adding the node plugin, you will have a `npmInstall` task already added. This task will 
-execute `npm install` and installs all dependencies in `package.json`. It will only run when changes 
+When adding the node plugin, you will have a `npmInstall` task already added. This task will
+execute `npm install` and installs all dependencies in `package.json`. It will only run when changes
 are made to `package.json`, `npm-shrinkwrap.json`, `package-lock.json` or `node_modules`. Execute it like this:
 
 ```bash
@@ -77,7 +77,7 @@ $ gradle npm_cache_clean
 ...
 ```
 
-These however are not shown when running gradle tasks, as they generated dynamically. However they can 
+These however are not shown when running gradle tasks, as they generated dynamically. However they can
 be used for dependency declarations, such as:
 
 ```gradle
@@ -104,19 +104,19 @@ task installExpress(type: NpmTask) {
 ## Executing `npm` Commands via `npx`
 
 [As of 5.2](https://blog.npmjs.org/post/162869356040/introducing-npx-an-npm-package-runner),
- `npm` is bundled with a new command called [`npx`](https://www.npmjs.com/package/npx) which is aimed at running CLI 
- commands from NPM packages. 
+ `npm` is bundled with a new command called [`npx`](https://www.npmjs.com/package/npx) which is aimed at running CLI
+ commands from NPM packages.
 
-It enables to execute `npm` commands without needing to declare them as a `script` in the `package.json` file and run 
+It enables to execute `npm` commands without needing to declare them as a `script` in the `package.json` file and run
 thanks to the `npm run` command.
 
-It does not require the command to be locally or globally installed. If the command is not already installed, the 
+It does not require the command to be locally or globally installed. If the command is not already installed, the
 corresponding package is installed then the command is run. In this case, it is necessary to indicate the package
  name instead of the command name.
- 
-The `NpxTask` is able to execute some `npx` commands. It depends on the `npmSetup` to ensure `npx` is available. 
 
-To generate a new Angular project with the `ng` command coming from `@angular/cli` which is not installed 
+The `NpxTask` is able to execute some `npx` commands. It depends on the `npmSetup` to ensure `npx` is available.
+
+To generate a new Angular project with the `ng` command coming from `@angular/cli` which is not installed
 (note that we can specify the version):
 
 ```gradle
@@ -142,8 +142,8 @@ task buildAngularApp(type: NpxTask) {
 
 ## Executing Yarn Tasks
 
-When adding the node plugin, you will have a yarn task already added. This task will 
-execute `yarn` and installs all dependencies in `package.json`. It will only run when changes 
+When adding the node plugin, you will have a yarn task already added. This task will
+execute `yarn` and installs all dependencies in `package.json`. It will only run when changes
 are made to `package.json`, `yarn.lock`, or `node_modules`. Execute it like this:
 
 ```bash
@@ -160,7 +160,7 @@ $ gradle yarn_cache_clean
 ...
 ```
 
-These however are not shown when running gradle tasks, as they generated dynamically. However they can be 
+These however are not shown when running gradle tasks, as they generated dynamically. However they can be
 used for dependency declarations, such as:
 
 ```gradle
@@ -191,7 +191,7 @@ You can configure the plugin through the `node` extension.
 Here is the list of all available configuration properties using the Groovy DSL.
 See [here](../src/test/resources/fixtures/kotlin/build.gradle.kts) to see a Kotlin DSL example.
 
-The values shown here are the default ones. We recommend to define only the ones for which the 
+The values shown here are the default ones. We recommend to define only the ones for which the
 default value is not satisfying.
 
 ```gradle
@@ -201,51 +201,51 @@ node {
     // If true, it will download node using above parameters
     // Note that npm is bundled with Node.js
     download = false
-    
+
     // Version of node to download and install (only used if download is true)
     // It will be unpacked in the workDir
     version = "16.14.0"
-    
+
     // Version of npm to use
     // If specified, installs it in the npmWorkDir
     // If empty, the plugin will use the npm command bundled with Node.js
     npmVersion = ""
-    
+
     // Version of Yarn to use
     // Any Yarn task first installs Yarn in the yarnWorkDir
     // It uses the specified version if defined and the latest version otherwise (by default)
     yarnVersion = ""
-    
+
     // Base URL for fetching node distributions
     // Only used if download is true
     // Change it if you want to use a mirror
     // Or set to null if you want to add the repository on your own.
     distBaseUrl = "https://nodejs.org/dist"
-    
+
     // Specifies whether it is acceptable to communicate with the Node.js repository over an insecure HTTP connection.
     // Only used if download is true
     // Change it to true if you use a mirror that uses HTTP rather than HTTPS
     // Or set to null if you want to use Gradle's default behaviour.
     allowInsecureProtocol = null
-    
+
     // The npm command executed by the npmInstall task
     // By default it is install but it can be changed to ci
     npmInstallCommand = "install"
-    
-    // The directory where Node.js is unpacked (when download is true) 
+
+    // The directory where Node.js is unpacked (when download is true)
     workDir = file("${project.projectDir}/.gradle/nodejs")
-    
+
     // The directory where npm is installed (when a specific version is defined)
     npmWorkDir = file("${project.projectDir}/.gradle/npm")
-    
+
     // The directory where yarn is installed (when a Yarn task is used)
     yarnWorkDir = file("${project.projectDir}/.gradle/yarn")
-    
+
     // The Node.js project directory location
     // This is where the package.json file and node_modules directory are located
     // By default it is at the root of the current project
     nodeProjectDir = file("${project.projectDir}")
-    
+
     // Whether the plugin automatically should add the proxy configuration to npm and yarn commands
     // according the proxy configuration defined for Gradle
     // Disable this option if you want to configure the proxy for npm or yarn on your own
