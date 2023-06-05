@@ -118,11 +118,11 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addPnpmRule(enableTaskRules: Property<Boolean>) { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
+    private fun addPnpmRule(enableTaskRules: Property<Boolean>) { // note this rule also makes it possible to specify e.g. "dependsOn pnpm_install"
         project.tasks.addRule("Pattern: \"pnpm_<command>\": Executes an PNPM command.") {
             val taskName = this
             if (taskName.startsWith("pnpm_") && enableTaskRules.get()) {
-                project.tasks.register<PnpmTask>(taskName) {
+                project.tasks.create<PnpmTask>(taskName) {
                     val tokens = taskName.split("_").drop(1) // all except first
                     pnpmCommand.set(tokens)
                     if (tokens.first().equals("run", ignoreCase = true)) {
