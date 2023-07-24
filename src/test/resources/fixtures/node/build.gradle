@@ -43,5 +43,10 @@ task version(type: NodeTask) {
 }
 
 def isPropertyEnabled(String name) {
-    return providers.systemProperty(name).forUseAtConfigurationTime().isPresent()
+    def provider = providers.systemProperty(name)
+    if (org.gradle.util.GradleVersion.current() >= org.gradle.util.GradleVersion.version("7.4")) {
+        return provider.isPresent()
+    } else {
+        return provider.forUseAtConfigurationTime().isPresent()
+    }
 }
