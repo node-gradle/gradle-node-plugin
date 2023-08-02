@@ -7,7 +7,7 @@ class PnpmTaskTest extends AbstractTaskTest {
     def "exec pnpm task"() {
         given:
         props.setProperty('os.name', 'Linux')
-        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
+        nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
 
         def task = project.tasks.create('simple', PnpmTask)
         mockPlatformHelper(task)
@@ -32,7 +32,7 @@ class PnpmTaskTest extends AbstractTaskTest {
     def "exec pnpm task (windows)"() {
         given:
         props.setProperty('os.name', 'Windows')
-        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
+        nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
 
         def task = project.tasks.create('simple', PnpmTask)
         mockPlatformHelper(task)
@@ -57,7 +57,7 @@ class PnpmTaskTest extends AbstractTaskTest {
     def "exec pnpm task (download)"() {
         given:
         props.setProperty('os.name', 'Linux')
-        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
+        nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', PnpmTask)

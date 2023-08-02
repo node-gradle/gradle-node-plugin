@@ -17,8 +17,8 @@ fun buildExecConfiguration(
     nodeExecConfiguration: NodeExecConfiguration,
     variantComputer: VariantComputer
 ):
-    Provider<ExecConfiguration> {
-    val nodeDirProvider = nodeExtension.computedNodeDir
+        Provider<ExecConfiguration> {
+    val nodeDirProvider = nodeExtension.resolvedNodeDir
     val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
     val executableProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
     val additionalBinPathProvider = computeAdditionalBinPath(nodeExtension, nodeBinDirProvider)

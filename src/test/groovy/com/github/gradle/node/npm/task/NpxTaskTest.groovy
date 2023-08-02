@@ -9,7 +9,7 @@ class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task"() {
         given:
         props.setProperty('os.name', 'Linux')
-        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
+        nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpxTask)
         mockPlatformHelper(task)
@@ -37,7 +37,7 @@ class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task (windows)"() {
         given:
         props.setProperty('os.name', 'Windows')
-        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
+        nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpxTask)
         mockPlatformHelper(task)
@@ -65,10 +65,10 @@ class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task (download)"() {
         given:
         props.setProperty('os.name', 'Linux')
-        nodeExtension.computedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
+        nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
         def variantComputer = new VariantComputer(testPlatformHelper)
-        def nodeDir = nodeExtension.computedNodeDir
+        def nodeDir = nodeExtension.resolvedNodeDir
         def nodeBinDir = variantComputer.computeNodeBinDir(nodeDir)
         def npxScriptFile = variantComputer.computeNpmScriptFile(nodeDir, "npx")
 

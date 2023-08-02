@@ -80,15 +80,15 @@ abstract class NpmExecRunner {
         npmExecConfiguration: NpmExecConfiguration,
         variantComputer: VariantComputer
     ):
-        Provider<ExecutableAndScript> {
-        val nodeDirProvider = nodeExtension.computedNodeDir
+            Provider<ExecutableAndScript> {
+        val nodeDirProvider = nodeExtension.resolvedNodeDir
         val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)
         val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
         val executableProvider =
             npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDirProvider)
-        val isWindows = nodeExtension.computedPlatform.get().isWindows()
+        val isWindows = nodeExtension.resolvedPlatform.get().isWindows()
         val npmScriptFileProvider =
             computeNpmScriptFile(nodeDirProvider, npmExecConfiguration.command, isWindows)
         return zip(
@@ -120,7 +120,7 @@ abstract class NpmExecRunner {
             if (!download) {
                 providers.provider { listOf<String>() }
             }
-            val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+            val nodeDirProvider = nodeExtension.resolvedNodeDir
             val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
             val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
             val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)

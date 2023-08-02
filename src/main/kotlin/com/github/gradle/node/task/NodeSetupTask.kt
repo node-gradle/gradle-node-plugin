@@ -62,7 +62,7 @@ abstract class NodeSetupTask : BaseTask() {
 
     private fun unpackNodeArchive() {
         val archiveFile = nodeArchiveFile.get().asFile
-        val nodeDirProvider = nodeExtension.computedNodeDir
+        val nodeDirProvider = nodeExtension.resolvedNodeDir
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         val archivePath = nodeDirProvider.map { it.dir("../") }
         if (archiveFile.name.endsWith("zip")) {
@@ -84,15 +84,15 @@ abstract class NodeSetupTask : BaseTask() {
 
     private fun fixBrokenSymlink(name: String, nodeBinDirPath: Path, nodeDirProvider: Provider<Directory>) {
         val script = nodeBinDirPath.resolve(name)
-        val scriptFile = computeNpmScriptFile(nodeDirProvider, name, nodeExtension.computedPlatform.get().isWindows())
+        val scriptFile = computeNpmScriptFile(nodeDirProvider, name, nodeExtension.resolvedPlatform.get().isWindows())
         if (Files.deleteIfExists(script)) {
             Files.createSymbolicLink(script, nodeBinDirPath.relativize(Paths.get(scriptFile.get())))
         }
     }
 
     private fun setExecutableFlag() {
-        if (!nodeExtension.computedPlatform.get().isWindows()) {
-            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeExtension.computedNodeDir)
+        if (!nodeExtension.resolvedPlatform.get().isWindows()) {
+            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeExtension.resolvedNodeDir)
             val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
             File(nodeExecProvider.get()).setExecutable(true)
         }

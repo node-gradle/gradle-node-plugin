@@ -134,10 +134,6 @@ open class NodeExtension(project: Project) {
      */
     val oldNpm = project.objects.property<Boolean>().convention(false)
 
-    @Suppress("unused")
-    @Deprecated("Deprecated in version 3.0, please use nodeProjectDir now")
-    val nodeModulesDir = nodeProjectDir
-
     /**
      * Create rules for automatic task creation
      *
@@ -152,12 +148,24 @@ open class NodeExtension(project: Project) {
     /**
      * Computed path to nodejs directory
      */
+    @Deprecated(message = "replaced with resolvedNodeDir", replaceWith = ReplaceWith("resolvedNodeDir"))
     val computedNodeDir = project.objects.directoryProperty()
+
+    /**
+     * Computed path to nodejs directory
+     */
+    val resolvedNodeDir = project.objects.directoryProperty()
 
     /**
      * Operating system and architecture
      */
+    @Deprecated(message = "replaced with resolvedPlatform", replaceWith = ReplaceWith("resolvedPlatform"))
     val computedPlatform = project.objects.property<Platform>()
+
+    /**
+     * Operating system and architecture
+     */
+    val resolvedPlatform = project.objects.property<Platform>()
 
     init {
         distBaseUrl.set("https://nodejs.org/dist")

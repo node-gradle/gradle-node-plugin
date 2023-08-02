@@ -74,7 +74,7 @@ abstract class PnpmExecRunner {
         variantComputer: VariantComputer
     ):
             Provider<ExecutableAndScript> {
-        val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+        val nodeDirProvider = nodeExtension.resolvedNodeDir
         val pnpmDirProvider = variantComputer.computePnpmDir(nodeExtension)
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
         val pnpmBinDirProvider = variantComputer.computePnpmBinDir(pnpmDirProvider)
@@ -105,7 +105,7 @@ abstract class PnpmExecRunner {
             if (!download) {
                 providers.provider { listOf<String>() }
             }
-            val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+            val nodeDirProvider = nodeExtension.resolvedNodeDir
             val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
             val pnpmDirProvider = variantComputer.computePnpmDir(nodeExtension)
             val pnpmBinDirProvider = variantComputer.computePnpmBinDir(pnpmDirProvider)

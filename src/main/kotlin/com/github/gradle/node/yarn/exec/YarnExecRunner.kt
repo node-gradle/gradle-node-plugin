@@ -24,16 +24,18 @@ abstract class YarnExecRunner {
         nodeExecConfiguration: NodeExecConfiguration,
         variantComputer: VariantComputer
     ): ExecResult {
-        val nodeDirProvider = variantComputer.computeNodeDir(nodeExtension)
+        val nodeDirProvider = nodeExtension.resolvedNodeDir
         val yarnDirProvider = variantComputer.computeYarnDir(nodeExtension)
         val yarnBinDirProvider = variantComputer.computeYarnBinDir(yarnDirProvider)
         val yarnExecProvider = variantComputer.computeYarnExec(nodeExtension, yarnBinDirProvider)
         val additionalBinPathProvider =
-                computeAdditionalBinPath(nodeExtension, nodeDirProvider, yarnBinDirProvider, variantComputer)
-        val execConfiguration = ExecConfiguration(yarnExecProvider.get(),
-                nodeExecConfiguration.command, additionalBinPathProvider.get(),
-                addNpmProxyEnvironment(nodeExtension, nodeExecConfiguration), nodeExecConfiguration.workingDir,
-                nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides)
+            computeAdditionalBinPath(nodeExtension, nodeDirProvider, yarnBinDirProvider, variantComputer)
+        val execConfiguration = ExecConfiguration(
+            yarnExecProvider.get(),
+            nodeExecConfiguration.command, additionalBinPathProvider.get(),
+            addNpmProxyEnvironment(nodeExtension, nodeExecConfiguration), nodeExecConfiguration.workingDir,
+            nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides
+        )
         val execRunner = ExecRunner()
 
         return execRunner.execute(project, nodeExtension, execConfiguration)

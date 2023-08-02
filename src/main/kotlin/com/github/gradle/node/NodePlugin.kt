@@ -48,10 +48,17 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private fun configureNodeExtension(extension: NodeExtension) {
         addPlatform(extension)
-        extension.computedNodeDir.set(computeNodeDir(extension))
-        extension.computedNodeDir.finalizeValueOnRead()
+        with(extension.resolvedNodeDir) {
+            set(computeNodeDir(extension))
+            finalizeValueOnRead()
+        }
+        with(extension.computedNodeDir) {
+            convention(extension.resolvedNodeDir)
+            finalizeValueOnRead()
+        }
     }
 
     private fun addPlatform(extension: NodeExtension) {
@@ -77,7 +84,8 @@ class NodePlugin : Plugin<Project> {
         val name = System.getProperty("os.name")
         val arch = System.getProperty("os.arch")
         val platform = parsePlatform(name, arch, uname)
-        extension.computedPlatform.set(platform)
+        extension.resolvedPlatform.set(platform)
+        extension.computedPlatform.convention(extension.resolvedPlatform)
     }
 
     private fun addGlobalTypes() {
@@ -167,7 +175,7 @@ class NodePlugin : Plugin<Project> {
 
     private fun configureNodeSetupTask(nodeExtension: NodeExtension) {
         project.tasks.withType<NodeSetupTask>().configureEach {
-            nodeDir.set(nodeExtension.computedNodeDir)
+            nodeDir.set(nodeExtension.resolvedNodeDir)
             val archiveFileProvider = computeNodeArchiveDependency(nodeExtension)
                     .map { nodeArchiveDependency ->
                         resolveNodeArchiveFile(nodeArchiveDependency)

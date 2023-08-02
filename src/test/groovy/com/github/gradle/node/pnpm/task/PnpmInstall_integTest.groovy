@@ -101,7 +101,7 @@ class PnpmInstall_integTest
                 download = true
                 workDir = file('build/node')
                 pnpmWorkDir = file('build/pnpm')
-                nodeModulesDir = file('subdirectory')
+                nodeProjectDir = file('subdirectory')
             }
         ''' )
         writeFile( 'subdirectory/package.json', """{

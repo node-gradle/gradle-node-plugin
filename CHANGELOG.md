@@ -1,6 +1,9 @@
 # Changelog
 
-## Version 5.x *(unreleased)*
+## Version 6.x *(unreleased)*
+* Removed deprecated `nodeModulesDir` from `NodeExtension`
+* The resolved/computed node directory and platform are stored in `resolvedNodeDir` and `resolvedPlatform` on `NodeExtension`
+* Fixes configuration-cache issue in Gradle 8.4
 
 ## Version 5.0.0 *(2023-05-13)*
 * Support configuration-cache on Gradle 8.1 [#271](https://github.com/node-gradle/gradle-node-plugin/issues/271)

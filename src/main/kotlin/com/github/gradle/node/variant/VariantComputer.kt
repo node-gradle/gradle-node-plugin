@@ -15,7 +15,7 @@ fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<D
     return zip(nodeExtension.download, nodeBinDirProvider).map {
         val (download, nodeBinDir) = it
         if (download) {
-            val nodeCommand = if (nodeExtension.computedPlatform.get().isWindows()) "node.exe" else "node"
+            val nodeCommand = if (nodeExtension.resolvedPlatform.get().isWindows()) "node.exe" else "node"
             nodeBinDir.dir(nodeCommand).asFile.absolutePath
         } else "node"
     }
@@ -28,8 +28,8 @@ fun computeNpmScriptFile(nodeDirProvider: Provider<Directory>, command: String, 
 }
 
 fun computeNodeDir(nodeExtension: NodeExtension): Provider<Directory> {
-    val osName = nodeExtension.computedPlatform.get().name
-    val osArch = nodeExtension.computedPlatform.get().arch
+    val osName = nodeExtension.resolvedPlatform.get().name
+    val osArch = nodeExtension.resolvedPlatform.get().arch
     return computeNodeDir(nodeExtension, osName, osArch)
 }
 
@@ -46,9 +46,9 @@ fun computeNodeDir(nodeExtension: NodeExtension, osName: String, osArch: String)
  * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
  */
 fun computeNodeArchiveDependency(extension: NodeExtension): Provider<String> {
-    val osName = extension.computedPlatform.get().name
-    val osArch = extension.computedPlatform.get().arch
-    val type = if (extension.computedPlatform.get().isWindows()) "zip" else "tar.gz"
+    val osName = extension.resolvedPlatform.get().name
+    val osArch = extension.resolvedPlatform.get().arch
+    val type = if (extension.resolvedPlatform.get().isWindows()) "zip" else "tar.gz"
     return extension.version.map { version -> "org.nodejs:node:$version:$osName-$osArch@$type" }
 }
 
@@ -112,7 +112,7 @@ open class VariantComputer constructor(
     fun computeNpmExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.download, nodeExtension.npmCommand, npmBinDirProvider).map {
             val (download, npmCommand, npmBinDir) = it
-            val command = if (nodeExtension.computedPlatform.get().isWindows()) {
+            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
                 npmCommand.mapIf({ it == "npm" }) { "npm.cmd" }
             } else npmCommand
             if (download) npmBinDir.dir(command).asFile.absolutePath else command
@@ -132,7 +132,7 @@ open class VariantComputer constructor(
     fun computeNpxExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.download, nodeExtension.npxCommand, npmBinDirProvider).map {
             val (download, npxCommand, npmBinDir) = it
-            val command = if (nodeExtension.computedPlatform.get().isWindows()) {
+            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
                 npxCommand.mapIf({ it == "npx" }) { "npx.cmd" }
             } else npxCommand
             if (download) npmBinDir.dir(command).asFile.absolutePath else command
@@ -155,7 +155,7 @@ open class VariantComputer constructor(
     fun computePnpmExec(nodeExtension: NodeExtension, pnpmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.pnpmCommand, nodeExtension.download, pnpmBinDirProvider).map {
             val (pnpmCommand, download, pnpmBinDir) = it
-            val command = if (nodeExtension.computedPlatform.get().isWindows()) {
+            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
                 pnpmCommand.mapIf({ it == "pnpm" }) { "pnpm.cmd" }
             } else pnpmCommand
             if (download) pnpmBinDir.dir(command).asFile.absolutePath else command
@@ -178,7 +178,7 @@ open class VariantComputer constructor(
     fun computeYarnExec(nodeExtension: NodeExtension, yarnBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.yarnCommand, nodeExtension.download, yarnBinDirProvider).map {
             val (yarnCommand, download, yarnBinDir) = it
-            val command = if (nodeExtension.computedPlatform.get().isWindows()) {
+            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
                 yarnCommand.mapIf({ it == "yarn" }) { "yarn.cmd" }
             } else yarnCommand
             if (download) yarnBinDir.dir(command).asFile.absolutePath else command

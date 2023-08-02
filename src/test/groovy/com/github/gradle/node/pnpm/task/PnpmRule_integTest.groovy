@@ -192,7 +192,7 @@ class PnpmRule_integTest extends AbstractIntegTest {
             node {
                 download = true
                 pnpmVersion = '${Versions.TEST_PNPM_DOWNLOAD_VERSION}'
-                nodeModulesDir = file("frontend")
+                nodeProjectDir = file("frontend")
             }
         """ )
         writeFile( 'frontend/package.json', """{

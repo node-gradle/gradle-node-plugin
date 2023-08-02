@@ -1,6 +1,7 @@
 package com.github.gradle.node.variant
 
 import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.util.KotlinUtilsKt
 import com.github.gradle.node.util.Platform
 import com.github.gradle.node.util.TestablePlatformHelper
 import com.github.gradle.node.util.PlatformHelperKt
@@ -34,7 +35,7 @@ class VariantComputerTest extends Specification {
         def platformHelper = new TestablePlatformHelper(props)
 
         def nodeExtension = new NodeExtension(project)
-        nodeExtension.computedPlatform.set(platform)
+        nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set(version)
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
@@ -46,16 +47,16 @@ class VariantComputerTest extends Specification {
 
         when:
         def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
-        def computedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
+        def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
-        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npm")
-        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npx")
+        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npm")
+        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npx")
 
         then:
         computedArchiveDependency.get() == depName
 
-        computedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
+        resolvedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
         computedNodeBinDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
         computedNodeExec.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node.exe")
         computedNpmScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "node_modules${PS}npm${PS}bin${PS}npm-cli.js")
@@ -81,7 +82,7 @@ class VariantComputerTest extends Specification {
 
         def project = ProjectBuilder.builder().build()
         def nodeExtension = new NodeExtension(project)
-        nodeExtension.computedPlatform.set(platform)
+        nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set('5.12.0')
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
@@ -90,16 +91,16 @@ class VariantComputerTest extends Specification {
 
         when:
         def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
-        def computedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
+        def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
-        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npm")
-        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npx")
+        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npm")
+        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npx")
 
         then:
         computedArchiveDependency.get() == depName
 
-        computedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
+        resolvedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
         computedNodeBinDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + 'bin')
         computedNodeExec.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "bin${PS}node")
         computedNpmScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "lib${PS}node_modules${PS}npm${PS}bin${PS}npm-cli.js")
@@ -129,7 +130,7 @@ class VariantComputerTest extends Specification {
 
         def project = ProjectBuilder.builder().build()
         def nodeExtension = new NodeExtension(project)
-        nodeExtension.computedPlatform.set(platform)
+        nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set('5.12.0')
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
@@ -138,16 +139,16 @@ class VariantComputerTest extends Specification {
 
         when:
         def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
-        def computedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
+        def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
         def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
-        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npm")
-        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(computedNodeDir, "npx")
+        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npm")
+        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npx")
 
         then:
         computedArchiveDependency.get() == depName
 
-        computedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
+        resolvedNodeDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir)
         computedNodeBinDir.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + 'bin')
         computedNodeExec.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "bin${PS}node")
         computedNpmScriptFile.get().toString().endsWith(NODE_BASE_PATH + nodeDir + PS + "lib${PS}node_modules${PS}npm${PS}bin${PS}npm-cli.js")
@@ -171,21 +172,21 @@ class VariantComputerTest extends Specification {
         def project = ProjectBuilder.builder().build()
 
         def nodeExtension = new NodeExtension(project)
-        nodeExtension.computedPlatform.set(platform)
+        nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
 
         def variantComputer = new VariantComputer(platformHelper)
 
         when:
-        def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
-        def computedNpmDir = variantComputer.computeNpmDir(nodeExtension, computedNodeDir)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
+        def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
+        def computedNpmDir = variantComputer.computeNpmDir(nodeExtension, resolvedNodeDir)
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
         def computedNpmBinDir = variantComputer.computeNpmBinDir(computedNpmDir)
         def computedNpmExec = variantComputer.computeNpmExec(nodeExtension, computedNpmBinDir)
         def computedNpxExec = variantComputer.computeNpxExec(nodeExtension, computedNpmBinDir)
 
-        def npmDir = computedNodeDir.get()
+        def npmDir = resolvedNodeDir.get()
         def npm = nodeExtension.npmCommand.get() + ".cmd"
         def npx = nodeExtension.npxCommand.get() + ".cmd"
 
@@ -204,7 +205,7 @@ class VariantComputerTest extends Specification {
         computedNpxExec.get() == npx
 
         // if no version use node paths
-        npmVersion != "" || computedNpmDir.get() == computedNodeDir.get()
+        npmVersion != "" || computedNpmDir.get() == resolvedNodeDir.get()
         npmVersion != "" || computedNpmBinDir.get() == computedNodeBinDir.get()
 
         where:
@@ -225,21 +226,21 @@ class VariantComputerTest extends Specification {
         def project = ProjectBuilder.builder().build()
 
         def nodeExtension = new NodeExtension(project)
-        nodeExtension.computedPlatform.set(platform)
+        nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
 
         def variantComputer = new VariantComputer(platformHelper)
 
         when:
-        def computedNodeDir = variantComputer.computeNodeDir(nodeExtension)
-        def computedNpmDir = variantComputer.computeNpmDir(nodeExtension, computedNodeDir)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(computedNodeDir)
+        def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
+        def computedNpmDir = variantComputer.computeNpmDir(nodeExtension, resolvedNodeDir)
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
         def computedNpmBinDir = variantComputer.computeNpmBinDir(computedNpmDir)
         def computedNpmExec = variantComputer.computeNpmExec(nodeExtension, computedNpmBinDir)
         def computedNpxExec = variantComputer.computeNpxExec(nodeExtension, computedNpmBinDir)
 
-        def npmDir = computedNodeDir.get()
+        def npmDir = resolvedNodeDir.get()
         def npm = nodeExtension.npmCommand.get()
         def npx = nodeExtension.npxCommand.get()
 
@@ -260,7 +261,7 @@ class VariantComputerTest extends Specification {
         computedNpxExec.get() == npx
 
         // if no version use node paths
-        npmVersion != "" || computedNpmDir.get() == computedNodeDir.get()
+        npmVersion != "" || computedNpmDir.get() == resolvedNodeDir.get()
         npmVersion != "" || computedNpmBinDir.get() == computedNodeBinDir.get()
 
         where:
