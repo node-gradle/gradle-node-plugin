@@ -292,26 +292,32 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         </tr>
                                         
                                         <tr class="altColor">
-                                            <td class="colFirst"><code>private final DirectoryProperty</code></td>
-                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#nodeModulesDir>nodeModulesDir</a></code></th>
-                                            <td class="colLast"></td>
-                                        </tr>
-                                        
-                                        <tr class="rowColor">
                                             <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#enableTaskRules>enableTaskRules</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr class="altColor">
+                                        <tr class="rowColor">
                                             <td class="colFirst"><code>private final DirectoryProperty</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#computedNodeDir>computedNodeDir</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>private final DirectoryProperty</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#resolvedNodeDir>resolvedNodeDir</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
                                         <tr class="rowColor">
                                             <td class="colFirst"><code>private final Property&lt;<a href=util/Platform.html>Platform</a>&gt;</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#computedPlatform>computedPlatform</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>private final Property&lt;<a href=util/Platform.html>Platform</a>&gt;</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#resolvedPlatform>resolvedPlatform</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
@@ -555,14 +561,6 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         </tr>
                                         
                                         <tr id="i20" class="altColor">
-                                            <td class="colFirst"><code>final DirectoryProperty</code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getNodeModulesDir()>getNodeModulesDir</a>() </code>
-                                            </th>
-                                            <td class="colLast"></td>
-                                        </tr>
-                                        
-                                        <tr id="i21" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getEnableTaskRules()>getEnableTaskRules</a>() </code>
@@ -570,10 +568,18 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Create rules for automatic task creationDisabling this will prevent the npm_ npx_ yarn_ pnpm_ tasks from being automatically created.</td>
                                         </tr>
                                         
-                                        <tr id="i22" class="altColor">
+                                        <tr id="i21" class="rowColor">
                                             <td class="colFirst"><code>final DirectoryProperty</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getComputedNodeDir()>getComputedNodeDir</a>() </code>
+                                            </th>
+                                            <td class="colLast">Computed path to nodejs directory</td>
+                                        </tr>
+                                        
+                                        <tr id="i22" class="altColor">
+                                            <td class="colFirst"><code>final DirectoryProperty</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getResolvedNodeDir()>getResolvedNodeDir</a>() </code>
                                             </th>
                                             <td class="colLast">Computed path to nodejs directory</td>
                                         </tr>
@@ -587,6 +593,14 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         </tr>
                                         
                                         <tr id="i24" class="altColor">
+                                            <td class="colFirst"><code>final Property&lt;<a href=util/Platform.html>Platform</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getResolvedPlatform()>getResolvedPlatform</a>() </code>
+                                            </th>
+                                            <td class="colLast">Operating system and architecture</td>
+                                        </tr>
+                                        
+                                        <tr id="i25" class="rowColor">
                                             <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#setUseGradleProxySettings(Boolean)>setUseGradleProxySettings</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> value) </code>
@@ -948,21 +962,6 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                     </li>
                                 </ul>
                                 
-                                <a id="getNodeModulesDir()">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>getNodeModulesDir</h4>
-                                        <pre class="methodSignature"> final DirectoryProperty <a href=NodeExtension.html#getNodeModulesDir()>getNodeModulesDir</a>()</pre>
-                                        <div class="block"></div>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
                                 <a id="getEnableTaskRules()">
                                     <!--   -->
                                 </a>
@@ -993,6 +992,21 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                     </li>
                                 </ul>
                                 
+                                <a id="getResolvedNodeDir()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getResolvedNodeDir</h4>
+                                        <pre class="methodSignature"> final DirectoryProperty <a href=NodeExtension.html#getResolvedNodeDir()>getResolvedNodeDir</a>()</pre>
+                                        <div class="block"><p>Computed path to nodejs directory</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
                                 <a id="getComputedPlatform()">
                                     <!--   -->
                                 </a>
@@ -1002,6 +1016,21 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                     <li class="blockList">
                                         <h4>getComputedPlatform</h4>
                                         <pre class="methodSignature"> final Property&lt;<a href=util/Platform.html>Platform</a>&gt; <a href=NodeExtension.html#getComputedPlatform()>getComputedPlatform</a>()</pre>
+                                        <div class="block"><p>Operating system and architecture</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getResolvedPlatform()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getResolvedPlatform</h4>
+                                        <pre class="methodSignature"> final Property&lt;<a href=util/Platform.html>Platform</a>&gt; <a href=NodeExtension.html#getResolvedPlatform()>getResolvedPlatform</a>()</pre>
                                         <div class="block"><p>Operating system and architecture</p></div>
                                         
                                         <!-- TODO missing return annotation -->
