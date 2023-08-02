@@ -194,12 +194,6 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                                 <td class="colLast"></td>
                                             </tr>
                                         
-                                            <tr class="rowColor">
-                                                <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a
-                                                        href="#VariantComputer(PlatformHelper)">VariantComputer</a></span>(<a href=../util/PlatformHelper.html>PlatformHelper</a> platformHelper)</code></th>
-                                                <td class="colLast"></td>
-                                            </tr>
-                                        
 
                                         </tbody>
                                     </table>
@@ -252,20 +246,12 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                         <tr id="i0" class="altColor">
                                             <td class="colFirst"><code>final Provider&lt;Directory&gt;</code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNodeDir(NodeExtension)>computeNodeDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension) </code>
-                                            </th>
-                                            <td class="colLast">Get the expected directory for a given node version.</td>
-                                        </tr>
-                                        
-                                        <tr id="i1" class="rowColor">
-                                            <td class="colFirst"><code>final Provider&lt;Directory&gt;</code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNodeBinDir(Provider)>computeNodeBinDir</a>(Provider&lt;Directory&gt; nodeDirProvider) </code>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNodeBinDir(Provider,Property)>computeNodeBinDir</a>(Provider&lt;Directory&gt; nodeDirProvider, Property&lt;<a href=../util/Platform.html>Platform</a>&gt; platform) </code>
                                             </th>
                                             <td class="colLast">Get the expected node binary directory, taking Windows specifics into account.</td>
                                         </tr>
                                         
-                                        <tr id="i2" class="altColor">
+                                        <tr id="i1" class="rowColor">
                                             <td class="colFirst"><code>final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNodeExec(NodeExtension,Provider)>computeNodeExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; nodeBinDirProvider) </code>
@@ -273,7 +259,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                             <td class="colLast">Get the expected node binary name, node.exe on Windows and node everywhere else.</td>
                                         </tr>
                                         
-                                        <tr id="i3" class="rowColor">
+                                        <tr id="i2" class="altColor">
                                             <td class="colFirst"><code>final Provider&lt;Directory&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNpmDir(NodeExtension,Provider)>computeNpmDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; nodeDirProvider) </code>
@@ -281,15 +267,15 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                             <td class="colLast">Get the expected directory for a given npm version.</td>
                                         </tr>
                                         
-                                        <tr id="i4" class="altColor">
+                                        <tr id="i3" class="rowColor">
                                             <td class="colFirst"><code>final Provider&lt;Directory&gt;</code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNpmBinDir(Provider)>computeNpmBinDir</a>(Provider&lt;Directory&gt; npmDirProvider) </code>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNpmBinDir(Provider,Property)>computeNpmBinDir</a>(Provider&lt;Directory&gt; npmDirProvider, Property&lt;<a href=../util/Platform.html>Platform</a>&gt; platform) </code>
                                             </th>
                                             <td class="colLast">Get the expected npm binary directory, taking Windows specifics into account.</td>
                                         </tr>
                                         
-                                        <tr id="i5" class="rowColor">
+                                        <tr id="i4" class="altColor">
                                             <td class="colFirst"><code>final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNpmExec(NodeExtension,Provider)>computeNpmExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; npmBinDirProvider) </code>
@@ -297,15 +283,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                             <td class="colLast">Get the expected node binary name, npm.cmd on Windows and npm everywhere else.</td>
                                         </tr>
                                         
-                                        <tr id="i6" class="altColor">
-                                            <td class="colFirst"><code>final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNpmScriptFile(Provider,String)>computeNpmScriptFile</a>(Provider&lt;Directory&gt; nodeDirProvider, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> command) </code>
-                                            </th>
-                                            <td class="colLast"></td>
-                                        </tr>
-                                        
-                                        <tr id="i7" class="rowColor">
+                                        <tr id="i5" class="rowColor">
                                             <td class="colFirst"><code>final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNpxExec(NodeExtension,Provider)>computeNpxExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; npmBinDirProvider) </code>
@@ -313,7 +291,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                             <td class="colLast">Get the expected node binary name, npx.cmd on Windows and npx everywhere else.</td>
                                         </tr>
                                         
-                                        <tr id="i8" class="altColor">
+                                        <tr id="i6" class="altColor">
                                             <td class="colFirst"><code>final Provider&lt;Directory&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computePnpmDir(NodeExtension)>computePnpmDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension) </code>
@@ -321,15 +299,15 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i9" class="rowColor">
+                                        <tr id="i7" class="rowColor">
                                             <td class="colFirst"><code>final Provider&lt;Directory&gt;</code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computePnpmBinDir(Provider)>computePnpmBinDir</a>(Provider&lt;Directory&gt; pnpmDirProvider) </code>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computePnpmBinDir(Provider,Property)>computePnpmBinDir</a>(Provider&lt;Directory&gt; pnpmDirProvider, Property&lt;<a href=../util/Platform.html>Platform</a>&gt; platform) </code>
                                             </th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i10" class="altColor">
+                                        <tr id="i8" class="altColor">
                                             <td class="colFirst"><code>final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computePnpmExec(NodeExtension,Provider)>computePnpmExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; pnpmBinDirProvider) </code>
@@ -337,7 +315,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i11" class="rowColor">
+                                        <tr id="i9" class="rowColor">
                                             <td class="colFirst"><code>final Provider&lt;Directory&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeYarnDir(NodeExtension)>computeYarnDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension) </code>
@@ -345,15 +323,15 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i12" class="altColor">
+                                        <tr id="i10" class="altColor">
                                             <td class="colFirst"><code>final Provider&lt;Directory&gt;</code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeYarnBinDir(Provider)>computeYarnBinDir</a>(Provider&lt;Directory&gt; yarnDirProvider) </code>
+                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeYarnBinDir(Provider,Property)>computeYarnBinDir</a>(Provider&lt;Directory&gt; yarnDirProvider, Property&lt;<a href=../util/Platform.html>Platform</a>&gt; platform) </code>
                                             </th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i13" class="rowColor">
+                                        <tr id="i11" class="rowColor">
                                             <td class="colFirst"><code>final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeYarnExec(NodeExtension,Provider)>computeYarnExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; yarnBinDirProvider) </code>
@@ -361,18 +339,10 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i14" class="altColor">
+                                        <tr id="i12" class="altColor">
                                             <td class="colFirst"><code>final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNodeArchiveDependency(NodeExtension)>computeNodeArchiveDependency</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension) </code>
-                                            </th>
-                                            <td class="colLast">Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.</td>
-                                        </tr>
-                                        
-                                        <tr id="i15" class="rowColor">
-                                            <td class="colFirst"><code>final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=VariantComputer.html#computeNodeArchiveDependency(Property)>computeNodeArchiveDependency</a>(Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; nodeVersion) </code>
                                             </th>
                                             <td class="colLast">Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.</td>
                                         </tr>
@@ -418,16 +388,6 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                     </li>
                                 </ul>
                                 
-                                <a name="VariantComputer(PlatformHelper)"></a>
-                                <ul class="blockList">
-                                    <li class="blockList">
-                                        <h4>VariantComputer</h4>
-                                        <pre>VariantComputer(<a href=../util/PlatformHelper.html>PlatformHelper</a> platformHelper)</pre>
-                                        <div class="block"></div>
-                                        
-                                    </li>
-                                </ul>
-                                
                             </li>
                         </ul>
                     </section>
@@ -441,22 +401,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                             </a>
                                 <h3>Method Detail</h3>
                                 
-                                <a id="computeNodeDir(NodeExtension)">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>computeNodeDir</h4>
-                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;moved to NodeExtension&quot;, replaceWith = @<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-replace-with/index.html>ReplaceWith</a>(imports = {}, expression = &quot;nodeExtension.resolvedNodeDir&quot;)) final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeNodeDir(NodeExtension)>computeNodeDir</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension)</pre>
-                                        <div class="block"><p>Get the expected directory for a given node version.</p><p>Essentially: workingDir/node-v$version-$osName-$osArch</p></div>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
-                                <a id="computeNodeBinDir(Provider)">
+                                <a id="computeNodeBinDir(Provider,Property)">
                                     <!--   -->
                                 </a>
                                 <ul class=
@@ -464,7 +409,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computeNodeBinDir</h4>
-                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeNodeBinDir(Provider)>computeNodeBinDir</a>(Provider&lt;Directory&gt; nodeDirProvider)</pre>
+                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeNodeBinDir(Provider,Property)>computeNodeBinDir</a>(Provider&lt;Directory&gt; nodeDirProvider, Property&lt;<a href=../util/Platform.html>Platform</a>&gt; platform)</pre>
                                         <div class="block"><p>Get the expected node binary directory, taking Windows specifics into account.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -501,7 +446,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                     </li>
                                 </ul>
                                 
-                                <a id="computeNpmBinDir(Provider)">
+                                <a id="computeNpmBinDir(Provider,Property)">
                                     <!--   -->
                                 </a>
                                 <ul class=
@@ -509,7 +454,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computeNpmBinDir</h4>
-                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeNpmBinDir(Provider)>computeNpmBinDir</a>(Provider&lt;Directory&gt; npmDirProvider)</pre>
+                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeNpmBinDir(Provider,Property)>computeNpmBinDir</a>(Provider&lt;Directory&gt; npmDirProvider, Property&lt;<a href=../util/Platform.html>Platform</a>&gt; platform)</pre>
                                         <div class="block"><p>Get the expected npm binary directory, taking Windows specifics into account.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -526,21 +471,6 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                         <h4>computeNpmExec</h4>
                                         <pre class="methodSignature"> final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNpmExec(NodeExtension,Provider)>computeNpmExec</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension, Provider&lt;Directory&gt; npmBinDirProvider)</pre>
                                         <div class="block"><p>Get the expected node binary name, npm.cmd on Windows and npm everywhere else.</p><p>Can be overridden by setting npmCommand.</p></div>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
-                                <a id="computeNpmScriptFile(Provider,String)">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>computeNpmScriptFile</h4>
-                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;replaced by package-level function&quot;) final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNpmScriptFile(Provider,String)>computeNpmScriptFile</a>(Provider&lt;Directory&gt; nodeDirProvider, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> command)</pre>
-                                        <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -576,7 +506,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                     </li>
                                 </ul>
                                 
-                                <a id="computePnpmBinDir(Provider)">
+                                <a id="computePnpmBinDir(Provider,Property)">
                                     <!--   -->
                                 </a>
                                 <ul class=
@@ -584,7 +514,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computePnpmBinDir</h4>
-                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computePnpmBinDir(Provider)>computePnpmBinDir</a>(Provider&lt;Directory&gt; pnpmDirProvider)</pre>
+                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computePnpmBinDir(Provider,Property)>computePnpmBinDir</a>(Provider&lt;Directory&gt; pnpmDirProvider, Property&lt;<a href=../util/Platform.html>Platform</a>&gt; platform)</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -621,7 +551,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                     </li>
                                 </ul>
                                 
-                                <a id="computeYarnBinDir(Provider)">
+                                <a id="computeYarnBinDir(Provider,Property)">
                                     <!--   -->
                                 </a>
                                 <ul class=
@@ -629,7 +559,7 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                           >
                                     <li class="blockList">
                                         <h4>computeYarnBinDir</h4>
-                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeYarnBinDir(Provider)>computeYarnBinDir</a>(Provider&lt;Directory&gt; yarnDirProvider)</pre>
+                                        <pre class="methodSignature"> final Provider&lt;Directory&gt; <a href=VariantComputer.html#computeYarnBinDir(Provider,Property)>computeYarnBinDir</a>(Provider&lt;Directory&gt; yarnDirProvider, Property&lt;<a href=../util/Platform.html>Platform</a>&gt; platform)</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -655,26 +585,11 @@ public class <span class="typeNameLabel"><a href=VariantComputer.html>VariantCom
                                     <!--   -->
                                 </a>
                                 <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>computeNodeArchiveDependency</h4>
-                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;replaced by package-level function&quot;, replaceWith = @<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-replace-with/index.html>ReplaceWith</a>(imports = {}, expression = &quot;com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)&quot;)) final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeArchiveDependency(NodeExtension)>computeNodeArchiveDependency</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension)</pre>
-                                        <div class="block"><p>Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.</p><p>Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz</p></div>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
-                                <a id="computeNodeArchiveDependency(Property)">
-                                    <!--   -->
-                                </a>
-                                <ul class=
                                               "blockListLast"
                                           >
                                     <li class="blockList">
                                         <h4>computeNodeArchiveDependency</h4>
-                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;replaced by package-level function&quot;, replaceWith = @<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-replace-with/index.html>ReplaceWith</a>(imports = {}, expression = &quot;com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)&quot;)) final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeArchiveDependency(Property)>computeNodeArchiveDependency</a>(Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; nodeVersion)</pre>
+                                        <pre class="methodSignature">@<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/index.html>Deprecated</a>(message = &quot;replaced by package-level function&quot;, replaceWith = @<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-replace-with/index.html>ReplaceWith</a>(imports = {}, expression = &quot;com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)&quot;)) final Provider&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=VariantComputer.html#computeNodeArchiveDependency(NodeExtension)>computeNodeArchiveDependency</a>(<a href=../NodeExtension.html>NodeExtension</a> nodeExtension)</pre>
                                         <div class="block"><p>Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.</p><p>Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz</p></div>
                                         
                                         <!-- TODO missing return annotation -->
