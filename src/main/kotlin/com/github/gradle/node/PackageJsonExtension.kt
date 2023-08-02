@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.property
-import org.gradle.util.GradleVersion
 
 /**
  * Provides a parsed view of package.json

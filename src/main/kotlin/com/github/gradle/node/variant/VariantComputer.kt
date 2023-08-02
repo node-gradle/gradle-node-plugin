@@ -1,7 +1,7 @@
 package com.github.gradle.node.variant
 
 import com.github.gradle.node.NodeExtension
-import com.github.gradle.node.util.PlatformHelper
+import com.github.gradle.node.util.Platform
 import com.github.gradle.node.util.mapIf
 import com.github.gradle.node.util.zip
 import org.gradle.api.file.Directory
@@ -52,29 +52,11 @@ fun computeNodeArchiveDependency(extension: NodeExtension): Provider<String> {
     return extension.version.map { version -> "org.nodejs:node:$version:$osName-$osArch@$type" }
 }
 
-open class VariantComputer constructor(
-        private val platformHelper: PlatformHelper
-) {
-    constructor() : this(PlatformHelper.INSTANCE)
-
-    /**
-     * Get the expected directory for a given node version.
-     *
-     * Essentially: workingDir/node-v$version-$osName-$osArch
-     */
-    @Deprecated(message = "moved to NodeExtension", replaceWith = ReplaceWith("nodeExtension.resolvedNodeDir"))
-    fun computeNodeDir(nodeExtension: NodeExtension): Provider<Directory> {
-        val osName = platformHelper.osName
-        val osArch = platformHelper.osArch
-        return computeNodeDir(nodeExtension, osName, osArch)
-    }
-
-
-
+open class VariantComputer {
     /**
      * Get the expected node binary directory, taking Windows specifics into account.
      */
-    fun computeNodeBinDir(nodeDirProvider: Provider<Directory>) = computeProductBinDir(nodeDirProvider)
+    fun computeNodeBinDir(nodeDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(nodeDirProvider, platform)
 
     /**
      * Get the expected node binary name, node.exe on Windows and node everywhere else.
@@ -102,7 +84,7 @@ open class VariantComputer constructor(
     /**
      * Get the expected npm binary directory, taking Windows specifics into account.
      */
-    fun computeNpmBinDir(npmDirProvider: Provider<Directory>) = computeProductBinDir(npmDirProvider)
+    fun computeNpmBinDir(npmDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(npmDirProvider, platform)
 
     /**
      * Get the expected node binary name, npm.cmd on Windows and npm everywhere else.
@@ -117,11 +99,6 @@ open class VariantComputer constructor(
             } else npmCommand
             if (download) npmBinDir.dir(command).asFile.absolutePath else command
         }
-    }
-
-    @Deprecated(message = "replaced by package-level function")
-    fun computeNpmScriptFile(nodeDirProvider: Provider<Directory>, command: String): Provider<String> {
-        return computeNpmScriptFile(nodeDirProvider, command, platformHelper.isWindows)
     }
 
     /**
@@ -150,7 +127,7 @@ open class VariantComputer constructor(
         }
     }
 
-    fun computePnpmBinDir(pnpmDirProvider: Provider<Directory>) = computeProductBinDir(pnpmDirProvider)
+    fun computePnpmBinDir(pnpmDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(pnpmDirProvider, platform)
 
     fun computePnpmExec(nodeExtension: NodeExtension, pnpmBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.pnpmCommand, nodeExtension.download, pnpmBinDirProvider).map {
@@ -173,7 +150,7 @@ open class VariantComputer constructor(
         }
     }
 
-    fun computeYarnBinDir(yarnDirProvider: Provider<Directory>) = computeProductBinDir(yarnDirProvider)
+    fun computeYarnBinDir(yarnDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(yarnDirProvider, platform)
 
     fun computeYarnExec(nodeExtension: NodeExtension, yarnBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.yarnCommand, nodeExtension.download, yarnBinDirProvider).map {
@@ -185,8 +162,8 @@ open class VariantComputer constructor(
         }
     }
 
-    private fun computeProductBinDir(productDirProvider: Provider<Directory>) =
-            if (platformHelper.isWindows) productDirProvider else productDirProvider.map { it.dir("bin") }
+    private fun computeProductBinDir(productDirProvider: Provider<Directory>, platform: Property<Platform>) =
+            if (platform.get().isWindows()) productDirProvider else productDirProvider.map { it.dir("bin") }
 
     /**
      * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.
@@ -197,19 +174,5 @@ open class VariantComputer constructor(
         replaceWith = ReplaceWith("com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)"))
     fun computeNodeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
         return com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)
-    }
-
-    /**
-     * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.
-     *
-     * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
-     */
-    @Deprecated(message = "replaced by package-level function",
-        replaceWith = ReplaceWith("com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)"))
-    fun computeNodeArchiveDependency(nodeVersion: Property<String>): Provider<String> {
-        val osName = platformHelper.osName
-        val osArch = platformHelper.osArch
-        val type = if (platformHelper.isWindows) "zip" else "tar.gz"
-        return nodeVersion.map { version -> "org.nodejs:node:$version:$osName-$osArch@$type" }
     }
 }

@@ -83,8 +83,8 @@ abstract class NpmExecRunner {
             Provider<ExecutableAndScript> {
         val nodeDirProvider = nodeExtension.resolvedNodeDir
         val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
-        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
-        val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)
+        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
+        val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider, nodeExtension.resolvedPlatform)
         val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
         val executableProvider =
             npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDirProvider)
@@ -121,9 +121,9 @@ abstract class NpmExecRunner {
                 providers.provider { listOf<String>() }
             }
             val nodeDirProvider = nodeExtension.resolvedNodeDir
-            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
             val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
-            val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)
+            val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider, nodeExtension.resolvedPlatform)
             zip(npmBinDirProvider, nodeBinDirProvider).map { (npmBinDir, nodeBinDir) ->
                 listOf(npmBinDir, nodeBinDir).map { file -> file.asFile.absolutePath }
             }

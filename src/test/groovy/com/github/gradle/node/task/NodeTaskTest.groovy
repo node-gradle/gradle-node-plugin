@@ -17,12 +17,10 @@ class NodeTaskTest extends AbstractTaskTest {
 
     def "exec node task"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(['a', 'b'])
         task.options.set(['c', 'd'])
@@ -48,12 +46,10 @@ class NodeTaskTest extends AbstractTaskTest {
 
     def "execOverrides test"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.ignoreExitValue.set(true)
 
@@ -75,12 +71,10 @@ class NodeTaskTest extends AbstractTaskTest {
 
     def "exec node task (download)"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         def script = new File(projectDir, 'script.js')
         task.script.set(script)
@@ -97,12 +91,10 @@ class NodeTaskTest extends AbstractTaskTest {
 
     def "exec node task (windows)"() {
         given:
-        props.setProperty('os.name', 'Windows')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         def script = new File(projectDir, 'script.js')
 
@@ -123,12 +115,10 @@ class NodeTaskTest extends AbstractTaskTest {
 
     def "exec node task (windows download)"() {
         given:
-        props.setProperty('os.name', 'Windows')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         def script = new File(projectDir, 'script.js')
         task.script.set(script)

@@ -12,13 +12,11 @@ class NpmInstallTaskTest extends AbstractTaskTest {
 
     def "exec npm install task with configured proxy"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
 
         def task = project.tasks.getByName("npmInstall")
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
 
         when:
@@ -33,14 +31,12 @@ class NpmInstallTaskTest extends AbstractTaskTest {
 
     def "exec npm install task with configured proxy but disabled"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.getByName("npmInstall")
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
 
         when:

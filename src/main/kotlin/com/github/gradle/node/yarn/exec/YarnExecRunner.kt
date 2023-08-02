@@ -26,7 +26,7 @@ abstract class YarnExecRunner {
     ): ExecResult {
         val nodeDirProvider = nodeExtension.resolvedNodeDir
         val yarnDirProvider = variantComputer.computeYarnDir(nodeExtension)
-        val yarnBinDirProvider = variantComputer.computeYarnBinDir(yarnDirProvider)
+        val yarnBinDirProvider = variantComputer.computeYarnBinDir(yarnDirProvider, nodeExtension.resolvedPlatform)
         val yarnExecProvider = variantComputer.computeYarnExec(nodeExtension, yarnBinDirProvider)
         val additionalBinPathProvider =
             computeAdditionalBinPath(nodeExtension, nodeDirProvider, yarnBinDirProvider, variantComputer)
@@ -62,9 +62,9 @@ abstract class YarnExecRunner {
             if (!download) {
                 providers.provider { listOf<String>() }
             }
-            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
             val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
-            val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider)
+            val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider, nodeExtension.resolvedPlatform)
             zip(nodeBinDirProvider, npmBinDirProvider, yarnBinDirProvider)
                     .map { (nodeBinDir, npmBinDir, yarnBinDir) ->
                         listOf(yarnBinDir, npmBinDir, nodeBinDir).map { file -> file.asFile.absolutePath }

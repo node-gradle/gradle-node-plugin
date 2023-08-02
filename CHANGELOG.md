@@ -4,6 +4,8 @@
 * Removed deprecated `nodeModulesDir` from `NodeExtension`
 * The resolved/computed node directory and platform are stored in `resolvedNodeDir` and `resolvedPlatform` on `NodeExtension`
 * Fixes configuration-cache issue in Gradle 8.4
+* Removes the entire `PlatformHelper` as the functionality has migrated into top-level functions
+* Removes the deprecated `HelperExecution`
 
 ## Version 5.0.0 *(2023-05-13)*
 * Support configuration-cache on Gradle 8.1 [#271](https://github.com/node-gradle/gradle-node-plugin/issues/271)

@@ -36,22 +36,6 @@ interface ProjectApiHelper {
     fun exec(action: Action<ExecSpec>): ExecResult
 }
 
-@Deprecated(message = "This class is no longer needed, the computed output is stored in the NodeExtension")
-class GradleHelperExecution(private val eo: ExecOperations) : HelperExecution {
-    override fun exec(command: String, vararg args: String, timeout: Long): String {
-        val out = ByteArrayOutputStream()
-        val cmd = eo.exec {
-            this.executable = command
-            this.args = args.toList()
-            this.standardOutput = out
-        }
-
-        cmd.assertNormalExitValue()
-        return out.toString().trim()
-    }
-}
-
-
 /**
  * Used in Gradle 6.6 and newer.
  */

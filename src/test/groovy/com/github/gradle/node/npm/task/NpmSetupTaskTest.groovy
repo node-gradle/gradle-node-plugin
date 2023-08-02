@@ -11,11 +11,9 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
     def "disable npmSetup task when no npm version is specified"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpmSetupTask)
-        mockPlatformHelper(task)
 
         when:
         project.evaluate()
@@ -26,12 +24,10 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
     def "exec npmSetup task (version specified)"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.npmVersion.set('6.4.1')
 
         def task = project.tasks.create('simple', NpmSetupTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
 
         when:
@@ -49,14 +45,12 @@ class NpmSetupTaskTest extends AbstractTaskTest {
 
     def "exec npmSetup task with proxy configured"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.npmVersion.set('6.4.1')
         GradleProxyHelper.setHttpProxyHost("my-proxy.net")
         GradleProxyHelper.setHttpProxyPort(1234)
 
         def task = project.tasks.create('simple', NpmSetupTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
 
         when:

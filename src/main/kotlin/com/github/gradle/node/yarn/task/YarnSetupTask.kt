@@ -2,7 +2,6 @@ package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmSetupTask
-import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory

@@ -1,7 +1,6 @@
 package com.github.gradle.node.pnpm.task
 
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.npm.proxy.NpmProxy
 import com.github.gradle.node.npm.task.NpmSetupTask
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.provider.Provider
@@ -25,7 +24,7 @@ abstract class PnpmSetupTask : NpmSetupTask() {
 
     @get:OutputDirectory
     val pnpmDir by lazy {
-        val variantComputer = VariantComputer(platformHelper)
+        val variantComputer = VariantComputer()
         variantComputer.computePnpmDir(nodeExtension)
     }
 

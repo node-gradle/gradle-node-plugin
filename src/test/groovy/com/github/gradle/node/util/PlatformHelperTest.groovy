@@ -4,25 +4,13 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class PlatformHelperTest extends Specification {
-    private Properties props
-    private PlatformHelper helper
-
-    def setup() {
-        this.props = new Properties()
-        this.helper = new TestablePlatformHelper(this.props)
-    }
 
     @Unroll
     def "check os and architecture for #osProp (#archProp)"() {
         given:
-        this.props.setProperty("os.name", osProp)
-        this.props.setProperty("os.arch", archProp)
         def platform = PlatformHelperKt.parsePlatform(osProp, archProp, {})
 
         expect:
-        this.helper.getOsName() == osName
-        this.helper.getOsArch() == osArch
-        this.helper.isWindows() == isWindows
         platform.name == osName
         platform.arch == osArch
         platform.windows == isWindows
@@ -44,14 +32,9 @@ class PlatformHelperTest extends Specification {
     @Unroll
     def "verify ARM handling #archProp (#unameProp)"() {
         given:
-        this.props.setProperty("os.name", "Linux")
-        this.props.setProperty("os.arch", archProp)
-        this.props.setProperty("uname", unameProp)
         def platform = PlatformHelperKt.parsePlatform("Linux", archProp, { unameProp })
 
         expect:
-        this.helper.getOsName() == "linux"
-        this.helper.getOsArch() == osArch
         platform.name == "linux"
         platform.arch == osArch
 
@@ -68,14 +51,9 @@ class PlatformHelperTest extends Specification {
     @Unroll
     def "verify ARM handling Mac OS #archProp (#unameProp)"() {
         given:
-        this.props.setProperty("os.name", "Mac OS X")
-        this.props.setProperty("os.arch", archProp)
-        this.props.setProperty("uname", unameProp)
         def platform = PlatformHelperKt.parsePlatform("Mac OS X", archProp, { unameProp })
 
         expect:
-        this.helper.getOsName() == "darwin"
-        this.helper.getOsArch() == osArch
         platform.name == "darwin"
         platform.arch == osArch
 

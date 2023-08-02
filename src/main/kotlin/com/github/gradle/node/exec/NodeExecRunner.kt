@@ -19,7 +19,7 @@ fun buildExecConfiguration(
 ):
         Provider<ExecConfiguration> {
     val nodeDirProvider = nodeExtension.resolvedNodeDir
-    val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+    val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
     val executableProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
     val additionalBinPathProvider = computeAdditionalBinPath(nodeExtension, nodeBinDirProvider)
     return zip(executableProvider, additionalBinPathProvider)

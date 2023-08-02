@@ -1,9 +1,7 @@
 package com.github.gradle.node.variant
 
 import com.github.gradle.node.NodeExtension
-import com.github.gradle.node.util.KotlinUtilsKt
 import com.github.gradle.node.util.Platform
-import com.github.gradle.node.util.TestablePlatformHelper
 import com.github.gradle.node.util.PlatformHelperKt
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
@@ -18,21 +16,12 @@ class VariantComputerTest extends Specification {
 
     static final String NODE_BASE_PATH = "${PS}.gradle${PS}node${PS}"
 
-    private Properties props
-
-    def setup() {
-        props = new Properties()
-    }
-
     @Unroll
     def "test variant on windows (#version #osArch)"() {
         given:
         def project = ProjectBuilder.builder().build()
-
-        props.setProperty("os.name", "Windows 8")
-        props.setProperty("os.arch", osArch)
+        
         def platform = getPlatform("Windows 8", osArch)
-        def platformHelper = new TestablePlatformHelper(props)
 
         def nodeExtension = new NodeExtension(project)
         nodeExtension.resolvedPlatform.set(platform)
@@ -43,15 +32,16 @@ class VariantComputerTest extends Specification {
         def nodeDir = "node-v${version}-win-${osArch}".toString()
         def depName = "org.nodejs:node:${version}:win-${osArch}@zip".toString()
 
-        def variantComputer = new VariantComputer(platformHelper)
+        def variantComputer = new VariantComputer()
 
         when:
+        def isWindows = platform.isWindows()
         def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
         def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
-        def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
-        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npm")
-        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npx")
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir, nodeExtension.resolvedPlatform)
+        def computedNodeExec = VariantComputerKt.computeNodeExec(nodeExtension, computedNodeBinDir)
+        def computedNpmScriptFile = VariantComputerKt.computeNpmScriptFile(resolvedNodeDir, "npm", isWindows)
+        def computedNpxScriptFile = VariantComputerKt.computeNpmScriptFile(resolvedNodeDir, "npx", isWindows)
 
         then:
         computedArchiveDependency.get() == depName
@@ -75,10 +65,7 @@ class VariantComputerTest extends Specification {
     @Unroll
     def "test variant on non-windows (#osName, #osArch)"() {
         given:
-        props.setProperty("os.name", osName)
-        props.setProperty("os.arch", osArch)
         def platform = getPlatform(osName, osArch)
-        def platformHelper = new TestablePlatformHelper(props)
 
         def project = ProjectBuilder.builder().build()
         def nodeExtension = new NodeExtension(project)
@@ -87,15 +74,16 @@ class VariantComputerTest extends Specification {
         nodeExtension.version.set('5.12.0')
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
 
-        def variantComputer = new VariantComputer(platformHelper)
+        def variantComputer = new VariantComputer()
 
         when:
+        def isWindows = platform.isWindows()
         def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
         def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
-        def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
-        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npm")
-        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npx")
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir, nodeExtension.resolvedPlatform)
+        def computedNodeExec = VariantComputerKt.computeNodeExec(nodeExtension, computedNodeBinDir)
+        def computedNpmScriptFile = VariantComputerKt.computeNpmScriptFile(resolvedNodeDir, "npm", isWindows)
+        def computedNpxScriptFile = VariantComputerKt.computeNpmScriptFile(resolvedNodeDir, "npx", isWindows)
 
         then:
         computedArchiveDependency.get() == depName
@@ -122,11 +110,7 @@ class VariantComputerTest extends Specification {
     @Unroll
     def "test variant on ARM (#osName, #osArch, #sysOsArch)"() {
         given:
-        props.setProperty("os.name", osName)
-        props.setProperty("os.arch", osArch)
-        props.setProperty("uname", sysOsArch)
         def platform = getPlatform(osName, osArch, sysOsArch)
-        def platformHelper = new TestablePlatformHelper(props)
 
         def project = ProjectBuilder.builder().build()
         def nodeExtension = new NodeExtension(project)
@@ -135,15 +119,16 @@ class VariantComputerTest extends Specification {
         nodeExtension.version.set('5.12.0')
         nodeExtension.workDir.set(project.layout.projectDirectory.dir(".gradle/node"))
 
-        def variantComputer = new VariantComputer(platformHelper)
+        def variantComputer = new VariantComputer()
 
         when:
+        def isWindows = platform.isWindows()
         def computedArchiveDependency = VariantComputerKt.computeNodeArchiveDependency(nodeExtension)
         def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
-        def computedNodeExec = variantComputer.computeNodeExec(nodeExtension, computedNodeBinDir)
-        def computedNpmScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npm")
-        def computedNpxScriptFile = variantComputer.computeNpmScriptFile(resolvedNodeDir, "npx")
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir, nodeExtension.resolvedPlatform)
+        def computedNodeExec = VariantComputerKt.computeNodeExec(nodeExtension, computedNodeBinDir)
+        def computedNpmScriptFile = VariantComputerKt.computeNpmScriptFile(resolvedNodeDir, "npm", isWindows)
+        def computedNpxScriptFile = VariantComputerKt.computeNpmScriptFile(resolvedNodeDir, "npx", isWindows)
 
         then:
         computedArchiveDependency.get() == depName
@@ -165,10 +150,7 @@ class VariantComputerTest extends Specification {
     @Unroll
     def "test npm paths on windows (npm: #npmVersion, download: #download)"() {
         given:
-        props.setProperty("os.name", "Windows 8")
-        props.setProperty("os.arch", "x86")
         def platform = getPlatform("Windows 8", "x86")
-        def platformHelper = new TestablePlatformHelper(props)
         def project = ProjectBuilder.builder().build()
 
         def nodeExtension = new NodeExtension(project)
@@ -176,13 +158,13 @@ class VariantComputerTest extends Specification {
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
 
-        def variantComputer = new VariantComputer(platformHelper)
+        def variantComputer = new VariantComputer()
 
         when:
         def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
         def computedNpmDir = variantComputer.computeNpmDir(nodeExtension, resolvedNodeDir)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
-        def computedNpmBinDir = variantComputer.computeNpmBinDir(computedNpmDir)
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir, nodeExtension.resolvedPlatform)
+        def computedNpmBinDir = variantComputer.computeNpmBinDir(computedNpmDir, nodeExtension.resolvedPlatform)
         def computedNpmExec = variantComputer.computeNpmExec(nodeExtension, computedNpmBinDir)
         def computedNpxExec = variantComputer.computeNpxExec(nodeExtension, computedNpmBinDir)
 
@@ -219,9 +201,6 @@ class VariantComputerTest extends Specification {
     @Unroll
     def "test npm paths on non-windows (npm: #npmVersion, download: #download)"() {
         given:
-        props.setProperty("os.name", "Linux")
-        props.setProperty("os.arch", "x86")
-        def platformHelper = new TestablePlatformHelper(props)
         def platform = getPlatform("Linux", "x86")
         def project = ProjectBuilder.builder().build()
 
@@ -230,13 +209,13 @@ class VariantComputerTest extends Specification {
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
 
-        def variantComputer = new VariantComputer(platformHelper)
+        def variantComputer = new VariantComputer()
 
         when:
         def resolvedNodeDir = VariantComputerKt.computeNodeDir(nodeExtension)
         def computedNpmDir = variantComputer.computeNpmDir(nodeExtension, resolvedNodeDir)
-        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir)
-        def computedNpmBinDir = variantComputer.computeNpmBinDir(computedNpmDir)
+        def computedNodeBinDir = variantComputer.computeNodeBinDir(resolvedNodeDir, nodeExtension.resolvedPlatform)
+        def computedNpmBinDir = variantComputer.computeNpmBinDir(computedNpmDir, nodeExtension.resolvedPlatform)
         def computedNpmExec = variantComputer.computeNpmExec(nodeExtension, computedNpmBinDir)
         def computedNpxExec = variantComputer.computeNpxExec(nodeExtension, computedNpmBinDir)
 

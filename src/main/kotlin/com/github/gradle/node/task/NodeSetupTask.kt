@@ -63,7 +63,7 @@ abstract class NodeSetupTask : BaseTask() {
     private fun unpackNodeArchive() {
         val archiveFile = nodeArchiveFile.get().asFile
         val nodeDirProvider = nodeExtension.resolvedNodeDir
-        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
         val archivePath = nodeDirProvider.map { it.dir("../") }
         if (archiveFile.name.endsWith("zip")) {
             projectHelper.copy {
@@ -92,7 +92,10 @@ abstract class NodeSetupTask : BaseTask() {
 
     private fun setExecutableFlag() {
         if (!nodeExtension.resolvedPlatform.get().isWindows()) {
-            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeExtension.resolvedNodeDir)
+            val nodeBinDirProvider = variantComputer.computeNodeBinDir(
+                nodeExtension.resolvedNodeDir,
+                nodeExtension.resolvedPlatform
+            )
             val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
             File(nodeExecProvider.get()).setExecutable(true)
         }

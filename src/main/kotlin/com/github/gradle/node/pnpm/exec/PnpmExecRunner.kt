@@ -76,8 +76,8 @@ abstract class PnpmExecRunner {
             Provider<ExecutableAndScript> {
         val nodeDirProvider = nodeExtension.resolvedNodeDir
         val pnpmDirProvider = variantComputer.computePnpmDir(nodeExtension)
-        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
-        val pnpmBinDirProvider = variantComputer.computePnpmBinDir(pnpmDirProvider)
+        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
+        val pnpmBinDirProvider = variantComputer.computePnpmBinDir(pnpmDirProvider, nodeExtension.resolvedPlatform)
         val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
         val executableProvider =
             pnpmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, pnpmBinDirProvider)
@@ -106,9 +106,9 @@ abstract class PnpmExecRunner {
                 providers.provider { listOf<String>() }
             }
             val nodeDirProvider = nodeExtension.resolvedNodeDir
-            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider)
+            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
             val pnpmDirProvider = variantComputer.computePnpmDir(nodeExtension)
-            val pnpmBinDirProvider = variantComputer.computePnpmBinDir(pnpmDirProvider)
+            val pnpmBinDirProvider = variantComputer.computePnpmBinDir(pnpmDirProvider, nodeExtension.resolvedPlatform)
             zip(pnpmBinDirProvider, nodeBinDirProvider).map { (pnpmBinDir, nodeBinDir) ->
                 listOf(pnpmBinDir, nodeBinDir).map { file -> file.asFile.absolutePath }
             }

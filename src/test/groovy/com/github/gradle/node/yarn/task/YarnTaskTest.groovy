@@ -32,12 +32,10 @@ class YarnTaskTest extends AbstractTaskTest {
 
     def "exec yarn task (download)"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', YarnTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(["run", "command"])
 
@@ -56,7 +54,6 @@ class YarnTaskTest extends AbstractTaskTest {
 
     def "exec yarn task (download) with configured proxy"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
         GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
@@ -65,7 +62,6 @@ class YarnTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpsProxyPassword("password")
 
         def task = project.tasks.create('simple', YarnTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(["run", "command"])
 
@@ -85,7 +81,6 @@ class YarnTaskTest extends AbstractTaskTest {
 
     def "exec yarn task (download) with configured proxy but disabled"() {
         given:
-        props.setProperty('os.name', 'Linux')
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
         nodeExtension.download.set(true)
         GradleProxyHelper.setHttpsProxyHost("1.2.3.4")
@@ -95,7 +90,6 @@ class YarnTaskTest extends AbstractTaskTest {
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.create('simple', YarnTask)
-        mockPlatformHelper(task)
         mockProjectApiHelperExec(task)
         task.args.set(["run", "command"])
 

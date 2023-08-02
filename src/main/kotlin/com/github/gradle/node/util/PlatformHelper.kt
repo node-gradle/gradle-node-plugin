@@ -2,19 +2,6 @@ package com.github.gradle.node.util
 
 import java.util.concurrent.Callable
 
-
-@Deprecated(message = "This class is no longer needed, the computed output is stored in the NodeExtension")
-internal class DefaultHelperExecution : HelperExecution {
-    override fun exec(command: String, vararg args: String, timeout: Long): String {
-        return execute(command, *args, timeout = timeout)
-    }
-}
-
-@Deprecated(message = "This class is no longer needed, the computed output is stored in the NodeExtension")
-interface HelperExecution {
-    fun exec(command: String, vararg args: String, timeout: Long = 60): String
-}
-
 fun parsePlatform(name: String, arch: String, uname: () -> String): Platform {
     return Platform(parseOsName(name.toLowerCase()), parseOsArch(arch.toLowerCase(), uname))
 }
@@ -43,39 +30,6 @@ fun parseOsArch(arch: String, uname: Callable<String>): String {
         arch == "s390x" -> "s390x"
         arch.contains("64") -> "x64"
         else -> "x86"
-    }
-}
-
-open class PlatformHelper(private val execution: HelperExecution = DefaultHelperExecution()) {
-    @get:Deprecated(message = "moved to NodeExtension")
-    open val osName: String by lazy {
-        parseOsName(property("os.name").toLowerCase())
-    }
-
-    @get:Deprecated(message = "moved to NodeExtension")
-    open val osArch: String by lazy {
-        val arch = property("os.arch").toLowerCase()
-        val uname = { property("uname") }
-        parseOsArch(arch, uname)
-    }
-
-    @get:Deprecated(message = "moved to NodeExtension",
-        replaceWith = ReplaceWith("nodeExtension.resolvedPlatform.get().isWindows()"))
-    open val isWindows: Boolean by lazy { osName == "win" }
-
-    private fun property(name: String): String {
-        return getSystemProperty(name) ?:
-            // Added so that we can test osArch on Windows and on non-arm systems
-            if (name == "uname") execution.exec("uname", "-m")
-            else error("Unable to find a value for property [$name].")
-    }
-
-    open fun getSystemProperty(name: String): String? {
-        return System.getProperty(name)
-    }
-
-    companion object {
-        var INSTANCE = PlatformHelper()
     }
 }
 
