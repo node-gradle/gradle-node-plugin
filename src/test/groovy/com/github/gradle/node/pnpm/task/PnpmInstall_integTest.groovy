@@ -136,10 +136,10 @@ class PnpmInstall_integTest
             }
 
             def lock = file('pnpm-lock.yaml')
+            def installTask = tasks.named("pnpmInstall").get()
+            def outputs = installTask.outputs.files
+            def inputs = installTask.inputs.files
             task verifyIO {
-                def outputs = tasks.named("pnpmInstall").get().outputs.files
-                def inputs = tasks.named("pnpmInstall").get().inputs.files
-
                 doLast {
                     if (!outputs.contains(lock)) {
                         throw new RuntimeException("pnpm-lock.yaml is not in INSTALL'S outputs!")

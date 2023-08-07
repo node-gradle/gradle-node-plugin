@@ -6,6 +6,7 @@
 * Fixes configuration-cache issue in Gradle 8.4
 * Removes the entire `PlatformHelper` as the functionality has migrated into top-level functions
 * Removes the deprecated `HelperExecution`
+* Fixed failure querying the task inputs/outputs on 8+ with configuration-cache enabled [#259](https://github.com/node-gradle/gradle-node-plugin/issues/259)
 
 ## Version 5.0.0 *(2023-05-13)*
 * Support configuration-cache on Gradle 8.1 [#271](https://github.com/node-gradle/gradle-node-plugin/issues/271)

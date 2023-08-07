@@ -199,8 +199,6 @@ class NpmInstall_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    // FIXME: https://github.com/node-gradle/gradle-node-plugin/issues/259
-    @IgnoreIf({ gv >= GradleVersion.version("8.0-milestone-1") })
     def 'verify npm install inputs/outputs (#gv.version)'() {
         given:
         gradleVersion = gv
@@ -215,9 +213,10 @@ class NpmInstall_integTest extends AbstractIntegTest {
             }
 
             def lock = file('package-lock.json')
+            def installTask = tasks.named("npmInstall").get()
+            def outputs = installTask.outputs.files
+            def inputs = installTask.inputs.files
             task verifyIO {
-                def outputs = tasks.named("npmInstall").get().outputs.files
-                def inputs = tasks.named("npmInstall").get().inputs.files
                 doLast {
                     if (!outputs.contains(lock)) {
                         throw new RuntimeException("package-lock.json is not in INSTALL'S outputs!")
@@ -241,8 +240,6 @@ class NpmInstall_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
-    // FIXME: https://github.com/node-gradle/gradle-node-plugin/issues/259
-    @IgnoreIf({ gv >= GradleVersion.version("8.0-milestone-1") })
     def 'verify npm ci inputs/outputs (#gv.version)'() {
         given:
         gradleVersion = gv
@@ -257,9 +254,10 @@ class NpmInstall_integTest extends AbstractIntegTest {
             }
 
             def lock = file('package-lock.json')
+            def installTask = tasks.named("npmInstall").get()
+            def outputs = installTask.outputs.files
+            def inputs = installTask.inputs.files
             task verifyIO {
-                def outputs = tasks.named("npmInstall").get().outputs.files
-                def inputs = tasks.named("npmInstall").get().inputs.files
                 doLast {
                     if (outputs.contains(lock)) {
                         throw new RuntimeException("package-lock.json is in CI'S outputs!")

@@ -31,19 +31,19 @@ abstract class PnpmInstallTask : PnpmTask() {
 
     @PathSensitive(RELATIVE)
     @InputFile
-    protected fun getPackageJsonFile(): Provider<File> {
-        return projectFileIfExists("package.json")
+    protected fun getPackageJsonFile(): File? {
+        return projectFileIfExists("package.json").orNull
     }
 
     @Optional
     @OutputFile
-    protected fun getPnpmLockAsOutput(): Provider<File> {
-        return projectFileIfExists("pnpm-lock.yaml")
+    protected fun getPnpmLockAsOutput(): File? {
+        return projectFileIfExists("pnpm-lock.yaml").orNull
     }
 
-    private fun projectFileIfExists(name: String): Provider<File> {
+    private fun projectFileIfExists(name: String): Provider<File?> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
-                .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
+            .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
 
     @Optional

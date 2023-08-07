@@ -37,42 +37,42 @@ abstract class NpmInstallTask : NpmTask() {
     @PathSensitive(RELATIVE)
     @InputFile
     @SkipWhenEmpty
-    protected fun getPackageJsonFile(): Provider<File> {
-        return projectFileIfExists("package.json")
+    protected fun getPackageJsonFile(): File? {
+        return projectFileIfExists("package.json").orNull
     }
 
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getNpmShrinkwrap(): Provider<File> {
-        return projectFileIfExists("npm-shrinkwrap.json")
+    protected fun getNpmShrinkwrap(): File? {
+        return projectFileIfExists("npm-shrinkwrap.json").orNull
     }
 
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getPackageLockFileAsInput(): Provider<File> {
+    protected fun getPackageLockFileAsInput(): File? {
         return npmCommand.flatMap { command ->
             if (command[0] == "ci") projectFileIfExists("package-lock.json") else providers.provider { null }
-        }
+        }.orNull
     }
 
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getYarnLockFile(): Provider<File> {
-        return projectFileIfExists("yarn.lock")
+    protected fun getYarnLockFile(): File? {
+        return projectFileIfExists("yarn.lock").orNull
     }
 
     @Optional
     @OutputFile
-    protected fun getPackageLockFileAsOutput(): Provider<File> {
+    protected fun getPackageLockFileAsOutput(): File? {
         return npmCommand.flatMap { command ->
             if (command[0] == "install") projectFileIfExists("package-lock.json") else providers.provider { null }
-        }
+        }.orNull
     }
 
-    private fun projectFileIfExists(name: String): Provider<File> {
+    private fun projectFileIfExists(name: String): Provider<File?> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
                 .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
@@ -107,12 +107,12 @@ abstract class NpmInstallTask : NpmTask() {
 
     @Optional
     @OutputFile
-    protected fun getNodeModulesPackageLock(): Provider<File> {
+    protected fun getNodeModulesPackageLock(): File? {
         if (isLegacyNpm()) {
-            return providers.provider { null }
+            return null
         }
 
-        return projectFileIfExists("node_modules/.package-lock.json")
+        return projectFileIfExists("node_modules/.package-lock.json").orNull
     }
 
     /**

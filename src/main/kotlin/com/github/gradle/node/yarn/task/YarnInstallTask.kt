@@ -29,24 +29,24 @@ abstract class YarnInstallTask : YarnTask() {
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getPackageJsonFile(): Provider<File> {
-        return projectFileIfExists("package.json")
+    protected fun getPackageJsonFile(): File? {
+        return projectFileIfExists("package.json").orNull
     }
 
     @PathSensitive(RELATIVE)
     @Optional
     @InputFile
-    protected fun getYarnLockFile(): Provider<File> {
-        return projectFileIfExists("yarn.lock")
+    protected fun getYarnLockFile(): File? {
+        return projectFileIfExists("yarn.lock").orNull
     }
 
     @Optional
     @OutputFile
-    protected fun getYarnLockFileAsOutput(): Provider<File> {
-        return projectFileIfExists("yarn.lock")
+    protected fun getYarnLockFileAsOutput(): File? {
+        return projectFileIfExists("yarn.lock").orNull
     }
 
-    private fun projectFileIfExists(name: String): Provider<File> {
+    private fun projectFileIfExists(name: String): Provider<File?> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
                 .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
