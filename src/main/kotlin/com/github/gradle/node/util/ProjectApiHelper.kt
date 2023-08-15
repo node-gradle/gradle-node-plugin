@@ -10,7 +10,6 @@ import org.gradle.api.tasks.WorkResult
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
-import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 

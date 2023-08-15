@@ -8,7 +8,6 @@ import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -19,7 +18,6 @@ import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecSpec
-import java.io.File
 import javax.inject.Inject
 
 abstract class NpmTask : BaseTask() {

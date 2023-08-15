@@ -3,7 +3,6 @@ package com.github.gradle.node.npm.task
 import com.github.gradle.AbstractIntegTest
 import com.github.gradle.node.ProxyTestHelper
 import org.gradle.testkit.runner.TaskOutcome
-import org.gradle.util.GradleVersion
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.socket.PortFactory
 

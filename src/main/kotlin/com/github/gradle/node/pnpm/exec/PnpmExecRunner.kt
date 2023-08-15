@@ -6,7 +6,6 @@ import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy
-import com.github.gradle.node.npm.proxy.NpmProxy.Companion.computeNpmProxyEnvironmentVariables
 import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
@@ -24,22 +23,9 @@ abstract class PnpmExecRunner {
         val npmExecConfiguration = NpmExecConfiguration("pnpm"
         ) { variantComputer, nodeExtension, pnpmBinDir -> variantComputer.computePnpmExec(nodeExtension, pnpmBinDir) }
 
-        return executeCommand(project, extension, addProxyEnvironmentVariables(extension, nodeExecConfiguration),
+        return executeCommand(project, extension, NpmProxy.addProxyEnvironmentVariables(extension.nodeProxySettings.get(), nodeExecConfiguration),
             npmExecConfiguration,
             variants)
-    }
-
-    private fun addProxyEnvironmentVariables(nodeExtension: NodeExtension,
-                                             nodeExecConfiguration: NodeExecConfiguration): NodeExecConfiguration {
-        if (NpmProxy.shouldConfigureProxy(System.getenv(), nodeExtension.nodeProxySettings.get())) {
-            val npmProxyEnvironmentVariables = computeNpmProxyEnvironmentVariables()
-            if (npmProxyEnvironmentVariables.isNotEmpty()) {
-                val environmentVariables =
-                    nodeExecConfiguration.environment.plus(npmProxyEnvironmentVariables)
-                return nodeExecConfiguration.copy(environment = environmentVariables)
-            }
-        }
-        return nodeExecConfiguration
     }
 
     private fun executeCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration,

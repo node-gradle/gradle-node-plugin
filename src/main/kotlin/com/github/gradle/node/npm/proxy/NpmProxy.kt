@@ -1,5 +1,6 @@
 package com.github.gradle.node.npm.proxy
 
+import com.github.gradle.node.exec.NodeExecConfiguration
 import java.net.URLEncoder
 import java.util.stream.Collectors.toList
 import java.util.stream.Stream
@@ -17,7 +18,8 @@ class NpmProxy {
         // And since npm also takes settings in the form of environment variables with the
         // NPM_CONFIG_<setting> format, we should check those. Hopefully nobody does this.
         // Windows will let you set environment variables with hyphens in them, but shells
-        // on Linux will fight you so you'll have to be sneaky, adding both here "just in case".
+        // on Linux will fight you. So you'll have to be pretty sneaky to do this.
+        // I'm adding both here "just in case".
         private val npmProxyVariables = listOf(
                 "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_HTTPS_PROXY", "NPM_CONFIG_NOPROXY"
         )
@@ -49,7 +51,7 @@ class NpmProxy {
         }
 
         /**
-         * Returns true if the given map of environment variables already has
+         * Returns true if the given map of environment variables has any
          * proxy settings configured.
          *
          * @param env map of environment variables
@@ -58,6 +60,33 @@ class NpmProxy {
             return env.keys.any {
                 proxyVariables.contains(it.toUpperCase()) || npmProxyVariables.contains(it.toUpperCase())
             }
+        }
+
+        /**
+         * Get a list of all known keys that affect the proxy configuration
+         */
+        fun getKnownProxyConfigurationKeys(): Set<String> {
+            return proxyVariables.plus(npmProxyVariables).toSet()
+        }
+
+        /**
+         * Creates a new NodeExecConfiguration with the proxy environment variables configured
+         */
+        fun addProxyEnvironmentVariables(proxySettings: ProxySettings, nodeExecConfiguration: NodeExecConfiguration,
+                                         environment: Map<String, String> = System.getenv()): NodeExecConfiguration {
+            if (shouldConfigureProxy(environment, proxySettings)) {
+                val npmProxyEnvironmentVariables = computeNpmProxyEnvironmentVariables()
+                val environmentVariablesToUnset = if (proxySettings == ProxySettings.FORCED) getKnownProxyConfigurationKeys()
+                                                  else emptySet()
+                if (npmProxyEnvironmentVariables.isNotEmpty()) {
+                    val environmentVariables =
+                        nodeExecConfiguration.environment
+                            .minus(environmentVariablesToUnset)
+                            .plus(npmProxyEnvironmentVariables)
+                    return nodeExecConfiguration.copy(environment = environmentVariables)
+                }
+            }
+            return nodeExecConfiguration
         }
 
         private fun computeProxyUrlEnvironmentVariables(): MutableMap<String, String> {
