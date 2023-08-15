@@ -1,12 +1,15 @@
 # Changelog
 
 ## Version 6.x *(unreleased)*
+
+## Version 6.0.0 *(2023-08-15)*
 * Removed deprecated `nodeModulesDir` from `NodeExtension`
 * The resolved/computed node directory and platform are stored in `resolvedNodeDir` and `resolvedPlatform` on `NodeExtension`
 * Fixes configuration-cache issue in Gradle 8.4
 * Removes the entire `PlatformHelper` as the functionality has migrated into top-level functions
 * Removes the deprecated `HelperExecution`
 * Fixed failure querying the task inputs/outputs on 8+ with configuration-cache enabled [#259](https://github.com/node-gradle/gradle-node-plugin/issues/259)
+* `ProxySetting.FORCED` will now unset environment variables configured outside of Gradle, forcing the settings to match [#153](https://github.com/node-gradle/gradle-node-plugin/issues/153)
 
 ## Version 5.0.0 *(2023-05-13)*
 * Support configuration-cache on Gradle 8.1 [#271](https://github.com/node-gradle/gradle-node-plugin/issues/271)
