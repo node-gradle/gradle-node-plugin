@@ -1,6 +1,8 @@
 package com.github.gradle.node.yarn.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.NodePlugin
 import org.gradle.testkit.runner.TaskOutcome
 
 class YarnInstall_integTest extends AbstractIntegTest {
@@ -45,7 +47,7 @@ class YarnInstall_integTest extends AbstractIntegTest {
         given:
         gradleVersion = gv
 
-        writeBuild('''
+        writeBuild("""
             plugins {
                 id 'com.github.node-gradle.node'
             }
@@ -53,10 +55,10 @@ class YarnInstall_integTest extends AbstractIntegTest {
             node {
                 download = true
                 yarnWorkDir = file('build/yarn')
-                version = '16.14.2'
+                version = '${NodeExtension.DEFAULT_NODE_VERSION}'
                 npmVersion = '7.0.1'
             }
-        ''')
+        """)
         writeEmptyPackageJson()
 
         when:

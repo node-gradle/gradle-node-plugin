@@ -1,7 +1,7 @@
 {
   "name": "example",
   "devDependencies": {
-    "npm": "8.5.0"
+    "npm": "9.6.7"
   },
   "scripts": {
     "npmVersion": "echo Version && npx npm --version"
