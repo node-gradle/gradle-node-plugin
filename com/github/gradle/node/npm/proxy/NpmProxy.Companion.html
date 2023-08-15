@@ -264,7 +264,23 @@ public class <span class="typeNameLabel"><a href=NpmProxy.Companion.html>NpmProx
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NpmProxy.Companion.html#hasProxyConfiguration(Map)>hasProxyConfiguration</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/util/Map.html>Map</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; env) </code>
                                             </th>
-                                            <td class="colLast">Returns true if the given map of environment variables already has proxy settings configured.</td>
+                                            <td class="colLast">Returns true if the given map of environment variables has any proxy settings configured.</td>
+                                        </tr>
+                                        
+                                        <tr id="i3" class="rowColor">
+                                            <td class="colFirst"><code>final <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Set.html>Set</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NpmProxy.Companion.html#getKnownProxyConfigurationKeys()>getKnownProxyConfigurationKeys</a>() </code>
+                                            </th>
+                                            <td class="colLast">Get a list of all known keys that affect the proxy configuration</td>
+                                        </tr>
+                                        
+                                        <tr id="i4" class="altColor">
+                                            <td class="colFirst"><code>final <a href=../../exec/NodeExecConfiguration.html>NodeExecConfiguration</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NpmProxy.Companion.html#addProxyEnvironmentVariables(ProxySettings,NodeExecConfiguration,Map)>addProxyEnvironmentVariables</a>(<a href=ProxySettings.html>ProxySettings</a> proxySettings, <a href=../../exec/NodeExecConfiguration.html>NodeExecConfiguration</a> nodeExecConfiguration, <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Map.html>Map</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; environment) </code>
+                                            </th>
+                                            <td class="colLast">Creates a new NodeExecConfiguration with the proxy environment variables configured</td>
                                         </tr>
                                         
                                         </tbody>
@@ -345,12 +361,12 @@ public class <span class="typeNameLabel"><a href=NpmProxy.Companion.html>NpmProx
                                     <!--   -->
                                 </a>
                                 <ul class=
-                                              "blockListLast"
+                                              "blockList"
                                           >
                                     <li class="blockList">
                                         <h4>hasProxyConfiguration</h4>
                                         <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> <a href=NpmProxy.Companion.html#hasProxyConfiguration(Map)>hasProxyConfiguration</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/util/Map.html>Map</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; env)</pre>
-                                        <div class="block"><p>Returns true if the given map of environment variables already has proxy settings configured.</p></div>
+                                        <div class="block"><p>Returns true if the given map of environment variables has any proxy settings configured.</p></div>
                                         
                                         <dl>
                                             <dt><span class="paramLabel">Parameters:</span></dt>
@@ -360,6 +376,36 @@ public class <span class="typeNameLabel"><a href=NpmProxy.Companion.html>NpmProx
                                             
                                             
                                         </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getKnownProxyConfigurationKeys()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getKnownProxyConfigurationKeys</h4>
+                                        <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Set.html>Set</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=NpmProxy.Companion.html#getKnownProxyConfigurationKeys()>getKnownProxyConfigurationKeys</a>()</pre>
+                                        <div class="block"><p>Get a list of all known keys that affect the proxy configuration</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="addProxyEnvironmentVariables(ProxySettings,NodeExecConfiguration,Map)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockListLast"
+                                          >
+                                    <li class="blockList">
+                                        <h4>addProxyEnvironmentVariables</h4>
+                                        <pre class="methodSignature"> final <a href=../../exec/NodeExecConfiguration.html>NodeExecConfiguration</a> <a href=NpmProxy.Companion.html#addProxyEnvironmentVariables(ProxySettings,NodeExecConfiguration,Map)>addProxyEnvironmentVariables</a>(<a href=ProxySettings.html>ProxySettings</a> proxySettings, <a href=../../exec/NodeExecConfiguration.html>NodeExecConfiguration</a> nodeExecConfiguration, <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Map.html>Map</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; environment)</pre>
+                                        <div class="block"><p>Creates a new NodeExecConfiguration with the proxy environment variables configured</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
