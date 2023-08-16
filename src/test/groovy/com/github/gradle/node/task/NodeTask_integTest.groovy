@@ -1,6 +1,7 @@
 package com.github.gradle.node.task
 
 import com.github.gradle.AbstractIntegTest
+import com.github.gradle.node.NodeExtension
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.util.GradleVersion
 import org.junit.Assume
@@ -87,7 +88,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         then:
         result9.task(":version").outcome == TaskOutcome.SUCCESS
-        result9.output.contains("Version: v16.14.2")
+        result9.output.contains("Version: v${DEFAULT_NODE_VERSION}")
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST

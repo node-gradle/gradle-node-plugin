@@ -204,7 +204,7 @@ node {
 
     // Version of node to download and install (only used if download is true)
     // It will be unpacked in the workDir
-    version = "16.14.0"
+    version = "18.17.1"
 
     // Version of npm to use
     // If specified, installs it in the npmWorkDir

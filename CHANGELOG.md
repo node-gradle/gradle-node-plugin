@@ -1,6 +1,7 @@
 # Changelog
 
 ## Version 6.x *(unreleased)*
+* Upgrade default Node to 18.17.1 and npm to 9.6.7
 
 ## Version 6.0.0 *(2023-08-15)*
 * Removed deprecated `nodeModulesDir` from `NodeExtension`
