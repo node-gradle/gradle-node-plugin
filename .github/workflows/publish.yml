@@ -20,8 +20,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Install yarn
-        run: npm install -g yarn@1.22.17
       - name: Build
         run: ./gradlew build
       - name: Publish

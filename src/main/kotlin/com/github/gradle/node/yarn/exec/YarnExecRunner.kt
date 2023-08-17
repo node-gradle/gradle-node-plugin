@@ -58,17 +58,13 @@ abstract class YarnExecRunner {
         yarnBinDirProvider: Provider<Directory>,
         variantComputer: VariantComputer
     ): Provider<List<String>> {
-        return nodeExtension.download.flatMap { download ->
-            if (!download) {
-                providers.provider { listOf<String>() }
-            }
-            val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
-            val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
-            val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider, nodeExtension.resolvedPlatform)
-            zip(nodeBinDirProvider, npmBinDirProvider, yarnBinDirProvider)
-                    .map { (nodeBinDir, npmBinDir, yarnBinDir) ->
-                        listOf(yarnBinDir, npmBinDir, nodeBinDir).map { file -> file.asFile.absolutePath }
-                    }
-        }
+        // This is conceptually pretty simple as we per documentation always download yarn
+        val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
+        val npmDirProvider = variantComputer.computeNpmDir(nodeExtension, nodeDirProvider)
+        val npmBinDirProvider = variantComputer.computeNpmBinDir(npmDirProvider, nodeExtension.resolvedPlatform)
+        return zip(nodeBinDirProvider, npmBinDirProvider, yarnBinDirProvider)
+                .map { (nodeBinDir, npmBinDir, yarnBinDir) ->
+                    listOf(yarnBinDir, npmBinDir, nodeBinDir).map { file -> file.asFile.absolutePath }
+                }
     }
 }
