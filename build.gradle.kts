@@ -105,11 +105,14 @@ tasks.withType(Test::class) {
 
 tasks.test {
     exclude("**/Pnpm*Test*")
-    if (project.hasProperty("skipIT")) {
-        exclude("**/*_integTest*")
-    } else if (project.hasProperty("onlyIT")) {
-        include("**/*_integTest*")
-    }
+}
+
+tasks.register<Test>("unitTests") {
+    exclude("**/*_integTest*")
+}
+
+tasks.register<Test>("integrationTests") {
+    include("**/*_integTest*")
 }
 
 tasks.register<Test>("pnpmTests") {
