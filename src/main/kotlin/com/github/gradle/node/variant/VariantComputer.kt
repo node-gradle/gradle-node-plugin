@@ -153,12 +153,13 @@ open class VariantComputer {
     fun computeYarnBinDir(yarnDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(yarnDirProvider, platform)
 
     fun computeYarnExec(nodeExtension: NodeExtension, yarnBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.yarnCommand, nodeExtension.download, yarnBinDirProvider).map {
-            val (yarnCommand, download, yarnBinDir) = it
+        return zip(nodeExtension.yarnCommand, yarnBinDirProvider).map {
+            val (yarnCommand, yarnBinDir) = it
             val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
                 yarnCommand.mapIf({ it == "yarn" }) { "yarn.cmd" }
             } else yarnCommand
-            if (download) yarnBinDir.dir(command).asFile.absolutePath else command
+            // This is conceptually pretty simple as we per documentation always download yarn
+            yarnBinDir.dir(command).asFile.absolutePath
         }
     }
 

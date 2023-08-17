@@ -15,8 +15,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Install yarn
-        run: npm install -g yarn@1.22.17
       - name: Gradle Version
         run: ./gradlew --version
       - name: Build Node.js Scripts Project
