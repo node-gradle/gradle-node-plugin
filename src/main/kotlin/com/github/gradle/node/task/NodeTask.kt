@@ -95,6 +95,6 @@ abstract class NodeTask : BaseTask() {
                 NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
         val nodeExecRunner = NodeExecRunner()
-        nodeExecRunner.execute(projectHelper, extension, nodeExecConfiguration, variantComputer)
+        result = nodeExecRunner.execute(projectHelper, extension, nodeExecConfiguration, variantComputer)
     }
 }
