@@ -1,5 +1,6 @@
 package com.github.gradle.node
 
+import com.github.gradle.node.bun.BunSetupTask
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
@@ -109,6 +110,7 @@ class NodePlugin : Plugin<Project> {
         project.tasks.register<NpmSetupTask>(NpmSetupTask.NAME)
         project.tasks.register<PnpmSetupTask>(PnpmSetupTask.NAME)
         project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME)
+        project.tasks.register<BunSetupTask>(BunSetupTask.NAME)
     }
 
     private fun addNpmRule(enableTaskRules: Property<Boolean>) { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
@@ -197,5 +199,6 @@ class NodePlugin : Plugin<Project> {
         const val NPM_GROUP = "npm"
         const val PNPM_GROUP = "pnpm"
         const val YARN_GROUP = "Yarn"
+        const val BUN_GROUP = "Bun"
     }
 }
