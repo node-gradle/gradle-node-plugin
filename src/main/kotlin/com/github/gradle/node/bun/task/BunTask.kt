@@ -1,9 +1,9 @@
-package com.github.gradle.node.bun
+package com.github.gradle.node.bun.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
+import com.github.gradle.node.bun.exec.BunExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
-import com.github.gradle.node.pnpm.exec.PnpmExecRunner
 import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.Action
@@ -72,7 +72,7 @@ abstract class BunTask : BaseTask() {
                 command, environment.get(), workingDir.asFile.orNull,
                 ignoreExitValue.get(), execOverrides.orNull
             )
-        val pnpmExecRunner = objects.newInstance(PnpmExecRunner::class.java)
-        result = pnpmExecRunner.executePnpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        val pnpmExecRunner = objects.newInstance(BunExecRunner::class.java)
+        result = pnpmExecRunner.executeBunCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }

@@ -1,6 +1,7 @@
 package com.github.gradle.node
 
-import com.github.gradle.node.bun.BunSetupTask
+import com.github.gradle.node.bun.task.BunSetupTask
+import com.github.gradle.node.bun.task.BunTask
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
@@ -95,6 +96,7 @@ class NodePlugin : Plugin<Project> {
         addGlobalType<NpxTask>()
         addGlobalType<PnpmTask>()
         addGlobalType<YarnTask>()
+        addGlobalType<BunTask>()
         addGlobalType<ProxySettings>()
     }
 

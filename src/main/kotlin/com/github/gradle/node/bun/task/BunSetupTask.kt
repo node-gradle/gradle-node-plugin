@@ -1,4 +1,4 @@
-package com.github.gradle.node.bun
+package com.github.gradle.node.bun.task
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmSetupTask

@@ -163,6 +163,29 @@ open class VariantComputer {
         }
     }
 
+    fun computeBunDir(nodeExtension: NodeExtension): Provider<Directory> {
+        return zip(nodeExtension.bunVersion, nodeExtension.bunWorkDir).map {
+            val (bunVersion, bunWorkDir) = it
+            val dirnameSuffix = if (bunVersion.isNotBlank()) {
+                "-v${bunVersion}"
+            } else "-latest"
+            val dirname = "bun$dirnameSuffix"
+            bunWorkDir.dir(dirname)
+        }
+    }
+
+    fun computeBunBinDir(bunDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(bunDirProvider, platform)
+
+    fun computeBunExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
+        return zip(nodeExtension.bunCommand, nodeExtension.download, bunBinDirProvider).map {
+            val (bunCommand, download, bunBinDir) = it
+            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
+                bunCommand.mapIf({ it == "bun" }) { "bun.cmd" }
+            } else bunCommand
+            if (download) bunBinDir.dir(command).asFile.absolutePath else command
+        }
+    }
+
     private fun computeProductBinDir(productDirProvider: Provider<Directory>, platform: Property<Platform>) =
             if (platform.get().isWindows()) productDirProvider else productDirProvider.map { it.dir("bin") }
 
