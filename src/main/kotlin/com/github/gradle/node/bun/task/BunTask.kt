@@ -72,7 +72,7 @@ abstract class BunTask : BaseTask() {
                 command, environment.get(), workingDir.asFile.orNull,
                 ignoreExitValue.get(), execOverrides.orNull
             )
-        val pnpmExecRunner = objects.newInstance(BunExecRunner::class.java)
-        result = pnpmExecRunner.executeBunCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        val bunExecRunner = objects.newInstance(BunExecRunner::class.java)
+        result = bunExecRunner.executeBunCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }

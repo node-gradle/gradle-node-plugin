@@ -25,7 +25,7 @@ abstract class BunSetupTask : NpmSetupTask() {
     @get:OutputDirectory
     val bunDir by lazy {
         val variantComputer = VariantComputer()
-        variantComputer.computePnpmDir(nodeExtension)
+        variantComputer.computeBunDir(nodeExtension)
     }
 
     override fun computeCommand(): List<String> {
