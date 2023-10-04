@@ -2,6 +2,9 @@
 
 ## Version 7.x *(unreleased)*
 
+## Version 7.0.1 *(2023-10-04)*
+* Adds missing `result` to NodeTask [#289](https://github.com/node-gradle/gradle-node-plugin/issues/289)
+
 ## Version 7.0.0 *(2023-08-17)*
 * Upgrade default Node to 18.17.1 and npm to 9.6.7
 * Always use downloaded Yarn as per documentation [#284](https://github.com/node-gradle/gradle-node-plugin/issues/284)
