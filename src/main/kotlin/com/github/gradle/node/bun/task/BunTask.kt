@@ -54,7 +54,7 @@ abstract class BunTask : BaseTask() {
     val nodeExtension = NodeExtension[project]
 
     init {
-        group = NodePlugin.NODE_GROUP
+        group = NodePlugin.BUN_GROUP
         dependsOn(BunSetupTask.NAME)
     }
 
