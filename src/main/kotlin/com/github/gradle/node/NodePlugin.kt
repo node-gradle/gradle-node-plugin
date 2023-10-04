@@ -1,5 +1,6 @@
 package com.github.gradle.node
 
+import com.github.gradle.node.bun.task.BunInstallTask
 import com.github.gradle.node.bun.task.BunSetupTask
 import com.github.gradle.node.bun.task.BunTask
 import com.github.gradle.node.npm.proxy.ProxySettings
@@ -108,6 +109,7 @@ class NodePlugin : Plugin<Project> {
         project.tasks.register<NpmInstallTask>(NpmInstallTask.NAME)
         project.tasks.register<PnpmInstallTask>(PnpmInstallTask.NAME)
         project.tasks.register<YarnInstallTask>(YarnInstallTask.NAME)
+        project.tasks.register<BunInstallTask>(BunInstallTask.NAME)
         project.tasks.register<NodeSetupTask>(NodeSetupTask.NAME)
         project.tasks.register<NpmSetupTask>(NpmSetupTask.NAME)
         project.tasks.register<PnpmSetupTask>(PnpmSetupTask.NAME)
