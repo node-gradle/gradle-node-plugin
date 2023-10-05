@@ -97,6 +97,7 @@ open class NodeExtension(project: Project) {
     val pnpmCommand = project.objects.property<String>().convention("pnpm")
     val yarnCommand = project.objects.property<String>().convention("yarn")
     val bunCommand = project.objects.property<String>().convention("bun")
+    val bunxCommand = project.objects.property<String>().convention("bunx")
 
     /**
      * The npm command executed by the npmInstall task

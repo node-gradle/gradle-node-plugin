@@ -116,6 +116,21 @@ open class VariantComputer {
         }
     }
 
+    /**
+     * Get the expected bunx binary name, bunx.cmd on Windows and bunx everywhere else.
+     *
+     * Can be overridden by setting bunxCommand.
+     */
+    fun computeBunxExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
+        return zip(nodeExtension.download, nodeExtension.npxCommand, bunBinDirProvider).map {
+            val (download, bunxCommand, bunBinDir) = it
+            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
+                bunxCommand.mapIf({ it == "bunx" }) { "bunx.cmd" }
+            } else bunxCommand
+            if (download) bunBinDir.dir(command).asFile.absolutePath else command
+        }
+    }
+
     fun computePnpmDir(nodeExtension: NodeExtension): Provider<Directory> {
         return zip(nodeExtension.pnpmVersion, nodeExtension.pnpmWorkDir).map {
             val (pnpmVersion, pnpmWorkDir) = it
