@@ -1,0 +1,29 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+node {
+    nodeProjectDir = file("${projectDir}/javascript-project")
+}
+
+task buildBunx(type: BunxTask) {
+    dependsOn bunInstall
+    command = "babel"
+    args = ["src", "--out-dir", "output-bunx"]
+    inputs.dir("javascript-project/src")
+    inputs.dir("javascript-project/node_modules")
+    outputs.dir("javascript-project/output-bunx")
+}
+
+task buildBun(type: BunTask) {
+    dependsOn bunInstall
+    bunCommand = ["run", "build"]
+    args = ["--", "--out-dir", "output-bun"]
+    inputs.dir("javascript-project/src")
+    inputs.dir("javascript-project/node_modules")
+    outputs.dir("javascript-project/output-bun")
+}
+
+task build {
+    dependsOn buildBunx, buildBun
+}
