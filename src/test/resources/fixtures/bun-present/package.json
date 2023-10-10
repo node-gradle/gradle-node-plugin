@@ -1,0 +1,9 @@
+{
+  "name": "example",
+  "devDependencies": {
+    "bun": "1.0.0"
+  },
+  "scripts": {
+    "bunVersion": "echo Version && bun --version"
+  }
+}

@@ -1,0 +1,65 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    workDir = file("build/node")
+    bunVersion = '1.0.3'
+}
+
+task env(type: BunTask) {
+    dependsOn bunInstall
+    bunCommand = ["run", "print-env"]
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+// This should be documented in the package.json file but it cannot be done because JSON does not accept comments.
+// bun run forces the current directory but we can read the INIT_CWD environment variable to get the original working
+// directory. This is the reason why we read the INIT_CWD variable and not the process.cwd() one in the script
+// definition.
+task pwd(type: BunTask) {
+    dependsOn bunInstall
+    bunCommand = ["run", "printcwd"]
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task version(type: BunTask) {
+    dependsOn bunInstall
+    bunCommand = ["--version"]
+}
+
+if (isPropertyEnabled("customEnv")) {
+    def qualifier = "custom"
+    env.environment = [CUSTOM: "${qualifier} value"]
+}
+
+if (isPropertyEnabled("ignoreExitValue")) {
+    env.ignoreExitValue = true
+}
+
+if (isPropertyEnabled("notExistingCommand")) {
+    env.bunCommand = ["notExistingCommand"]
+}
+
+if (isPropertyEnabled("customWorkingDir")) {
+    pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
+}
+
+if (isPropertyEnabled("outputFile")) {
+    env.execOverrides {
+        standardOutput = new FileOutputStream("${buildDir}/standard-output.txt")
+    }
+}
+
+def isPropertyEnabled(String name) {
+    def provider = providers.systemProperty(name)
+    if (org.gradle.util.GradleVersion.current() >= org.gradle.util.GradleVersion.version("7.4")) {
+        return provider.isPresent()
+    } else {
+        return provider.forUseAtConfigurationTime().isPresent()
+    }
+}

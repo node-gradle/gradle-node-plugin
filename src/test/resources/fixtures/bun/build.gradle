@@ -1,0 +1,36 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+def changeInputs = isPropertyEnabled("changeInputs")
+
+node {
+    bunVersion = "1.0.3"
+    workDir = file('build/node')
+}
+
+task test(type: BunTask) {
+    dependsOn bunInstall
+    bunCommand = changeInputs ? ['run', 'test'] : ['run']
+    args = changeInputs ? [] : ['test']
+    inputs.dir('node_modules')
+    inputs.file('package.json')
+    inputs.files('index.js', 'test.js')
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task version(type: BunTask) {
+    dependsOn bunInstall
+    bunCommand = ["--version"]
+}
+
+def isPropertyEnabled(String name) {
+    def provider = providers.systemProperty(name)
+    if (org.gradle.util.GradleVersion.current() >= org.gradle.util.GradleVersion.version("7.4")) {
+        return provider.isPresent()
+    } else {
+        return provider.forUseAtConfigurationTime().isPresent()
+    }
+}

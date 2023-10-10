@@ -1,0 +1,61 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    bunVersion = "1.0.3"
+    workDir = file("build/node")
+}
+
+// mocha is installed locally whereas eslint is not
+
+task lint(type: BunxTask) {
+    dependsOn bunInstall
+    command = "eslint@6.3.0"
+    args = ["src", "test"]
+    inputs.file(".eslintrc.yml")
+    inputs.dir("src")
+    inputs.dir("test")
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task test(type: BunxTask) {
+    dependsOn lint
+    command = "mocha"
+    inputs.file("package.json")
+    inputs.dir("src")
+    inputs.dir("test")
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task env(type: BunxTask) {
+    command = "print-env"
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task cwd(type: BunxTask) {
+    command = "cwd"
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+if (isPropertyEnabled("changeInputs")) {
+    lint.args = ["src"]
+    test.command = "_mocha"
+}
+
+def isPropertyEnabled(String name) {
+    def provider = providers.systemProperty(name)
+    if (org.gradle.util.GradleVersion.current() >= org.gradle.util.GradleVersion.version("7.4")) {
+        return provider.isPresent()
+    } else {
+        return provider.forUseAtConfigurationTime().isPresent()
+    }
+}

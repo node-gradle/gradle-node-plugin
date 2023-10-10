@@ -1,0 +1,76 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+node {
+    workDir = file("build/node")
+}
+
+task env(type: BunxTask) {
+    dependsOn bunInstall
+    command = "print-env"
+    args = ["PATH", "CUSTOM"]
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task pwd(type: BunxTask) {
+    dependsOn bunInstall
+    command = "jseval"
+    /* This is cursed.
+    This used to work before we upgraded node+npm but now the backticks break, I tried to work around it and...
+    ["work..='", process.cwd(), "'"].join('') works, except on windows where it prints:
+    , process.cwd,
+    "work..='" + process.cwd() + "'" works, except on windows where it prints:
+     + process.cwd +
+     And surprising nobody at this point:
+     process.stdout.write("workingDirectory='"); process.stdout.write(process.cwd()); process.stdout.write("'\\n");
+     Does work, except on windows, where it's parsed as:
+     process.stdout.write(workingDirectory='); process.stdout.write(process.cwd()); process.stdout.write('\\n);
+
+     If someone manages to fix this, remove the @IgnoreIf from the NpxTask_integTest
+     */
+    args = ["""console.log(["workingDirectory='", process.cwd(), "'"].join(''));"""]
+    outputs.upToDateWhen {
+        true
+    }
+}
+
+task version(type: BunxTask) {
+    dependsOn bunInstall
+    command = "--version"
+}
+
+if (isPropertyEnabled("customEnv")) {
+    def qualifier = "custom"
+    env.environment = [CUSTOM: "${qualifier} value"]
+}
+
+if (isPropertyEnabled("ignoreExitValue")) {
+    env.ignoreExitValue = true
+}
+
+if (isPropertyEnabled("notExistingCommand")) {
+    env.command = "notExistingCommand"
+}
+
+if (isPropertyEnabled("customWorkingDir")) {
+    pwd.workingDir = file("${project.buildDir}/customWorkingDirectory/")
+}
+
+if (isPropertyEnabled("outputFile")) {
+    def standardOutputFile = new File(buildDir, "standard-output.txt")
+    env.execOverrides {
+        standardOutput = new FileOutputStream(standardOutputFile)
+    }
+}
+
+def isPropertyEnabled(String name) {
+    def provider = providers.systemProperty(name)
+    if (org.gradle.util.GradleVersion.current() >= org.gradle.util.GradleVersion.version("7.4")) {
+        return provider.isPresent()
+    } else {
+        return provider.forUseAtConfigurationTime().isPresent()
+    }
+}
