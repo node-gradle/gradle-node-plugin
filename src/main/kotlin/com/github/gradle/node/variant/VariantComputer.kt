@@ -122,7 +122,7 @@ open class VariantComputer {
      * Can be overridden by setting bunxCommand.
      */
     fun computeBunxExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.download, nodeExtension.npxCommand, bunBinDirProvider).map {
+        return zip(nodeExtension.download, nodeExtension.bunxCommand, bunBinDirProvider).map {
             val (download, bunxCommand, bunBinDir) = it
             val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
                 bunxCommand.mapIf({ it == "bunx" }) { "bunx.cmd" }

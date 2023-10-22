@@ -6,6 +6,7 @@ def changeInputs = isPropertyEnabled("changeInputs")
 
 node {
     bunVersion = "1.0.3"
+    download = true
     workDir = file('build/node')
 }
 

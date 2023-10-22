@@ -4,6 +4,8 @@ plugins {
 
 node {
     workDir = file("build/node")
+    download = true
+    bunVersion = "1.0.3"
 }
 
 task env(type: BunxTask) {

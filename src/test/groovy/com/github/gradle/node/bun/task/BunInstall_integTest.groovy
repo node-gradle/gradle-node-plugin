@@ -2,12 +2,14 @@ package com.github.gradle.node.bun.task
 
 import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
+import spock.lang.Ignore
 import spock.lang.IgnoreIf
 
 import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
 
 @IgnoreIf({ os.windows })
 class BunInstall_integTest extends AbstractIntegTest {
+
     def 'install packages with bun (#gv.version)'() {
         given:
         gradleVersion = gv
@@ -16,6 +18,10 @@ class BunInstall_integTest extends AbstractIntegTest {
             plugins {
                 id 'com.github.node-gradle.node'
             }
+
+            node {
+                download = true
+            }
         ''')
         writeEmptyPackageJson()
 
@@ -23,7 +29,6 @@ class BunInstall_integTest extends AbstractIntegTest {
         def result = build('bunInstall')
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":bunSetup").outcome == TaskOutcome.SUCCESS
         result.task(":bunInstall").outcome == TaskOutcome.SUCCESS
 
@@ -31,7 +36,6 @@ class BunInstall_integTest extends AbstractIntegTest {
         result = build('bunInstall')
 
         then:
-        result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
         result.task(":bunSetup").outcome == TaskOutcome.UP_TO_DATE
         // because bun.lockb is generated only when needed
         result.task(":bunInstall").outcome == TaskOutcome.UP_TO_DATE
@@ -196,7 +200,7 @@ class BunInstall_integTest extends AbstractIntegTest {
             }
 
             bunInstall {
-                nodeModulesOutputFilter { 
+                nodeModulesOutputFilter {
                     exclude("is-number/package.json")
                 }
             }
