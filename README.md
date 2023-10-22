@@ -2,7 +2,7 @@
 
 # Gradle Plugin for Node
 
-![Build Status](https://github.com/node-gradle/gradle-node-plugin/workflows/Build/badge.svg?branch=master)
+![Build Status](https://github.com/node-gradle/gradle-node-plugin/workflows/Build/badge.svg?branch=main)
 [![License](https://img.shields.io/github/license/node-gradle/gradle-node-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 ![Version](https://img.shields.io/badge/Version-7.0.1-orange.svg)
 

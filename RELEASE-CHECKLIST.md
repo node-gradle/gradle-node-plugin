@@ -2,11 +2,11 @@
 
 ## Conditions
 
-- [ ] All Tests Passing in the `master` branch
+- [ ] All Tests Passing in the `main` branch
 
 ## Preparation
 
-- [ ] Checkout the `master` branch
+- [ ] Checkout the `main` branch
 - [ ] Add a link to this new version to the Release History in the `README.md` file and mark it as the current one
 - [ ] Add the version and its changes to the `CHANGELOG.md` file
 - [ ] Replace all the occurrences of the former latest version by this version in all the docs files

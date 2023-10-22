@@ -2,7 +2,7 @@ name: Update Javadoc
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   linux:
     runs-on: ubuntu-latest
