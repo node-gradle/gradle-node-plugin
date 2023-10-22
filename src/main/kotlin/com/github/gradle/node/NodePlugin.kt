@@ -1,5 +1,9 @@
 package com.github.gradle.node
 
+import com.github.gradle.node.bun.task.BunInstallTask
+import com.github.gradle.node.bun.task.BunSetupTask
+import com.github.gradle.node.bun.task.BunTask
+import com.github.gradle.node.bun.task.BunxTask
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
@@ -94,6 +98,8 @@ class NodePlugin : Plugin<Project> {
         addGlobalType<NpxTask>()
         addGlobalType<PnpmTask>()
         addGlobalType<YarnTask>()
+        addGlobalType<BunTask>()
+        addGlobalType<BunxTask>()
         addGlobalType<ProxySettings>()
     }
 
@@ -105,10 +111,12 @@ class NodePlugin : Plugin<Project> {
         project.tasks.register<NpmInstallTask>(NpmInstallTask.NAME)
         project.tasks.register<PnpmInstallTask>(PnpmInstallTask.NAME)
         project.tasks.register<YarnInstallTask>(YarnInstallTask.NAME)
+        project.tasks.register<BunInstallTask>(BunInstallTask.NAME)
         project.tasks.register<NodeSetupTask>(NodeSetupTask.NAME)
         project.tasks.register<NpmSetupTask>(NpmSetupTask.NAME)
         project.tasks.register<PnpmSetupTask>(PnpmSetupTask.NAME)
         project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME)
+        project.tasks.register<BunSetupTask>(BunSetupTask.NAME)
     }
 
     private fun addNpmRule(enableTaskRules: Property<Boolean>) { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"
@@ -197,5 +205,6 @@ class NodePlugin : Plugin<Project> {
         const val NPM_GROUP = "npm"
         const val PNPM_GROUP = "pnpm"
         const val YARN_GROUP = "Yarn"
+        const val BUN_GROUP = "Bun"
     }
 }

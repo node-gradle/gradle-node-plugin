@@ -167,7 +167,7 @@ gradlePlugin {
             id = "com.github.node-gradle.node"
             implementationClass = "com.github.gradle.node.NodePlugin"
             displayName = "Gradle Node.js Plugin"
-            description = "Gradle plugin for executing Node.js scripts. Supports npm, pnpm and Yarn."
+            description = "Gradle plugin for executing Node.js scripts. Supports npm, pnpm, Yarn and Bun."
         }
     }
 }
@@ -176,7 +176,7 @@ pluginBundle {
     website = "https://github.com/node-gradle/gradle-node-plugin"
     vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
 
-    tags = listOf("java", "node", "node.js", "npm", "yarn", "pnpm")
+    tags = listOf("java", "node", "node.js", "npm", "yarn", "pnpm", "bun")
 }
 
 tasks.wrapper {

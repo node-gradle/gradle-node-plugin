@@ -31,6 +31,11 @@ open class NodeExtension(project: Project) {
     val yarnWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("yarn"))
 
     /**
+     * The directory where Bun is installed (when a Bun task is used)
+     */
+    val bunWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("bun"))
+
+    /**
      * The Node.js project directory location
      * This is where the package.json file and node_modules directory are located
      * By default it is at the root of the current project
@@ -65,6 +70,13 @@ open class NodeExtension(project: Project) {
     val yarnVersion = project.objects.property<String>().convention("")
 
     /**
+     * Version of Bun to use
+     * Any Bun task first installs Bun in the bunWorkDir
+     * It uses the specified version if defined and the latest version otherwise (by default)
+     */
+    val bunVersion = project.objects.property<String>().convention("")
+
+    /**
      * Base URL for fetching node distributions
      * Only used if download is true
      * Change it if you want to use a mirror
@@ -84,6 +96,8 @@ open class NodeExtension(project: Project) {
     val npxCommand = project.objects.property<String>().convention("npx")
     val pnpmCommand = project.objects.property<String>().convention("pnpm")
     val yarnCommand = project.objects.property<String>().convention("yarn")
+    val bunCommand = project.objects.property<String>().convention("bun")
+    val bunxCommand = project.objects.property<String>().convention("bunx")
 
     /**
      * The npm command executed by the npmInstall task

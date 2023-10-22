@@ -116,6 +116,21 @@ open class VariantComputer {
         }
     }
 
+    /**
+     * Get the expected bunx binary name, bunx.cmd on Windows and bunx everywhere else.
+     *
+     * Can be overridden by setting bunxCommand.
+     */
+    fun computeBunxExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
+        return zip(nodeExtension.download, nodeExtension.npxCommand, bunBinDirProvider).map {
+            val (download, bunxCommand, bunBinDir) = it
+            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
+                bunxCommand.mapIf({ it == "bunx" }) { "bunx.cmd" }
+            } else bunxCommand
+            if (download) bunBinDir.dir(command).asFile.absolutePath else command
+        }
+    }
+
     fun computePnpmDir(nodeExtension: NodeExtension): Provider<Directory> {
         return zip(nodeExtension.pnpmVersion, nodeExtension.pnpmWorkDir).map {
             val (pnpmVersion, pnpmWorkDir) = it
@@ -160,6 +175,29 @@ open class VariantComputer {
             } else yarnCommand
             // This is conceptually pretty simple as we per documentation always download yarn
             yarnBinDir.dir(command).asFile.absolutePath
+        }
+    }
+
+    fun computeBunDir(nodeExtension: NodeExtension): Provider<Directory> {
+        return zip(nodeExtension.bunVersion, nodeExtension.bunWorkDir).map {
+            val (bunVersion, bunWorkDir) = it
+            val dirnameSuffix = if (bunVersion.isNotBlank()) {
+                "-v${bunVersion}"
+            } else "-latest"
+            val dirname = "bun$dirnameSuffix"
+            bunWorkDir.dir(dirname)
+        }
+    }
+
+    fun computeBunBinDir(bunDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(bunDirProvider, platform)
+
+    fun computeBunExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
+        return zip(nodeExtension.bunCommand, nodeExtension.download, bunBinDirProvider).map {
+            val (bunCommand, download, bunBinDir) = it
+            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
+                bunCommand.mapIf({ it == "bun" }) { "bun.cmd" }
+            } else bunCommand
+            if (download) bunBinDir.dir(command).asFile.absolutePath else command
         }
     }
 

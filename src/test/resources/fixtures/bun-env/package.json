@@ -1,0 +1,11 @@
+{
+  "name": "env",
+  "dependencies": {
+    "@bahmutov/print-env": "2.0.2",
+    "utils-eval": "1.0.1"
+  },
+  "scripts": {
+    "print-env": "print-env PATH CUSTOM",
+    "printcwd": "jseval \"'Working directory is \\'' + process.env.PWD + '\\''\""
+  }
+}
