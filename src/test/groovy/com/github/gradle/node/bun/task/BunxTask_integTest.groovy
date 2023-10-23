@@ -13,6 +13,7 @@ import java.util.regex.Pattern
 
 import static com.github.gradle.node.NodeExtension.DEFAULT_NPM_VERSION
 
+@IgnoreIf({ os.windows })
 class BunxTask_integTest extends AbstractIntegTest {
     def 'execute bunx command with no package.json file (#gv.version)'() {
         given:
