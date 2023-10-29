@@ -4,6 +4,7 @@ plugins {
 
 node {
     bunVersion = "1.0.3"
+    download = true
     workDir = file("build/node")
 }
 
@@ -48,7 +49,7 @@ task cwd(type: BunxTask) {
 
 if (isPropertyEnabled("changeInputs")) {
     lint.args = ["src"]
-    test.command = "_mocha"
+    test.command = "mocha"
 }
 
 def isPropertyEnabled(String name) {

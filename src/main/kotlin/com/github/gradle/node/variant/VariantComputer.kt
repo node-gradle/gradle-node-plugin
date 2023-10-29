@@ -5,6 +5,7 @@ import com.github.gradle.node.util.Platform
 import com.github.gradle.node.util.mapIf
 import com.github.gradle.node.util.zip
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
@@ -37,6 +38,34 @@ fun computeNodeDir(nodeExtension: NodeExtension, osName: String, osArch: String)
     return zip(nodeExtension.workDir, nodeExtension.version).map { (workDir, version) ->
         val dirName = "node-v$version-$osName-$osArch"
         workDir.dir(dirName)
+    }
+}
+
+/**
+ * Compute the path for a given command, from a given binary directory, taking Windows into account
+ */
+internal fun computeExec(nodeExtension: NodeExtension, binDirProvider: Provider<Directory>,
+                         configurationCommand: Property<String>, unixCommand: String, windowsCommand: String): Provider<String> {
+    return zip(nodeExtension.download, configurationCommand, binDirProvider).map {
+        val (download, cfgCommand, binDir) = it
+        val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
+            cfgCommand.mapIf({ it == unixCommand }) { windowsCommand }
+        } else cfgCommand
+        if (download) binDir.dir(command).asFile.absolutePath else command
+    }
+}
+
+/**
+ * Compute the path for a given package, taken versions and user-configured working directories into account
+ */
+internal fun computePackageDir(packageName: String, packageVersion: Property<String>, packageWorkDir: DirectoryProperty): Provider<Directory> {
+    return zip(packageVersion, packageWorkDir).map {
+        val (version, workDir) = it
+        val dirnameSuffix = if (version.isNotBlank()) {
+            "-v${version}"
+        } else "-latest"
+        val dirname = "$packageName$dirnameSuffix"
+        workDir.dir(dirname)
     }
 }
 
@@ -92,13 +121,8 @@ open class VariantComputer {
      * Can be overridden by setting npmCommand.
      */
     fun computeNpmExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.download, nodeExtension.npmCommand, npmBinDirProvider).map {
-            val (download, npmCommand, npmBinDir) = it
-            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
-                npmCommand.mapIf({ it == "npm" }) { "npm.cmd" }
-            } else npmCommand
-            if (download) npmBinDir.dir(command).asFile.absolutePath else command
-        }
+        return computeExec(nodeExtension, npmBinDirProvider,
+            nodeExtension.npmCommand, "npm", "npm.cmd")
     }
 
     /**
@@ -107,62 +131,23 @@ open class VariantComputer {
      * Can be overridden by setting npxCommand.
      */
     fun computeNpxExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.download, nodeExtension.npxCommand, npmBinDirProvider).map {
-            val (download, npxCommand, npmBinDir) = it
-            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
-                npxCommand.mapIf({ it == "npx" }) { "npx.cmd" }
-            } else npxCommand
-            if (download) npmBinDir.dir(command).asFile.absolutePath else command
-        }
-    }
-
-    /**
-     * Get the expected bunx binary name, bunx.cmd on Windows and bunx everywhere else.
-     *
-     * Can be overridden by setting bunxCommand.
-     */
-    fun computeBunxExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.download, nodeExtension.npxCommand, bunBinDirProvider).map {
-            val (download, bunxCommand, bunBinDir) = it
-            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
-                bunxCommand.mapIf({ it == "bunx" }) { "bunx.cmd" }
-            } else bunxCommand
-            if (download) bunBinDir.dir(command).asFile.absolutePath else command
-        }
+        return computeExec(nodeExtension, npmBinDirProvider,
+            nodeExtension.npxCommand, "npx", "npx.cmd")
     }
 
     fun computePnpmDir(nodeExtension: NodeExtension): Provider<Directory> {
-        return zip(nodeExtension.pnpmVersion, nodeExtension.pnpmWorkDir).map {
-            val (pnpmVersion, pnpmWorkDir) = it
-            val dirnameSuffix = if (pnpmVersion.isNotBlank()) {
-                "-v${pnpmVersion}"
-            } else "-latest"
-            val dirname = "pnpm$dirnameSuffix"
-            pnpmWorkDir.dir(dirname)
-        }
+        return computePackageDir("pnpm", nodeExtension.pnpmVersion, nodeExtension.pnpmWorkDir)
     }
 
     fun computePnpmBinDir(pnpmDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(pnpmDirProvider, platform)
 
     fun computePnpmExec(nodeExtension: NodeExtension, pnpmBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.pnpmCommand, nodeExtension.download, pnpmBinDirProvider).map {
-            val (pnpmCommand, download, pnpmBinDir) = it
-            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
-                pnpmCommand.mapIf({ it == "pnpm" }) { "pnpm.cmd" }
-            } else pnpmCommand
-            if (download) pnpmBinDir.dir(command).asFile.absolutePath else command
-        }
+        return computeExec(nodeExtension, pnpmBinDirProvider,
+            nodeExtension.pnpmCommand, "pnpm", "pnpm.cmd")
     }
 
     fun computeYarnDir(nodeExtension: NodeExtension): Provider<Directory> {
-        return zip(nodeExtension.yarnVersion, nodeExtension.yarnWorkDir).map {
-            val (yarnVersion, yarnWorkDir) = it
-            val dirnameSuffix = if (yarnVersion.isNotBlank()) {
-                "-v${yarnVersion}"
-            } else "-latest"
-            val dirname = "yarn$dirnameSuffix"
-            yarnWorkDir.dir(dirname)
-        }
+        return computePackageDir("yarn", nodeExtension.yarnVersion, nodeExtension.yarnWorkDir)
     }
 
     fun computeYarnBinDir(yarnDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(yarnDirProvider, platform)
@@ -179,26 +164,24 @@ open class VariantComputer {
     }
 
     fun computeBunDir(nodeExtension: NodeExtension): Provider<Directory> {
-        return zip(nodeExtension.bunVersion, nodeExtension.bunWorkDir).map {
-            val (bunVersion, bunWorkDir) = it
-            val dirnameSuffix = if (bunVersion.isNotBlank()) {
-                "-v${bunVersion}"
-            } else "-latest"
-            val dirname = "bun$dirnameSuffix"
-            bunWorkDir.dir(dirname)
-        }
+        return computePackageDir("bun", nodeExtension.bunVersion, nodeExtension.bunWorkDir)
     }
 
     fun computeBunBinDir(bunDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(bunDirProvider, platform)
 
     fun computeBunExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
-        return zip(nodeExtension.bunCommand, nodeExtension.download, bunBinDirProvider).map {
-            val (bunCommand, download, bunBinDir) = it
-            val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
-                bunCommand.mapIf({ it == "bun" }) { "bun.cmd" }
-            } else bunCommand
-            if (download) bunBinDir.dir(command).asFile.absolutePath else command
-        }
+        return computeExec(nodeExtension, bunBinDirProvider,
+            nodeExtension.bunCommand, "bun", "bun.cmd")
+    }
+
+    /**
+     * Get the expected bunx binary name, bunx.cmd on Windows and bunx everywhere else.
+     *
+     * Can be overridden by setting bunxCommand.
+     */
+    fun computeBunxExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
+        return computeExec(nodeExtension, bunBinDirProvider,
+            nodeExtension.bunxCommand, "bunx", "bunx.cmd")
     }
 
     private fun computeProductBinDir(productDirProvider: Provider<Directory>, platform: Property<Platform>) =

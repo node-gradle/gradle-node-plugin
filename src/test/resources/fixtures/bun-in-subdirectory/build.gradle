@@ -4,6 +4,8 @@ plugins {
 
 node {
     nodeProjectDir = file("${projectDir}/javascript-project")
+    download = true
+    bunVersion = "1.0.3"
 }
 
 task buildBunx(type: BunxTask) {
