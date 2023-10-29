@@ -20,7 +20,7 @@ class VariantComputerTest extends Specification {
     def "test variant on windows (#version #osArch)"() {
         given:
         def project = ProjectBuilder.builder().build()
-        
+
         def platform = getPlatform("Windows 8", osArch)
 
         def nodeExtension = new NodeExtension(project)
@@ -249,6 +249,42 @@ class VariantComputerTest extends Specification {
         true     | ""
         false    | "4.0.2"
         false    | ""
+    }
+
+    @Unroll
+    def "test bun paths on non-windows (download: #download)"() {
+        given:
+        def platform = getPlatform("Linux", "x86")
+        def project = ProjectBuilder.builder().build()
+
+        def nodeExtension = new NodeExtension(project)
+        nodeExtension.resolvedPlatform.set(platform)
+        nodeExtension.download.set(download)
+
+        def variantComputer = new VariantComputer()
+
+        when:
+        def resolvedBunDir = variantComputer.computeBunDir(nodeExtension)
+        def computedBunBinDir = variantComputer.computeBunBinDir(resolvedBunDir, nodeExtension.resolvedPlatform)
+        def computedBunExec = variantComputer.computeBunExec(nodeExtension, computedBunBinDir)
+        def computedBunxExec = variantComputer.computeBunxExec(nodeExtension, computedBunBinDir)
+
+        def bunBinDir = resolvedBunDir.get().dir("bin")
+
+        def bun = nodeExtension.bunCommand.get()
+        def bunx = nodeExtension.bunxCommand.get()
+
+        if (download) {
+            bun = bunBinDir.file(bun).toString()
+            bunx = bunBinDir.file(bunx).toString()
+        }
+
+        then:
+        computedBunExec.get() == bun
+        computedBunxExec.get() == bunx
+
+        where:
+        download << [true, false]
     }
 
     private Platform getPlatform(String osName, String osArch, uname = null) {

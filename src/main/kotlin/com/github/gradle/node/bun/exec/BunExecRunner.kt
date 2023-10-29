@@ -29,9 +29,9 @@ abstract class BunExecRunner {
     }
 
     fun executeBunxCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
-        val bunExecConfiguration = NpmExecConfiguration("bunx") { variantComputer, nodeExtension, bunBinDir ->
-            variantComputer.computeBunxExec(nodeExtension, bunBinDir)
-        }
+        val bunExecConfiguration = NpmExecConfiguration("bunx"
+        ) { variantComputer, nodeExtension, bunBinDir ->
+            variantComputer.computeBunxExec(nodeExtension, bunBinDir) }
 
         val enhancedNodeExecConfiguration = NpmProxy.addProxyEnvironmentVariables(extension.nodeProxySettings.get(), nodeExecConfiguration)
         val execConfiguration = computeExecConfiguration(extension, bunExecConfiguration, enhancedNodeExecConfiguration, variants).get()
