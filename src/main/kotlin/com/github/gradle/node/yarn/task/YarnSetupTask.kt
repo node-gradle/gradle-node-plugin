@@ -2,6 +2,7 @@ package com.github.gradle.node.yarn.task
 
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmSetupTask
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -16,18 +17,13 @@ abstract class YarnSetupTask : NpmSetupTask() {
         description = "Setup a specific version of Yarn to be used by the build."
     }
 
-    @Input
-    override fun getVersion(): Provider<String> {
-        return nodeExtension.yarnVersion
-    }
-
     @get:OutputDirectory
     val yarnDir by lazy {
         variantComputer.computeYarnDir(nodeExtension)
     }
 
     override fun computeCommand(): List<String> {
-        val version = nodeExtension.yarnVersion.get()
+        val version = version.get()
         val yarnDir = yarnDir.get()
         val yarnPackage = if (version.isNotBlank()) "yarn@$version" else "yarn"
         // npm < 7 creates the directory if it's missing, >= 7 fails if it's missing

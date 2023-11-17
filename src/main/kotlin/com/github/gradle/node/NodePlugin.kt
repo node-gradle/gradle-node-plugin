@@ -4,6 +4,7 @@ import com.github.gradle.node.bun.task.BunInstallTask
 import com.github.gradle.node.bun.task.BunSetupTask
 import com.github.gradle.node.bun.task.BunTask
 import com.github.gradle.node.bun.task.BunxTask
+import com.github.gradle.node.experiment.PackageManager
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
@@ -20,6 +21,7 @@ import com.github.gradle.node.variant.computeNodeDir
 import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnSetupTask
 import com.github.gradle.node.yarn.task.YarnTask
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
@@ -37,18 +39,94 @@ class NodePlugin : Plugin<Project> {
 //        }
         this.project = project
         val nodeExtension = NodeExtension.create(project)
+        val container = project.objects.domainObjectContainer(PackageManager::class)
+        nodeExtension.extensions.add("custom", container)
         configureNodeExtension(nodeExtension)
         project.extensions.create<PackageJsonExtension>(PackageJsonExtension.NAME, project)
         addGlobalTypes()
-        addTasks()
+        addNodeTasks()
+        addNpmTasks(nodeExtension, container)
+        addYarnTasks(nodeExtension, container)
+        addPnpmTasks(nodeExtension, container)
+        addBunTasks(nodeExtension, container)
         addNpmRule(nodeExtension.enableTaskRules)
         addPnpmRule(nodeExtension.enableTaskRules)
         addYarnRule(nodeExtension.enableTaskRules)
+
         project.afterEvaluate {
             if (nodeExtension.download.get()) {
                 nodeExtension.distBaseUrl.orNull?.let { addRepository(it, nodeExtension.allowInsecureProtocol.orNull) }
                 configureNodeSetupTask(nodeExtension)
             }
+        }
+    }
+
+    private fun addBunTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PackageManager>) {
+        val manager = project.objects.newInstance(PackageManager::class, "bun", nodeExtension.bunWorkDir)
+        manager.enabled.convention(true)
+        manager.version.convention(nodeExtension.bunVersion)
+        container.add(manager)
+
+        project.tasks.register<BunSetupTask>(BunSetupTask.NAME) {
+            version.convention(manager.version)
+            enabled = manager.enabled.get()
+            manager(manager)
+        }
+        project.tasks.register<BunInstallTask>(BunInstallTask.NAME) {
+            enabled = manager.enabled.get()
+        }
+    }
+
+    private fun addPnpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PackageManager>) {
+        val manager = project.objects.newInstance(PackageManager::class, "pnpm", nodeExtension.pnpmWorkDir)
+        manager.enabled.convention(true)
+        manager.version.convention(nodeExtension.pnpmVersion)
+        container.add(manager)
+
+        project.tasks.register<PnpmSetupTask>(PnpmSetupTask.NAME) {
+            version.convention(manager.version)
+            enabled = manager.enabled.get()
+            manager(manager)
+        }
+        project.tasks.register<PnpmInstallTask>(PnpmInstallTask.NAME) {
+            enabled = manager.enabled.get()
+        }
+
+    }
+
+    private fun addYarnTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PackageManager>) {
+        val manager = project.objects.newInstance(PackageManager::class, "yarn", nodeExtension.yarnWorkDir)
+        manager.enabled.convention(true)
+        manager.version.convention(nodeExtension.yarnVersion)
+        container.add(manager)
+
+        project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME).configure {
+            version.convention(manager.version)
+            enabled = manager.enabled.get()
+            manager(manager)
+        }
+        project.tasks.register<YarnInstallTask>(YarnInstallTask.NAME) {
+            enabled = manager.enabled.get()
+        }
+    }
+
+    private fun addNodeTasks() {
+        project.tasks.register<NodeSetupTask>(NodeSetupTask.NAME)
+    }
+
+    private fun addNpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PackageManager>) {
+        val manager = project.objects.newInstance(PackageManager::class, "npm", nodeExtension.npmWorkDir)
+        manager.enabled.convention(true)
+        manager.version.convention(nodeExtension.npmVersion)
+        container.add(manager)
+
+        project.tasks.register<NpmSetupTask>(NpmSetupTask.NAME) {
+            version.convention(manager.version)
+            enabled = manager.enabled.get()
+            manager(manager)
+        }
+        project.tasks.register<NpmInstallTask>(NpmInstallTask.NAME) {
+            enabled = manager.enabled.get()
         }
     }
 
@@ -105,18 +183,6 @@ class NodePlugin : Plugin<Project> {
 
     private inline fun <reified T> addGlobalType() {
         project.extensions.extraProperties[T::class.java.simpleName] = T::class.java
-    }
-
-    private fun addTasks() {
-        project.tasks.register<NpmInstallTask>(NpmInstallTask.NAME)
-        project.tasks.register<PnpmInstallTask>(PnpmInstallTask.NAME)
-        project.tasks.register<YarnInstallTask>(YarnInstallTask.NAME)
-        project.tasks.register<BunInstallTask>(BunInstallTask.NAME)
-        project.tasks.register<NodeSetupTask>(NodeSetupTask.NAME)
-        project.tasks.register<NpmSetupTask>(NpmSetupTask.NAME)
-        project.tasks.register<PnpmSetupTask>(PnpmSetupTask.NAME)
-        project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME)
-        project.tasks.register<BunSetupTask>(BunSetupTask.NAME)
     }
 
     private fun addNpmRule(enableTaskRules: Property<Boolean>) { // note this rule also makes it possible to specify e.g. "dependsOn npm_install"

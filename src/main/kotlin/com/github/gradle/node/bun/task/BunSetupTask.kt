@@ -17,11 +17,6 @@ abstract class BunSetupTask : NpmSetupTask() {
         description = "Setup a specific version of Bun to be used by the build."
     }
 
-    @Input
-    override fun getVersion(): Provider<String> {
-        return nodeExtension.bunVersion
-    }
-
     @get:OutputDirectory
     val bunDir by lazy {
         val variantComputer = VariantComputer()

@@ -17,11 +17,6 @@ abstract class PnpmSetupTask : NpmSetupTask() {
         description = "Setup a specific version of pnpm to be used by the build."
     }
 
-    @Input
-    override fun getVersion(): Provider<String> {
-        return nodeExtension.pnpmVersion
-    }
-
     @get:OutputDirectory
     val pnpmDir by lazy {
         val variantComputer = VariantComputer()
