@@ -5,7 +5,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import javax.inject.Inject
 
-abstract class PackageManager @Inject constructor(
+abstract class PluginModuleConfiguration @Inject constructor(
     @get:Internal
     val name: String,
     @get:InputDirectory
