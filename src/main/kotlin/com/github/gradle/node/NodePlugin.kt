@@ -137,10 +137,6 @@ class NodePlugin : Plugin<Project> {
             set(computeNodeDir(extension))
             finalizeValueOnRead()
         }
-        with(extension.computedNodeDir) {
-            convention(extension.resolvedNodeDir)
-            finalizeValueOnRead()
-        }
     }
 
     private fun addPlatform(extension: NodeExtension) {
@@ -167,7 +163,6 @@ class NodePlugin : Plugin<Project> {
         val arch = System.getProperty("os.arch")
         val platform = parsePlatform(name, arch, uname)
         extension.resolvedPlatform.set(platform)
-        extension.computedPlatform.convention(extension.resolvedPlatform)
     }
 
     private fun addGlobalTypes() {

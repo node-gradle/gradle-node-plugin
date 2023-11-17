@@ -41,9 +41,6 @@ abstract class BunAbstractTask : BaseTask() {
     val execOverrides = objects.property<Action<ExecSpec>>()
 
     @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
-
-    @get:Internal
     val nodeExtension = NodeExtension[project]
 
     init {

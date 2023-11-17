@@ -1,6 +1,9 @@
 # Changelog
 
 ## Version 7.x *(unreleased)*
+* Remove deprecated `computeNodeArchiveDependency` and `computeNodeExec` from VariantComputer
+* Remove deprecated `setUseGradleProxySettings` and `computedNodeDir` from NodeExtension
+* Remove deprecated `ProjectApiHelper`
 
 ## Version 7.0.2 *(2024-02-02)*
 * Prevent misconfigured `workDir` from removing all unrelated files [#297](https://github.com/node-gradle/gradle-node-plugin/issues/297)

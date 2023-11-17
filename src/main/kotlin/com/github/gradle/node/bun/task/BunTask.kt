@@ -6,6 +6,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
 
 abstract class BunTask : BunAbstractTask() {
     @get:Optional
@@ -21,6 +23,6 @@ abstract class BunTask : BunAbstractTask() {
                 ignoreExitValue.get(), execOverrides.orNull
             )
         val bunExecRunner = objects.newInstance(BunExecRunner::class.java)
-        result = bunExecRunner.executeBunCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = bunExecRunner.executeBunCommand(nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }
