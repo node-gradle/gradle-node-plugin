@@ -19,6 +19,7 @@ plugins {
     id("com.cinnober.gradle.semver-git") version "3.0.0"
     id("org.jetbrains.dokka") version "1.7.10"
     id("org.gradle.test-retry") version "1.5.0"
+    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
 group = "com.github.node-gradle"
@@ -177,6 +178,15 @@ pluginBundle {
     vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
 
     tags = listOf("java", "node", "node.js", "npm", "yarn", "pnpm", "bun")
+}
+
+nexusPublishing {
+    repositories {
+        create("internalNexus") {
+            nexusUrl.set(uri(project.findProperty("internalNexusReleaseUrl") ?: "https://localhost:8080/release"))
+            snapshotRepositoryUrl.set(uri(project.findProperty("internalNexusSnapshotsUrl") ?: "https://localhost:8080/snapshots"))
+        }
+    }
 }
 
 tasks.wrapper {
