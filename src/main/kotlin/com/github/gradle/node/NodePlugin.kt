@@ -4,7 +4,7 @@ import com.github.gradle.node.bun.task.BunInstallTask
 import com.github.gradle.node.bun.task.BunSetupTask
 import com.github.gradle.node.bun.task.BunTask
 import com.github.gradle.node.bun.task.BunxTask
-import com.github.gradle.node.experiment.PackageManager
+import com.github.gradle.node.experiment.PluginModuleConfiguration
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
@@ -39,7 +39,7 @@ class NodePlugin : Plugin<Project> {
 //        }
         this.project = project
         val nodeExtension = NodeExtension.create(project)
-        val container = project.objects.domainObjectContainer(PackageManager::class)
+        val container = project.objects.domainObjectContainer(PluginModuleConfiguration::class)
         nodeExtension.extensions.add("custom", container)
         configureNodeExtension(nodeExtension)
         project.extensions.create<PackageJsonExtension>(PackageJsonExtension.NAME, project)
@@ -61,8 +61,8 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addBunTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PackageManager>) {
-        val manager = project.objects.newInstance(PackageManager::class, "bun", nodeExtension.bunWorkDir)
+    private fun addBunTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PluginModuleConfiguration>) {
+        val manager = project.objects.newInstance(PluginModuleConfiguration::class, "bun", nodeExtension.bunWorkDir)
         manager.enabled.convention(true)
         manager.version.convention(nodeExtension.bunVersion)
         container.add(manager)
@@ -77,8 +77,8 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addPnpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PackageManager>) {
-        val manager = project.objects.newInstance(PackageManager::class, "pnpm", nodeExtension.pnpmWorkDir)
+    private fun addPnpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PluginModuleConfiguration>) {
+        val manager = project.objects.newInstance(PluginModuleConfiguration::class, "pnpm", nodeExtension.pnpmWorkDir)
         manager.enabled.convention(true)
         manager.version.convention(nodeExtension.pnpmVersion)
         container.add(manager)
@@ -94,8 +94,8 @@ class NodePlugin : Plugin<Project> {
 
     }
 
-    private fun addYarnTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PackageManager>) {
-        val manager = project.objects.newInstance(PackageManager::class, "yarn", nodeExtension.yarnWorkDir)
+    private fun addYarnTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PluginModuleConfiguration>) {
+        val manager = project.objects.newInstance(PluginModuleConfiguration::class, "yarn", nodeExtension.yarnWorkDir)
         manager.enabled.convention(true)
         manager.version.convention(nodeExtension.yarnVersion)
         container.add(manager)
@@ -114,8 +114,8 @@ class NodePlugin : Plugin<Project> {
         project.tasks.register<NodeSetupTask>(NodeSetupTask.NAME)
     }
 
-    private fun addNpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PackageManager>) {
-        val manager = project.objects.newInstance(PackageManager::class, "npm", nodeExtension.npmWorkDir)
+    private fun addNpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PluginModuleConfiguration>) {
+        val manager = project.objects.newInstance(PluginModuleConfiguration::class, "npm", nodeExtension.npmWorkDir)
         manager.enabled.convention(true)
         manager.version.convention(nodeExtension.npmVersion)
         container.add(manager)

@@ -3,14 +3,13 @@ package com.github.gradle.node.npm.task
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
-import com.github.gradle.node.experiment.PackageManager
+import com.github.gradle.node.experiment.PluginModuleConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -28,7 +27,7 @@ import javax.inject.Inject
 abstract class NpmSetupTask : BaseTask() {
 
     @get:Nested
-    abstract val packageManager: Property<PackageManager>
+    abstract val moduleConfiguration: Property<PluginModuleConfiguration>
 
     @get:Inject
     abstract val objects: ObjectFactory
@@ -88,8 +87,8 @@ abstract class NpmSetupTask : BaseTask() {
                 "npm@$version") + args.get()
     }
 
-    fun manager(manager: PackageManager) {
-        this.packageManager.set(manager)
+    fun manager(manager: PluginModuleConfiguration) {
+        this.moduleConfiguration.set(manager)
     }
 
     companion object {
