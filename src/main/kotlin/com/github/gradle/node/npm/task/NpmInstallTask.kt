@@ -6,16 +6,21 @@ import org.gradle.api.Action
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileTree
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.property
 import java.io.File
+import javax.inject.Inject
 
 /**
  * npm install that only gets executed if gradle decides so.
  */
 abstract class NpmInstallTask : NpmTask() {
+    @get:Inject
+    abstract val factory: ObjectFactory
+
     @get:Internal
     val nodeModulesOutputFilter =
             objects.property<Action<ConfigurableFileTree>>()
@@ -97,7 +102,7 @@ abstract class NpmInstallTask : NpmTask() {
             zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
                     .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
                         if (nodeModulesOutputFilter != null) {
-                            val fileTree = projectHelper.fileTree(nodeModulesDirectory)
+                            val fileTree = factory.fileTree().from(nodeModulesDirectory)
                             nodeModulesOutputFilter.execute(fileTree)
                             providers.provider { fileTree }
                         } else providers.provider { null }

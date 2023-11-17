@@ -80,6 +80,16 @@ internal fun computePackageDir(packageName: String, packageVersion: Property<Str
     }
 }
 
+//    fun computeNpmDir(nodeExtension: NodeExtension, nodeDirProvider: Provider<Directory>): Provider<Directory> {
+//        return zip(nodeExtension.npmVersion, nodeExtension.npmWorkDir, nodeDirProvider).map {
+//            val (npmVersion, npmWorkDir, nodeDir) = it
+//            if (npmVersion.isNotBlank()) {
+//                val directoryName = "npm-v${npmVersion}"
+//                npmWorkDir.dir(directoryName)
+//            } else nodeDir
+//        }
+//    }
+
 /**
  * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.
  *
@@ -97,16 +107,6 @@ open class VariantComputer {
      * Get the expected node binary directory, taking Windows specifics into account.
      */
     fun computeNodeBinDir(nodeDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(nodeDirProvider, platform)
-
-    /**
-     * Get the expected node binary name, node.exe on Windows and node everywhere else.
-     */
-    @Deprecated(message = "replaced by package-level function",
-        replaceWith =
-        ReplaceWith("com.github.gradle.node.variant.computeNodeExec(nodeExtension, nodeBinDirProvider)"))
-    fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<Directory>): Provider<String> {
-        return com.github.gradle.node.variant.computeNodeExec(nodeExtension, nodeBinDirProvider)
-    }
 
     /**
      * Get the expected directory for a given npm version.
@@ -195,14 +195,4 @@ open class VariantComputer {
             nodeExtension.bunxCommand, "bunx", "bunx.cmd")
     }
 
-    /**
-     * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.
-     *
-     * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
-     */
-    @Deprecated(message = "replaced by package-level function",
-        replaceWith = ReplaceWith("com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)"))
-    fun computeNodeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
-        return com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)
-    }
 }

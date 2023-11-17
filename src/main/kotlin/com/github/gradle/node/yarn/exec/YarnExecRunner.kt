@@ -11,6 +11,7 @@ import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import javax.inject.Inject
 
@@ -18,8 +19,20 @@ abstract class YarnExecRunner {
     @get:Inject
     abstract val providers: ProviderFactory
 
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
+    @Deprecated(message = ProjectApiHelper.DEPRECATION_STRING)
     fun executeYarnCommand(
         project: ProjectApiHelper,
+        nodeExtension: NodeExtension,
+        nodeExecConfiguration: NodeExecConfiguration,
+        variantComputer: VariantComputer
+    ): ExecResult {
+        return executeYarnCommand(nodeExtension, nodeExecConfiguration, variantComputer)
+    }
+
+    fun executeYarnCommand(
         nodeExtension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
         variantComputer: VariantComputer
@@ -38,7 +51,7 @@ abstract class YarnExecRunner {
         )
         val execRunner = ExecRunner()
 
-        return execRunner.execute(project, nodeExtension, execConfiguration)
+        return execRunner.execute(execOperations, nodeExtension, execConfiguration)
     }
 
     private fun addNpmProxyEnvironment(nodeExtension: NodeExtension,

@@ -1,6 +1,9 @@
 # Changelog
 
 ## Version 7.x *(unreleased)*
+* Remove deprecated `computeNodeArchiveDependency` and `computeNodeExec` from VariantComputer
+* Remove deprecated `setUseGradleProxySettings` and `computedNodeDir` from NodeExtension
+* Remove deprecated `ProjectApiHelper`
 
 ## Version 7.0.1 *(2023-10-04)*
 * Adds missing `result` to NodeTask [#289](https://github.com/node-gradle/gradle-node-plugin/issues/289)

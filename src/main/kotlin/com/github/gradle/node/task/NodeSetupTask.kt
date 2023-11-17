@@ -5,8 +5,10 @@ import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.util.DefaultProjectApiHelper
 import com.github.gradle.node.variant.computeNodeExec
 import com.github.gradle.node.variant.computeNpmScriptFile
+import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -24,6 +26,12 @@ abstract class NodeSetupTask : BaseTask() {
 
     @get:Inject
     abstract val providers: ProviderFactory
+
+    @get:Inject
+    abstract val fileSystemOperations: FileSystemOperations
+
+    @get:Inject
+    abstract val archiveOperations: ArchiveOperations
 
     private val nodeExtension = NodeExtension[project]
 
@@ -55,7 +63,7 @@ abstract class NodeSetupTask : BaseTask() {
     }
 
     private fun deleteExistingNode() {
-        projectHelper.delete {
+        fileSystemOperations.delete {
             delete(nodeDir.get().dir("../"))
         }
     }
@@ -66,13 +74,13 @@ abstract class NodeSetupTask : BaseTask() {
         val nodeBinDirProvider = variantComputer.computeNodeBinDir(nodeDirProvider, nodeExtension.resolvedPlatform)
         val archivePath = nodeDirProvider.map { it.dir("../") }
         if (archiveFile.name.endsWith("zip")) {
-            projectHelper.copy {
-                from(projectHelper.zipTree(archiveFile))
+            fileSystemOperations.copy {
+                from(archiveOperations.zipTree(archiveFile))
                 into(archivePath)
             }
         } else {
-            projectHelper.copy {
-                from(projectHelper.tarTree(archiveFile))
+            fileSystemOperations.copy {
+                from(archiveOperations.tarTree(archiveFile))
                 into(archivePath)
             }
             // Fix broken symlink

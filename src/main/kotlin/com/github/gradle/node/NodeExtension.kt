@@ -163,19 +163,7 @@ abstract class NodeExtension(project: Project) : ExtensionAware {
     /**
      * Computed path to nodejs directory
      */
-    @Deprecated(message = "replaced with resolvedNodeDir", replaceWith = ReplaceWith("resolvedNodeDir"))
-    val computedNodeDir = project.objects.directoryProperty()
-
-    /**
-     * Computed path to nodejs directory
-     */
     val resolvedNodeDir = project.objects.directoryProperty()
-
-    /**
-     * Operating system and architecture
-     */
-    @Deprecated(message = "replaced with resolvedPlatform", replaceWith = ReplaceWith("resolvedPlatform"))
-    val computedPlatform = project.objects.property<Platform>()
 
     /**
      * Operating system and architecture
@@ -184,12 +172,6 @@ abstract class NodeExtension(project: Project) : ExtensionAware {
 
     init {
         distBaseUrl.set("https://nodejs.org/dist")
-    }
-
-    @Deprecated("useGradleProxySettings has been replaced with nodeProxySettings",
-        replaceWith = ReplaceWith("nodeProxySettings.set(i)"))
-    fun setUseGradleProxySettings(value: Boolean) {
-        nodeProxySettings.set(if (value) ProxySettings.SMART else ProxySettings.OFF)
     }
 
     companion object {

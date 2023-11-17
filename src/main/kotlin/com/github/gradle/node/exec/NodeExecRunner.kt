@@ -7,6 +7,7 @@ import com.github.gradle.node.variant.VariantComputer
 import com.github.gradle.node.variant.computeNodeExec
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 
 /**
@@ -40,11 +41,20 @@ fun computeAdditionalBinPath(nodeExtension: NodeExtension, nodeBinDirProvider: P
         }
 }
 
+//TODO: remove entirely?
 class NodeExecRunner {
+    @Deprecated(message = ProjectApiHelper.DEPRECATION_STRING)
     fun execute(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variantComputer: VariantComputer): ExecResult {
         val execConfiguration = buildExecConfiguration(extension, nodeExecConfiguration, variantComputer).get()
         val execRunner = ExecRunner()
 
         return execRunner.execute(project, extension, execConfiguration)
+    }
+
+    fun execute(execOperations: ExecOperations, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variantComputer: VariantComputer): ExecResult {
+        val execConfiguration = buildExecConfiguration(extension, nodeExecConfiguration, variantComputer).get()
+        val execRunner = ExecRunner()
+
+        return execRunner.execute(execOperations, extension, execConfiguration)
     }
 }

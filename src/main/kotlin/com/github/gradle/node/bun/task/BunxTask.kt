@@ -5,6 +5,8 @@ import com.github.gradle.node.exec.NodeExecConfiguration
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
 
 abstract class BunxTask : BunAbstractTask() {
     @get:Input
@@ -19,6 +21,6 @@ abstract class BunxTask : BunAbstractTask() {
                 ignoreExitValue.get(), execOverrides.orNull
             )
         val bunExecRunner = objects.newInstance(BunExecRunner::class.java)
-        result = bunExecRunner.executeBunxCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = bunExecRunner.executeBunxCommand(nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }
