@@ -1,6 +1,7 @@
 package com.github.gradle.node.variant
 
 import com.github.gradle.node.NodeExtension
+import com.github.gradle.node.experiment.PackageManager
 import com.github.gradle.node.util.Platform
 import com.github.gradle.node.util.mapIf
 import com.github.gradle.node.util.zip
@@ -41,6 +42,9 @@ fun computeNodeDir(nodeExtension: NodeExtension, osName: String, osArch: String)
     }
 }
 
+private fun computeProductBinDir(productDirProvider: Provider<Directory>, platform: Property<Platform>) =
+    if (platform.get().isWindows()) productDirProvider else productDirProvider.map { it.dir("bin") }
+
 /**
  * Compute the path for a given command, from a given binary directory, taking Windows into account
  */
@@ -53,6 +57,13 @@ internal fun computeExec(nodeExtension: NodeExtension, binDirProvider: Provider<
         } else cfgCommand
         if (download) binDir.dir(command).asFile.absolutePath else command
     }
+}
+
+/**
+ * Compute the path for a given package, taken versions and user-configured working directories into account
+ */
+internal fun computePackageDir(manager: PackageManager): Provider<Directory> {
+    return computePackageDir(manager.name, manager.version, manager.workDir)
 }
 
 /**
@@ -183,9 +194,6 @@ open class VariantComputer {
         return computeExec(nodeExtension, bunBinDirProvider,
             nodeExtension.bunxCommand, "bunx", "bunx.cmd")
     }
-
-    private fun computeProductBinDir(productDirProvider: Provider<Directory>, platform: Property<Platform>) =
-            if (platform.get().isWindows()) productDirProvider else productDirProvider.map { it.dir("bin") }
 
     /**
      * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.

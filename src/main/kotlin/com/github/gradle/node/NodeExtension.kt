@@ -3,11 +3,12 @@ package com.github.gradle.node
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.util.Platform
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.property
 
-open class NodeExtension(project: Project) {
+abstract class NodeExtension(project: Project) : ExtensionAware {
     private val cacheDir = project.layout.projectDirectory.dir(".gradle")
 
     /**

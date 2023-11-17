@@ -3,15 +3,18 @@ package com.github.gradle.node.npm.task
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
+import com.github.gradle.node.experiment.PackageManager
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
@@ -23,6 +26,9 @@ import javax.inject.Inject
  * npm install that only gets executed if gradle decides so.
  */
 abstract class NpmSetupTask : BaseTask() {
+
+    @get:Nested
+    abstract val packageManager: Property<PackageManager>
 
     @get:Inject
     abstract val objects: ObjectFactory
@@ -57,14 +63,12 @@ abstract class NpmSetupTask : BaseTask() {
         }
     }
 
-    @Input
-    protected open fun getVersion(): Provider<String> {
-        return nodeExtension.npmVersion
-    }
+    @get:Input
+    abstract val version: Property<String>
 
     @Internal
     open fun isTaskEnabled(): Boolean {
-        return nodeExtension.npmVersion.get().isNotBlank()
+        return version.get().isNotBlank()
     }
 
     @TaskAction
@@ -76,12 +80,16 @@ abstract class NpmSetupTask : BaseTask() {
     }
 
     protected open fun computeCommand(): List<String> {
-        val version = nodeExtension.npmVersion.get()
+        val version = version.get()
         val directory = npmDir.get().asFile
         // npm < 7 creates the directory if it's missing, >= 7 fails if it's missing
         File(directory, "lib").mkdirs()
         return listOf("install", "--global", "--no-save", "--prefix", directory.absolutePath,
                 "npm@$version") + args.get()
+    }
+
+    fun manager(manager: PackageManager) {
+        this.packageManager.set(manager)
     }
 
     companion object {
