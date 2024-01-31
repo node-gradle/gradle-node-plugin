@@ -64,14 +64,15 @@ abstract class NpmInstallTask : NpmTask() {
         return projectFileIfExists("yarn.lock").orNull
     }
 
-    // does this overlap with getNodeModulesFiles()?
-//    @Optional
-//    @OutputFile
-//    protected fun getPackageLockFileAsOutput(): File? {
-//        return npmCommand.flatMap { command ->
-//            if (command[0] == "install") projectFileIfExists("package-lock.json") else providers.provider { null }
-//        }.orNull
-//    }
+    // does this output overlap with getNodeModulesFiles()?
+    //@Optional
+    //@OutputFile
+    @Internal
+    protected fun getPackageLockFileAsOutput(): File? {
+        return npmCommand.flatMap { command ->
+            if (command[0] == "install") projectFileIfExists("package-lock.json") else providers.provider { null }
+        }.orNull
+    }
 
     private fun projectFileIfExists(name: String): Provider<File?> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
@@ -106,35 +107,36 @@ abstract class NpmInstallTask : NpmTask() {
         }
     }
 
-    // does this overlap with getNodeModulesFiles()?
-//    @Optional
-//    @OutputFile
-//    protected fun getNodeModulesPackageLock(): File? {
-//        if (isLegacyNpm()) {
-//            return null
-//        }
-//
-//        return projectFileIfExists("node_modules/.package-lock.json").orNull
-//    }
-//
-//    /**
-//     * Is our npm likely to be lower than 7?
-//     */
-//    private fun isLegacyNpm(): Boolean {
-//        if (nodeExtension.oldNpm.get()) {
-//            return true
-//        }
-//
-//        val npmVersion = nodeExtension.npmVersion.get()
-//        if (npmVersion.isBlank()) {
-//            if (nodeExtension.version.get().split('.').first().toInt() <= 14)
-//                return true
-//        } else if (npmVersion.split('.').first().toInt() < 7 ) {
-//            return true
-//        }
-//
-//        return false
-//    }
+    // does this output overlap with getNodeModulesFiles()?
+    @Optional
+    @OutputFile
+//    @Internal
+    protected fun getNodeModulesPackageLock(): File? {
+        if (isLegacyNpm()) {
+            return null
+        }
+
+        return projectFileIfExists("node_modules/.package-lock.json").orNull
+    }
+
+    /**
+     * Is our npm likely to be lower than 7?
+     */
+    private fun isLegacyNpm(): Boolean {
+        if (nodeExtension.oldNpm.get()) {
+            return true
+        }
+
+        val npmVersion = nodeExtension.npmVersion.get()
+        if (npmVersion.isBlank()) {
+            if (nodeExtension.version.get().split('.').first().toInt() <= 14)
+                return true
+        } else if (npmVersion.split('.').first().toInt() < 7 ) {
+            return true
+        }
+
+        return false
+    }
 
     // For DSL
     @Suppress("unused")
