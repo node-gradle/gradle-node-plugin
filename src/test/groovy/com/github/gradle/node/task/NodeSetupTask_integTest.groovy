@@ -47,4 +47,34 @@ node {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    def 'nodeSetup should only delete old node versions (#gv.version)'() {
+        given:
+        gradleVersion = gv
+
+        def badVersion = "node-v18.17.0"
+        def goodVersion = "18.17.1"
+        createFile("build.gradle") << """plugins {
+            id "com.github.node-gradle.node"
+        }
+
+        node {
+            version = "${goodVersion}"
+            download = true
+            workDir = file("build/node")
+        }"""
+        def badFile = writeFile("build/node/$badVersion/bin/node.js", "console.log(\"bad\");")
+        def goodFile = writeFile("build/node/important.txt", "should not be deleted by nodeSetup")
+
+        when:
+        def result1 = build("nodeSetup")
+
+        then:
+        result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
+        !badFile.exists()
+        goodFile.exists()
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
 }

@@ -61,10 +61,11 @@ abstract class AbstractIntegTest extends Specification {
         return new File(temporaryFolder.getRoot(), name)
     }
 
-    protected final void writeFile(final String name, final String text) {
+    protected final File writeFile(final String name, final String text) {
         File file = createFile(name)
         file.parentFile.mkdirs()
         file << text
+        return file
     }
 
     protected final void writePackageJson(final String text) {
