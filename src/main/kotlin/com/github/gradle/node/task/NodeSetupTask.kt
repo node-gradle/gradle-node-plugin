@@ -56,7 +56,9 @@ abstract class NodeSetupTask : BaseTask() {
 
     private fun deleteExistingNode() {
         projectHelper.delete {
-            delete(nodeDir.get().dir("../"))
+            delete(nodeDir.get().dir("../").asFileTree.matching {
+                include("node-v*/**")
+            })
         }
     }
 
