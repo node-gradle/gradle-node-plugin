@@ -2,6 +2,9 @@
 
 ## Version 7.x *(unreleased)*
 
+## Version 7.0.2 *(2024-02-02)*
+* Prevent misconfigured `workDir` from removing all unrelated files [#297](https://github.com/node-gradle/gradle-node-plugin/issues/297)
+
 ## Version 7.0.1 *(2023-10-04)*
 * Adds missing `result` to NodeTask [#289](https://github.com/node-gradle/gradle-node-plugin/issues/289)
 
