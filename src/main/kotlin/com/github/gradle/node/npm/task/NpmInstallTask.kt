@@ -64,8 +64,10 @@ abstract class NpmInstallTask : NpmTask() {
         return projectFileIfExists("yarn.lock").orNull
     }
 
-    @Optional
-    @OutputFile
+    // does this output overlap with getNodeModulesFiles()?
+    //@Optional
+    //@OutputFile
+    @Internal
     protected fun getPackageLockFileAsOutput(): File? {
         return npmCommand.flatMap { command ->
             if (command[0] == "install") projectFileIfExists("package-lock.json") else providers.provider { null }
@@ -105,8 +107,10 @@ abstract class NpmInstallTask : NpmTask() {
         }
     }
 
+    // does this output overlap with getNodeModulesFiles()?
     @Optional
     @OutputFile
+//    @Internal
     protected fun getNodeModulesPackageLock(): File? {
         if (isLegacyNpm()) {
             return null
