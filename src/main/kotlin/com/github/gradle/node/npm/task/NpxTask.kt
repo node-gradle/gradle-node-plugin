@@ -46,6 +46,7 @@ abstract class NpxTask : BaseTask() {
     val execOverrides = objects.property<Action<ExecSpec>>()
 
     @get:Internal
+    // TODO: remove
     val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
 
     @get:Internal

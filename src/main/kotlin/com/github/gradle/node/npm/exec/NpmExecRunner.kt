@@ -6,6 +6,7 @@ import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy
 import com.github.gradle.node.util.ProjectApiHelper
+import com.github.gradle.node.util.ProjectApiHelper.Companion.DEPRECATION_STRING
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import com.github.gradle.node.variant.computeNodeExec
@@ -25,7 +26,7 @@ abstract class NpmExecRunner {
     abstract val providers: ProviderFactory
 
 
-    @Deprecated(message = ProjectApiHelper.DEPRECATION_STRING)
+    @Deprecated(message = DEPRECATION_STRING)
     fun executeNpmCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
         return executeNpmCommand(extension, nodeExecConfiguration, variants)
     }
@@ -37,7 +38,7 @@ abstract class NpmExecRunner {
             variants)
     }
 
-    @Deprecated(message = ProjectApiHelper.DEPRECATION_STRING)
+    @Deprecated(message = DEPRECATION_STRING)
     fun executeNpxCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
         return executeNpxCommand(extension, nodeExecConfiguration, variants)
     }

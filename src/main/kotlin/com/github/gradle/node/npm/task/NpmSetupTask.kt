@@ -3,21 +3,17 @@ package com.github.gradle.node.npm.task
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
-import com.github.gradle.node.experiment.PluginModuleConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.task.NodeSetupTask
-import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
-import org.gradle.kotlin.dsl.newInstance
 import java.io.File
 import javax.inject.Inject
 
@@ -25,9 +21,6 @@ import javax.inject.Inject
  * npm install that only gets executed if gradle decides so.
  */
 abstract class NpmSetupTask : BaseTask() {
-
-    @get:Nested
-    abstract val moduleConfiguration: Property<PluginModuleConfiguration>
 
     @get:Inject
     abstract val objects: ObjectFactory
@@ -37,9 +30,6 @@ abstract class NpmSetupTask : BaseTask() {
 
     @get:Internal
     protected val nodeExtension = NodeExtension[project]
-
-    @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
 
     @get:Input
     val args = objects.listProperty<String>()
@@ -75,7 +65,7 @@ abstract class NpmSetupTask : BaseTask() {
         val command = computeCommand()
         val nodeExecConfiguration = NodeExecConfiguration(command)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        result = npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = npmExecRunner.executeNpmCommand(nodeExtension, nodeExecConfiguration, variantComputer)
     }
 
     protected open fun computeCommand(): List<String> {
@@ -85,10 +75,6 @@ abstract class NpmSetupTask : BaseTask() {
         File(directory, "lib").mkdirs()
         return listOf("install", "--global", "--no-save", "--prefix", directory.absolutePath,
                 "npm@$version") + args.get()
-    }
-
-    fun manager(manager: PluginModuleConfiguration) {
-        this.moduleConfiguration.set(manager)
     }
 
     companion object {

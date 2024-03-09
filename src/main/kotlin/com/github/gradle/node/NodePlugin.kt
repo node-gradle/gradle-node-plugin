@@ -4,7 +4,7 @@ import com.github.gradle.node.bun.task.BunInstallTask
 import com.github.gradle.node.bun.task.BunSetupTask
 import com.github.gradle.node.bun.task.BunTask
 import com.github.gradle.node.bun.task.BunxTask
-import com.github.gradle.node.experiment.PluginModuleConfiguration
+import com.github.gradle.node.experiment.RuntimeBundleConfiguration
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.npm.task.NpmInstallTask
 import com.github.gradle.node.npm.task.NpmSetupTask
@@ -39,7 +39,7 @@ class NodePlugin : Plugin<Project> {
 //        }
         this.project = project
         val nodeExtension = NodeExtension.create(project)
-        val container = project.objects.domainObjectContainer(PluginModuleConfiguration::class)
+        val container = project.objects.domainObjectContainer(RuntimeBundleConfiguration::class)
         nodeExtension.extensions.add("custom", container)
         configureNodeExtension(nodeExtension)
         project.extensions.create<PackageJsonExtension>(PackageJsonExtension.NAME, project)
@@ -61,52 +61,49 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addBunTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PluginModuleConfiguration>) {
-        val manager = project.objects.newInstance(PluginModuleConfiguration::class, "bun", nodeExtension.bunWorkDir)
-        manager.enabled.convention(true)
-        manager.version.convention(nodeExtension.bunVersion)
-        container.add(manager)
+    private fun addBunTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<RuntimeBundleConfiguration>) {
+        val runtimeBundle = project.objects.newInstance(RuntimeBundleConfiguration::class, "bun")
+        runtimeBundle.enabled.convention(true)
+        runtimeBundle.version.convention(nodeExtension.bunVersion)
+        container.add(runtimeBundle)
 
         project.tasks.register<BunSetupTask>(BunSetupTask.NAME) {
-            version.convention(manager.version)
-            enabled = manager.enabled.get()
-            manager(manager)
+            version.convention(runtimeBundle.version)
+            enabled = runtimeBundle.enabled.get()
         }
         project.tasks.register<BunInstallTask>(BunInstallTask.NAME) {
-            enabled = manager.enabled.get()
+            enabled = runtimeBundle.enabled.get()
         }
     }
 
-    private fun addPnpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PluginModuleConfiguration>) {
-        val manager = project.objects.newInstance(PluginModuleConfiguration::class, "pnpm", nodeExtension.pnpmWorkDir)
-        manager.enabled.convention(true)
-        manager.version.convention(nodeExtension.pnpmVersion)
-        container.add(manager)
+    private fun addPnpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<RuntimeBundleConfiguration>) {
+        val runtimeBundle = project.objects.newInstance(RuntimeBundleConfiguration::class, "pnpm")
+        runtimeBundle.enabled.convention(true)
+        runtimeBundle.version.convention(nodeExtension.pnpmVersion)
+        container.add(runtimeBundle)
 
         project.tasks.register<PnpmSetupTask>(PnpmSetupTask.NAME) {
-            version.convention(manager.version)
-            enabled = manager.enabled.get()
-            manager(manager)
+            version.convention(runtimeBundle.version)
+            enabled = runtimeBundle.enabled.get()
         }
         project.tasks.register<PnpmInstallTask>(PnpmInstallTask.NAME) {
-            enabled = manager.enabled.get()
+            enabled = runtimeBundle.enabled.get()
         }
 
     }
 
-    private fun addYarnTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PluginModuleConfiguration>) {
-        val manager = project.objects.newInstance(PluginModuleConfiguration::class, "yarn", nodeExtension.yarnWorkDir)
-        manager.enabled.convention(true)
-        manager.version.convention(nodeExtension.yarnVersion)
-        container.add(manager)
+    private fun addYarnTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<RuntimeBundleConfiguration>) {
+        val runtimeBundle = project.objects.newInstance(RuntimeBundleConfiguration::class, "yarn")
+        runtimeBundle.enabled.convention(true)
+        runtimeBundle.version.convention(nodeExtension.yarnVersion)
+        container.add(runtimeBundle)
 
         project.tasks.register<YarnSetupTask>(YarnSetupTask.NAME).configure {
-            version.convention(manager.version)
-            enabled = manager.enabled.get()
-            manager(manager)
+            version.convention(runtimeBundle.version)
+            enabled = runtimeBundle.enabled.get()
         }
         project.tasks.register<YarnInstallTask>(YarnInstallTask.NAME) {
-            enabled = manager.enabled.get()
+            enabled = runtimeBundle.enabled.get()
         }
     }
 
@@ -114,19 +111,18 @@ class NodePlugin : Plugin<Project> {
         project.tasks.register<NodeSetupTask>(NodeSetupTask.NAME)
     }
 
-    private fun addNpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<PluginModuleConfiguration>) {
-        val manager = project.objects.newInstance(PluginModuleConfiguration::class, "npm", nodeExtension.npmWorkDir)
-        manager.enabled.convention(true)
-        manager.version.convention(nodeExtension.npmVersion)
-        container.add(manager)
+    private fun addNpmTasks(nodeExtension: NodeExtension, container: NamedDomainObjectContainer<RuntimeBundleConfiguration>) {
+        val runtimeBundle = project.objects.newInstance(RuntimeBundleConfiguration::class, "npm")
+        runtimeBundle.enabled.convention(true)
+        runtimeBundle.version.convention(nodeExtension.npmVersion)
+        container.add(runtimeBundle)
 
         project.tasks.register<NpmSetupTask>(NpmSetupTask.NAME) {
-            version.convention(manager.version)
-            enabled = manager.enabled.get()
-            manager(manager)
+            version.convention(runtimeBundle.version)
+            enabled = runtimeBundle.enabled.get()
         }
         project.tasks.register<NpmInstallTask>(NpmInstallTask.NAME) {
-            enabled = manager.enabled.get()
+            enabled = runtimeBundle.enabled.get()
         }
     }
 

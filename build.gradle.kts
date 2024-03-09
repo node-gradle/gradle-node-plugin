@@ -86,8 +86,9 @@ tasks.withType(Test::class) {
         exceptionFormat = TestExceptionFormat.FULL
     }
 
+    val testRetries = project.properties["com.github.gradle.node.testretries"].toString().toIntOrNull() ?: 3
     retry {
-        maxRetries.set(3)
+        maxRetries.set(testRetries)
         filter {
             includeClasses.add("*_integTest")
         }

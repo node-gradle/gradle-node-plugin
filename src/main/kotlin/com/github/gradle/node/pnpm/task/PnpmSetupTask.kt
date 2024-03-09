@@ -24,7 +24,7 @@ abstract class PnpmSetupTask : NpmSetupTask() {
     }
 
     override fun computeCommand(): List<String> {
-        val version = nodeExtension.pnpmVersion.get()
+        val version = version.get()
         val pnpmDir = pnpmDir.get()
         val pnpmPackage = if (version.isNotBlank()) "pnpm@$version" else "pnpm"
         return listOf(

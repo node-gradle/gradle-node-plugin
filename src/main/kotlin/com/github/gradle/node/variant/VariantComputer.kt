@@ -1,7 +1,6 @@
 package com.github.gradle.node.variant
 
 import com.github.gradle.node.NodeExtension
-import com.github.gradle.node.experiment.PluginModuleConfiguration
 import com.github.gradle.node.util.Platform
 import com.github.gradle.node.util.mapIf
 import com.github.gradle.node.util.zip
@@ -57,13 +56,6 @@ internal fun computeExec(nodeExtension: NodeExtension, binDirProvider: Provider<
         } else cfgCommand
         if (download) binDir.dir(command).asFile.absolutePath else command
     }
-}
-
-/**
- * Compute the path for a given package, taken versions and user-configured working directories into account
- */
-internal fun computePackageDir(manager: PluginModuleConfiguration): Provider<Directory> {
-    return computePackageDir(manager.name, manager.version, manager.workDir)
 }
 
 /**

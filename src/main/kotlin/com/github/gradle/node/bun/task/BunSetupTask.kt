@@ -24,7 +24,7 @@ abstract class BunSetupTask : NpmSetupTask() {
     }
 
     override fun computeCommand(): List<String> {
-        val version = nodeExtension.bunVersion.get()
+        val version = version.get()
         val bunDir = bunDir.get()
         val bunPackage = if (version.isNotBlank()) "bun@$version" else "bun"
         return listOf(

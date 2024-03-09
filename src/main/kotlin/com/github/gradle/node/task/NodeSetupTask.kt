@@ -44,9 +44,6 @@ abstract class NodeSetupTask : BaseTask() {
     @get:OutputDirectory
     abstract val nodeDir: DirectoryProperty
 
-    @get:Internal
-    val projectHelper = project.objects.newInstance(DefaultProjectApiHelper::class.java)
-
     init {
         group = NodePlugin.NODE_GROUP
         description = "Download and install a local node/npm version."
