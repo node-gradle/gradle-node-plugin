@@ -112,6 +112,7 @@ abstract class NpmInstallTask : NpmTask() {
             return null
         }
 
+        // When legacy npm support is dropped this does not need projectFileIfExists
         return projectFileIfExists("node_modules/.package-lock.json").orNull
     }
 

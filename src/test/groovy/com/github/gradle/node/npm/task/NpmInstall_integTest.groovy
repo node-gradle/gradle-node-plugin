@@ -2,6 +2,7 @@ package com.github.gradle.node.npm.task
 
 import com.github.gradle.AbstractIntegTest
 import com.github.gradle.node.NodeExtension
+import groovy.io.FileType
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.util.GradleVersion
 import spock.lang.IgnoreIf
@@ -89,6 +90,133 @@ class NpmInstall_integTest extends AbstractIntegTest {
 
         then:
         result.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
+    def 'fast npm install properly handles lockfile deleted through task (#gv.version)'() {
+        given:
+        gradleVersion = gv
+
+        writePackageJson '''
+{
+  "name": "fastinstall",
+  "dependencies": {
+    "@isaacs/string-locale-compare": "1.1.0"
+  }
+}
+'''
+
+        def scriptfile = "script.js"
+        writeFile(scriptfile, """
+            const stringLocaleCompare = require('@isaacs/string-locale-compare')
+            console.log(['b', 'a'].sort(stringLocaleCompare('en')))
+""")
+        writeBuild("""
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                fastNpmInstall = true
+            }
+            
+            def scriptWithDependency = file("$scriptfile")
+            
+            tasks.register("taskWithDependency", NodeTask) {
+                script = scriptWithDependency
+                dependsOn "npmInstall"
+            }
+            
+            tasks.register("deleteNodeModules", Delete) {
+                delete "node_modules"
+            }
+        """)
+
+
+        when:
+        def result = build('npmInstall')
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        when:
+        // when the node_modules is removed
+        result = build('deleteNodeModules')
+
+        then:
+        result.task(':deleteNodeModules').outcome == TaskOutcome.SUCCESS
+
+        when:
+        result = build('taskWithDependency')
+
+        then:
+        // npmInstall is re-run and the task runs successfully
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result.task(":taskWithDependency").outcome == TaskOutcome.SUCCESS
+        result.output.contains("[ 'a', 'b' ]")
+
+        where:
+        gv << GRADLE_VERSIONS_UNDER_TEST
+    }
+
+    def 'fast npm install properly handles lockfile deleted manually (#gv.version)'() {
+        given:
+        gradleVersion = gv
+
+        writePackageJson '''
+{
+  "name": "fastinstall",
+  "dependencies": {
+    "@isaacs/string-locale-compare": "1.1.0"
+  }
+}
+'''
+
+        def scriptfile = "script.js"
+        writeFile(scriptfile, """
+            const stringLocaleCompare = require('@isaacs/string-locale-compare')
+            console.log(['b', 'a'].sort(stringLocaleCompare('en')))
+""")
+        writeBuild("""
+            plugins {
+                id 'com.github.node-gradle.node'
+            }
+            
+            node {
+                fastNpmInstall = true
+            }
+            
+            def scriptWithDependency = file("$scriptfile")
+            
+            tasks.register("taskWithDependency", NodeTask) {
+                script = scriptWithDependency
+                dependsOn "npmInstall"
+            }
+        """)
+
+
+        when:
+        def result = build('npmInstall')
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        when:
+        // when the node_modules is removed
+        projectDir.eachFile(FileType.DIRECTORIES, {
+            if (it.name == "node_modules") {
+                it.deleteDir()
+            }
+        })
+        result = build('taskWithDependency')
+
+        then:
+        // npmInstall is re-run and the task runs successfully
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+        result.task(":taskWithDependency").outcome == TaskOutcome.SUCCESS
+        result.output.contains("[ 'a', 'b' ]")
 
         where:
         gv << GRADLE_VERSIONS_UNDER_TEST
