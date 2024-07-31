@@ -16,10 +16,12 @@ import com.github.gradle.node.variant.computeNodeDir
 import com.github.gradle.node.yarn.task.YarnInstallTask
 import com.github.gradle.node.yarn.task.YarnSetupTask
 import com.github.gradle.node.yarn.task.YarnTask
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.*
+import org.gradle.process.ExecSpec
 import org.gradle.util.GradleVersion
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -62,18 +64,32 @@ class NodePlugin : Plugin<Project> {
     }
 
     private fun addPlatform(extension: NodeExtension) {
+        val osType = parseOsType(System.getProperty("os.name"))
+        val arch = System.getProperty("os.arch")
+
+        val unameSpec: Action<ExecSpec> = Action {
+            if (osType == OsType.WINDOWS) {
+                this.executable = "powershell"
+                this.args = listOf(
+                    "-NoProfile", // Command runs in ~175ms, -NoProfile saves ~300ms
+                    "-Command",
+                    "(Get-WmiObject Win32_Processor).Architecture",
+                )
+            } else {
+                this.executable = "uname"
+                this.args = listOf("-m")
+            }
+        }
+
         val uname = {
             if (GradleVersion.current() >= GradleVersion.version("7.5")) {
-                val cmd = project.providers.exec {
-                    this.executable = "uname"
-                    this.args = listOf("-m")
-                }
+                val cmd = project.providers.exec(unameSpec)
                 cmd.standardOutput.asText.get().trim()
             } else {
                 val out = ByteArrayOutputStream()
+                project.exec(unameSpec)
                 val cmd = project.exec {
-                    this.executable = "uname"
-                    this.args = listOf("-m")
+                    unameSpec.execute(this)
                     this.standardOutput = out
                 }
 
@@ -81,9 +97,7 @@ class NodePlugin : Plugin<Project> {
                 out.toString().trim()
             }
         }
-        val name = System.getProperty("os.name")
-        val arch = System.getProperty("os.arch")
-        val platform = parsePlatform(name, arch, uname)
+        val platform = parsePlatform(osType, arch, uname)
         extension.resolvedPlatform.set(platform)
         extension.computedPlatform.convention(extension.resolvedPlatform)
     }
