@@ -8,6 +8,7 @@ internal enum class OsType(val osName: String) {
     LINUX("linux"),
     FREEBSD("linux"), // https://github.com/node-gradle/gradle-node-plugin/issues/178
     SUN("sunos"),
+    AIX("aix"),
 }
 
 internal fun parsePlatform(type: OsType, arch: String, uname: () -> String): Platform {
@@ -24,6 +25,7 @@ internal fun parseOsType(type: String): OsType {
         name.contains("linux") -> OsType.LINUX
         name.contains("freebsd") -> OsType.FREEBSD
         name.contains("sunos") -> OsType.SUN
+        name.contains("aix") -> OsType.AIX
         else -> error("Unsupported OS: $name")
     }
 }
@@ -39,6 +41,7 @@ fun parseOsName(name: String): String {
         name.contains("linux") -> "linux"
         name.contains("freebsd") -> "linux"
         name.contains("sunos") -> "sunos"
+        name.contains("aix") -> "aix"
         else -> error("Unsupported OS: $name")
     }
 }
@@ -52,6 +55,7 @@ fun parseOsArch(arch: String, uname: Callable<String>): String {
         arch == "arm" || arch.startsWith("aarch") -> uname.call()
             .mapIf({ it == "armv8l" || it == "aarch64" }) { "arm64" }
             .mapIf({ it == "x86_64" }) {"x64"}
+        arch == "ppc64" -> "ppc64"
         arch == "ppc64le" -> "ppc64le"
         arch == "s390x" -> "s390x"
         arch.contains("64") -> "x64"

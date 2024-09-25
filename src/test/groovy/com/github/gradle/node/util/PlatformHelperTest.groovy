@@ -28,6 +28,7 @@ class PlatformHelperTest extends Specification {
         'Linux'      | 's390x'   || 'linux'  | 's390x'   | false
         'SunOS'      | 'x86'     || 'sunos'  | 'x86'     | false
         'SunOS'      | 'x86_64'  || 'sunos'  | 'x64'     | false
+        'AIX'        | 'ppc64'   || 'aix'    | 'ppc64'   | false
     }
 
     @Unroll
