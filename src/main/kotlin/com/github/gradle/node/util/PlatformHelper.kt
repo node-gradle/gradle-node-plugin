@@ -13,6 +13,7 @@ fun parseOsName(name: String): String {
         name.contains("linux") -> "linux"
         name.contains("freebsd") -> "linux"
         name.contains("sunos") -> "sunos"
+        name.contains("aix") -> "aix"
         else -> error("Unsupported OS: $name")
     }
 }
@@ -26,6 +27,7 @@ fun parseOsArch(arch: String, uname: Callable<String>): String {
         arch == "arm" || arch.startsWith("aarch") -> uname.call()
             .mapIf({ it == "armv8l" || it == "aarch64" }) { "arm64" }
             .mapIf({ it == "x86_64" }) {"x64"}
+        arch == "ppc64" -> "ppc64"
         arch == "ppc64le" -> "ppc64le"
         arch == "s390x" -> "s390x"
         arch.contains("64") -> "x64"
