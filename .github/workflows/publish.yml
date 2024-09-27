@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Fetch Git Tags
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Install Java
