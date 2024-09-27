@@ -16,7 +16,6 @@ task test(type: PnpmTask) {
     dependsOn pnpmInstall
     pnpmCommand = changeInputs ? ['run', 'test'] : ['run']
     args = changeInputs ? [] : ['test']
-    inputs.dir('node_modules')
     inputs.file('package.json')
     inputs.files('index.js', 'test.js')
     outputs.upToDateWhen {
