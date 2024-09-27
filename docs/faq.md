@@ -81,7 +81,6 @@ task buildWebapp(type: NpxTask) {
     args = ["build"]
     inputs.file("Gruntfile.js")
     inputs.dir("src")
-    inputs.dir("node_modules")
     outputs.dir("dist")
 }
 ```
@@ -105,7 +104,6 @@ task buildWebapp(type: NpxTask) {
     args = ["build"]
     inputs.file("gulpfile.js")
     inputs.dir("src")
-    inputs.dir("node_modules")
     outputs.dir("dist")
 }
 ```

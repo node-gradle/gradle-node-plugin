@@ -13,7 +13,6 @@ task buildBunx(type: BunxTask) {
     command = "babel"
     args = ["src", "--out-dir", "output-bunx"]
     inputs.dir("javascript-project/src")
-    inputs.dir("javascript-project/node_modules")
     outputs.dir("javascript-project/output-bunx")
 }
 
@@ -22,7 +21,6 @@ task buildBun(type: BunTask) {
     bunCommand = ["run", "build"]
     args = ["--", "--out-dir", "output-bun"]
     inputs.dir("javascript-project/src")
-    inputs.dir("javascript-project/node_modules")
     outputs.dir("javascript-project/output-bun")
 }
 

@@ -51,7 +51,6 @@ val testTaskUsingNpx = tasks.register<NpxTask>("testNpx") {
     execOverrides {
         standardOutput = System.out
     }
-    inputs.dir("node_modules")
     inputs.file("package.json")
     inputs.dir("src")
     inputs.dir("test")
@@ -70,7 +69,6 @@ val testTaskUsingNpm = tasks.register<NpmTask>("testNpm") {
     execOverrides {
         standardOutput = System.out
     }
-    inputs.dir("node_modules")
     inputs.file("package.json")
     inputs.dir("src")
     inputs.dir("test")

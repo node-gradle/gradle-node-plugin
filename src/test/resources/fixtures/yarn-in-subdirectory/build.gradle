@@ -11,6 +11,5 @@ task build(type: YarnTask) {
     yarnCommand = ["run", "build"]
     args = ["--out-dir", "output"]
     inputs.dir("javascript-project/src")
-    inputs.dir("javascript-project/node_modules")
     outputs.dir("javascript-project/output")
 }
