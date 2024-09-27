@@ -18,7 +18,9 @@ with Gradle:
 The plugin is published in the [Gradle plugins portal](https://plugins.gradle.org/plugin/com.github.node-gradle.node)
 with the `com.github.node-gradle.node` identifier.
 
-It supports Gradle 6.6+ and Node.js 10+, for Gradle 5.6.4 support use version 3.x
+It supports Gradle 6.6 and newer, Node.js 10 and newer, and npm 7 or newer.
+* For npm 6 support use version 7.x
+* For Gradle 5.6.4 support use version 3.x
 
 ## Documentation
 
