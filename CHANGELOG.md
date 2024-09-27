@@ -2,9 +2,10 @@
 
 ## Version 7.x *(unreleased)*
 
-## Version 7.0.3 *(unreleased)*
+## Version 7.1.0 *(unreleased)*
 * Add support for ARM64 Windows [#315](https://github.com/node-gradle/gradle-node-plugin/issues/315)
 * Add support for AIX [#320](https://github.com/node-gradle/gradle-node-plugin/issues/320)
+* Add license to publications POM [#319](https://github.com/node-gradle/gradle-node-plugin/issues/319)
 
 ## Version 7.0.2 *(2024-02-02)*
 * Prevent misconfigured `workDir` from removing all unrelated files [#297](https://github.com/node-gradle/gradle-node-plugin/issues/297)

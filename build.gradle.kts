@@ -182,3 +182,12 @@ pluginBundle {
 tasks.wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
+
+publishing.publications.withType<MavenPublication>().configureEach {
+    pom.licenses {
+        license {
+            name.set("Apache License, Version 2.0")
+            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+        }
+    }
+}
