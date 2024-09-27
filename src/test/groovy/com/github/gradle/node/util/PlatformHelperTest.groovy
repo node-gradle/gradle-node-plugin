@@ -16,54 +16,45 @@ class PlatformHelperTest extends Specification {
         platform.windows == isWindows
 
         where:
-        osProp      | archProp  | osName   | osArch    | isWindows
-        'Windows 8' | 'x86'     | 'win'    | 'x86'     | true
-        'Windows 8' | 'x86_64'  | 'win'    | 'x64'     | true
-        'Mac OS X'  | 'x86'     | 'darwin' | 'x86'     | false
-        'Mac OS X'  | 'x86_64'  | 'darwin' | 'x64'     | false
-        'Linux'     | 'x86'     | 'linux'  | 'x86'     | false
-        'Linux'     | 'x86_64'  | 'linux'  | 'x64'     | false
-        'Linux'     | 'ppc64le' | 'linux'  | 'ppc64le' | false
-        'Linux'     | 's390x'   | 'linux'  | 's390x'   | false
-        'SunOS'     | 'x86'     | 'sunos'  | 'x86'     | false
-        'SunOS'     | 'x86_64'  | 'sunos'  | 'x64'     | false
-        'AIX'       | 'ppc64'   | 'aix'    | 'ppc64'   | false
+        osProp       | archProp  || osName   | osArch    | isWindows
+        'Windows 8'  | 'x86'     || 'win'    | 'x86'     | true
+        'Windows 8'  | 'x86_64'  || 'win'    | 'x64'     | true
+        'Windows 10' | 'x86_64'  || 'win'    | 'x64'     | true
+        'Mac OS X'   | 'x86'     || 'darwin' | 'x86'     | false
+        'Mac OS X'   | 'x86_64'  || 'darwin' | 'x64'     | false
+        'Linux'      | 'x86'     || 'linux'  | 'x86'     | false
+        'Linux'      | 'x86_64'  || 'linux'  | 'x64'     | false
+        'Linux'      | 'ppc64le' || 'linux'  | 'ppc64le' | false
+        'Linux'      | 's390x'   || 'linux'  | 's390x'   | false
+        'SunOS'      | 'x86'     || 'sunos'  | 'x86'     | false
+        'SunOS'      | 'x86_64'  || 'sunos'  | 'x64'     | false
+        'AIX'        | 'ppc64'   || 'aix'    | 'ppc64'   | false
     }
 
     @Unroll
-    def "verify ARM handling #archProp (#unameProp)"() {
+    def "verify #osProp ARM handling #archProp (#unameProp)"() {
         given:
-        def platform = PlatformHelperKt.parsePlatform("Linux", archProp, { unameProp })
+        def osType = PlatformHelperKt.parseOsType(osProp)
+        def platform = PlatformHelperKt.parsePlatform(osType, archProp, { unameProp })
 
         expect:
-        platform.name == "linux"
+        platform.name == osName
         platform.arch == osArch
 
         where:
-        archProp  | unameProp | osArch
-        'arm'     | 'armv7l'  | 'armv7l' // Raspberry Pi 3
-        'arm'     | 'armv8l'  | 'arm64'
-        'aarch32' | 'arm'     | 'arm'
-        'aarch64' | 'arm64'   | 'arm64'
-        'aarch64' | 'aarch64' | 'arm64'
-        'ppc64le' | 'ppc64le' | 'ppc64le'
-    }
-
-    @Unroll
-    def "verify ARM handling Mac OS #archProp (#unameProp)"() {
-        given:
-        def platform = PlatformHelperKt.parsePlatform("Mac OS X", archProp, { unameProp })
-
-        expect:
-        platform.name == "darwin"
-        platform.arch == osArch
-
-        where:
-        archProp  | unameProp | osArch
-        'aarch32' | 'arm'     | 'arm'
-        'aarch64' | 'arm64'   | 'arm64'
-        'aarch64' | 'aarch64' | 'arm64'
-        'aarch64' | 'x86_64'  | 'x64' // This shouldn't really happen but according to PR #204 it does
+        osProp       | archProp  || osName   | unameProp | osArch
+        'Linux'      | 'arm'     || 'linux'  | 'armv7l'  | 'armv7l' // Raspberry Pi 3
+        'Linux'      | 'arm'     || 'linux'  | 'armv8l'  | 'arm64'
+        'Linux'      | 'aarch32' || 'linux'  | 'arm'     | 'arm'
+        'Linux'      | 'aarch64' || 'linux'  | 'arm64'   | 'arm64'
+        'Linux'      | 'aarch64' || 'linux'  | 'aarch64' | 'arm64'
+        'Linux'      | 'ppc64le' || 'linux'  | 'ppc64le' | 'ppc64le'
+        'Mac OS X'   | 'aarch32' || 'darwin' | 'arm'     | 'arm'
+        'Mac OS X'   | 'aarch64' || 'darwin' | 'arm64'   | 'arm64'
+        'Mac OS X'   | 'aarch64' || 'darwin' | 'aarch64' | 'arm64'
+        'Mac OS X'   | 'aarch64' || 'darwin' | 'x86_64'  | 'x64' // This unfortunately happens see PR #204
+        'Windows 10' | 'aarch64' || 'win'    | '12'      | 'arm64'
+        'Windows 11' | 'aarch64' || 'win'    | '9'       | 'x64' // Not sure if this can actually happen
     }
 
     def "throw exception if unsupported os"() {

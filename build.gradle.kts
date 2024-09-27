@@ -186,3 +186,11 @@ tasks.wrapper {
 tasks.withType<Test>().configureEach {
     jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
 }
+publishing.publications.withType<MavenPublication>().configureEach {
+    pom.licenses {
+        license {
+            name.set("Apache License, Version 2.0")
+            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+        }
+    }
+}
