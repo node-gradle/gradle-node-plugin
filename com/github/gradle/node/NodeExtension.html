@@ -197,31 +197,43 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         
                                         <tr class="altColor">
                                             <td class="colFirst"><code>private final DirectoryProperty</code></td>
-                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#nodeProjectDir>nodeProjectDir</a></code></th>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#bunWorkDir>bunWorkDir</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
                                         <tr class="rowColor">
+                                            <td class="colFirst"><code>private final DirectoryProperty</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#nodeProjectDir>nodeProjectDir</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
                                             <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#version>version</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr class="altColor">
+                                        <tr class="rowColor">
                                             <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#npmVersion>npmVersion</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr class="rowColor">
+                                        <tr class="altColor">
                                             <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#pnpmVersion>pnpmVersion</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr class="altColor">
+                                        <tr class="rowColor">
                                             <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#yarnVersion>yarnVersion</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#bunVersion>bunVersion</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
@@ -258,6 +270,18 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         <tr class="altColor">
                                             <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code></td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#yarnCommand>yarnCommand</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#bunCommand>bunCommand</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>private final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#bunxCommand>bunxCommand</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
@@ -435,12 +459,20 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         <tr id="i4" class="altColor">
                                             <td class="colFirst"><code>final DirectoryProperty</code>
                                             </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getBunWorkDir()>getBunWorkDir</a>() </code>
+                                            </th>
+                                            <td class="colLast">The directory where Bun is installed (when a Bun task is used)</td>
+                                        </tr>
+                                        
+                                        <tr id="i5" class="rowColor">
+                                            <td class="colFirst"><code>final DirectoryProperty</code>
+                                            </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getNodeProjectDir()>getNodeProjectDir</a>() </code>
                                             </th>
                                             <td class="colLast">The Node.js project directory location This is where the package.</td>
                                         </tr>
                                         
-                                        <tr id="i5" class="rowColor">
+                                        <tr id="i6" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getVersion()>getVersion</a>() </code>
@@ -448,7 +480,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Version of node to download and install (only used if download is true) It will be unpacked in the workDir</td>
                                         </tr>
                                         
-                                        <tr id="i6" class="altColor">
+                                        <tr id="i7" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getNpmVersion()>getNpmVersion</a>() </code>
@@ -456,7 +488,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Version of npm to use If specified, installs it in the npmWorkDir If empty, the plugin will use the npm command bundled with Node.</td>
                                         </tr>
                                         
-                                        <tr id="i7" class="rowColor">
+                                        <tr id="i8" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getPnpmVersion()>getPnpmVersion</a>() </code>
@@ -464,7 +496,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Version of pnpm to use Any pnpm task first installs pnpm in the pnpmWorkDir It uses the specified version if defined and the latest version otherwise (by default)</td>
                                         </tr>
                                         
-                                        <tr id="i8" class="altColor">
+                                        <tr id="i9" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getYarnVersion()>getYarnVersion</a>() </code>
@@ -472,7 +504,15 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Version of Yarn to use Any Yarn task first installs Yarn in the yarnWorkDir It uses the specified version if defined and the latest version otherwise (by default)</td>
                                         </tr>
                                         
-                                        <tr id="i9" class="rowColor">
+                                        <tr id="i10" class="altColor">
+                                            <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getBunVersion()>getBunVersion</a>() </code>
+                                            </th>
+                                            <td class="colLast">Version of Bun to use Any Bun task first installs Bun in the bunWorkDir It uses the specified version if defined and the latest version otherwise (by default)</td>
+                                        </tr>
+                                        
+                                        <tr id="i11" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getDistBaseUrl()>getDistBaseUrl</a>() </code>
@@ -480,7 +520,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Base URL for fetching node distributions Only used if download is true Change it if you want to use a mirror Or set to null if you want to add the repository on your own.</td>
                                         </tr>
                                         
-                                        <tr id="i10" class="altColor">
+                                        <tr id="i12" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getAllowInsecureProtocol()>getAllowInsecureProtocol</a>() </code>
@@ -488,7 +528,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Specifies whether it is acceptable to communicate with the Node.js repository over an insecure HTTP connection.</td>
                                         </tr>
                                         
-                                        <tr id="i11" class="rowColor">
+                                        <tr id="i13" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getNpmCommand()>getNpmCommand</a>() </code>
@@ -496,7 +536,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i12" class="altColor">
+                                        <tr id="i14" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getNpxCommand()>getNpxCommand</a>() </code>
@@ -504,7 +544,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i13" class="rowColor">
+                                        <tr id="i15" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getPnpmCommand()>getPnpmCommand</a>() </code>
@@ -512,7 +552,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i14" class="altColor">
+                                        <tr id="i16" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getYarnCommand()>getYarnCommand</a>() </code>
@@ -520,7 +560,23 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i15" class="rowColor">
+                                        <tr id="i17" class="rowColor">
+                                            <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getBunCommand()>getBunCommand</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i18" class="altColor">
+                                            <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getBunxCommand()>getBunxCommand</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i19" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getNpmInstallCommand()>getNpmInstallCommand</a>() </code>
@@ -528,7 +584,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">The npm command executed by the npmInstall task By default it is install but it can be changed to ci</td>
                                         </tr>
                                         
-                                        <tr id="i16" class="altColor">
+                                        <tr id="i20" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getDownload()>getDownload</a>() </code>
@@ -536,7 +592,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Whether to download and install a specific Node.js version or not If false, it will use the globally installed Node.js If true, it will download node using above parameters Note that npm is bundled with Node.</td>
                                         </tr>
                                         
-                                        <tr id="i17" class="rowColor">
+                                        <tr id="i21" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=npm/proxy/ProxySettings.html>ProxySettings</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getNodeProxySettings()>getNodeProxySettings</a>() </code>
@@ -544,7 +600,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Whether the plugin automatically should add the proxy configuration to npm and yarn commands according the proxy configuration defined for GradleDisable this option if you want to configure the proxy for npm or yarn on your own (in the .</td>
                                         </tr>
                                         
-                                        <tr id="i18" class="altColor">
+                                        <tr id="i22" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getFastNpmInstall()>getFastNpmInstall</a>() </code>
@@ -552,7 +608,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Use fast NpmInstall logic, excluding node_modules for output tracking resulting in a significantly faster npm install/ci configuration at the cost of slightly decreased correctness in certain circumstances.</td>
                                         </tr>
                                         
-                                        <tr id="i19" class="rowColor">
+                                        <tr id="i23" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getOldNpm()>getOldNpm</a>() </code>
@@ -560,7 +616,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Disable functionality that requires newer versions of npmIf you're not downloading Node.js and using old version of Node or npm set this to true to disable functionality that makes use of newer functionality.</td>
                                         </tr>
                                         
-                                        <tr id="i20" class="altColor">
+                                        <tr id="i24" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getEnableTaskRules()>getEnableTaskRules</a>() </code>
@@ -568,7 +624,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Create rules for automatic task creationDisabling this will prevent the npm_ npx_ yarn_ pnpm_ tasks from being automatically created.</td>
                                         </tr>
                                         
-                                        <tr id="i21" class="rowColor">
+                                        <tr id="i25" class="rowColor">
                                             <td class="colFirst"><code>final DirectoryProperty</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getComputedNodeDir()>getComputedNodeDir</a>() </code>
@@ -576,7 +632,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Computed path to nodejs directory</td>
                                         </tr>
                                         
-                                        <tr id="i22" class="altColor">
+                                        <tr id="i26" class="altColor">
                                             <td class="colFirst"><code>final DirectoryProperty</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getResolvedNodeDir()>getResolvedNodeDir</a>() </code>
@@ -584,7 +640,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Computed path to nodejs directory</td>
                                         </tr>
                                         
-                                        <tr id="i23" class="rowColor">
+                                        <tr id="i27" class="rowColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=util/Platform.html>Platform</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getComputedPlatform()>getComputedPlatform</a>() </code>
@@ -592,7 +648,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Operating system and architecture</td>
                                         </tr>
                                         
-                                        <tr id="i24" class="altColor">
+                                        <tr id="i28" class="altColor">
                                             <td class="colFirst"><code>final Property&lt;<a href=util/Platform.html>Platform</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#getResolvedPlatform()>getResolvedPlatform</a>() </code>
@@ -600,7 +656,7 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                             <td class="colLast">Operating system and architecture</td>
                                         </tr>
                                         
-                                        <tr id="i25" class="rowColor">
+                                        <tr id="i29" class="rowColor">
                                             <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=NodeExtension.html#setUseGradleProxySettings(Boolean)>setUseGradleProxySettings</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> value) </code>
@@ -722,6 +778,21 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                     </li>
                                 </ul>
                                 
+                                <a id="getBunWorkDir()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getBunWorkDir</h4>
+                                        <pre class="methodSignature"> final DirectoryProperty <a href=NodeExtension.html#getBunWorkDir()>getBunWorkDir</a>()</pre>
+                                        <div class="block"><p>The directory where Bun is installed (when a Bun task is used)</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
                                 <a id="getNodeProjectDir()">
                                     <!--   -->
                                 </a>
@@ -792,6 +863,21 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                         <h4>getYarnVersion</h4>
                                         <pre class="methodSignature"> final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=NodeExtension.html#getYarnVersion()>getYarnVersion</a>()</pre>
                                         <div class="block"><p>Version of Yarn to use Any Yarn task first installs Yarn in the yarnWorkDir It uses the specified version if defined and the latest version otherwise (by default)</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getBunVersion()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getBunVersion</h4>
+                                        <pre class="methodSignature"> final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=NodeExtension.html#getBunVersion()>getBunVersion</a>()</pre>
+                                        <div class="block"><p>Version of Bun to use Any Bun task first installs Bun in the bunWorkDir It uses the specified version if defined and the latest version otherwise (by default)</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -881,6 +967,36 @@ public class <span class="typeNameLabel"><a href=NodeExtension.html>NodeExtensio
                                     <li class="blockList">
                                         <h4>getYarnCommand</h4>
                                         <pre class="methodSignature"> final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=NodeExtension.html#getYarnCommand()>getYarnCommand</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getBunCommand()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getBunCommand</h4>
+                                        <pre class="methodSignature"> final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=NodeExtension.html#getBunCommand()>getBunCommand</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getBunxCommand()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getBunxCommand</h4>
+                                        <pre class="methodSignature"> final Property&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=NodeExtension.html#getBunxCommand()>getBunxCommand</a>()</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->

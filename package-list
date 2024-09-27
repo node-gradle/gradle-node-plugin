@@ -1,5 +1,7 @@
 $dokka.format:javadoc-v1
 $dokka.linkExtension:html
+$dokka.location:com.github.gradle.node.bun.task/BunInstallTask.Companion///PointingToDeclaration/com/github/gradle/node/bun/task/BunInstallTask.Companion.html
+$dokka.location:com.github.gradle.node.bun.task/BunSetupTask.Companion///PointingToDeclaration/com/github/gradle/node/bun/task/BunSetupTask.Companion.html
 $dokka.location:com.github.gradle.node.npm.proxy/NpmProxy.Companion///PointingToDeclaration/com/github/gradle/node/npm/proxy/NpmProxy.Companion.html
 $dokka.location:com.github.gradle.node.npm.task/NpmInstallTask.Companion///PointingToDeclaration/com/github/gradle/node/npm/task/NpmInstallTask.Companion.html
 $dokka.location:com.github.gradle.node.npm.task/NpmSetupTask.Companion///PointingToDeclaration/com/github/gradle/node/npm/task/NpmSetupTask.Companion.html
@@ -13,6 +15,8 @@ $dokka.location:com.github.gradle.node/NodeExtension.Companion///PointingToDecla
 $dokka.location:com.github.gradle.node/NodePlugin.Companion///PointingToDeclaration/com/github/gradle/node/NodePlugin.Companion.html
 $dokka.location:com.github.gradle.node/PackageJsonExtension.Companion///PointingToDeclaration/com/github/gradle/node/PackageJsonExtension.Companion.html
 com.github.gradle.node
+com.github.gradle.node.bun.exec
+com.github.gradle.node.bun.task
 com.github.gradle.node.exec
 com.github.gradle.node.npm.exec
 com.github.gradle.node.npm.proxy
