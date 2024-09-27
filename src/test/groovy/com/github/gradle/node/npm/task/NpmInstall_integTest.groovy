@@ -149,6 +149,19 @@ class NpmInstall_integTest extends AbstractIntegTest {
         result.task(':deleteNodeModules').outcome == TaskOutcome.SUCCESS
 
         when:
+        result = build('npmInstall')
+
+        then:
+        result.task(":npmInstall").outcome == TaskOutcome.SUCCESS
+
+        when:
+        // when the node_modules is removed
+        result = build('deleteNodeModules')
+
+        then:
+        result.task(':deleteNodeModules').outcome == TaskOutcome.SUCCESS
+
+        when:
         result = build('taskWithDependency')
 
         then:
