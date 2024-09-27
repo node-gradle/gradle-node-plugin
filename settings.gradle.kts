@@ -1,6 +1,6 @@
 plugins {
-    id("com.gradle.enterprise") version("3.14.1")
-    id("com.gradle.common-custom-user-data-gradle-plugin") version("1.11.1")
+    id("com.gradle.develocity") version("3.18.1")
+    id("com.gradle.common-custom-user-data-gradle-plugin") version("2.0.2")
 }
 
 val isCI = System.getenv().containsKey("CI")
@@ -8,25 +8,26 @@ val isPR = isCI && System.getenv().containsKey("GRADLE_ENTERPRISE_ACCESS_KEY")
 
 val publishAlwaysIf = System.getProperties()["user.name"] == "deepy"
 
-gradleEnterprise {
+develocity {
+    server.set("https://alexandernordlund.gradle-enterprise.cloud/")
     buildScan {
-        if (publishAlwaysIf || isPR) {
-            server = "https://alexandernordlund.gradle-enterprise.cloud/"
+        publishing {
+            onlyIf { it.isAuthenticated }
         }
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        if (isCI) {
-            termsOfServiceAgree = "yes"
-        }
-        publishAlwaysIf(publishAlwaysIf)
+        uploadInBackground.set(!isCI)
 
         capture {
-            isTaskInputFiles = publishAlwaysIf || isPR
+            fileFingerprints.set(publishAlwaysIf || isPR)
         }
-        isUploadInBackground = !isCI
+
         obfuscation {
             ipAddresses { addresses -> addresses.map { _ -> "0.0.0.0"} }
+            if (!isCI) {
+                externalProcessName { processName -> "non-build-process" }
+            }
         }
     }
 }
+
 
 rootProject.name = "gradle-node-plugin"
