@@ -16,7 +16,6 @@ task test(type: YarnTask) {
     dependsOn yarn
     yarnCommand = changeInputs ? ["run", "test"] : ["run"]
     args = changeInputs ? [] : ["test"]
-    inputs.dir("node_modules")
     inputs.file("package.json")
     inputs.dir("src")
     inputs.dir("test")
