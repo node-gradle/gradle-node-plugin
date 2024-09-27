@@ -6,10 +6,11 @@ jobs:
     strategy:
       matrix:
         config:
-          - {os: ubuntu-latest, params: "'-PtestedGradleVersion=6.9.4|7.6.3|8.10.2' pnpmTests" }
-          - {os: ubuntu-latest, params: "'-PtestedGradleVersion=6.9.4|7.6.3|8.10.2' build" }
-          - {os: windows-latest, params: "build pnpmTests" }
-          - {os: macos-latest, params: "build pnpmTests" }
+          - {os: ubuntu-latest,  java: 11, params: "'-PtestedGradleVersion=6.9.4|7.6.3' pnpmTests" }
+          - {os: ubuntu-latest,  java: 11, params: "'-PtestedGradleVersion=6.9.4|7.6.3' build" }
+          - {os: ubuntu-latest,  java: 16, params: "'-PtestedGradleVersion=8.10.2' build pnpmTests"}
+          - {os: windows-latest, java: 11, params: "build pnpmTests" }
+          - {os: macos-latest,   java: 11, params: "build pnpmTests" }
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -17,7 +18,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: ${{ matrix.config.java }}
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
