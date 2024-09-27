@@ -2,7 +2,7 @@
 
 ## Version 7.x *(unreleased)*
 
-## Version 7.1.0 *(unreleased)*
+## Version 7.1.0 *(2024-09-27)*
 * Add support for ARM64 Windows [#315](https://github.com/node-gradle/gradle-node-plugin/issues/315)
 * Add support for AIX [#320](https://github.com/node-gradle/gradle-node-plugin/issues/320)
 * Add license to publications POM [#319](https://github.com/node-gradle/gradle-node-plugin/issues/319)
