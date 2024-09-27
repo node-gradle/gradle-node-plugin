@@ -8,7 +8,7 @@ jobs:
         config:
           - {os: ubuntu-latest,  java: 11, params: "'-PtestedGradleVersion=6.9.4|7.6.3' pnpmTests" }
           - {os: ubuntu-latest,  java: 11, params: "'-PtestedGradleVersion=6.9.4|7.6.3' build" }
-          - {os: ubuntu-latest,  java: 16, params: "'-PtestedGradleVersion=8.10.2' build pnpmTests"}
+          - {os: ubuntu-latest,  java: 17, params: "'-PtestedGradleVersion=8.10.2' build pnpmTests"}
           - {os: windows-latest, java: 11, params: "build pnpmTests" }
           - {os: macos-latest,   java: 11, params: "build pnpmTests" }
     steps:
