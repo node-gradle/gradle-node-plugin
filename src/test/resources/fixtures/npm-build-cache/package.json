@@ -1,0 +1,23 @@
+{
+  "name": "npm-build-cache",
+  "version": "1.0.0",
+  "private": true,
+  "config": {
+    "dist": "./dist"
+  },
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
