@@ -36,6 +36,24 @@ fun computeWorkingDir(nodeProjectDir: DirectoryProperty, execConfiguration: Exec
 }
 
 /**
+ * Helper function to find the best matching executable in the system PATH.
+ *
+ * @param executableName The name of the executable to search for.
+ * @return The best matching executable path as a String.
+ */
+fun findBestExecutableMatch(executableName: String): String {
+    val pathVariable = System.getenv("PATH") ?: return executableName
+    val paths = pathVariable.split(File.pathSeparator)
+    for (path in paths) {
+        val executableFile = File(path, executableName)
+        if (executableFile.exists() && executableFile.canExecute()) {
+            return executableFile.absolutePath
+        }
+    }
+    return executableName  // Return the original executable if no match is found
+}
+
+/**
  * Basic execution runner that runs a given ExecConfiguration.
  *
  * Specific implementations likely use the same configuration but may assign
@@ -43,8 +61,9 @@ fun computeWorkingDir(nodeProjectDir: DirectoryProperty, execConfiguration: Exec
  */
 class ExecRunner {
     fun execute(projectHelper: ProjectApiHelper, extension: NodeExtension, execConfiguration: ExecConfiguration): ExecResult {
+        val executablePath = findBestExecutableMatch(execConfiguration.executable)
         return projectHelper.exec {
-            executable = execConfiguration.executable
+            executable = executablePath
             args = execConfiguration.args
             environment = computeEnvironment(execConfiguration)
             isIgnoreExitValue = execConfiguration.ignoreExitValue
