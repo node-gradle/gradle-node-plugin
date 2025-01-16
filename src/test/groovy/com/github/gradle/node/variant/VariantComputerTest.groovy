@@ -157,6 +157,7 @@ class VariantComputerTest extends Specification {
         nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
+        nodeExtension.environment.set([:])
 
         def variantComputer = new VariantComputer()
 
@@ -208,6 +209,7 @@ class VariantComputerTest extends Specification {
         nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
+        nodeExtension.environment.set([:])
 
         def variantComputer = new VariantComputer()
 

@@ -8,19 +8,47 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import java.io.File
+
+/**
+ * Helper function to find the best matching executable in the system PATH.
+ *
+ * @param executableName The name of the executable to search for.
+ * @return The best matching executable path as a String.
+ */
+fun findBestExecutableMatch(
+    executableName: String,
+    environmentProvider: Provider<Map<String, String>>,
+): String {
+    val environment = environmentProvider.orNull ?: return executableName
+    val pathEnvironmentVariableName = if (environment["Path"] != null) "Path" else "PATH"
+    val pathVariable = environment[pathEnvironmentVariableName] ?: return executableName
+    val paths = pathVariable.split(File.pathSeparator)
+    for (path in paths) {
+        val executableFile = File(path, executableName)
+        if (executableFile.exists() && executableFile.canExecute()) {
+            return executableFile.absolutePath
+        }
+    }
+    return executableName  // Return the original executable if no match is found
+}
 
 /**
  * Get the expected node binary name, node.exe on Windows and node everywhere else.
  */
-fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<Directory>): Provider<String> {
+fun computeNodeExec(
+    nodeExtension: NodeExtension,
+    nodeBinDirProvider: Provider<Directory>,
+): Provider<String> {
     return zip(nodeExtension.download, nodeBinDirProvider).map {
         val (download, nodeBinDir) = it
         if (download) {
             val nodeCommand = if (nodeExtension.resolvedPlatform.get().isWindows()) "node.exe" else "node"
             nodeBinDir.dir(nodeCommand).asFile.absolutePath
-        } else "node"
+        } else findBestExecutableMatch("node", nodeExtension.environment)
     }
 }
+
 fun computeNpmScriptFile(nodeDirProvider: Provider<Directory>, command: String, isWindows: Boolean): Provider<String> {
     return nodeDirProvider.map { nodeDir ->
         if (isWindows) nodeDir.dir("node_modules/npm/bin/$command-cli.js").asFile.path
@@ -51,7 +79,7 @@ internal fun computeExec(nodeExtension: NodeExtension, binDirProvider: Provider<
         val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
             cfgCommand.mapIf({ it == unixCommand }) { windowsCommand }
         } else cfgCommand
-        if (download) binDir.dir(command).asFile.absolutePath else command
+        if (download) binDir.dir(command).asFile.absolutePath else findBestExecutableMatch(command, nodeExtension.environment)
     }
 }
 

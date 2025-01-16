@@ -10,6 +10,7 @@ class NpxTaskTest extends AbstractTaskTest {
     def "exec npx task"() {
         given:
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
+        nodeExtension.environment.set([:])
 
         def task = project.tasks.create('simple', NpxTask)
         mockProjectApiHelperExec(task)

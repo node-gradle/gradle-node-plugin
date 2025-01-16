@@ -13,9 +13,10 @@ import java.io.File
  *
  * @param execConfiguration configuration to get environment variables from
  */
-fun computeEnvironment(execConfiguration: ExecConfiguration): Map<String, String> {
+fun computeEnvironment(extension: NodeExtension, execConfiguration: ExecConfiguration): Map<String, String> {
     val execEnvironment = mutableMapOf<String, String>()
     execEnvironment += System.getenv()
+    execEnvironment += extension.environment.getOrElse(emptyMap())
     execEnvironment += execConfiguration.environment
     if (execConfiguration.additionalBinPaths.isNotEmpty()) {
         // Take care of Windows environments that may contain "Path" OR "PATH" - both existing
@@ -34,25 +35,6 @@ fun computeWorkingDir(nodeProjectDir: DirectoryProperty, execConfiguration: Exec
     workingDir.mkdirs()
     return workingDir
 }
-
-/**
- * Helper function to find the best matching executable in the system PATH.
- *
- * @param executableName The name of the executable to search for.
- * @return The best matching executable path as a String.
- */
-fun findBestExecutableMatch(executableName: String): String {
-    val pathVariable = System.getenv("PATH") ?: return executableName
-    val paths = pathVariable.split(File.pathSeparator)
-    for (path in paths) {
-        val executableFile = File(path, executableName)
-        if (executableFile.exists() && executableFile.canExecute()) {
-            return executableFile.absolutePath
-        }
-    }
-    return executableName  // Return the original executable if no match is found
-}
-
 /**
  * Basic execution runner that runs a given ExecConfiguration.
  *
@@ -61,11 +43,10 @@ fun findBestExecutableMatch(executableName: String): String {
  */
 class ExecRunner {
     fun execute(projectHelper: ProjectApiHelper, extension: NodeExtension, execConfiguration: ExecConfiguration): ExecResult {
-        val executablePath = findBestExecutableMatch(execConfiguration.executable)
         return projectHelper.exec {
-            executable = executablePath
+            executable = execConfiguration.executable
             args = execConfiguration.args
-            environment = computeEnvironment(execConfiguration)
+            environment = computeEnvironment(extension, execConfiguration)
             isIgnoreExitValue = execConfiguration.ignoreExitValue
             workingDir = computeWorkingDir(extension.nodeProjectDir, execConfiguration)
             execConfiguration.execOverrides?.execute(this)
