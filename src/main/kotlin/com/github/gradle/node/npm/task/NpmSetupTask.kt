@@ -80,8 +80,10 @@ abstract class NpmSetupTask : BaseTask() {
         val directory = npmDir.get().asFile
         // npm < 7 creates the directory if it's missing, >= 7 fails if it's missing
         File(directory, "lib").mkdirs()
-        return listOf("install", "--global", "--no-save", "--prefix", directory.absolutePath,
-                "npm@$version") + args.get()
+        return listOf(
+            "install", "--global", "--no-save", "--prefix", directory.absolutePath,
+            "npm@$version"
+        ) + args.get()
     }
 
     companion object {

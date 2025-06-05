@@ -14,7 +14,9 @@ import com.github.gradle.node.pnpm.task.PnpmSetupTask
 import com.github.gradle.node.pnpm.task.PnpmTask
 import com.github.gradle.node.task.NodeSetupTask
 import com.github.gradle.node.task.NodeTask
-import com.github.gradle.node.util.*
+import com.github.gradle.node.util.OsType
+import com.github.gradle.node.util.parseOsType
+import com.github.gradle.node.util.parsePlatform
 import com.github.gradle.node.variant.computeNodeArchiveDependency
 import com.github.gradle.node.variant.computeNodeDir
 import com.github.gradle.node.yarn.task.YarnInstallTask
@@ -24,7 +26,9 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 import org.gradle.process.ExecSpec
 import org.gradle.util.GradleVersion
 import java.io.ByteArrayOutputStream
@@ -199,9 +203,9 @@ class NodePlugin : Plugin<Project> {
         project.tasks.withType<NodeSetupTask>().configureEach {
             nodeDir.set(nodeExtension.resolvedNodeDir)
             val archiveFileProvider = computeNodeArchiveDependency(nodeExtension)
-                    .map { nodeArchiveDependency ->
-                        resolveNodeArchiveFile(nodeArchiveDependency)
-                    }
+                .map { nodeArchiveDependency ->
+                    resolveNodeArchiveFile(nodeArchiveDependency)
+                }
             nodeArchiveFile.set(project.layout.file(archiveFileProvider))
         }
     }

@@ -18,7 +18,7 @@ import java.io.File
 abstract class NpmInstallTask : NpmTask() {
     @get:Internal
     val nodeModulesOutputFilter =
-            objects.property<Action<ConfigurableFileTree>>()
+        objects.property<Action<ConfigurableFileTree>>()
 
     @get:Internal
     val fastInstall = objects.property<Boolean>()
@@ -74,7 +74,7 @@ abstract class NpmInstallTask : NpmTask() {
 
     private fun projectFileIfExists(name: String): Provider<File?> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
-                .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
+            .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
 
     @Optional
@@ -95,13 +95,13 @@ abstract class NpmInstallTask : NpmTask() {
         } else {
             val nodeModulesDirectoryProvider = nodeExtension.nodeProjectDir.dir("node_modules")
             zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
-                    .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
-                        if (nodeModulesOutputFilter != null) {
-                            val fileTree = projectHelper.fileTree(nodeModulesDirectory)
-                            nodeModulesOutputFilter.execute(fileTree)
-                            providers.provider { fileTree }
-                        } else providers.provider { null }
-                    }
+                .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
+                    if (nodeModulesOutputFilter != null) {
+                        val fileTree = projectHelper.fileTree(nodeModulesDirectory)
+                        nodeModulesOutputFilter.execute(fileTree)
+                        providers.provider { fileTree }
+                    } else providers.provider { null }
+                }
         }
     }
 
@@ -127,7 +127,7 @@ abstract class NpmInstallTask : NpmTask() {
         if (npmVersion.isBlank()) {
             if (nodeExtension.version.get().split('.').first().toInt() <= 14)
                 return true
-        } else if (npmVersion.split('.').first().toInt() < 7 ) {
+        } else if (npmVersion.split('.').first().toInt() < 7) {
             return true
         }
 

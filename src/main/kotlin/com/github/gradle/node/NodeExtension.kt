@@ -185,8 +185,10 @@ open class NodeExtension(project: Project) {
         distBaseUrl.set("https://nodejs.org/dist")
     }
 
-    @Deprecated("useGradleProxySettings has been replaced with nodeProxySettings",
-        replaceWith = ReplaceWith("nodeProxySettings.set(i)"))
+    @Deprecated(
+        "useGradleProxySettings has been replaced with nodeProxySettings",
+        replaceWith = ReplaceWith("nodeProxySettings.set(i)")
+    )
     fun setUseGradleProxySettings(value: Boolean) {
         nodeProxySettings.set(if (value) ProxySettings.SMART else ProxySettings.OFF)
     }
@@ -214,7 +216,7 @@ open class NodeExtension(project: Project) {
 
         @JvmStatic
         fun create(project: Project): NodeExtension {
-            return project.extensions.create<NodeExtension>(NAME, project, )
+            return project.extensions.create<NodeExtension>(NAME, project)
         }
     }
 }

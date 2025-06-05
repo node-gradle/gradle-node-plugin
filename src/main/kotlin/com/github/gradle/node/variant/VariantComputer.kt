@@ -21,6 +21,7 @@ fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<D
         } else "node"
     }
 }
+
 fun computeNpmScriptFile(nodeDirProvider: Provider<Directory>, command: String, isWindows: Boolean): Provider<String> {
     return nodeDirProvider.map { nodeDir ->
         if (isWindows) nodeDir.dir("node_modules/npm/bin/$command-cli.js").asFile.path
@@ -44,8 +45,13 @@ fun computeNodeDir(nodeExtension: NodeExtension, osName: String, osArch: String)
 /**
  * Compute the path for a given command, from a given binary directory, taking Windows into account
  */
-internal fun computeExec(nodeExtension: NodeExtension, binDirProvider: Provider<Directory>,
-                         configurationCommand: Property<String>, unixCommand: String, windowsCommand: String): Provider<String> {
+internal fun computeExec(
+    nodeExtension: NodeExtension,
+    binDirProvider: Provider<Directory>,
+    configurationCommand: Property<String>,
+    unixCommand: String,
+    windowsCommand: String
+): Provider<String> {
     return zip(nodeExtension.download, configurationCommand, binDirProvider).map {
         val (download, cfgCommand, binDir) = it
         val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
@@ -58,7 +64,11 @@ internal fun computeExec(nodeExtension: NodeExtension, binDirProvider: Provider<
 /**
  * Compute the path for a given package, taken versions and user-configured working directories into account
  */
-internal fun computePackageDir(packageName: String, packageVersion: Property<String>, packageWorkDir: DirectoryProperty): Provider<Directory> {
+internal fun computePackageDir(
+    packageName: String,
+    packageVersion: Property<String>,
+    packageWorkDir: DirectoryProperty
+): Provider<Directory> {
     return zip(packageVersion, packageWorkDir).map {
         val (version, workDir) = it
         val dirnameSuffix = if (version.isNotBlank()) {
@@ -85,14 +95,17 @@ open class VariantComputer {
     /**
      * Get the expected node binary directory, taking Windows specifics into account.
      */
-    fun computeNodeBinDir(nodeDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(nodeDirProvider, platform)
+    fun computeNodeBinDir(nodeDirProvider: Provider<Directory>, platform: Property<Platform>) =
+        computeProductBinDir(nodeDirProvider, platform)
 
     /**
      * Get the expected node binary name, node.exe on Windows and node everywhere else.
      */
-    @Deprecated(message = "replaced by package-level function",
+    @Deprecated(
+        message = "replaced by package-level function",
         replaceWith =
-        ReplaceWith("com.github.gradle.node.variant.computeNodeExec(nodeExtension, nodeBinDirProvider)"))
+            ReplaceWith("com.github.gradle.node.variant.computeNodeExec(nodeExtension, nodeBinDirProvider)")
+    )
     fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<Directory>): Provider<String> {
         return com.github.gradle.node.variant.computeNodeExec(nodeExtension, nodeBinDirProvider)
     }
@@ -113,7 +126,8 @@ open class VariantComputer {
     /**
      * Get the expected npm binary directory, taking Windows specifics into account.
      */
-    fun computeNpmBinDir(npmDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(npmDirProvider, platform)
+    fun computeNpmBinDir(npmDirProvider: Provider<Directory>, platform: Property<Platform>) =
+        computeProductBinDir(npmDirProvider, platform)
 
     /**
      * Get the expected node binary name, npm.cmd on Windows and npm everywhere else.
@@ -121,8 +135,10 @@ open class VariantComputer {
      * Can be overridden by setting npmCommand.
      */
     fun computeNpmExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
-        return computeExec(nodeExtension, npmBinDirProvider,
-            nodeExtension.npmCommand, "npm", "npm.cmd")
+        return computeExec(
+            nodeExtension, npmBinDirProvider,
+            nodeExtension.npmCommand, "npm", "npm.cmd"
+        )
     }
 
     /**
@@ -131,26 +147,32 @@ open class VariantComputer {
      * Can be overridden by setting npxCommand.
      */
     fun computeNpxExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
-        return computeExec(nodeExtension, npmBinDirProvider,
-            nodeExtension.npxCommand, "npx", "npx.cmd")
+        return computeExec(
+            nodeExtension, npmBinDirProvider,
+            nodeExtension.npxCommand, "npx", "npx.cmd"
+        )
     }
 
     fun computePnpmDir(nodeExtension: NodeExtension): Provider<Directory> {
         return computePackageDir("pnpm", nodeExtension.pnpmVersion, nodeExtension.pnpmWorkDir)
     }
 
-    fun computePnpmBinDir(pnpmDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(pnpmDirProvider, platform)
+    fun computePnpmBinDir(pnpmDirProvider: Provider<Directory>, platform: Property<Platform>) =
+        computeProductBinDir(pnpmDirProvider, platform)
 
     fun computePnpmExec(nodeExtension: NodeExtension, pnpmBinDirProvider: Provider<Directory>): Provider<String> {
-        return computeExec(nodeExtension, pnpmBinDirProvider,
-            nodeExtension.pnpmCommand, "pnpm", "pnpm.cmd")
+        return computeExec(
+            nodeExtension, pnpmBinDirProvider,
+            nodeExtension.pnpmCommand, "pnpm", "pnpm.cmd"
+        )
     }
 
     fun computeYarnDir(nodeExtension: NodeExtension): Provider<Directory> {
         return computePackageDir("yarn", nodeExtension.yarnVersion, nodeExtension.yarnWorkDir)
     }
 
-    fun computeYarnBinDir(yarnDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(yarnDirProvider, platform)
+    fun computeYarnBinDir(yarnDirProvider: Provider<Directory>, platform: Property<Platform>) =
+        computeProductBinDir(yarnDirProvider, platform)
 
     fun computeYarnExec(nodeExtension: NodeExtension, yarnBinDirProvider: Provider<Directory>): Provider<String> {
         return zip(nodeExtension.yarnCommand, yarnBinDirProvider).map {
@@ -167,11 +189,14 @@ open class VariantComputer {
         return computePackageDir("bun", nodeExtension.bunVersion, nodeExtension.bunWorkDir)
     }
 
-    fun computeBunBinDir(bunDirProvider: Provider<Directory>, platform: Property<Platform>) = computeProductBinDir(bunDirProvider, platform)
+    fun computeBunBinDir(bunDirProvider: Provider<Directory>, platform: Property<Platform>) =
+        computeProductBinDir(bunDirProvider, platform)
 
     fun computeBunExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
-        return computeExec(nodeExtension, bunBinDirProvider,
-            nodeExtension.bunCommand, "bun", "bun.cmd")
+        return computeExec(
+            nodeExtension, bunBinDirProvider,
+            nodeExtension.bunCommand, "bun", "bun.cmd"
+        )
     }
 
     /**
@@ -180,20 +205,24 @@ open class VariantComputer {
      * Can be overridden by setting bunxCommand.
      */
     fun computeBunxExec(nodeExtension: NodeExtension, bunBinDirProvider: Provider<Directory>): Provider<String> {
-        return computeExec(nodeExtension, bunBinDirProvider,
-            nodeExtension.bunxCommand, "bunx", "bunx.cmd")
+        return computeExec(
+            nodeExtension, bunBinDirProvider,
+            nodeExtension.bunxCommand, "bunx", "bunx.cmd"
+        )
     }
 
     private fun computeProductBinDir(productDirProvider: Provider<Directory>, platform: Property<Platform>) =
-            if (platform.get().isWindows()) productDirProvider else productDirProvider.map { it.dir("bin") }
+        if (platform.get().isWindows()) productDirProvider else productDirProvider.map { it.dir("bin") }
 
     /**
      * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.
      *
      * Essentially: org.nodejs:node:$version:$osName-$osArch@tar.gz
      */
-    @Deprecated(message = "replaced by package-level function",
-        replaceWith = ReplaceWith("com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)"))
+    @Deprecated(
+        message = "replaced by package-level function",
+        replaceWith = ReplaceWith("com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)")
+    )
     fun computeNodeArchiveDependency(nodeExtension: NodeExtension): Provider<String> {
         return com.github.gradle.node.variant.computeNodeArchiveDependency(nodeExtension)
     }
