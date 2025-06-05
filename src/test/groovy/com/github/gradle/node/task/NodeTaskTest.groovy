@@ -18,6 +18,7 @@ class NodeTaskTest extends AbstractTaskTest {
     def "exec node task"() {
         given:
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
+        nodeExtension.environment.set([:])
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
@@ -93,6 +94,7 @@ class NodeTaskTest extends AbstractTaskTest {
         given:
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
         nodeExtension.download.set(false)
+        nodeExtension.environment.set([:])
 
         def task = project.tasks.create('simple', NodeTask)
         mockProjectApiHelperExec(task)

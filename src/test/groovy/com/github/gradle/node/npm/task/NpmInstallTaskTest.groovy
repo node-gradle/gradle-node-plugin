@@ -13,6 +13,7 @@ class NpmInstallTaskTest extends AbstractTaskTest {
     def "exec npm install task with configured proxy"() {
         given:
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
+        nodeExtension.environment.set([:])
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
 
@@ -32,6 +33,7 @@ class NpmInstallTaskTest extends AbstractTaskTest {
     def "exec npm install task with configured proxy but disabled"() {
         given:
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
+        nodeExtension.environment.set([:])
         GradleProxyHelper.setHttpsProxyHost("my-super-proxy.net")
         GradleProxyHelper.setHttpsProxyPort(11235)
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
