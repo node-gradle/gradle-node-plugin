@@ -1,6 +1,11 @@
 package com.github.gradle.node.util
 
-data class Platform(val name: String, val arch: String) {
+import java.io.Serializable
+
+data class Platform(
+    val name: String,
+    val arch: String,
+): Serializable {
     fun isWindows(): Boolean {
         return name == "win"
     }
