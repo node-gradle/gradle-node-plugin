@@ -66,28 +66,28 @@ abstract class NpmTask : BaseTask() {
         val npmExec = providers.of(NpmExecSource::class) {
             parameters.arguments.set(args)
             parameters.environment.set(environment)
-//                parameters.includeSystemEnvironment.set(nodeExtension.includeSystemEnvironment)
-//            parameters.additionalBinPaths.set(nodeExtension.additionalBinPaths)
+            parameters.npmCommand.set(npmCommand)
+
+            parameters.ignoreExitValue.set(true)
+            parameters.workingDir.set(workingDir.asFile.orNull)
+
             parameters.download.set(nodeExtension.download)
             parameters.resolvedNodeDir.set(nodeExtension.resolvedNodeDir)
             parameters.resolvedPlatform.set(nodeExtension.resolvedPlatform)
             parameters.npmVersion.set(nodeExtension.npmVersion)
-            parameters.npmCommand.set(listOf(nodeExtension.npmCommand.get()))
             parameters.npmWorkDir.set(nodeExtension.npmWorkDir)
             parameters.nodeProjectDir.set(nodeExtension.nodeProjectDir)
             parameters.nodeProxySettings.set(nodeExtension.nodeProxySettings)
-//            parameters.executable.set(nodeExtension.executable)
-            parameters.ignoreExitValue.set(true)
-            parameters.workingDir.set(workingDir.asFile.orNull)
-//            parameters.npmCommand.set(nodeExtension.npmCommand)
-//            parameters.args.set(args)
+            parameters.coreNpmCommand.set(nodeExtension.npmCommand)
         }
         val result = npmExec.get()
         if (result.failure != null) {
             logger.error(result.capturedOutput)
             throw RuntimeException("$path failed to execute npm command.", result.failure)
+        } else {
+            logger.info(result.capturedOutput)
         }
-        this.result = result.asExecResult()
+        this.result = result.asExecResult().rethrowFailure()
 //        val command = npmCommand.get().plus(args.get())
 //        val nodeExecConfiguration =
 //            NodeExecConfiguration(

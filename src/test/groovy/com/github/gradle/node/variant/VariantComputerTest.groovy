@@ -23,7 +23,7 @@ class VariantComputerTest extends Specification {
 
         def platform = getPlatform("Windows 8", osArch)
 
-        def nodeExtension = project.objects.newInstance(NodeExtension::class, project)
+        def nodeExtension = project.objects.newInstance(NodeExtension.class, project)
         nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set(version)
@@ -68,7 +68,7 @@ class VariantComputerTest extends Specification {
         def platform = getPlatform(osName, osArch)
 
         def project = ProjectBuilder.builder().build()
-        def nodeExtension = project.objects.newInstance(NodeExtension::class, project)
+        def nodeExtension = project.objects.newInstance(NodeExtension.class, project)
         nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set('5.12.0')
@@ -113,7 +113,7 @@ class VariantComputerTest extends Specification {
         def platform = getPlatform(osName, osArch, sysOsArch)
 
         def project = ProjectBuilder.builder().build()
-        def nodeExtension = project.objects.newInstance(NodeExtension::class, project)
+        def nodeExtension = project.objects.newInstance(NodeExtension.class, project)
         nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(true)
         nodeExtension.version.set('5.12.0')
@@ -153,7 +153,7 @@ class VariantComputerTest extends Specification {
         def platform = getPlatform("Windows 8", "x86")
         def project = ProjectBuilder.builder().build()
 
-        def nodeExtension = project.objects.newInstance(NodeExtension::class, project)
+        def nodeExtension = project.objects.newInstance(NodeExtension.class, project)
         nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
@@ -204,7 +204,7 @@ class VariantComputerTest extends Specification {
         def platform = getPlatform("Linux", "x86")
         def project = ProjectBuilder.builder().build()
 
-        def nodeExtension = project.objects.newInstance(NodeExtension::class, project)
+        def nodeExtension = project.objects.newInstance(NodeExtension.class, project)
         nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(download)
         nodeExtension.npmVersion.set(npmVersion)
@@ -257,7 +257,7 @@ class VariantComputerTest extends Specification {
         def platform = getPlatform("Linux", "x86")
         def project = ProjectBuilder.builder().build()
 
-        def nodeExtension = project.objects.newInstance(NodeExtension::class, project)
+        def nodeExtension = project.objects.newInstance(NodeExtension.class, project)
         nodeExtension.resolvedPlatform.set(platform)
         nodeExtension.download.set(download)
 

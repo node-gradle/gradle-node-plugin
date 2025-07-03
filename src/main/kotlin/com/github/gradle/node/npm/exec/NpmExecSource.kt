@@ -34,11 +34,13 @@ abstract class NpmExecSource @Inject internal constructor(
     abstract class Parameters internal constructor() : NpmExecSpec(), ValueSourceParameters {
         abstract val ignoreExitValue: Property<Boolean>
         abstract val workingDir: DirectoryProperty
+        abstract val coreNpmCommand: Property<String>
         abstract val npmCommand: ListProperty<String>
     }
 
 
-    private val npmCommand get() = parameters.npmCommand.get()
+    private val coreNpmCommand get() = parameters.coreNpmCommand.get()
+    private val execNpmCommand get() = parameters.npmCommand.get()
     private val nodeProxySettings get() = parameters.nodeProxySettings.get()
     private val npmVersion get() = parameters.npmVersion.get()
     private val npmWorkDir get() = parameters.npmWorkDir.get()
@@ -52,7 +54,7 @@ abstract class NpmExecSource @Inject internal constructor(
 
 
     override fun obtain(): NpmExecResult {
-        val command = parameters.npmCommand.get().plus(parameters.arguments.get())
+        val command = execNpmCommand.plus(parameters.arguments.get())
         val nodeExecConfiguration =
             NodeExecConfiguration(
                 command = command,
@@ -263,14 +265,14 @@ abstract class NpmExecSource @Inject internal constructor(
         computeProductBinDir(npmDirProvider, platform)
 
     /**
-     * Get the expected node binary name, npm.cmd on Windows and npm everywhere else.
+     * Get the expected node binary name, `npm.cmd` on Windows and `npm` everywhere else.
      *
-     * Can be overridden by setting npmCommand.
+     * Can be overridden by setting `npmCommand`.
      */
     private fun computeNpmExec(npmBinDirProvider: Directory): String {
         return computeExec(
             binDirProvider = npmBinDirProvider,
-            configurationCommand = npmCommand.single(),
+            configurationCommand = coreNpmCommand,
         )
     }
 

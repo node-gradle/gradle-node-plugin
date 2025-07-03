@@ -37,20 +37,6 @@ fun computeNpmScriptFile(nodeDirProvider: Provider<Directory>, command: String, 
     }
 }
 
-internal fun computeNpmScriptFile(
-    nodeDirProvider: Provider<Directory>,
-    command: String,
-    platform: Provider<Platform>,
-): Provider<String> {
-    return zip(nodeDirProvider, platform).map { (nodeDir, platform) ->
-        if (platform.isWindows()) {
-            nodeDir.dir("node_modules/npm/bin/$command-cli.js").asFile.path
-        } else {
-            nodeDir.dir("lib/node_modules/npm/bin/$command-cli.js").asFile.path
-        }
-    }
-}
-
 fun computeNodeDir(nodeExtension: NodeExtension): Provider<Directory> {
     val osName = nodeExtension.resolvedPlatform.get().name
     val osArch = nodeExtension.resolvedPlatform.get().arch

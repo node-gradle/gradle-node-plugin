@@ -110,34 +110,19 @@ abstract class NpmExecRunner {
         val nodeExecProvider = computeNodeExec(nodeExtension, nodeBinDirProvider)
         val executableProvider =
             npmExecConfiguration.commandExecComputer(variantComputer, nodeExtension, npmBinDirProvider)
+        val isWindows = nodeExtension.resolvedPlatform.get().isWindows()
         val npmScriptFileProvider =
-            computeNpmScriptFile(nodeDirProvider, npmExecConfiguration.command, nodeExtension.resolvedPlatform)
-        return computeExecutable(
-            npmExecConfiguration.command,
-            nodeExtension,
-            executableProvider,
-            nodeExecProvider,
-            npmScriptFileProvider
-        )
-    }
-
-    private fun computeExecutable(
-        command: String,
-        nodeExtension: NodeExtension,
-        executableProvider: Provider<String>,
-        nodeExecProvider: Provider<String>,
-        npmScriptFileProvider: Provider<String>,
-    ): Provider<ExecutableAndScript> {
+            computeNpmScriptFile(nodeDirProvider, npmExecConfiguration.command, isWindows)
         return zip(
             nodeExtension.download,
             nodeExtension.nodeProjectDir,
             executableProvider,
             nodeExecProvider,
-            npmScriptFileProvider
+            npmScriptFileProvider,
         ).map { (download, nodeProjectDir, executable, nodeExec, npmScriptFile) ->
             if (download) {
                 val localCommandScript = nodeProjectDir.dir("node_modules/npm/bin")
-                    .file("${command}-cli.js").asFile
+                    .file("${npmExecConfiguration.command}-cli.js").asFile
                 if (localCommandScript.exists()) {
                     return@map ExecutableAndScript(nodeExec, localCommandScript.absolutePath)
                 } else if (!File(executable).exists()) {
