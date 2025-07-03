@@ -32,17 +32,9 @@ abstract class NpmExecSource @Inject internal constructor(
 ) : ValueSource<NpmExecResult, NpmExecSource.Parameters> {
 
     abstract class Parameters internal constructor() : NpmExecSpec(), ValueSourceParameters {
-        //        /**
-//         * The `npm` executable.
-//         *
-//         * This could either be a path to the `npm` executable file,
-//         * or the name of the `PATH` executable.
-//         */
-//        abstract val executable: Property<String>
         abstract val ignoreExitValue: Property<Boolean>
         abstract val workingDir: DirectoryProperty
         abstract val npmCommand: ListProperty<String>
-//        abstract val args: ListProperty<String>
     }
 
 
@@ -66,8 +58,6 @@ abstract class NpmExecSource @Inject internal constructor(
                 command = command,
                 environment = parameters.environment.orNull.orEmpty(),
                 workingDir = parameters.workingDir.asFile.orNull,
-//                ignoreExitValue = ignoreExitValue.get(),
-//                execOverrides = execOverrides.orNull,
             )
         return executeNpmCommand(nodeExecConfiguration)
     }
@@ -76,7 +66,7 @@ abstract class NpmExecSource @Inject internal constructor(
         execConfiguration: ExecConfiguration
     ): Map<String, String> {
         return mutableMapOf<String, String>().apply {
-            if (parameters.includeSystemEnvironment.orNull == true) {
+            if (parameters.includeSystemEnvironment.getOrElse(true)) {
                 putAll(System.getenv())
             }
             putAll(parameters.environment.get())
@@ -94,10 +84,7 @@ abstract class NpmExecSource @Inject internal constructor(
 
 
     private fun executeNpmCommand(
-//        project: ProjectApiHelper,
-//        extension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
-//        variants: VariantComputer,
     ): NpmExecResult {
         val npmExecConfiguration = NpmExecConfiguration(
             command = "npm",
@@ -116,38 +103,17 @@ abstract class NpmExecSource @Inject internal constructor(
         val proxiedNodeExecConfiguration = nodeExecConfiguration.copy(environment = proxiedEnvVars)
 
         return executeCommand(
-//            project = project,
-//            extension = extension,
             nodeExecConfiguration = proxiedNodeExecConfiguration,
             npmExecConfiguration = npmExecConfiguration,
-//            variantComputer = variants
         )
     }
 
-//private     fun executeNpxCommand(
-//        project: ProjectApiHelper,
-//        extension: NodeExtension,
-//        nodeExecConfiguration: NodeExecConfiguration,
-//        variants: VariantComputer
-//    ): ExecResult {
-//        val npxExecConfiguration = NpmExecConfiguration("npx") { variantComputer, parameters, npmBinDir ->
-//            variantComputer.computeNpxExec(parameters, npmBinDir)
-//        }
-//
-//        return executeCommand(project, extension, nodeExecConfiguration, npxExecConfiguration, variants)
-//    }
-
     private fun executeCommand(
-//        project: ProjectApiHelper? = null,
-//        extension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
         npmExecConfiguration: NpmExecConfiguration,
-//        variants: VariantComputer,
     ): NpmExecResult {
         val execConfiguration =
             computeExecConfiguration(npmExecConfiguration, nodeExecConfiguration)
-//        val execRunner = ExecRunner()
-//        return execRunner.execute(project, extension, execConfiguration)
 
         ByteArrayOutputStream().use { capturedOutput ->
             val result = execOps.exec {
@@ -155,14 +121,8 @@ abstract class NpmExecSource @Inject internal constructor(
                 executable = execConfiguration.executable
                 args = execConfiguration.args
                 environment = computeEnvironment(execConfiguration)
-//                isIgnoreExitValue = execConfiguration.ignoreExitValue
                 workingDir = computeWorkingDir(nodeProjectDir, execConfiguration)
-
-//                executable = parameters.executable.get()
-//                args = parameters.arguments.orNull.orEmpty()
-//                environment = computeEnvironment()
-                isIgnoreExitValue = parameters.ignoreExitValue.getOrElse(false)
-//                workingDir = parameters.workingDir.get().asFile
+                isIgnoreExitValue = parameters.ignoreExitValue.getOrElse(true)
                 standardOutput = capturedOutput
                 errorOutput = capturedOutput
             }
@@ -183,15 +143,11 @@ abstract class NpmExecSource @Inject internal constructor(
     }
 
     private fun computeExecConfiguration(
-//        extension: NodeExtension,
         npmExecConfiguration: NpmExecConfiguration,
         nodeExecConfiguration: NodeExecConfiguration,
     ): ExecConfiguration {
         val additionalBinPath = computeAdditionalBinPath()
         val executableAndScript = computeExecutable(npmExecConfiguration)
-//        return zip(additionalBinPathProvider, executableAndScriptProvider)
-//            .map { (additionalBinPath, executableAndScript) ->
-//            }
         val argsPrefix =
             if (executableAndScript.script != null) listOf(executableAndScript.script) else listOf()
         val args = argsPrefix.plus(nodeExecConfiguration.command)
@@ -201,15 +157,12 @@ abstract class NpmExecSource @Inject internal constructor(
             additionalBinPaths = additionalBinPath,
             environment = nodeExecConfiguration.environment,
             workingDir = nodeExecConfiguration.workingDir,
-//            ignoreExitValue = nodeExecConfiguration.ignoreExitValue,
             execOverrides = nodeExecConfiguration.execOverrides,
         )
     }
 
     private fun computeExecutable(
-//        parameters: NodeExtension,
         npmExecConfiguration: NpmExecConfiguration,
-//        variantComputer: VariantComputer
     ): ExecutableAndScript {
         val nodeDirProvider = parameters.resolvedNodeDir.get()
         val npmDirProvider = computeNpmDir(nodeDirProvider)
@@ -316,24 +269,10 @@ abstract class NpmExecSource @Inject internal constructor(
      */
     private fun computeNpmExec(npmBinDirProvider: Directory): String {
         return computeExec(
-//            nodeExtension = nodeExtension,
             binDirProvider = npmBinDirProvider,
             configurationCommand = npmCommand.single(),
         )
     }
-
-//    /**
-//     * Get the expected node binary name, npx.cmd on Windows and npx everywhere else.
-//     *
-//     * Can be overridden by setting npxCommand.
-//     */
-//private     fun computeNpxExec(nodeExtension: NodeExtension, npmBinDirProvider: Directory): Provider<String> {
-//        return computeExec(
-//            nodeExtension,
-//            npmBinDirProvider,
-//            parameters.npxCommand, "npx", "npx.cmd"
-//        )
-//    }
 
     /**
      * Compute the path for a given command, from a given binary directory, taking Windows into account
@@ -374,21 +313,12 @@ abstract class NpmExecSource @Inject internal constructor(
         val additionalBinPaths: List<String> = listOf(),
         val environment: Map<String, String> = mapOf(),
         val workingDir: File? = null,
-//        val ignoreExitValue: Boolean = false,
         val execOverrides: Action<ExecSpec>? = null
     )
-
-//    internal typealias CommandExecComputer = (
-//        variantComputer: VariantComputer,
-//        nodeExtension: NodeExtension,
-//        npmBinDir: Provider<Directory>,
-//    ) -> Provider<String>
 
     private data class NpmExecConfiguration(
         val command: String,
         val commandExecComputer: (
-//            variantComputer: VariantComputer,
-//            nodeExtension: NodeExtension,
             npmBinDir: Directory,
         ) -> String,
     )
@@ -414,13 +344,10 @@ abstract class NpmExecSource @Inject internal constructor(
         }
     }
 
-
     private data class NodeExecConfiguration(
         val command: List<String> = listOf(),
         val environment: Map<String, String> = mapOf(),
         val workingDir: File? = null,
-//        val ignoreExitValue: Boolean = false,
         val execOverrides: Action<ExecSpec>? = null
     )
-
 }

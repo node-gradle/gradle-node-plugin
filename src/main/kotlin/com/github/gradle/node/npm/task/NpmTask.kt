@@ -82,9 +82,12 @@ abstract class NpmTask : BaseTask() {
 //            parameters.npmCommand.set(nodeExtension.npmCommand)
 //            parameters.args.set(args)
         }
-        val result = npmExec.get().asExecResult()
-        result.rethrowFailure()
-        this.result = result
+        val result = npmExec.get()
+        if (result.failure != null) {
+            logger.error(result.capturedOutput)
+            throw RuntimeException("$path failed to execute npm command.", result.failure)
+        }
+        this.result = result.asExecResult()
 //        val command = npmCommand.get().plus(args.get())
 //        val nodeExecConfiguration =
 //            NodeExecConfiguration(
