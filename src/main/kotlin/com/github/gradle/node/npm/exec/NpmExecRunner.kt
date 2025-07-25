@@ -24,17 +24,26 @@ abstract class NpmExecRunner {
         project: ProjectApiHelper,
         extension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
-        variants: VariantComputer
+        variants: VariantComputer,
     ): ExecResult {
         val npmExecConfiguration = NpmExecConfiguration(
-            "npm"
-        ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpmExec(nodeExtension, npmBinDir) }
+            command = "npm",
+            commandExecComputer = { variantComputer, nodeExtension, npmBinDir ->
+                variantComputer.computeNpmExec(
+                    nodeExtension,
+                    npmBinDir
+                )
+            }
+        )
         return executeCommand(
-            project,
-            extension,
-            NpmProxy.addProxyEnvironmentVariables(extension.nodeProxySettings.get(), nodeExecConfiguration),
-            npmExecConfiguration,
-            variants
+            project = project,
+            extension = extension,
+            nodeExecConfiguration = NpmProxy.addProxyEnvironmentVariables(
+                proxySettings = extension.nodeProxySettings.get(),
+                nodeExecConfiguration = nodeExecConfiguration
+            ),
+            npmExecConfiguration = npmExecConfiguration,
+            variantComputer = variants
         )
     }
 
@@ -78,9 +87,13 @@ abstract class NpmExecRunner {
                     if (executableAndScript.script != null) listOf(executableAndScript.script) else listOf()
                 val args = argsPrefix.plus(nodeExecConfiguration.command)
                 ExecConfiguration(
-                    executableAndScript.executable, args, additionalBinPath,
-                    nodeExecConfiguration.environment, nodeExecConfiguration.workingDir,
-                    nodeExecConfiguration.ignoreExitValue, nodeExecConfiguration.execOverrides
+                    executable = executableAndScript.executable,
+                    args = args,
+                    additionalBinPaths = additionalBinPath,
+                    environment = nodeExecConfiguration.environment,
+                    workingDir = nodeExecConfiguration.workingDir,
+                    ignoreExitValue = nodeExecConfiguration.ignoreExitValue,
+                    execOverrides = nodeExecConfiguration.execOverrides,
                 )
             }
     }
@@ -101,11 +114,12 @@ abstract class NpmExecRunner {
         val npmScriptFileProvider =
             computeNpmScriptFile(nodeDirProvider, npmExecConfiguration.command, isWindows)
         return zip(
-            nodeExtension.download, nodeExtension.nodeProjectDir, executableProvider, nodeExecProvider,
-            npmScriptFileProvider
-        ).map {
-            val (download, nodeProjectDir, executable, nodeExec,
-                npmScriptFile) = it
+            nodeExtension.download,
+            nodeExtension.nodeProjectDir,
+            executableProvider,
+            nodeExecProvider,
+            npmScriptFileProvider,
+        ).map { (download, nodeProjectDir, executable, nodeExec, npmScriptFile) ->
             if (download) {
                 val localCommandScript = nodeProjectDir.dir("node_modules/npm/bin")
                     .file("${npmExecConfiguration.command}-cli.js").asFile
@@ -121,7 +135,7 @@ abstract class NpmExecRunner {
 
     private data class ExecutableAndScript(
         val executable: String,
-        val script: String? = null
+        val script: String? = null,
     )
 
     private fun computeAdditionalBinPath(

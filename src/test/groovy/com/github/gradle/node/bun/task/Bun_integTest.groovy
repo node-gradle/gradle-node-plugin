@@ -14,7 +14,7 @@ class Bun_integTest extends AbstractIntegTest {
         copyResources("fixtures/javascript-project/", "javascript-project")
 
         when:
-        def result1 = build("build")
+        def result1 = build("build", "--stacktrace")
 
         then:
         result1.task(":bunInstall").outcome == TaskOutcome.SUCCESS
@@ -28,7 +28,7 @@ class Bun_integTest extends AbstractIntegTest {
         createFile("javascript-project/output-bun/index.js").isFile()
 
         when:
-        def result2 = build("build")
+        def result2 = build("build", "--stacktrace")
 
         then:
         // Not up-to-date because the bun.lockb now exists
@@ -37,7 +37,7 @@ class Bun_integTest extends AbstractIntegTest {
         result2.task(":buildBun").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result3 = build("build")
+        def result3 = build("build", "--stacktrace")
 
         then:
         result3.task(":bunInstall").outcome == TaskOutcome.UP_TO_DATE

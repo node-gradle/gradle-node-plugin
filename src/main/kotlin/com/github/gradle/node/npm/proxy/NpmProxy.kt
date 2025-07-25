@@ -2,8 +2,6 @@ package com.github.gradle.node.npm.proxy
 
 import com.github.gradle.node.exec.NodeExecConfiguration
 import java.net.URLEncoder
-import java.util.stream.Collectors.toList
-import java.util.stream.Stream
 import kotlin.text.Charsets.UTF_8
 
 class NpmProxy {
@@ -12,7 +10,7 @@ class NpmProxy {
         // These are the environment variables that HTTPing applications checks, proxy is on and off.
         // FTP skipped in hopes of a better future.
         private val proxyVariables = listOf(
-                "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "PROXY"
+            "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "PROXY"
         )
 
         // And since npm also takes settings in the form of environment variables with the
@@ -21,7 +19,7 @@ class NpmProxy {
         // on Linux will fight you. So you'll have to be pretty sneaky to do this.
         // I'm adding both here "just in case".
         private val npmProxyVariables = listOf(
-                "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_HTTPS_PROXY", "NPM_CONFIG_NOPROXY"
+            "NPM_CONFIG_PROXY", "NPM_CONFIG_HTTPS-PROXY", "NPM_CONFIG_HTTPS_PROXY", "NPM_CONFIG_NOPROXY"
         )
 
         /**
@@ -72,21 +70,38 @@ class NpmProxy {
         /**
          * Creates a new NodeExecConfiguration with the proxy environment variables configured
          */
-        fun addProxyEnvironmentVariables(proxySettings: ProxySettings, nodeExecConfiguration: NodeExecConfiguration,
-                                         environment: Map<String, String> = System.getenv()): NodeExecConfiguration {
+        fun addProxyEnvironmentVariables(
+            proxySettings: ProxySettings,
+            nodeExecConfiguration: NodeExecConfiguration,
+            environment: Map<String, String> = System.getenv()
+        ): NodeExecConfiguration {
+            val environmentVariables = createProxyEnvironmentVariables(
+                proxySettings,
+                nodeExecConfiguration.environment,
+                environment,
+            )
+            return nodeExecConfiguration.copy(environment = environmentVariables)
+        }
+
+        fun createProxyEnvironmentVariables(
+            proxySettings: ProxySettings,
+            nodeExecConfigurationEnvironment: Map<String, String>,
+            environment: Map<String, String> = System.getenv()
+        ): Map<String, String> {
             if (shouldConfigureProxy(environment, proxySettings)) {
                 val npmProxyEnvironmentVariables = computeNpmProxyEnvironmentVariables()
-                val environmentVariablesToUnset = if (proxySettings == ProxySettings.FORCED) getKnownProxyConfigurationKeys()
-                                                  else emptySet()
+                val environmentVariablesToUnset =
+                    if (proxySettings == ProxySettings.FORCED) getKnownProxyConfigurationKeys()
+                    else emptySet()
                 if (npmProxyEnvironmentVariables.isNotEmpty()) {
                     val environmentVariables =
-                        nodeExecConfiguration.environment
+                        nodeExecConfigurationEnvironment
                             .minus(environmentVariablesToUnset)
                             .plus(npmProxyEnvironmentVariables)
-                    return nodeExecConfiguration.copy(environment = environmentVariables)
+                    return environmentVariables
                 }
             }
-            return nodeExecConfiguration
+            return emptyMap()
         }
 
         private fun computeProxyUrlEnvironmentVariables(): MutableMap<String, String> {
@@ -101,7 +116,7 @@ class NpmProxy {
                     val proxyPassword = System.getProperty("$proxyProto.proxyPassword")
                     if (proxyUser != null && proxyPassword != null) {
                         proxyArgs[proxyParam] =
-                                "http://${encode(proxyUser)}:${encode(proxyPassword)}@$proxyHost:$proxyPort"
+                            "http://${encode(proxyUser)}:${encode(proxyPassword)}@$proxyHost:$proxyPort"
                     } else {
                         proxyArgs[proxyParam] = "http://$proxyHost:$proxyPort"
                     }
@@ -114,7 +129,9 @@ class NpmProxy {
             return URLEncoder.encode(value, UTF_8.toString())
         }
 
-        private fun addProxyIgnoredHostsEnvironmentVariable(proxyEnvironmentVariables: MutableMap<String, String>) {
+        private fun addProxyIgnoredHostsEnvironmentVariable(
+            proxyEnvironmentVariables: MutableMap<String, String>,
+        ) {
             val proxyIgnoredHosts = computeProxyIgnoredHosts()
             if (proxyIgnoredHosts.isNotEmpty()) {
                 proxyEnvironmentVariables["NO_PROXY"] = proxyIgnoredHosts.joinToString(", ")
@@ -122,22 +139,20 @@ class NpmProxy {
         }
 
         private fun computeProxyIgnoredHosts(): List<String> {
-            return Stream.of("http.nonProxyHosts", "https.nonProxyHosts")
-                    .map { property ->
-                        val propertyValue = System.getProperty(property)
-                        if (propertyValue != null) {
-                            val hosts = propertyValue.split("|")
-                            return@map hosts
-                                    .map { host ->
-                                        if (host.contains(":")) host.split(":")[0]
-                                        else host
-                                    }
+            return listOf("http.nonProxyHosts", "https.nonProxyHosts")
+                .map { property ->
+                    val propertyValue = System.getProperty(property)
+                    if (propertyValue != null) {
+                        val hosts = propertyValue.split("|")
+                        return@map hosts.map { host ->
+                            host.substringBefore(":")
                         }
-                        return@map listOf<String>()
                     }
-                    .flatMap(List<String>::stream)
-                    .distinct()
-                    .collect(toList())
+                    return@map listOf()
+                }
+                .flatten()
+                .distinct()
         }
+
     }
 }

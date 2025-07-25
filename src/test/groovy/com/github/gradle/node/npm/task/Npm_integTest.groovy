@@ -12,7 +12,7 @@ class Npm_integTest extends AbstractIntegTest {
         copyResources("fixtures/javascript-project/", "javascript-project")
 
         when:
-        def result1 = build("build")
+        def result1 = build("build", "--stacktrace")
 
         then:
         result1.task(":npmInstall").outcome == TaskOutcome.SUCCESS
@@ -26,7 +26,7 @@ class Npm_integTest extends AbstractIntegTest {
         createFile("javascript-project/output-npm/index.js").isFile()
 
         when:
-        def result2 = build("build")
+        def result2 = build("build", "--stacktrace")
 
         then:
         // Not up-to-date because the package-lock.json now exists
@@ -35,7 +35,7 @@ class Npm_integTest extends AbstractIntegTest {
         result2.task(":buildNpm").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result3 = build("build")
+        def result3 = build("build", "--stacktrace")
 
         then:
         result3.task(":npmInstall").outcome == TaskOutcome.UP_TO_DATE

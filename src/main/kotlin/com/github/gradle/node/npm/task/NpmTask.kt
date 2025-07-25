@@ -2,8 +2,7 @@ package com.github.gradle.node.npm.task
 
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.exec.NodeExecConfiguration
-import com.github.gradle.node.npm.exec.NpmExecRunner
+import com.github.gradle.node.npm.exec.NpmExecSource
 import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.Action
@@ -13,10 +12,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.listProperty
-import org.gradle.kotlin.dsl.mapProperty
-import org.gradle.kotlin.dsl.newInstance
-import org.gradle.kotlin.dsl.property
+import org.gradle.kotlin.dsl.*
 import org.gradle.process.ExecSpec
 import javax.inject.Inject
 
@@ -66,11 +62,47 @@ abstract class NpmTask : BaseTask() {
 
     @TaskAction
     fun exec() {
-        val command = npmCommand.get().plus(args.get())
-        val nodeExecConfiguration =
-                NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull, ignoreExitValue.get(),
-                        execOverrides.orNull)
-        val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        result = npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        @Suppress("UnstableApiUsage")
+        val npmExec = providers.of(NpmExecSource::class) {
+            parameters.arguments.set(args)
+            parameters.environment.set(environment)
+            parameters.npmCommand.set(npmCommand)
+
+            parameters.ignoreExitValue.set(true)
+            parameters.workingDir.set(workingDir.asFile.orNull)
+
+            parameters.download.set(nodeExtension.download)
+            parameters.resolvedNodeDir.set(nodeExtension.resolvedNodeDir)
+            parameters.resolvedPlatform.set(nodeExtension.resolvedPlatform)
+            parameters.npmVersion.set(nodeExtension.npmVersion)
+            parameters.npmWorkDir.set(nodeExtension.npmWorkDir)
+            parameters.nodeProjectDir.set(nodeExtension.nodeProjectDir)
+            parameters.nodeProxySettings.set(nodeExtension.nodeProxySettings)
+            parameters.coreNpmCommand.set(nodeExtension.npmCommand)
+        }
+        val result = npmExec.get()
+        if (result.failure != null) {
+            logger.error(result.capturedOutput)
+            throw RuntimeException("$path failed to execute npm command.", result.failure)
+        } else {
+            logger.info(result.capturedOutput)
+        }
+        this.result = result.asExecResult().rethrowFailure()
+//        val command = npmCommand.get().plus(args.get())
+//        val nodeExecConfiguration =
+//            NodeExecConfiguration(
+//                command = command,
+//                environment = environment.get(),
+//                workingDir = workingDir.asFile.orNull,
+//                ignoreExitValue = ignoreExitValue.get(),
+//                execOverrides = execOverrides.orNull,
+//            )
+//        val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
+//        result = npmExecRunner.executeNpmCommand(
+//            project = projectHelper,
+//            extension = nodeExtension,
+//            nodeExecConfiguration = nodeExecConfiguration,
+//            variants = variantComputer,
+//        )
     }
 }
