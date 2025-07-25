@@ -90,16 +90,18 @@ tasks.withType(Test::class) {
         }
     }
 
-    distribution {
-        enabled.set(project.properties["com.github.gradle.node.testdistribution"].toString().toBoolean())
-        remoteExecutionPreferred.set(project.properties["com.github.gradle.node.preferremote"].toString().toBoolean())
-        if (project.properties["com.github.gradle.node.remoteonly"].toString().toBoolean()) {
-            maxLocalExecutors.set(0)
+    develocity {
+        testDistribution {
+            enabled.set(project.properties["com.github.gradle.node.testdistribution"].toString().toBoolean())
+            remoteExecutionPreferred.set(project.properties["com.github.gradle.node.preferremote"].toString().toBoolean())
+            if (project.properties["com.github.gradle.node.remoteonly"].toString().toBoolean()) {
+                maxLocalExecutors.set(0)
+            }
         }
-    }
 
-    predictiveSelection {
-        enabled.set(project.properties["com.github.gradle.node.predictivetestselection"].toString().toBoolean())
+        predictiveTestSelection {
+            enabled.set(project.properties["com.github.gradle.node.predictivetestselection"].toString().toBoolean())
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 plugins {
-    id("com.gradle.develocity") version("3.18.1")
-    id("com.gradle.common-custom-user-data-gradle-plugin") version("2.0.2")
+    id("com.gradle.develocity") version("4.1")
+    id("com.gradle.common-custom-user-data-gradle-plugin") version("2.3")
 }
 
 val isCI = System.getenv().containsKey("CI")
@@ -18,6 +18,7 @@ develocity {
 
         capture {
             fileFingerprints.set(publishAlwaysIf || isPR)
+            resourceUsage.set(isCI)
         }
 
         obfuscation {
