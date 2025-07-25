@@ -29,4 +29,4 @@ jobs:
           develocity-access-key: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
           cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Build
-        run: ./gradlew --scan "-Pcom.github.gradle.node.predictivetestselection=${{ github.event_name == 'pull_request' }}" ${{ matrix.config.params }}
+        run: ./gradlew "-Pcom.github.gradle.node.predictivetestselection=${{ github.event_name == 'pull_request' }}" ${{ matrix.config.params }}
