@@ -24,10 +24,9 @@ jobs:
         with:
           node-version: 18
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v4.4.1
         with:
+          develocity-access-key: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
           cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Build
         run: ./gradlew --scan "-Pcom.github.gradle.node.predictivetestselection=${{ github.event_name == 'pull_request' }}" ${{ matrix.config.params }}
-        env:
-          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
