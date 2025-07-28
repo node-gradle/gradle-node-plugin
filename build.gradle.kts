@@ -19,6 +19,7 @@ plugins {
     id("com.cinnober.gradle.semver-git") version "3.0.0"
     id("org.jetbrains.dokka") version "1.7.10"
     id("org.gradle.test-retry") version "1.5.0"
+    `maven-publish`
 }
 
 group = "com.github.node-gradle"
@@ -58,6 +59,35 @@ dependencies {
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            groupId = "com.github.node-gradle"
+            artifactId = "gradle-node-plugin"
+            version = project.version.toString()
+            pom {
+                name.set("Gradle Node.js Plugin")
+                description.set("Gradle plugin for executing Node.js scripts. Supports npm, pnpm, Yarn, and Bun.")
+                url.set("https://github.com/node-gradle/gradle-node-plugin")
+                licenses {
+                    license {
+                        name.set("Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "localMaven"
+            url = uri("${buildDir}/maven-repo")
+        }
+    }
+}
+
 
 tasks.compileTestGroovy {
     // Should be
