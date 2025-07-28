@@ -233,18 +233,18 @@ node {
     npmInstallCommand = "install"
 
     // The directory where Node.js is unpacked (when download is true)
-    workDir = file("${project.projectDir}/.gradle/nodejs")
+    workDir.value(layout.projectDirectory.dir(".gradle/nodejs"))
 
     // The directory where npm is installed (when a specific version is defined)
-    npmWorkDir = file("${project.projectDir}/.gradle/npm")
+    npmWorkDir.value(layout.projectDirectory.dir(".gradle/npm"))
 
     // The directory where yarn is installed (when a Yarn task is used)
-    yarnWorkDir = file("${project.projectDir}/.gradle/yarn")
+    yarnWorkDir.value(layout.projectDirectory.dir(".gradle/yarn"))
 
     // The Node.js project directory location
     // This is where the package.json file and node_modules directory are located
     // By default it is at the root of the current project
-    nodeProjectDir = file("${project.projectDir}")
+    nodeProjectDir.value(layout.projectDirectory)
 
     // Whether the plugin automatically should add the proxy configuration to npm and yarn commands
     // according the proxy configuration defined for Gradle
