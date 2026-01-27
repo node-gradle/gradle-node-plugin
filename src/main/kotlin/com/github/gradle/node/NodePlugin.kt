@@ -52,7 +52,8 @@ class NodePlugin : Plugin<Project> {
         addYarnRule(nodeExtension.enableTaskRules)
         project.afterEvaluate {
             if (nodeExtension.download.get()) {
-                nodeExtension.distBaseUrl.orNull?.let { addRepository(it, nodeExtension.allowInsecureProtocol.orNull) }
+                nodeExtension.distBaseUrl.orNull?.let { addRepository(it, nodeExtension.allowInsecureProtocol.orNull,
+                    nodeExtension.exclusiveRepository.getOrElse(true)) }
                 configureNodeSetupTask(nodeExtension)
             }
         }
@@ -182,8 +183,8 @@ class NodePlugin : Plugin<Project> {
         }
     }
 
-    private fun addRepository(distUrl: String, allowInsecureProtocol: Boolean?) {
-        project.repositories.ivy {
+    private fun addRepository(distUrl: String, allowInsecureProtocol: Boolean?, exclusiveRepository: Boolean) {
+        val repository = project.repositories.ivy {
             name = "Node.js"
             setUrl(distUrl)
             patternLayout {
@@ -196,6 +197,17 @@ class NodePlugin : Plugin<Project> {
                 includeModule("org.nodejs", "node")
             }
             allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
+        }
+
+        if (exclusiveRepository) {
+            project.repositories.exclusiveContent {
+                forRepository {
+                    repository
+                }
+                filter {
+                    includeModule("org.nodejs", "node")
+                }
+            }
         }
     }
 

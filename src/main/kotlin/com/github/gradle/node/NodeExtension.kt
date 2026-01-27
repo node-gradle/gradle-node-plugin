@@ -92,6 +92,12 @@ open class NodeExtension(project: Project) {
      */
     val allowInsecureProtocol = project.objects.property<Boolean>()
 
+    /**
+     * Specifies whether the Node.js repository added to the project should be accessed exclusively.
+     * Only used if download is true
+     */
+    val exclusiveRepository = project.objects.property<Boolean>().convention(true)
+
     val npmCommand = project.objects.property<String>().convention("npm")
     val npxCommand = project.objects.property<String>().convention("npx")
     val pnpmCommand = project.objects.property<String>().convention("pnpm")
