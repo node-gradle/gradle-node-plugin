@@ -4,7 +4,6 @@ import com.github.gradle.AbstractIntegTest
 import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.IgnoreIf
 
-@IgnoreIf({ os.windows })
 class Bun_integTest extends AbstractIntegTest {
     def 'install packages with Bun and project in sub directory (#gv.version)'() {
         given:

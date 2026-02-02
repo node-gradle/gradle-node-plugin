@@ -7,7 +7,6 @@ import spock.lang.IgnoreIf
 
 import static com.github.gradle.node.NodeExtension.DEFAULT_NODE_VERSION
 
-@IgnoreIf({ os.windows })
 class BunInstall_integTest extends AbstractIntegTest {
 
     def 'install packages with bun (#gv.version)'() {

@@ -6,7 +6,6 @@ import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Ignore
 import spock.lang.IgnoreIf
 
-@IgnoreIf({ os.windows })
 class BunTask_integTest extends AbstractIntegTest {
     def 'execute bun command with a package.json file and check inputs up-to-date detection (#gv.version)'() {
         given:
