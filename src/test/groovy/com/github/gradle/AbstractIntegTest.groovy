@@ -36,6 +36,7 @@ abstract class AbstractIntegTest extends Specification {
                 .withPluginClasspath()
                 .forwardOutput()
                 .withGradleVersion(gradleVersion.version)
+                .withTestKitDir(createFile(".gradle-homedir"))
                 .withDebug(false)
     }
 
