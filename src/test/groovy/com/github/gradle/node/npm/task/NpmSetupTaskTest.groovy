@@ -28,7 +28,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         nodeExtension.npmVersion.set('6.4.1')
 
         def task = project.tasks.create('simple', NpmSetupTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()
@@ -51,7 +51,7 @@ class NpmSetupTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpProxyPort(1234)
 
         def task = project.tasks.create('simple', NpmSetupTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()

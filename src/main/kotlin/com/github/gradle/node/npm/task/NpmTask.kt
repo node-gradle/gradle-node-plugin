@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import javax.inject.Inject
 
@@ -26,6 +27,9 @@ abstract class NpmTask : BaseTask() {
 
     @get:Inject
     abstract val providers: ProviderFactory
+
+    @get:Inject
+    abstract val execOperations: ExecOperations
 
     @get:Optional
     @get:Input
@@ -48,9 +52,6 @@ abstract class NpmTask : BaseTask() {
     val execOverrides = objects.property<Action<ExecSpec>>()
 
     @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
-
-    @get:Internal
     val nodeExtension = NodeExtension[project]
 
     init {
@@ -71,6 +72,6 @@ abstract class NpmTask : BaseTask() {
                 NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull, ignoreExitValue.get(),
                         execOverrides.orNull)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        result = npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = npmExecRunner.executeNpmCommand(execOperations, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }

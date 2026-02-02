@@ -18,7 +18,7 @@ class NpmTaskTest extends AbstractTaskTest {
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
         task.ignoreExitValue.set(true)
@@ -40,7 +40,7 @@ class NpmTaskTest extends AbstractTaskTest {
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
         task.ignoreExitValue.set(true)
@@ -65,7 +65,7 @@ class NpmTaskTest extends AbstractTaskTest {
                 .resolve("node-v${DEFAULT_NODE_VERSION}-linux-x64")
 
         def task = project.tasks.create('simple', NpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(["run", "command"])
 
         when:
@@ -96,7 +96,7 @@ class NpmTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpProxyPort(123)
 
         def task = project.tasks.create('simple', NpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(["run", "command"])
 
         when:
@@ -125,7 +125,7 @@ class NpmTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpsProxyPort(11235)
 
         def task = project.tasks.create('simple', NpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(['a', 'b'])
 
         when:
@@ -146,7 +146,7 @@ class NpmTaskTest extends AbstractTaskTest {
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.create('simple', NpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(['a', 'b'])
 
         when:

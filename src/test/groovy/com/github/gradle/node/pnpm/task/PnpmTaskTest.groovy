@@ -9,7 +9,7 @@ class PnpmTaskTest extends AbstractTaskTest {
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
 
         def task = project.tasks.create('simple', PnpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
         task.ignoreExitValue.set(true)
@@ -32,7 +32,7 @@ class PnpmTaskTest extends AbstractTaskTest {
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
 
         def task = project.tasks.create('simple', PnpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
         task.ignoreExitValue.set(true)
@@ -56,7 +56,7 @@ class PnpmTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', PnpmTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()

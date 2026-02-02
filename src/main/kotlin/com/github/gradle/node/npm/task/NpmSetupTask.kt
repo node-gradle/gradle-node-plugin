@@ -16,6 +16,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.newInstance
+import org.gradle.process.ExecOperations
 import java.io.File
 import javax.inject.Inject
 
@@ -23,18 +24,17 @@ import javax.inject.Inject
  * npm install that only gets executed if gradle decides so.
  */
 abstract class NpmSetupTask : BaseTask() {
-
     @get:Inject
     abstract val objects: ObjectFactory
 
     @get:Inject
     abstract val providers: ProviderFactory
 
-    @get:Internal
-    protected val nodeExtension = NodeExtension[project]
+    @get:Inject
+    abstract val execOperations: ExecOperations
 
     @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
+    protected val nodeExtension = NodeExtension[project]
 
     @get:Input
     val args = objects.listProperty<String>()
@@ -72,7 +72,7 @@ abstract class NpmSetupTask : BaseTask() {
         val command = computeCommand()
         val nodeExecConfiguration = NodeExecConfiguration(command)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        result = npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = npmExecRunner.executeNpmCommand(execOperations, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 
     protected open fun computeCommand(): List<String> {

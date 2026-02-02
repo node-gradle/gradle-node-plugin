@@ -1,5 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_4
 
 buildscript {
     repositories {
@@ -15,7 +17,7 @@ plugins {
     `kotlin-dsl`
     idea
     jacoco
-    id("com.gradle.plugin-publish") version "1.0.0-rc-3"
+    id("com.gradle.plugin-publish") version "2.0.0"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
     id("org.jetbrains.dokka") version "1.7.10"
 }
@@ -23,19 +25,34 @@ plugins {
 group = "com.github.node-gradle"
 
 val compatibilityVersion = JavaVersion.VERSION_1_8
+val toolchainVersion = JavaLanguageVersion.of(17)
 
 java {
-    sourceCompatibility = compatibilityVersion
+    toolchain {
+        languageVersion.set(toolchainVersion)
+    }
+
     targetCompatibility = compatibilityVersion
 }
 
-tasks.compileKotlin {
-    kotlinOptions {
-        apiVersion = "1.3"
-        freeCompilerArgs = listOf("-Xno-optimized-callable-references")
-        jvmTarget = compatibilityVersion.toString()
+kotlin {
+    jvmToolchain {
+        languageVersion.set(toolchainVersion)
+    }
+
+    compilerOptions {
+        apiVersion.set(KOTLIN_1_4)
+        jvmTarget.set(JvmTarget.JVM_1_8)
     }
 }
+
+//tasks.compileKotlin {
+//    kotlinOptions {
+//        apiVersion = "1.3"
+//        freeCompilerArgs = listOf("-Xno-optimized-callable-references")
+//        jvmTarget = compatibilityVersion.toString()
+//    }
+//}
 
 repositories {
     mavenCentral()
@@ -51,7 +68,7 @@ dependencies {
     testImplementation("cglib:cglib-nodep:3.3.0")
     testImplementation("org.objenesis:objenesis:3.3")
     testImplementation("commons-io:commons-io:2.13.0")
-    testImplementation(platform("org.spockframework:spock-bom:2.3-groovy-3.0"))
+    testImplementation(platform("org.spockframework:spock-bom:2.3-groovy-4.0"))
     testImplementation("org.spockframework:spock-core")
     testImplementation("org.spockframework:spock-junit4")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
@@ -63,8 +80,9 @@ tasks.compileTestGroovy {
     // classpath += files(sourceSets.test.get().kotlin.classesDirectory)
     // but unable to get it compile in the Kotlin DSL - works in the Groovy DSL as this
     // classpath += files(sourceSets.test.kotlin.classesDirectory)
+    // classpath += files("${layout.buildDirectory}/kotlin/test")
     // This workaround works
-    classpath += files("${buildDir}/classes/kotlin/test")
+    classpath += files(sourceSets.test.get().kotlin.classesDirectory)
 }
 
 tasks.withType(Test::class) {
@@ -156,21 +174,18 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
 }
 
 gradlePlugin {
+    website = "https://github.com/node-gradle/gradle-node-plugin"
+    vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
     plugins {
         register("nodePlugin") {
             id = "com.github.node-gradle.node"
             implementationClass = "com.github.gradle.node.NodePlugin"
             displayName = "Gradle Node.js Plugin"
             description = "Gradle plugin for executing Node.js scripts. Supports npm, pnpm, Yarn and Bun."
+
+            tags = listOf("java", "node", "node.js", "npm", "yarn", "pnpm", "bun")
         }
     }
-}
-
-pluginBundle {
-    website = "https://github.com/node-gradle/gradle-node-plugin"
-    vcsUrl = "https://github.com/node-gradle/gradle-node-plugin"
-
-    tags = listOf("java", "node", "node.js", "npm", "yarn", "pnpm", "bun")
 }
 
 tasks.wrapper {

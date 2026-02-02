@@ -46,7 +46,7 @@ abstract class YarnInstallTask : YarnTask() {
         return projectFileIfExists("yarn.lock").orNull
     }
 
-    private fun projectFileIfExists(name: String): Provider<File?> {
+    private fun projectFileIfExists(name: String): Provider<File> {
         return nodeExtension.nodeProjectDir.map { it.file(name).asFile }
                 .flatMap { if (it.exists()) providers.provider { it } else providers.provider { null } }
     }
@@ -68,7 +68,7 @@ abstract class YarnInstallTask : YarnTask() {
         return zip(nodeModulesDirectoryProvider, nodeModulesOutputFilter)
                 .flatMap { (nodeModulesDirectory, nodeModulesOutputFilter) ->
                     if (nodeModulesOutputFilter != null) {
-                        val fileTree = projectHelper.fileTree(nodeModulesDirectory)
+                        val fileTree = objects.fileTree().from(nodeModulesDirectory)
                         nodeModulesOutputFilter.execute(fileTree)
                         providers.provider { fileTree }
                     } else providers.provider { null }

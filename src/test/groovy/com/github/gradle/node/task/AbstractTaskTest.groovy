@@ -5,6 +5,7 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.Action
 import org.gradle.api.Task
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 
@@ -23,19 +24,19 @@ abstract class AbstractTaskTest extends AbstractProjectTest {
         nodeExtension = NodeExtension.get(project)
     }
 
-    protected mockProjectApiHelperExec(Task task, String fieldName = "projectHelper") {
-        Field projectApiHelperField = findProjectApiHelperTaskField(task, fieldName)
-        projectApiHelperField.setAccessible(true)
-        ProjectApiHelper projectApiHelper = Spy(projectApiHelperField.get(task)) as ProjectApiHelper
-        projectApiHelper.exec(_ as Action<ExecSpec>) >> { Action<ExecSpec> action ->
+    protected mockExecOperationsExec(Task task, String fieldName = "execOperations") {
+        Field execOperationsField = findExecOperationsTaskField(task, fieldName)
+        execOperationsField.setAccessible(true)
+        ExecOperations execOperations = Spy(execOperationsField.get(task)) as ExecOperations
+        execOperations.exec(_ as Action<ExecSpec>) >> { Action<ExecSpec> action ->
             action.execute(execSpec)
             return execResult
         }
-        projectApiHelperField.set(task, projectApiHelper)
-        projectApiHelperField.setAccessible(false)
+        execOperationsField.set(task, execOperations)
+        execOperationsField.setAccessible(false)
     }
 
-    private static Field findProjectApiHelperTaskField(Task task, String fieldName) {
+    private static Field findExecOperationsTaskField(Task task, String fieldName) {
         Class<?> type = task.getClass()
         while (type != null) {
             try {

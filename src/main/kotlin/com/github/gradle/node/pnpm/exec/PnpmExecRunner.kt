@@ -6,12 +6,12 @@ import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy
-import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import com.github.gradle.node.variant.computeNodeExec
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import javax.inject.Inject
 
@@ -19,23 +19,23 @@ abstract class PnpmExecRunner {
     @get:Inject
     abstract val providers: ProviderFactory
 
-    fun executePnpmCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
+    fun executePnpmCommand(execOperations: ExecOperations, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
         val npmExecConfiguration = NpmExecConfiguration("pnpm"
         ) { variantComputer, nodeExtension, pnpmBinDir -> variantComputer.computePnpmExec(nodeExtension, pnpmBinDir) }
 
-        return executeCommand(project, extension, NpmProxy.addProxyEnvironmentVariables(extension.nodeProxySettings.get(), nodeExecConfiguration),
+        return executeCommand(execOperations, extension, NpmProxy.addProxyEnvironmentVariables(extension.nodeProxySettings.get(), nodeExecConfiguration),
             npmExecConfiguration,
             variants)
     }
 
-    private fun executeCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration,
+    private fun executeCommand(execOperations: ExecOperations, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration,
                                pnpmExecConfiguration: NpmExecConfiguration,
                                variantComputer: VariantComputer): ExecResult {
         val execConfiguration =
             computeExecConfiguration(extension, pnpmExecConfiguration, nodeExecConfiguration, variantComputer).get()
         val execRunner = ExecRunner()
 
-        return execRunner.execute(project, extension, execConfiguration)
+        return execRunner.execute(execOperations, extension, execConfiguration)
     }
 
     private fun computeExecConfiguration(extension: NodeExtension, pnpmExecConfiguration: NpmExecConfiguration,

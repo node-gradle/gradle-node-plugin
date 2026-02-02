@@ -16,16 +16,19 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import javax.inject.Inject
 
 abstract class NpxTask : BaseTask() {
-
     @get:Inject
     abstract val objects: ObjectFactory
 
     @get:Inject
     abstract val providers: ProviderFactory
+
+    @get:Inject
+    abstract val execOperations: ExecOperations
 
     @get:Input
     val command = objects.property<String>()
@@ -44,9 +47,6 @@ abstract class NpxTask : BaseTask() {
 
     @get:Internal
     val execOverrides = objects.property<Action<ExecSpec>>()
-
-    @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
 
     @get:Internal
     val extension = NodeExtension[project]
@@ -71,6 +71,6 @@ abstract class NpxTask : BaseTask() {
                 NodeExecConfiguration(fullCommand, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
         val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-        result = npmExecRunner.executeNpxCommand(projectHelper, extension, nodeExecConfiguration, variantComputer)
+        result = npmExecRunner.executeNpxCommand(execOperations, extension, nodeExecConfiguration, variantComputer)
     }
 }

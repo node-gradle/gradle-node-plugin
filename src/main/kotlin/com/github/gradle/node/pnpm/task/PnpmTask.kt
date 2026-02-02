@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import javax.inject.Inject
 
@@ -26,6 +27,9 @@ abstract class PnpmTask : BaseTask() {
 
     @get:Inject
     abstract val providers: ProviderFactory
+
+    @get:Inject
+    abstract val execOperations: ExecOperations
 
     @get:Optional
     @get:Input
@@ -46,9 +50,6 @@ abstract class PnpmTask : BaseTask() {
 
     @get:Internal
     val execOverrides = objects.property<Action<ExecSpec>>()
-
-    @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
 
     @get:Internal
     val nodeExtension = NodeExtension[project]
@@ -73,6 +74,6 @@ abstract class PnpmTask : BaseTask() {
                 ignoreExitValue.get(), execOverrides.orNull
             )
         val pnpmExecRunner = objects.newInstance(PnpmExecRunner::class.java)
-        result = pnpmExecRunner.executePnpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = pnpmExecRunner.executePnpmCommand(execOperations, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }

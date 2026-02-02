@@ -4,7 +4,6 @@ import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.exec.NodeExecRunner
-import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
@@ -12,8 +11,8 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.mapProperty
-import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import javax.inject.Inject
 
@@ -26,6 +25,9 @@ abstract class NodeTask : BaseTask() {
 
     @get:Inject
     abstract val providers: ProviderFactory
+
+    @get:Inject
+    abstract val execOperations: ExecOperations
 
     /**
      * Node.js script to run.
@@ -67,9 +69,6 @@ abstract class NodeTask : BaseTask() {
     @get:Internal
     val execOverrides = objects.property<Action<ExecSpec>>()
 
-    @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
-
     /**
      * Overrides for [ExecSpec]
      */
@@ -95,6 +94,6 @@ abstract class NodeTask : BaseTask() {
                 NodeExecConfiguration(command, environment.get(), workingDir.asFile.orNull,
                         ignoreExitValue.get(), execOverrides.orNull)
         val nodeExecRunner = NodeExecRunner()
-        result = nodeExecRunner.execute(projectHelper, extension, nodeExecConfiguration, variantComputer)
+        result = nodeExecRunner.execute(execOperations, extension, nodeExecConfiguration, variantComputer)
     }
 }

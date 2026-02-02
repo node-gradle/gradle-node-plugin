@@ -6,12 +6,12 @@ import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy
-import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import com.github.gradle.node.variant.computeNodeExec
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import javax.inject.Inject
 
@@ -19,23 +19,23 @@ abstract class BunExecRunner {
     @get:Inject
     abstract val providers: ProviderFactory
 
-    fun executeBunCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
+    fun executeBunCommand(execOperations: ExecOperations, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
         val bunExecConfiguration = NpmExecConfiguration("bun"
         ) { variantComputer, nodeExtension, binDir -> variantComputer.computeBunExec(nodeExtension, binDir) }
 
         val enhancedNodeExecConfiguration = NpmProxy.addProxyEnvironmentVariables(extension.nodeProxySettings.get(), nodeExecConfiguration)
         val execConfiguration = computeExecConfiguration(extension, bunExecConfiguration, enhancedNodeExecConfiguration, variants).get()
-        return ExecRunner().execute(project, extension, execConfiguration)
+        return ExecRunner().execute(execOperations, extension, execConfiguration)
     }
 
-    fun executeBunxCommand(project: ProjectApiHelper, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
+    fun executeBunxCommand(execOperations: ExecOperations, extension: NodeExtension, nodeExecConfiguration: NodeExecConfiguration, variants: VariantComputer): ExecResult {
         val bunExecConfiguration = NpmExecConfiguration("bunx"
         ) { variantComputer, nodeExtension, bunBinDir ->
             variantComputer.computeBunxExec(nodeExtension, bunBinDir) }
 
         val enhancedNodeExecConfiguration = NpmProxy.addProxyEnvironmentVariables(extension.nodeProxySettings.get(), nodeExecConfiguration)
         val execConfiguration = computeExecConfiguration(extension, bunExecConfiguration, enhancedNodeExecConfiguration, variants).get()
-        return ExecRunner().execute(project, extension, execConfiguration)
+        return ExecRunner().execute(execOperations, extension, execConfiguration)
     }
 
     private fun computeExecConfiguration(extension: NodeExtension, bunExecConfiguration: NpmExecConfiguration,

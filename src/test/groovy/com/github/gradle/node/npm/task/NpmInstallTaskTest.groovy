@@ -17,7 +17,7 @@ class NpmInstallTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpsProxyPort(11235)
 
         def task = project.tasks.getByName("npmInstall")
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()
@@ -37,7 +37,7 @@ class NpmInstallTaskTest extends AbstractTaskTest {
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.getByName("npmInstall")
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()

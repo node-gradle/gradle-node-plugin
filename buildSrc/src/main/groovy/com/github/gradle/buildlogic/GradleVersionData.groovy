@@ -1,7 +1,7 @@
 package com.github.gradle.buildlogic
 
 import groovy.json.JsonSlurper
-import org.gradle.util.VersionNumber
+import org.semver4j.Semver
 
 // From https://github.com/gradle/test-retry-gradle-plugin
 class GradleVersionData {
@@ -24,17 +24,17 @@ class GradleVersionData {
             .findAll { !it.nightly && !it.snapshot } // filter out snapshots and nightlies
             .findAll { !it.rcFor || it.activeRc } // filter out inactive rcs
             .findAll { !it.milestoneFor } // filter out milestones
-            .<String, VersionNumber, String>collectEntries { [(it.version): VersionNumber.parse(it.version as String)] }
-            .findAll { it.value.major >= 6 } // only 6.9 and above
-            .findAll { !(it.value.major == 6 && it.value.minor < 9) } // only 6.9 and above
-            .inject([] as List<Map.Entry<String, VersionNumber>>) { releasesToTest, version -> // only test against latest patch versions
-                if (!releasesToTest.any { it.value.major == version.value.major && it.value.minor == version.value.minor }) {
+            .collect { Semver.parse(it.version as String) }
+            .findAll { it != null }
+            .findAll { it.isGreaterThanOrEqualTo("6.9.0") } // Only test specific versions
+            .inject([] as List<Map.Entry<String, Semver>>) { releasesToTest, version -> // only test against latest patch versions
+                if (!releasesToTest.any { it.major == version.major && it.minor == version.minor }) {
                     releasesToTest + version
                 } else {
                     releasesToTest
                 }
             }
-            .collect { it.key.toString() }
+            .collect { it.toString() }
     }
 
 }

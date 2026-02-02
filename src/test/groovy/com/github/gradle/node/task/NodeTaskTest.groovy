@@ -21,7 +21,7 @@ class NodeTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(['a', 'b'])
         task.options.set(['c', 'd'])
         task.environment.set(['a': '1'])
@@ -50,7 +50,7 @@ class NodeTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.ignoreExitValue.set(true)
 
         def script = new File(projectDir, 'script.js')
@@ -75,7 +75,7 @@ class NodeTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         def script = new File(projectDir, 'script.js')
         task.script.set(script)
 
@@ -95,7 +95,7 @@ class NodeTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(false)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         def script = new File(projectDir, 'script.js')
 
         task.args.set(['a', 'b'])
@@ -119,7 +119,7 @@ class NodeTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', NodeTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         def script = new File(projectDir, 'script.js')
         task.script.set(script)
 

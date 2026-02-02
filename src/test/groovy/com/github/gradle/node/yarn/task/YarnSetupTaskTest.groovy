@@ -15,7 +15,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpProxyPort(80)
 
         def task = project.tasks.create('simple', YarnSetupTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()
@@ -38,7 +38,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.create('simple', YarnSetupTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()
@@ -58,7 +58,7 @@ class YarnSetupTaskTest extends AbstractTaskTest {
         nodeExtension.yarnVersion.set('1.22.4')
 
         def task = project.tasks.create('simple', YarnSetupTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()

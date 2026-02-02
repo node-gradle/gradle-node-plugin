@@ -21,6 +21,6 @@ abstract class BunTask : BunAbstractTask() {
                 ignoreExitValue.get(), execOverrides.orNull
             )
         val bunExecRunner = objects.newInstance(BunExecRunner::class.java)
-        result = bunExecRunner.executeBunCommand(projectHelper, nodeExtension, nodeExecConfiguration, variantComputer)
+        result = bunExecRunner.executeBunCommand(execOperations, nodeExtension, nodeExecConfiguration, variantComputer)
     }
 }

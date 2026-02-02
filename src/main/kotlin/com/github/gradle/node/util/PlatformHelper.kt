@@ -1,5 +1,7 @@
 package com.github.gradle.node.util
 
+import java.util.Locale
+import java.util.Locale.getDefault
 import java.util.concurrent.Callable
 
 internal enum class OsType(val osName: String) {
@@ -12,13 +14,13 @@ internal enum class OsType(val osName: String) {
 }
 
 internal fun parsePlatform(type: OsType, arch: String, uname: () -> String): Platform {
-    val osArch = if (type == OsType.WINDOWS) parseWindowsArch(arch.toLowerCase(), uname)
-                 else parseOsArch(arch.toLowerCase(), uname)
+    val osArch = if (type == OsType.WINDOWS) parseWindowsArch(arch.lowercase(getDefault()), uname)
+                 else parseOsArch(arch.lowercase(getDefault()), uname)
     return Platform(type.osName, osArch)
 }
 
 internal fun parseOsType(type: String): OsType {
-    val name = type.toLowerCase()
+    val name = type.lowercase(getDefault())
     return when {
         name.contains("windows") -> OsType.WINDOWS
         name.contains("mac") -> OsType.MAC
@@ -31,7 +33,7 @@ internal fun parseOsType(type: String): OsType {
 }
 
 fun parsePlatform(name: String, arch: String, uname: () -> String): Platform {
-    return Platform(parseOsName(name.toLowerCase()), parseOsArch(arch.toLowerCase(), uname))
+    return Platform(parseOsName(name.lowercase(getDefault())), parseOsArch(arch.lowercase(getDefault()), uname))
 }
 
 fun parseOsName(name: String): String {

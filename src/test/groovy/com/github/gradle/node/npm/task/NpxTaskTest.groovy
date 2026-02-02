@@ -12,7 +12,7 @@ class NpxTaskTest extends AbstractTaskTest {
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Linux", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpxTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.command.set('command')
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
@@ -38,7 +38,7 @@ class NpxTaskTest extends AbstractTaskTest {
         nodeExtension.resolvedPlatform.set(PlatformHelperKt.parsePlatform("Windows", "x86_64", {}))
 
         def task = project.tasks.create('simple', NpxTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.command.set('command')
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
@@ -69,7 +69,7 @@ class NpxTaskTest extends AbstractTaskTest {
         def npxScriptFile = VariantComputerKt.computeNpmScriptFile(nodeDir, "npx", nodeExtension.resolvedPlatform.get().isWindows())
 
         def task = project.tasks.create('simple', NpxTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()

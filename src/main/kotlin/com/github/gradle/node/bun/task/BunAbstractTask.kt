@@ -5,6 +5,8 @@ import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.task.BaseTask
 import com.github.gradle.node.util.DefaultProjectApiHelper
 import org.gradle.api.Action
+import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
@@ -14,6 +16,7 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import javax.inject.Inject
 
@@ -23,6 +26,15 @@ abstract class BunAbstractTask : BaseTask() {
 
     @get:Inject
     abstract val providers: ProviderFactory
+
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
+    @get:Inject
+    abstract val fileSystemOperations: FileSystemOperations
+
+    @get:Inject
+    abstract val archiveOperations: ArchiveOperations
 
     @get:Optional
     @get:Input
@@ -39,9 +51,6 @@ abstract class BunAbstractTask : BaseTask() {
 
     @get:Internal
     val execOverrides = objects.property<Action<ExecSpec>>()
-
-    @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
 
     @get:Internal
     val nodeExtension = NodeExtension[project]

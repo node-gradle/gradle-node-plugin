@@ -1,0 +1,11 @@
+plugins {
+    id "java-library"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.semver4j:semver4j:6.0.0")
+}

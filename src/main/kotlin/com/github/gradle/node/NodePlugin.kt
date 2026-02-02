@@ -91,20 +91,8 @@ class NodePlugin : Plugin<Project> {
         }
 
         val uname = {
-            if (GradleVersion.current() >= GradleVersion.version("7.5")) {
-                val cmd = project.providers.exec(unameSpec)
-                cmd.standardOutput.asText.get().trim()
-            } else {
-                val out = ByteArrayOutputStream()
-                project.exec(unameSpec)
-                val cmd = project.exec {
-                    unameSpec.execute(this)
-                    this.standardOutput = out
-                }
-
-                cmd.assertNormalExitValue()
-                out.toString().trim()
-            }
+            val cmd = project.providers.exec(unameSpec)
+            cmd.standardOutput.asText.get().trim()
         }
         val platform = parsePlatform(osType, arch, uname)
         extension.resolvedPlatform.set(platform)

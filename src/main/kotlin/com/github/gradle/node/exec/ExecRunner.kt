@@ -1,8 +1,8 @@
 package com.github.gradle.node.exec
 
 import com.github.gradle.node.NodeExtension
-import com.github.gradle.node.util.ProjectApiHelper
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import java.io.File
 
@@ -42,8 +42,8 @@ fun computeWorkingDir(nodeProjectDir: DirectoryProperty, execConfiguration: Exec
  * different meaning to its values.
  */
 class ExecRunner {
-    fun execute(projectHelper: ProjectApiHelper, extension: NodeExtension, execConfiguration: ExecConfiguration): ExecResult {
-        return projectHelper.exec {
+    fun execute(execOperations: ExecOperations, extension: NodeExtension, execConfiguration: ExecConfiguration): ExecResult {
+        return execOperations.exec {
             executable = execConfiguration.executable
             args = execConfiguration.args
             environment = computeEnvironment(execConfiguration)

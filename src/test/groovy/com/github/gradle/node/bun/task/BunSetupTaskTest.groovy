@@ -9,7 +9,7 @@ class BunSetupTaskTest
     def "exec bunSetup task without any bun version specified"() {
         given:
         def task = project.tasks.create('simple', BunSetupTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()
@@ -30,7 +30,7 @@ class BunSetupTaskTest
         def bunVersion = BunUtils.VERSION
         nodeExtension.bunVersion.set(bunVersion)
         def task = project.tasks.create('simple', BunSetupTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
 
         when:
         project.evaluate()

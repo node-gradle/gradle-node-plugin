@@ -13,7 +13,7 @@ class YarnTaskTest extends AbstractTaskTest {
     def "exec yarn task"() {
         given:
         def task = project.tasks.create('simple', YarnTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(['a', 'b'])
         task.environment.set(['a': '1'])
         task.ignoreExitValue.set(true)
@@ -36,7 +36,7 @@ class YarnTaskTest extends AbstractTaskTest {
         nodeExtension.download.set(true)
 
         def task = project.tasks.create('simple', YarnTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(["run", "command"])
 
         when:
@@ -62,7 +62,7 @@ class YarnTaskTest extends AbstractTaskTest {
         GradleProxyHelper.setHttpsProxyPassword("password")
 
         def task = project.tasks.create('simple', YarnTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(["run", "command"])
 
         when:
@@ -90,7 +90,7 @@ class YarnTaskTest extends AbstractTaskTest {
         nodeExtension.nodeProxySettings.set(ProxySettings.OFF)
 
         def task = project.tasks.create('simple', YarnTask)
-        mockProjectApiHelperExec(task)
+        mockExecOperationsExec(task)
         task.args.set(["run", "command"])
 
         when:

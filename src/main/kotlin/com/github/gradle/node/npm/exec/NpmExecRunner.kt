@@ -5,13 +5,13 @@ import com.github.gradle.node.exec.ExecConfiguration
 import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy
-import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import com.github.gradle.node.variant.computeNodeExec
 import com.github.gradle.node.variant.computeNpmScriptFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import java.io.File
 import javax.inject.Inject
@@ -21,7 +21,7 @@ abstract class NpmExecRunner {
     abstract val providers: ProviderFactory
 
     fun executeNpmCommand(
-        project: ProjectApiHelper,
+        execOperations: ExecOperations,
         extension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
         variants: VariantComputer
@@ -30,7 +30,7 @@ abstract class NpmExecRunner {
             "npm"
         ) { variantComputer, nodeExtension, npmBinDir -> variantComputer.computeNpmExec(nodeExtension, npmBinDir) }
         return executeCommand(
-            project,
+            execOperations,
             extension,
             NpmProxy.addProxyEnvironmentVariables(extension.nodeProxySettings.get(), nodeExecConfiguration),
             npmExecConfiguration,
@@ -39,7 +39,7 @@ abstract class NpmExecRunner {
     }
 
     fun executeNpxCommand(
-        project: ProjectApiHelper,
+        execOperations: ExecOperations,
         extension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
         variants: VariantComputer
@@ -48,11 +48,11 @@ abstract class NpmExecRunner {
             variantComputer.computeNpxExec(nodeExtension, npmBinDir)
         }
 
-        return executeCommand(project, extension, nodeExecConfiguration, npxExecConfiguration, variants)
+        return executeCommand(execOperations, extension, nodeExecConfiguration, npxExecConfiguration, variants)
     }
 
     private fun executeCommand(
-        project: ProjectApiHelper,
+        execOperations: ExecOperations,
         extension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
         npmExecConfiguration: NpmExecConfiguration,
@@ -61,7 +61,7 @@ abstract class NpmExecRunner {
         val execConfiguration =
             computeExecConfiguration(extension, npmExecConfiguration, nodeExecConfiguration, variantComputer).get()
         val execRunner = ExecRunner()
-        return execRunner.execute(project, extension, execConfiguration)
+        return execRunner.execute(execOperations, extension, execConfiguration)
     }
 
     private fun computeExecConfiguration(

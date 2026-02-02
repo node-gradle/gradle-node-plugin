@@ -5,12 +5,12 @@ import com.github.gradle.node.exec.ExecConfiguration
 import com.github.gradle.node.exec.ExecRunner
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.proxy.NpmProxy
-import com.github.gradle.node.util.ProjectApiHelper
 import com.github.gradle.node.util.zip
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import javax.inject.Inject
 
@@ -19,7 +19,7 @@ abstract class YarnExecRunner {
     abstract val providers: ProviderFactory
 
     fun executeYarnCommand(
-        project: ProjectApiHelper,
+        execOperations: ExecOperations,
         nodeExtension: NodeExtension,
         nodeExecConfiguration: NodeExecConfiguration,
         variantComputer: VariantComputer
@@ -38,7 +38,7 @@ abstract class YarnExecRunner {
         )
         val execRunner = ExecRunner()
 
-        return execRunner.execute(project, nodeExtension, execConfiguration)
+        return execRunner.execute(execOperations, nodeExtension, execConfiguration)
     }
 
     private fun addNpmProxyEnvironment(nodeExtension: NodeExtension,

@@ -2,6 +2,8 @@ package com.github.gradle.node.npm.proxy
 
 import com.github.gradle.node.exec.NodeExecConfiguration
 import java.net.URLEncoder
+import java.util.Locale
+import java.util.Locale.getDefault
 import java.util.stream.Collectors.toList
 import java.util.stream.Stream
 import kotlin.text.Charsets.UTF_8
@@ -58,7 +60,7 @@ class NpmProxy {
          */
         fun hasProxyConfiguration(env: Map<String, String>): Boolean {
             return env.keys.any {
-                proxyVariables.contains(it.toUpperCase()) || npmProxyVariables.contains(it.toUpperCase())
+                proxyVariables.contains(it.uppercase(getDefault())) || npmProxyVariables.contains(it.uppercase(getDefault()))
             }
         }
 
