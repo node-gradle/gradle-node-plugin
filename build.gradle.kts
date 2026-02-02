@@ -18,7 +18,6 @@ plugins {
     id("com.gradle.plugin-publish") version "1.0.0-rc-3"
     id("com.cinnober.gradle.semver-git") version "3.0.0"
     id("org.jetbrains.dokka") version "1.7.10"
-    id("org.gradle.test-retry") version "1.5.0"
 }
 
 group = "com.github.node-gradle"
@@ -81,13 +80,6 @@ tasks.withType(Test::class) {
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         exceptionFormat = TestExceptionFormat.FULL
-    }
-
-    retry {
-        maxRetries.set(3)
-        filter {
-            includeClasses.add("*_integTest")
-        }
     }
 
     develocity {
@@ -187,6 +179,13 @@ tasks.wrapper {
 
 tasks.withType<Test>().configureEach {
     jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
+
+    develocity.testRetry {
+        maxRetries.set(3)
+        filter {
+            includeClasses.add("*_integTest")
+        }
+    }
 }
 publishing.publications.withType<MavenPublication>().configureEach {
     pom.licenses {
