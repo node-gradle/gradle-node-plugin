@@ -28,6 +28,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.repositories
 import org.gradle.kotlin.dsl.withType
 import org.gradle.process.ExecSpec
 import org.gradle.util.GradleVersion
@@ -183,22 +184,24 @@ class NodePlugin : Plugin<Project> {
     }
 
     private fun addRepository(distUrl: String, allowInsecureProtocol: Boolean?) {
-        project.repositories.exclusiveContent {
-            forRepository {
-                project.repositories.ivy {
-                    name = "Node.js"
-                    setUrl(distUrl)
-                    patternLayout {
-                        artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+        project.repositories {
+            exclusiveContent {
+                forRepository {
+                    ivy {
+                        name = "Node.js"
+                        setUrl(distUrl)
+                        patternLayout {
+                            artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                        }
+                        metadataSources {
+                            artifact()
+                        }
+                        allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
                     }
-                    metadataSources {
-                        artifact()
-                    }
-                    allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
                 }
-            }
-            filter {
-                includeModule("org.nodejs", "node")
+                filter {
+                    includeModule("org.nodejs", "node")
+                }
             }
         }
     }
