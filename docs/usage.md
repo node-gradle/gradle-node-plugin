@@ -73,6 +73,7 @@ All npm command can also be invoked using underscore notation based on a gradle 
 ```bash
 $ gradle npm_update
 $ gradle npm_list
+$ gradle npm_ping
 $ gradle npm_cache_clean
 ...
 ```
@@ -82,6 +83,12 @@ be used for dependency declarations, such as:
 
 ```gradle
 npm_audit.dependsOn(npm_cache_clean)
+```
+
+A custom NPM task named `"my-custom-task"` declared in `package.json` in the `"scripts"`-block, can be referenced:
+
+```bash
+$ gradle npm_run_my-custom-task
 ```
 
 More arguments can be passed via the `build.gradle` file:
