@@ -28,7 +28,7 @@ abstract class BunInstallTask : BunTask() {
         dependsOn(BunSetupTask.NAME)
         bunCommand.set(nodeExtension.npmInstallCommand.map {
             when(it) {
-                "ci" -> listOf("install", "--frozen-lockfile")
+                "ci" -> listOf("install", "--save-text-lockfile")
                 else -> listOf(it)
             }
         })
@@ -43,7 +43,7 @@ abstract class BunInstallTask : BunTask() {
     @Optional
     @OutputFile
     protected fun getBunLockAsOutput(): File? {
-        return projectFileIfExists("bun.lockb").orNull
+        return projectFileIfExists("bun.lock").orNull
     }
 
     private fun projectFileIfExists(name: String): Provider<File?> {

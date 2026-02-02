@@ -1,5 +1,6 @@
 package com.github.gradle.node.bun.task
 
+import com.github.gradle.node.bun.BunUtils
 import com.github.gradle.node.task.AbstractTaskTest
 
 class BunSetupTaskTest
@@ -26,7 +27,7 @@ class BunSetupTaskTest
 
     def "exec bunSetup task with bun version specified"() {
         given:
-        def bunVersion = '1.0.0'
+        def bunVersion = BunUtils.VERSION
         nodeExtension.bunVersion.set(bunVersion)
         def task = project.tasks.create('simple', BunSetupTask)
         mockProjectApiHelperExec(task)

@@ -20,9 +20,9 @@ class Bun_integTest extends AbstractIntegTest {
         result1.task(":bunInstall").outcome == TaskOutcome.SUCCESS
         result1.task(":buildBunx").outcome == TaskOutcome.SUCCESS
         result1.task(":buildBun").outcome == TaskOutcome.SUCCESS
-        createFile("javascript-project/bun.lockb").isFile()
+        createFile("javascript-project/bun.lock").isFile()
         createFile("javascript-project/node_modules").isDirectory()
-        !createFile("bun.lockb").exists()
+        !createFile("bun.lock").exists()
         !createFile("node_modules").exists()
         createFile("javascript-project/output-bunx/index.js").isFile()
         createFile("javascript-project/output-bun/index.js").isFile()
@@ -31,7 +31,7 @@ class Bun_integTest extends AbstractIntegTest {
         def result2 = build("build")
 
         then:
-        // Not up-to-date because the bun.lockb now exists
+        // Not up-to-date because the bun.lock now exists
         result2.task(":bunInstall").outcome == TaskOutcome.SUCCESS
         result2.task(":buildBunx").outcome == TaskOutcome.UP_TO_DATE
         result2.task(":buildBun").outcome == TaskOutcome.UP_TO_DATE

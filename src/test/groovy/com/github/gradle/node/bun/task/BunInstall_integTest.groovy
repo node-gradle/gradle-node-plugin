@@ -37,7 +37,7 @@ class BunInstall_integTest extends AbstractIntegTest {
 
         then:
         result.task(":bunSetup").outcome == TaskOutcome.UP_TO_DATE
-        // because bun.lockb is generated only when needed
+        // because bun.lock is generated only when needed
         result.task(":bunInstall").outcome == TaskOutcome.UP_TO_DATE
 
         where:
@@ -88,23 +88,23 @@ class BunInstall_integTest extends AbstractIntegTest {
                 npmInstallCommand = 'install'
             }
 
-            def lock = file('bun.lockb')
+            def lock = file('bun.lock')
             def installTask = tasks.named("bunInstall").get()
             def outputs = installTask.outputs.files
             def inputs = installTask.inputs.files
             task verifyIO {
                 doLast {
                     if (!outputs.contains(lock)) {
-                        throw new RuntimeException("bun.lockb is not in INSTALL'S outputs!")
+                        throw new RuntimeException("bun.lock is not in INSTALL'S outputs!")
                     }
                     if (inputs.contains(lock)) {
-                        throw new RuntimeException("bun.lockb is in INSTALL'S inputs!")
+                        throw new RuntimeException("bun.lock is in INSTALL'S inputs!")
                     }
                 }
             }
         ''' )
         writeEmptyPackageJson()
-        writeFile('bun.lockb', '')
+        writeFile('bun.lock', '')
 
         when:
         def result = buildTask( 'verifyIO' )
@@ -149,7 +149,7 @@ class BunInstall_integTest extends AbstractIntegTest {
         def result2 = build("bunInstall")
 
         then:
-        // Because bun.lockb was created
+        // Because bun.lock was created
         result2.task(":bunInstall").outcome == TaskOutcome.SUCCESS
 
         when:

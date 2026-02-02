@@ -3,7 +3,7 @@ plugins {
 }
 
 node {
-    bunVersion = "1.0.3"
+    bunVersion = '1.3.8'
     download = true
     workDir = file("build/node")
 }

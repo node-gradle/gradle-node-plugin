@@ -165,7 +165,7 @@ class BunxTask_integTest extends AbstractIntegTest {
         result4.task(":bunSetup").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":bunInstall").outcome == TaskOutcome.UP_TO_DATE
         result4.task(":env").outcome == TaskOutcome.SUCCESS
-        result4.output.contains("notExistingCommand 404")
+        result4.output.contains("notExistingCommand - 404")
 
         when:
         def result5 = buildAndFail(":env", "-DnotExistingCommand=true")
@@ -174,7 +174,7 @@ class BunxTask_integTest extends AbstractIntegTest {
         result5.task(":bunSetup").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":bunInstall").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.FAILED
-        result5.output.contains("notExistingCommand 404")
+        result5.output.contains("notExistingCommand - 404")
 
         when:
         def result6 = build(":env", "-DoutputFile=true", "--stacktrace")
