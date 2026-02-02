@@ -183,19 +183,23 @@ class NodePlugin : Plugin<Project> {
     }
 
     private fun addRepository(distUrl: String, allowInsecureProtocol: Boolean?) {
-        project.repositories.ivy {
-            name = "Node.js"
-            setUrl(distUrl)
-            patternLayout {
-                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+        project.repositories.exclusiveContent {
+            forRepository {
+                project.repositories.ivy {
+                    name = "Node.js"
+                    setUrl(distUrl)
+                    patternLayout {
+                        artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                    }
+                    metadataSources {
+                        artifact()
+                    }
+                    allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
+                }
             }
-            metadataSources {
-                artifact()
-            }
-            content {
+            filter {
                 includeModule("org.nodejs", "node")
             }
-            allowInsecureProtocol?.let { isAllowInsecureProtocol = it }
         }
     }
 
