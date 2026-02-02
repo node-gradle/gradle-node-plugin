@@ -5,6 +5,7 @@ import com.github.gradle.node.util.Platform
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 
 open class NodeExtension(project: Project) {
@@ -180,6 +181,9 @@ open class NodeExtension(project: Project) {
      * Operating system and architecture
      */
     val resolvedPlatform = project.objects.property<Platform>()
+
+
+    val environment = project.objects.mapProperty<String, String>().convention(System.getenv())
 
     init {
         distBaseUrl.set("https://nodejs.org/dist")
