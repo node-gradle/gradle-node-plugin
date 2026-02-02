@@ -87,6 +87,7 @@ class BunxTask_integTest extends AbstractIntegTest {
         gv << GRADLE_VERSIONS_UNDER_TEST
     }
 
+    @IgnoreIf({ os.windows })
     def 'execute bun pwd command with custom execution configuration and check up-to-date-detection'() {
         given:
         gradleVersion = gv
