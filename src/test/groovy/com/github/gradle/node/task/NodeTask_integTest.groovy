@@ -21,7 +21,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         copyResources("fixtures/node")
 
         when:
-        def result1 = build("hello")
+        def result1 = build("hello", "--stacktrace")
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
@@ -29,7 +29,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         result1.output.contains("Hello World")
 
         when:
-        def result2 = build("hello")
+        def result2 = build("hello", "--stacktrace")
 
         then:
         result2.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -37,7 +37,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         !result2.output.contains("Hello World")
 
         when:
-        def result3 = build("hello", "-DchangeScript=true")
+        def result3 = build("hello", "-DchangeScript=true", "--stacktrace")
 
         then:
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -45,7 +45,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         !result3.output.contains("Hello")
 
         when:
-        def result4 = build("hello", "-DchangeScript=true", "-DchangeArgs=true")
+        def result4 = build("hello", "-DchangeScript=true", "-DchangeArgs=true", "--stacktrace")
 
         then:
         result4.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -54,7 +54,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         result4.output.contains("Hello Alice")
 
         when:
-        def result5 = build("hello", "-DchangeScript=true", "-DchangeArgs=true")
+        def result5 = build("hello", "-DchangeScript=true", "-DchangeArgs=true", "--stacktrace")
 
         then:
         result5.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -62,7 +62,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date
-        def result6 = build("hello")
+        def result6 = build("hello", "--stacktrace")
 
         then:
         result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -70,7 +70,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         when:
         writeFile("simple.js", "console.log('Hello Bobby');")
-        def result7 = build("hello")
+        def result7 = build("hello", "--stacktrace")
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -84,7 +84,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         result8.task(":executeDirectoryScript").outcome == TaskOutcome.FAILED
 
         when:
-        def result9 = build(":version")
+        def result9 = build(":version", "--stacktrace")
 
         then:
         result9.task(":version").outcome == TaskOutcome.SUCCESS
@@ -101,7 +101,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         copyResources("fixtures/node-env")
 
         when:
-        def result1 = build("env")
+        def result1 = build("env", "--stacktrace")
 
         then:
         result1.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
@@ -109,14 +109,14 @@ class NodeTask_integTest extends AbstractIntegTest {
         result1.output.contains("No custom environment")
 
         when:
-        def result2 = build("env")
+        def result2 = build("env", "--stacktrace")
 
         then:
         result2.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result2.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result3 = build("env", "-DchangeOptions=true")
+        def result3 = build("env", "-DchangeOptions=true", "--stacktrace")
 
         then:
         result3.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -124,7 +124,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         result3.output.contains("1000000")
 
         when:
-        def result4 = build("env", "-DchangeOptions=true")
+        def result4 = build("env", "-DchangeOptions=true", "--stacktrace")
 
         then:
         result4.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -132,14 +132,14 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date
-        def result5 = build("env")
+        def result5 = build("env", "--stacktrace")
 
         then:
         result5.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result5.task(":env").outcome == TaskOutcome.SUCCESS
 
         when:
-        def result6 = build("env", "-DchangeEnv=true")
+        def result6 = build("env", "-DchangeEnv=true", "--stacktrace")
 
         then:
         result6.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -148,7 +148,7 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         when:
         environmentVariables.set("NEW_ENV_VARIABLE", "Let's make the whole environment change")
-        def result7 = build("env", "-DchangeEnv=true")
+        def result7 = build("env", "-DchangeEnv=true", "--stacktrace")
 
         then:
         result7.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -156,21 +156,21 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date
-        def result8 = build("env")
+        def result8 = build("env", "--stacktrace")
 
         then:
         result8.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result8.task(":env").outcome == TaskOutcome.SUCCESS
 
         when:
-        def result9 = build("env", "-DchangeWorkingDir=true")
+        def result9 = build("env", "-DchangeWorkingDir=true", "--stacktrace")
 
         then:
         result9.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result9.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result10 = build("env", "-DchangeWorkingDir=true", "--rerun-tasks")
+        def result10 = build("env", "-DchangeWorkingDir=true", "--rerun-tasks", "--stacktrace")
 
         then:
         result10.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
@@ -181,14 +181,14 @@ class NodeTask_integTest extends AbstractIntegTest {
 
         when:
         // Reset build arguments to ensure the next change is not up-to-date
-        def result11 = build("env")
+        def result11 = build("env", "--stacktrace")
 
         then:
         result11.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
         result11.task(":env").outcome == TaskOutcome.UP_TO_DATE
 
         when:
-        def result12 = build("env", "-DignoreExitValue=true")
+        def result12 = build("env", "-DignoreExitValue=true", "--stacktrace")
 
         then:
         result12.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -196,7 +196,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         result12.output.contains("No custom environment")
 
         when:
-        def result13 = build("env", "-Dfail=true", "-DignoreExitValue=true")
+        def result13 = build("env", "-Dfail=true", "-DignoreExitValue=true", "--stacktrace")
 
         then:
         result13.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -204,7 +204,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         result13.output.contains("I had to fail")
 
         when:
-        def result14 = build("env", "-Dfail=true", "-DignoreExitValue=true")
+        def result14 = build("env", "-Dfail=true", "-DignoreExitValue=true", "--stacktrace")
 
         then:
         result14.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -219,7 +219,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         result15.output.contains("I had to fail")
 
         when:
-        def result16 = build("env", "-DoutputFile=true")
+        def result16 = build("env", "-DoutputFile=true", "--stacktrace")
 
         then:
         result16.task(":nodeSetup").outcome == TaskOutcome.UP_TO_DATE
@@ -230,7 +230,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         outputFile.text.contains("No custom environment")
 
         when:
-        def result17 = build(":version")
+        def result17 = build(":version", "--stacktrace")
 
         then:
         result17.task(":version").outcome == TaskOutcome.SUCCESS
@@ -264,7 +264,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         copyResources("fixtures/node-fail-on-project-repos-download")
 
         when:
-        def result = build("hello")
+        def result = build("hello", "--stacktrace")
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
@@ -282,7 +282,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         copyResources("fixtures/node-fail-on-project-repos-no-download")
 
         when:
-        def result = build("hello")
+        def result = build("hello", "--stacktrace")
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SKIPPED
@@ -300,7 +300,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         copyResources("fixtures/node-disallow-insecure-protocol")
 
         when:
-        def result = build("hello")
+        def result = build("hello", "--stacktrace")
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
@@ -318,7 +318,7 @@ class NodeTask_integTest extends AbstractIntegTest {
         copyResources("fixtures/node-allow-insecure-protocol")
 
         when:
-        def result = build("hello")
+        def result = build("hello", "--stacktrace")
 
         then:
         result.task(":nodeSetup").outcome == TaskOutcome.SUCCESS
