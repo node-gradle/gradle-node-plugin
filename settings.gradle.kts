@@ -9,7 +9,7 @@ val isPR = isCI && System.getenv().containsKey("GRADLE_ENTERPRISE_ACCESS_KEY")
 val publishAlwaysIf = System.getProperties()["user.name"] == "deepy"
 
 develocity {
-    server.set("https://alexandernordlund.gradle-enterprise.cloud/")
+    server.set("https://alexnordlund.develocity.cloud/")
     buildScan {
         publishing {
             onlyIf { it.isAuthenticated }
