@@ -96,7 +96,7 @@ fun main(args: Array<String>) {
     val osType = parseOsType(osName)
     val uname = {
         val args = if (osType == OsType.WINDOWS) {
-            listOf("powershell", "-NoProfile", "-Command", "(Get-WmiObject Win32_Processor).Architecture")
+            listOf("powershell", "-NoProfile", "-Command", "(Get-WmiObject Win32_Processor)[0].Architecture")
         } else {
             listOf("uname", "-m")
         }
