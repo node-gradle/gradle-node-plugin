@@ -4,6 +4,7 @@ jobs:
   build:
     runs-on: ${{ matrix.config.os }}
     strategy:
+      fail-fast: false
       matrix:
         config:
           - {os: ubuntu-latest,  java: 11, params: "'-PtestedGradleVersion=6.9.4|7.6.3' pnpmTests" }
