@@ -12,13 +12,21 @@ import org.gradle.api.provider.Provider
 /**
  * Get the expected node binary name, node.exe on Windows and node everywhere else.
  */
-fun computeNodeExec(nodeExtension: NodeExtension, nodeBinDirProvider: Provider<Directory>): Provider<String> {
-    return zip(nodeExtension.download, nodeBinDirProvider).map {
-        val (download, nodeBinDir) = it
+fun computeNodeExec(
+    nodeExtension: NodeExtension,
+    nodeBinDirProvider: Provider<Directory>
+): Provider<String> {
+    return zip(
+        nodeExtension.download,
+        nodeBinDirProvider,
+        nodeExtension.resolvedPlatform,
+    ).map { (download, nodeBinDir, platform) ->
         if (download) {
-            val nodeCommand = if (nodeExtension.resolvedPlatform.get().isWindows()) "node.exe" else "node"
+            val nodeCommand = if (platform.isWindows()) "node.exe" else "node"
             nodeBinDir.dir(nodeCommand).asFile.absolutePath
-        } else "node"
+        } else {
+            "node"
+        }
     }
 }
 
@@ -50,14 +58,24 @@ internal fun computeExec(
     binDirProvider: Provider<Directory>,
     configurationCommand: Property<String>,
     unixCommand: String,
-    windowsCommand: String
+    windowsCommand: String,
 ): Provider<String> {
-    return zip(nodeExtension.download, configurationCommand, binDirProvider).map {
-        val (download, cfgCommand, binDir) = it
-        val command = if (nodeExtension.resolvedPlatform.get().isWindows()) {
+    return zip(
+        nodeExtension.download,
+        nodeExtension.resolvedPlatform,
+        configurationCommand,
+        binDirProvider,
+    ).map { (download, resolvedPlatform, cfgCommand, binDir) ->
+        val command = if (resolvedPlatform.isWindows()) {
             cfgCommand.mapIf({ it == unixCommand }) { windowsCommand }
-        } else cfgCommand
-        if (download) binDir.dir(command).asFile.absolutePath else command
+        } else {
+            cfgCommand
+        }
+        if (download) {
+            binDir.dir(command).asFile.absolutePath
+        } else {
+            command
+        }
     }
 }
 
@@ -95,7 +113,10 @@ open class VariantComputer {
     /**
      * Get the expected node binary directory, taking Windows specifics into account.
      */
-    fun computeNodeBinDir(nodeDirProvider: Provider<Directory>, platform: Property<Platform>) =
+    fun computeNodeBinDir(
+        nodeDirProvider: Provider<Directory>,
+        platform: Property<Platform>,
+    ): Provider<Directory> =
         computeProductBinDir(nodeDirProvider, platform)
 
     /**
@@ -113,20 +134,28 @@ open class VariantComputer {
     /**
      * Get the expected directory for a given npm version.
      */
-    fun computeNpmDir(nodeExtension: NodeExtension, nodeDirProvider: Provider<Directory>): Provider<Directory> {
-        return zip(nodeExtension.npmVersion, nodeExtension.npmWorkDir, nodeDirProvider).map {
-            val (npmVersion, npmWorkDir, nodeDir) = it
-            if (npmVersion.isNotBlank()) {
-                val directoryName = "npm-v${npmVersion}"
-                npmWorkDir.dir(directoryName)
-            } else nodeDir
-        }
+    fun computeNpmDir(
+        nodeExtension: NodeExtension,
+        nodeDirProvider: Provider<Directory>,
+    ): Provider<Directory> {
+        return zip(nodeExtension.npmVersion, nodeExtension.npmWorkDir, nodeDirProvider)
+            .map { (npmVersion, npmWorkDir, nodeDir) ->
+                if (npmVersion.isNotBlank()) {
+                    val directoryName = "npm-v${npmVersion}"
+                    npmWorkDir.dir(directoryName)
+                } else {
+                    nodeDir
+                }
+            }
     }
 
     /**
      * Get the expected npm binary directory, taking Windows specifics into account.
      */
-    fun computeNpmBinDir(npmDirProvider: Provider<Directory>, platform: Property<Platform>) =
+    fun computeNpmBinDir(
+        npmDirProvider: Provider<Directory>,
+        platform: Property<Platform>
+    ): Provider<Directory> =
         computeProductBinDir(npmDirProvider, platform)
 
     /**
@@ -136,8 +165,11 @@ open class VariantComputer {
      */
     fun computeNpmExec(nodeExtension: NodeExtension, npmBinDirProvider: Provider<Directory>): Provider<String> {
         return computeExec(
-            nodeExtension, npmBinDirProvider,
-            nodeExtension.npmCommand, "npm", "npm.cmd"
+            nodeExtension = nodeExtension,
+            binDirProvider = npmBinDirProvider,
+            configurationCommand = nodeExtension.npmCommand,
+            unixCommand = "npm",
+            windowsCommand = "npm.cmd",
         )
     }
 
@@ -211,8 +243,18 @@ open class VariantComputer {
         )
     }
 
-    private fun computeProductBinDir(productDirProvider: Provider<Directory>, platform: Property<Platform>) =
-        if (platform.get().isWindows()) productDirProvider else productDirProvider.map { it.dir("bin") }
+    private fun computeProductBinDir(
+        productDirProvider: Provider<Directory>,
+        platform: Property<Platform>
+    ): Provider<Directory> {
+        return platform.flatMap { p ->
+            if (p.isWindows()) {
+                productDirProvider.map { it.dir("bin") }
+            } else {
+                productDirProvider
+            }
+        }
+    }
 
     /**
      * Get the node archive name in Gradle dependency format, using zip for Windows and tar.gz everywhere else.

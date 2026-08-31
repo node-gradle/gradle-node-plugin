@@ -1,13 +1,29 @@
 package com.github.gradle.node
 
+import com.github.gradle.node.npm.exec.NpmExecResult
+import com.github.gradle.node.npm.exec.NpmExecSource
+import com.github.gradle.node.npm.exec.NpmExecSpec
 import com.github.gradle.node.npm.proxy.ProxySettings
 import com.github.gradle.node.util.Platform
+import com.github.gradle.node.variant.VariantComputer
+import com.github.gradle.node.variant.computeNodeExec
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.of
 import org.gradle.kotlin.dsl.property
+import javax.inject.Inject
 
-open class NodeExtension(project: Project) {
+abstract class NodeExtension
+@Inject
+internal constructor(
+    project: Project,
+    private val providers: ProviderFactory,
+) {
     private val cacheDir = project.layout.projectDirectory.dir(".gradle")
 
     /**
@@ -18,7 +34,7 @@ open class NodeExtension(project: Project) {
     /**
      * The directory where npm is installed (when a specific version is defined)
      */
-    val npmWorkDir = project.objects.directoryProperty().convention(cacheDir.dir("npm"))
+    val npmWorkDir: DirectoryProperty = project.objects.directoryProperty().convention(cacheDir.dir("npm"))
 
     /**
      * The directory where pnpm is installed (when a pnpm task is used)
@@ -53,7 +69,7 @@ open class NodeExtension(project: Project) {
      * If specified, installs it in the npmWorkDir
      * If empty, the plugin will use the npm command bundled with Node.js
      */
-    val npmVersion = project.objects.property<String>().convention("")
+    val npmVersion: Property<String> = project.objects.property<String>().convention("")
 
     /**
      * Version of pnpm to use
@@ -111,7 +127,7 @@ open class NodeExtension(project: Project) {
      * If true, it will download node using above parameters
      * Note that npm is bundled with Node.js
      */
-    val download = project.objects.property<Boolean>().convention(false)
+    val download: Property<Boolean> = project.objects.property<Boolean>().convention(false)
 
     /**
      * Whether the plugin automatically should add the proxy configuration to npm and yarn commands
@@ -168,7 +184,7 @@ open class NodeExtension(project: Project) {
     /**
      * Computed path to nodejs directory
      */
-    val resolvedNodeDir = project.objects.directoryProperty()
+    val resolvedNodeDir: DirectoryProperty = project.objects.directoryProperty()
 
     /**
      * Operating system and architecture
@@ -179,7 +195,7 @@ open class NodeExtension(project: Project) {
     /**
      * Operating system and architecture
      */
-    val resolvedPlatform = project.objects.property<Platform>()
+    val resolvedPlatform: Property<Platform> = project.objects.property<Platform>()
 
     init {
         distBaseUrl.set("https://nodejs.org/dist")
@@ -191,6 +207,30 @@ open class NodeExtension(project: Project) {
     )
     fun setUseGradleProxySettings(value: Boolean) {
         nodeProxySettings.set(if (value) ProxySettings.SMART else ProxySettings.OFF)
+    }
+
+    @Suppress("UnstableApiUsage")
+    fun npmExec(
+        configuration: NpmExecSpec.() -> Unit
+    ): Provider<NpmExecResult> {
+
+        val vc = VariantComputer()
+        val nodeDirProvider = resolvedNodeDir
+        val npmDirProvider = vc.computeNpmDir(this, nodeDirProvider)
+        val nodeBinDirProvider = vc.computeNodeBinDir(nodeDirProvider, resolvedPlatform)
+        val npmBinDirProvider = vc.computeNpmBinDir(npmDirProvider, resolvedPlatform)
+        val nodeExecProvider = computeNodeExec(this, nodeBinDirProvider)
+
+        vc.computeNpmExec(this, npmBinDirProvider)
+
+        return providers.of(NpmExecSource::class) {
+            parameters.apply(configuration)
+//            parameters {
+//                executable
+//                ignoreExitValue
+//                workingDir
+//            }
+        }
     }
 
     companion object {
